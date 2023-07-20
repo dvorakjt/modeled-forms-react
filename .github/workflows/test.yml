@@ -12,4 +12,4 @@ jobs:
           with:
             node-version: latest
         - run: npm ci 
-        - run: npm run test:ci
+        - run: npm run test
