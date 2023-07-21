@@ -1,0 +1,144 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<coverage generated="1689933910607" clover="3.2.0">
+  <project timestamp="1689933910608" name="All files">
+    <metrics statements="123" coveredstatements="123" conditionals="22" coveredconditionals="22" methods="17" coveredmethods="17" elements="162" coveredelements="162" complexity="0" loc="123" ncloc="123" packages="1" files="5" classes="5"/>
+    <file name="managed-observable.ts" path="C:\Users\Owner\Desktop\code\javascript-typescript\react-projects\modeled-forms-react\src\model\subscriptions\managed-observable.ts">
+      <metrics statements="42" coveredstatements="42" conditionals="6" coveredconditionals="6" methods="4" coveredmethods="4"/>
+      <line num="1" count="1" type="stmt"/>
+      <line num="2" count="1" type="stmt"/>
+      <line num="3" count="1" type="stmt"/>
+      <line num="4" count="1" type="stmt"/>
+      <line num="5" count="1" type="stmt"/>
+      <line num="6" count="1" type="stmt"/>
+      <line num="7" count="1" type="stmt"/>
+      <line num="8" count="1" type="stmt"/>
+      <line num="9" count="1" type="stmt"/>
+      <line num="10" count="1" type="cond" truecount="1" falsecount="0"/>
+      <line num="11" count="10" type="stmt"/>
+      <line num="12" count="10" type="stmt"/>
+      <line num="13" count="10" type="stmt"/>
+      <line num="14" count="1" type="stmt"/>
+      <line num="15" count="1" type="cond" truecount="1" falsecount="0"/>
+      <line num="16" count="7" type="stmt"/>
+      <line num="17" count="7" type="stmt"/>
+      <line num="18" count="7" type="stmt"/>
+      <line num="19" count="7" type="stmt"/>
+      <line num="20" count="7" type="cond" truecount="1" falsecount="0"/>
+      <line num="21" count="6" type="stmt"/>
+      <line num="22" count="6" type="stmt"/>
+      <line num="23" count="6" type="cond" truecount="1" falsecount="0"/>
+      <line num="24" count="1" type="stmt"/>
+      <line num="25" count="1" type="stmt"/>
+      <line num="26" count="6" type="stmt"/>
+      <line num="27" count="6" type="cond" truecount="1" falsecount="0"/>
+      <line num="28" count="1" type="stmt"/>
+      <line num="29" count="1" type="stmt"/>
+      <line num="30" count="1" type="cond" truecount="1" falsecount="0"/>
+      <line num="31" count="1" type="stmt"/>
+      <line num="32" count="1" type="stmt"/>
+      <line num="33" count="1" type="stmt"/>
+      <line num="34" count="1" type="stmt"/>
+      <line num="35" count="1" type="stmt"/>
+      <line num="36" count="7" type="stmt"/>
+      <line num="37" count="7" type="stmt"/>
+      <line num="38" count="7" type="stmt"/>
+      <line num="39" count="7" type="stmt"/>
+      <line num="40" count="7" type="stmt"/>
+      <line num="41" count="7" type="stmt"/>
+      <line num="42" count="1" type="stmt"/>
+    </file>
+    <file name="managed-subject.ts" path="C:\Users\Owner\Desktop\code\javascript-typescript\react-projects\modeled-forms-react\src\model\subscriptions\managed-subject.ts">
+      <metrics statements="22" coveredstatements="22" conditionals="4" coveredconditionals="4" methods="4" coveredmethods="4"/>
+      <line num="1" count="1" type="stmt"/>
+      <line num="2" count="1" type="stmt"/>
+      <line num="3" count="1" type="stmt"/>
+      <line num="4" count="1" type="stmt"/>
+      <line num="5" count="1" type="stmt"/>
+      <line num="6" count="1" type="stmt"/>
+      <line num="7" count="1" type="cond" truecount="1" falsecount="0"/>
+      <line num="8" count="8" type="stmt"/>
+      <line num="9" count="8" type="stmt"/>
+      <line num="10" count="1" type="stmt"/>
+      <line num="11" count="1" type="cond" truecount="1" falsecount="0"/>
+      <line num="12" count="1" type="stmt"/>
+      <line num="13" count="1" type="stmt"/>
+      <line num="14" count="1" type="stmt"/>
+      <line num="15" count="1" type="cond" truecount="1" falsecount="0"/>
+      <line num="16" count="1" type="stmt"/>
+      <line num="17" count="1" type="stmt"/>
+      <line num="18" count="1" type="stmt"/>
+      <line num="19" count="1" type="cond" truecount="1" falsecount="0"/>
+      <line num="20" count="3" type="stmt"/>
+      <line num="21" count="3" type="stmt"/>
+      <line num="22" count="1" type="stmt"/>
+    </file>
+    <file name="managed-subscription.ts" path="C:\Users\Owner\Desktop\code\javascript-typescript\react-projects\modeled-forms-react\src\model\subscriptions\managed-subscription.ts">
+      <metrics statements="21" coveredstatements="21" conditionals="4" coveredconditionals="4" methods="4" coveredmethods="4"/>
+      <line num="1" count="1" type="stmt"/>
+      <line num="2" count="1" type="stmt"/>
+      <line num="3" count="1" type="stmt"/>
+      <line num="4" count="1" type="stmt"/>
+      <line num="5" count="1" type="cond" truecount="1" falsecount="0"/>
+      <line num="6" count="7" type="stmt"/>
+      <line num="7" count="1" type="stmt"/>
+      <line num="8" count="1" type="cond" truecount="1" falsecount="0"/>
+      <line num="9" count="5" type="stmt"/>
+      <line num="10" count="5" type="stmt"/>
+      <line num="11" count="1" type="stmt"/>
+      <line num="12" count="1" type="cond" truecount="1" falsecount="0"/>
+      <line num="13" count="7" type="stmt"/>
+      <line num="14" count="7" type="stmt"/>
+      <line num="15" count="7" type="stmt"/>
+      <line num="16" count="1" type="stmt"/>
+      <line num="17" count="1" type="cond" truecount="1" falsecount="0"/>
+      <line num="18" count="5" type="stmt"/>
+      <line num="19" count="5" type="stmt"/>
+      <line num="20" count="5" type="stmt"/>
+      <line num="21" count="1" type="stmt"/>
+    </file>
+    <file name="subscription-list-item.ts" path="C:\Users\Owner\Desktop\code\javascript-typescript\react-projects\modeled-forms-react\src\model\subscriptions\subscription-list-item.ts">
+      <metrics statements="10" coveredstatements="10" conditionals="1" coveredconditionals="1" methods="1" coveredmethods="1"/>
+      <line num="1" count="1" type="stmt"/>
+      <line num="2" count="1" type="stmt"/>
+      <line num="3" count="1" type="stmt"/>
+      <line num="4" count="1" type="stmt"/>
+      <line num="5" count="1" type="stmt"/>
+      <line num="6" count="1" type="stmt"/>
+      <line num="7" count="1" type="cond" truecount="1" falsecount="0"/>
+      <line num="8" count="7" type="stmt"/>
+      <line num="9" count="7" type="stmt"/>
+      <line num="10" count="1" type="stmt"/>
+    </file>
+    <file name="subscription-manager-impl.ts" path="C:\Users\Owner\Desktop\code\javascript-typescript\react-projects\modeled-forms-react\src\model\subscriptions\subscription-manager-impl.ts">
+      <metrics statements="28" coveredstatements="28" conditionals="7" coveredconditionals="7" methods="4" coveredmethods="4"/>
+      <line num="1" count="1" type="stmt"/>
+      <line num="2" count="1" type="stmt"/>
+      <line num="3" count="1" type="stmt"/>
+      <line num="4" count="1" type="stmt"/>
+      <line num="5" count="1" type="stmt"/>
+      <line num="6" count="1" type="stmt"/>
+      <line num="7" count="1" type="stmt"/>
+      <line num="8" count="1" type="stmt"/>
+      <line num="9" count="1" type="cond" truecount="1" falsecount="0"/>
+      <line num="10" count="1" type="stmt"/>
+      <line num="11" count="1" type="cond" truecount="1" falsecount="0"/>
+      <line num="12" count="6" type="stmt"/>
+      <line num="13" count="6" type="stmt"/>
+      <line num="14" count="1" type="stmt"/>
+      <line num="15" count="1" type="cond" truecount="1" falsecount="0"/>
+      <line num="16" count="10" type="cond" truecount="2" falsecount="0"/>
+      <line num="17" count="2" type="stmt"/>
+      <line num="18" count="10" type="stmt"/>
+      <line num="19" count="1" type="stmt"/>
+      <line num="20" count="1" type="cond" truecount="1" falsecount="0"/>
+      <line num="21" count="1" type="stmt"/>
+      <line num="22" count="1" type="cond" truecount="1" falsecount="0"/>
+      <line num="23" count="5" type="stmt"/>
+      <line num="24" count="5" type="stmt"/>
+      <line num="25" count="5" type="stmt"/>
+      <line num="26" count="5" type="stmt"/>
+      <line num="27" count="1" type="stmt"/>
+      <line num="28" count="1" type="stmt"/>
+    </file>
+  </project>
+</coverage>
