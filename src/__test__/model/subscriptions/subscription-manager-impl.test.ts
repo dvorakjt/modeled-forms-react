@@ -2,7 +2,7 @@ import { describe, beforeEach, test, expect } from 'vitest';
 import { ManagedObservable } from "../../../model/subscriptions/managed-observable";
 import { SubscriptionManagerImpl } from "../../../model/subscriptions/subscription-manager-impl";
 import { Observable, from, BehaviorSubject, ReplaySubject, Subject } from "rxjs";
-import type { SubscriptionManager } from '../../../model/subscriptions/subscription-manager.interface';
+import type { SubscriptionManager } from '../../../model/types/subscriptions/subscription-manager.interface';
 import { ManagedSubject } from '../../../model/subscriptions/managed-subject';
 
 describe('SubscriptionManagerImpl', () => {

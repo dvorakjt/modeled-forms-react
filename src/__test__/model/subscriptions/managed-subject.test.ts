@@ -1,6 +1,6 @@
 import { describe, beforeEach, test, expect, vi } from 'vitest';
 import { SubscriptionManagerImpl } from '../../../model/subscriptions/subscription-manager-impl';
-import type { SubscriptionManager } from '../../../model/subscriptions/subscription-manager.interface';
+import type { SubscriptionManager } from '../../../model/types/subscriptions/subscription-manager.interface';
 import { Subject } from 'rxjs';
 import { ManagedSubject } from '../../../model/subscriptions/managed-subject';
 

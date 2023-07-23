@@ -1,6 +1,6 @@
 import { List } from "linked-list";
 import { SubscriptionListItem } from "./subscription-list-item";
-import type { SubscriptionManager } from "./subscription-manager.interface";
+import type { SubscriptionManager } from "../types/subscriptions/subscription-manager.interface";
 import { Observable, Subject } from "rxjs";
 import { ManagedSubject } from "./managed-subject";
 import { ManagedObservable } from "./managed-observable";

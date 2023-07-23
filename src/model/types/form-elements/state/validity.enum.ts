@@ -1,0 +1,7 @@
+export enum Validity {
+  ERROR = 0,
+  INVALID,
+  PENDING,
+  VALID_UNFINALIZABLE,
+  VALID_FINALIZABLE
+}
