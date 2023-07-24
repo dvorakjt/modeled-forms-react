@@ -29,7 +29,7 @@ describe('SimpleField', () => {
     subscriptionManager.unsubscribeAll();
   });
 
-  test('setting omit should update state.omit', () => {
+  test('setting omit should update field.omit', () => {
     field.omit = true;
     expect(field.omit).toBe(true);
   });
