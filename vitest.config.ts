@@ -8,7 +8,7 @@ export default defineConfig({
       all: true,
       100: true,
       include: ["src/model/**"],
-      exclude: ["**/*.interface.ts"]
+      exclude: ["**/*.interface.ts", "**/*.type.ts"]
     }
   },
 });
