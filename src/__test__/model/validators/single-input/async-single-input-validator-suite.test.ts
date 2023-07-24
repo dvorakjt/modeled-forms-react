@@ -6,7 +6,7 @@ import { MessageType } from "../../../../model/types/state/messages/message-type
 import { ErrorMessages } from "../../../../model/constants/error-messages.enum";
 import { AsyncSingleInputValidatorSuite } from "../../../../model/validators/single-input/async-single-input-validator-suite";
 import { ValidatorResult } from "../../../../model/types/validators/validator-result.interface";
-import { ValidatorSuiteResult } from "../../../../model/types/state/validator-suite-result.interface";
+import { ValidatorSuiteResult } from "../../../../model/types/validators/validator-suite-result.interface";
 import { AsyncValidator } from "../../../../model/types/validators/async-validator.type";
 
 describe('SyncSingleInputValidatorSuite', () => {
@@ -18,24 +18,22 @@ describe('SyncSingleInputValidatorSuite', () => {
 
   test('it synchronously returns a result including a validity of PENDING before any async validators run.', () => {
     const validatorSuite = new AsyncSingleInputValidatorSuite<string>([], "Checking field", subscriptionManager);
-    validatorSuite.evaluate('test').subscribe(result => {
-      expect(result).toStrictEqual({
-        value: 'test',
-        validity: Validity.PENDING,
-        messages: [
-          {
-            type: MessageType.PENDING,
-            text: 'Checking field'
-          }
-        ]
-      });
+    expect(validatorSuite.evaluate('test').syncResult).toStrictEqual({
+      value: 'test',
+      validity: Validity.PENDING,
+      messages: [
+        {
+          type: MessageType.PENDING,
+          text: 'Checking field'
+        }
+      ]
     });
   });
 
   test('it should return the appropriate result when all validators pass.', () => {
     const validatorSuite = new AsyncSingleInputValidatorSuite<string>([isNotEmptyStrAsync, containsVowelAsync], 'Checking field', subscriptionManager);
     let result : ValidatorSuiteResult<string>;
-    validatorSuite.evaluate('test').subscribe({
+    validatorSuite.evaluate('test').observable?.subscribe({
       next: next => result = next,
       complete: () => {
         expect(result).toStrictEqual({
@@ -59,7 +57,7 @@ describe('SyncSingleInputValidatorSuite', () => {
   test('it should return the appropriate result when a validator fails.', () => {
     const validatorSuite = new AsyncSingleInputValidatorSuite<string>([isNotEmptyStrAsync, containsVowelAsync], 'Checking field', subscriptionManager);
     let result : ValidatorSuiteResult<string>;
-    validatorSuite.evaluate('tst').subscribe({
+    validatorSuite.evaluate('tst').observable?.subscribe({
       next: next => result = next,
       complete: () => {
         expect(result).toStrictEqual({
@@ -83,7 +81,7 @@ describe('SyncSingleInputValidatorSuite', () => {
   test('it should return the appropriate result when a validator throws an error.', () => {
     const validatorSuite = new AsyncSingleInputValidatorSuite<string>([isNotEmptyStrAsync, containsVowelAsync, throwErrorAsync as AsyncValidator<string>], 'Checking field', subscriptionManager);
     let result : ValidatorSuiteResult<string>;
-    validatorSuite.evaluate('test').subscribe({
+    validatorSuite.evaluate('test').observable?.subscribe({
       next: next => result = next,
       complete: () => {
         expect(result).toStrictEqual({

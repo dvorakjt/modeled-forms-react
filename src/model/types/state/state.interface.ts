@@ -1,3 +1,3 @@
-import type { ValidatorSuiteResult } from "./validator-suite-result.interface"
+import type { ValidatorSuiteResult } from "../validators/validator-suite-result.interface"
 
 export type State<T> = ValidatorSuiteResult<T> & { omit? : boolean };

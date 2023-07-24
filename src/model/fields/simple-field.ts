@@ -2,14 +2,17 @@ import { ManagedSubject } from "../subscriptions/managed-subject";
 import { copyObject } from "../util/copy-object";
 import { BehaviorSubject } from "rxjs";
 import { ManagedSubscription } from "../subscriptions/managed-subscription";
-import { Validity } from "../types/state/validity.enum";
 import type { Field } from "../types/fields/field.interface";
 import type { FieldState } from "../types/state/field-state.interface";
 import type { SubscriptionManager } from "../types/subscriptions/subscription-manager.interface";
 import type { SingleInputValidatorSuite } from "../types/validators/single-input/single-input-validator-suite.interface";
+import { ManagedObservable } from "../subscriptions/managed-observable";
+import { ValidatorSuiteResult } from "../types/validators/validator-suite-result.interface";
+import { MessageType } from "../types/state/messages/message-type.enum";
+import { Message } from "../types/state/messages/message.interface";
 
 export class SimpleField implements Field {
-  stateChanges?: ManagedSubject<FieldState>;
+  stateChanges: ManagedSubject<FieldState>;
   #state : FieldState;
   #validatorSuite : SingleInputValidatorSuite<string>;
   #validatorSuiteSubscription? : ManagedSubscription;
@@ -42,34 +45,45 @@ export class SimpleField implements Field {
     this.#defaultValue = defaultValue;
     this.#omitByDefault = omitByDefault;
     this.#subscriptionManager = subscriptionManager;
-    //set default state
+    const initialState = this.#validatorSuite.evaluate(this.#defaultValue);
     this.#state = {
-      value: this.#defaultValue,
-      validity: Validity.PENDING,
-      messages: [],
-      omit: this.#omitByDefault
-    };
-    this.setValue(this.#defaultValue);
+      ...initialState.syncResult,
+      omit : this.#omitByDefault
+    }
+    this.stateChanges = this.#subscriptionManager.registerSubject(new BehaviorSubject(this.state));
+    if(initialState.observable) this.handleValidityObservable(initialState.observable);
   }
 
   setValue(value: string) {
     if(this.#validatorSuiteSubscription) this.#validatorSuiteSubscription.unsubscribe();
-    this.#validatorSuiteSubscription = this.#validatorSuite.evaluate(value).subscribe(result => {
-      this.setState({
-        ...result,
-        omit : this.state.omit
-      });
+    const validityResult = this.#validatorSuite.evaluate(value);
+    this.setState({
+      ...validityResult.syncResult,
+      omit: this.state.omit
     });
+    if(validityResult.observable) this.handleValidityObservable(validityResult.observable);
   }
 
   setState(state : FieldState) {
     this.#state = copyObject(state);
-    if(this.stateChanges) this.stateChanges.next(this.state);
-    else this.stateChanges = this.#subscriptionManager.registerSubject(new BehaviorSubject(this.state));
+    this.stateChanges.next(this.state);
   }
 
   reset() {
     this.#state.omit = this.#omitByDefault;
     this.setValue(this.#defaultValue);
+  }
+
+  private handleValidityObservable(observable : ManagedObservable<ValidatorSuiteResult<string>>) {
+    this.#validatorSuiteSubscription = observable.subscribe(result => {
+      this.setState({
+        ...result,
+        messages: [
+          ...this.state.messages.filter((message : Message) => message.type !== MessageType.PENDING),
+          ...result.messages
+        ],
+        omit : this.state.omit
+      });
+    });
   }
 }

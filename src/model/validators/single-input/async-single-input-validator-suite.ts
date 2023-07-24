@@ -6,8 +6,9 @@ import { SubscriptionListItem } from "../../subscriptions/subscription-list-item
 import { Observable, from } from "rxjs";
 import { Validity } from "../../types/state/validity.enum";
 import { MessageType } from "../../types/state/messages/message-type.enum";
-import type { ValidatorSuiteResult } from "../../types/state/validator-suite-result.interface";
+import type { ValidatorSuiteResult } from "../../types/validators/validator-suite-result.interface";
 import { ErrorMessages } from "../../constants/error-messages.enum";
+import { ValidatorSuiteResultsObject } from "../../types/validators/validator-suite-results-object.interface";
 
 export class AsyncSingleInputValidatorSuite<T> implements SingleInputValidatorSuite<T> {
   #validators : Array<AsyncValidator<T>>;
@@ -24,20 +25,22 @@ export class AsyncSingleInputValidatorSuite<T> implements SingleInputValidatorSu
     this.#pendingValidatorMessage = pendingValidatorMessage;
     this.#subscriptionManager = subscriptionManager;
   }
+
   evaluate(value : T) {
     this.unsubscribeAll()
-    return this.#subscriptionManager.registerObservable(new Observable<ValidatorSuiteResult<T>>(subscriber => {
-      subscriber.next({
+    const result : ValidatorSuiteResultsObject<T> = {
+      syncResult : {
         value,
         validity: Validity.PENDING,
         messages: [
-          {
-            type: MessageType.PENDING,
-            text: this.#pendingValidatorMessage
-          }
-        ]
-      });
-      //run each async validator, consolidate results
+        {
+          type: MessageType.PENDING,
+          text: this.#pendingValidatorMessage
+        }
+      ]
+      }
+    }
+    result.observable = this.#subscriptionManager.registerObservable(new Observable<ValidatorSuiteResult<T>>(subscriber => {
       const result : ValidatorSuiteResult<T> = {
         value,
         validity: Validity.VALID_FINALIZABLE,
@@ -88,6 +91,7 @@ export class AsyncSingleInputValidatorSuite<T> implements SingleInputValidatorSu
           });
       }
     }));
+    return result;
   }
 
   private unsubscribeAll() {

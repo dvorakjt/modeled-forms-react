@@ -1,9 +1,8 @@
-import { Observable } from "rxjs";
 import { SubscriptionManager } from "../../../model/types/subscriptions/subscription-manager.interface";
 import { SingleInputValidatorSuite } from "../../../model/types/validators/single-input/single-input-validator-suite.interface";
-import { ValidatorSuiteResult } from "../../../model/types/state/validator-suite-result.interface";
+import { ValidatorSuiteResult } from "../../../model/types/validators/validator-suite-result.interface";
 
-export class SingleInputValidatorSuiteStub<T> implements SingleInputValidatorSuite<T> {
+export class SyncSingleInputValidatorSuiteStub<T> implements SingleInputValidatorSuite<T> {
   #subscriptionManager : SubscriptionManager;
   #returnValue : ValidatorSuiteResult<T>;
 
@@ -13,11 +12,11 @@ export class SingleInputValidatorSuiteStub<T> implements SingleInputValidatorSui
   }
   
   evaluate(value : T) {
-    return this.#subscriptionManager.registerObservable<ValidatorSuiteResult<T>>(new Observable(subscriber => {
-      subscriber.next({
+    return {
+      syncResult : {
         ...this.#returnValue,
         value
-      });
-    }));
+      }
+    }
   }
 }
