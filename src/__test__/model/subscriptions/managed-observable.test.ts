@@ -4,7 +4,7 @@ import type { SubscriptionManager } from '../../../model/types/subscriptions/sub
 import { Subject } from 'rxjs';
 import { ManagedSubject } from '../../../model/subscriptions/managed-subject';
 
-describe('managedObservable', () => {
+describe('ManagedObservable', () => {
   let subscriptionManager : SubscriptionManager;
 
   beforeEach(() => {
@@ -13,7 +13,7 @@ describe('managedObservable', () => {
   
   test('it should remove the corresponding subscriptionListItem from the subscription list when complete() is called when a fn is passed into subscribe().', () => {
     const subject = new Subject<any>();
-    const managedSubject = subscriptionManager.registerObservable(subject);
+    const managedSubject = subscriptionManager.registerSubject(subject);
     managedSubject.subscribe(next => console.log(next));
     expect(subscriptionManager.count).toBe(1);
     (managedSubject as ManagedSubject<any>).complete();
@@ -22,7 +22,7 @@ describe('managedObservable', () => {
 
   test('it should remove the corresponding subscriptionListItem from the subscription list when complete() is called when an obj is passed into subscribe().', () => {
     const subject = new Subject();
-    const managedSubject = subscriptionManager.registerObservable(subject);
+    const managedSubject = subscriptionManager.registerSubject(subject);
     managedSubject.subscribe({
       next: next => console.log(next),
       complete: () => console.log("complete")

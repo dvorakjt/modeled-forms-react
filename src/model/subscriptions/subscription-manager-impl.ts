@@ -13,8 +13,11 @@ export class SubscriptionManagerImpl implements SubscriptionManager {
   }
 
   registerObservable<T>(observable: Observable<T>) {
-    if(observable instanceof Subject) return new ManagedSubject<T>(observable, this.#subscriptionList);
-    else return new ManagedObservable<T>(observable, this.#subscriptionList);
+    return new ManagedObservable<T>(observable, this.#subscriptionList);
+  }
+
+  registerSubject<T>(subject: Subject<T>) {
+    return new ManagedSubject<T>(subject, this.#subscriptionList);
   }
 
   unsubscribeAll() {
