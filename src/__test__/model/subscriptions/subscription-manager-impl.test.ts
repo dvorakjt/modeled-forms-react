@@ -26,15 +26,15 @@ describe('SubscriptionManagerImpl', () => {
     expect(managedObservable).toBeInstanceOf(ManagedObservable);
   });
 
-  test('it returns a ManagedSubject when registerObservable is called with a BehaviorSubject.', () => {
+  test('it returns a ManagedSubject when registerSubject is called with a BehaviorSubject.', () => {
     const subject = new BehaviorSubject('test');
-    const managedSubject = subscriptionManager.registerObservable(subject);
+    const managedSubject = subscriptionManager.registerSubject(subject);
     expect(managedSubject).toBeInstanceOf(ManagedSubject);
   });
 
-  test('it returns a ManagedSubject when registerObservable is called with a ReplaySubject.', () => {
+  test('it returns a ManagedSubject when registerSubject is called with a ReplaySubject.', () => {
     const subject = new ReplaySubject();
-    const managedSubject = subscriptionManager.registerObservable(subject);
+    const managedSubject = subscriptionManager.registerSubject(subject);
     expect(managedSubject).toBeInstanceOf(ManagedSubject);
   });
 

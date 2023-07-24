@@ -5,7 +5,10 @@ export default defineConfig({
     watch: false,
     coverage: {
       enabled: true,
-      100: true
+      all: true,
+      100: true,
+      include: ["src/model/**"],
+      exclude: ["**/*.interface.ts"]
     }
   },
 });
