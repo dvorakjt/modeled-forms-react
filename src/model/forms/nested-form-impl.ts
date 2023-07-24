@@ -8,7 +8,7 @@ import type { FormStateManager } from "../types/forms/form-state-manager.interfa
 import { copyObject } from "../util/copy-object";
 
 export class NestedFormImpl implements NestedForm {
-  stateChanges?: ManagedSubject<State<any>>;
+  stateChanges: ManagedSubject<State<any>>;
   #formStateManager: FormStateManager;
   #subscriptionManager : SubscriptionManager;
   #omit;
@@ -36,10 +36,11 @@ export class NestedFormImpl implements NestedForm {
     this.#omitByDefault = omitByDefault;
     this.#omit = this.#omitByDefault;
 
-    this.#formStateManager.stateChanges?.subscribe(() => {
-      if(this.stateChanges) this.stateChanges.next(this.state);
-      else this.stateChanges = this.#subscriptionManager.registerSubject(new BehaviorSubject(this.state));
+    this.#formStateManager.stateChanges.subscribe(() => {
+      if(this.stateChanges) this.stateChanges?.next(this.state);
     });
+
+    this.stateChanges = this.#subscriptionManager.registerSubject(new BehaviorSubject(this.state));
   }
 
   reset() {

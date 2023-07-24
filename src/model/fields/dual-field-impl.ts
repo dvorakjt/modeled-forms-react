@@ -10,7 +10,7 @@ import { DualFieldSetStateArg } from "../types/state/dual-field-set-state-arg.in
 export class DualFieldImpl implements DualField {
   primaryField : SimpleField;
   secondaryField : SimpleField;
-  stateChanges? : ManagedSubject<DualFieldState>;
+  stateChanges : ManagedSubject<DualFieldState>;
   #useSecondaryField : boolean = false;
   #omit : boolean;
   #omitByDefault : boolean;
@@ -51,17 +51,13 @@ export class DualFieldImpl implements DualField {
     this.secondaryField = secondaryField;
     this.#omitByDefault = omitByDefault;
     this.#omit = this.#omitByDefault;
-    this.primaryField.stateChanges?.subscribe(() => {
-      if(!(this.#useSecondaryField)) {
-        if(this.stateChanges) this.stateChanges.next(this.state);
-        else this.stateChanges = subscriptionManager.registerSubject(new BehaviorSubject(this.state));
-      }
+    this.primaryField.stateChanges.subscribe(() => {
+      if(!(this.#useSecondaryField)) this.stateChanges?.next(this.state);
     });
-    this.secondaryField.stateChanges?.subscribe(() => {
-      if((this.#useSecondaryField)) {
-        if(this.stateChanges) this.stateChanges.next(this.state);
-      }
+    this.secondaryField.stateChanges.subscribe(() => {
+      if(this.#useSecondaryField) this.stateChanges?.next(this.state);
     });
+    this.stateChanges = subscriptionManager.registerSubject(new BehaviorSubject(this.state));
   }
 
   setValue(valueObj : DualFieldSetValueArg) {

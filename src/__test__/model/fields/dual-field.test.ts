@@ -3,7 +3,7 @@ import { DualFieldImpl } from "../../../model/fields/dual-field-impl";
 import { SimpleField } from "../../../model/fields/simple-field";
 import { DualField } from "../../../model/types/fields/dual-field.interface";
 import { SubscriptionManagerImpl } from "../../../model/subscriptions/subscription-manager-impl";
-import { SingleInputValidatorSuiteStub } from "../stub/single-input-validator-suite.stub";
+import { SyncSingleInputValidatorSuiteStub } from "../stub/sync-single-input-validator-suite.stub";
 import { SubscriptionManager } from "../../../model/types/subscriptions/subscription-manager.interface";
 import { Validity } from "../../../model/types/state/validity.enum";
 
@@ -21,14 +21,14 @@ describe('DualFieldImpl', () => {
     }
 
     const primaryField = new SimpleField(
-      new SingleInputValidatorSuiteStub(subscriptionManager, validatorReturnValue), 
+      new SyncSingleInputValidatorSuiteStub(subscriptionManager, validatorReturnValue), 
       "",
       subscriptionManager,
       false
     );
 
     const secondaryField = new SimpleField(
-      new SingleInputValidatorSuiteStub(subscriptionManager, validatorReturnValue), 
+      new SyncSingleInputValidatorSuiteStub(subscriptionManager, validatorReturnValue), 
       "",
       subscriptionManager,
       false

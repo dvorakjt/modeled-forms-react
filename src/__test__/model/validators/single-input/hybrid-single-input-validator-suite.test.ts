@@ -6,7 +6,6 @@ import { MessageType } from "../../../../model/types/state/messages/message-type
 import { ErrorMessages } from "../../../../model/constants/error-messages.enum";
 import { AsyncSingleInputValidatorSuite } from "../../../../model/validators/single-input/async-single-input-validator-suite";
 import { ValidatorResult } from "../../../../model/types/validators/validator-result.interface";
-import { ValidatorSuiteResult } from "../../../../model/types/state/validator-suite-result.interface";
 import { SyncSingleInputValidatorSuite } from "../../../../model/validators/single-input/sync-single-input-validator-suite";
 import { HybridSingleInputValidatorSuite } from "../../../../model/validators/single-input/hybrid-single-input-validator-suite";
 import { SyncValidator } from "../../../../model/types/validators/sync-validator.type";
@@ -19,65 +18,51 @@ describe('SyncSingleInputValidatorSuite', () => {
   });
 
   test('it does not run async validators if the sync result is INVALID.', () => {
-    const syncValidatorSuite = new SyncSingleInputValidatorSuite<string>([failingSyncValidator], subscriptionManager);
+    const syncValidatorSuite = new SyncSingleInputValidatorSuite<string>([failingSyncValidator]);
     const asyncValidatorSuite = new AsyncSingleInputValidatorSuite<string>([passingAsyncValidator], '', subscriptionManager);
-    const hybridValidatorSuite = new HybridSingleInputValidatorSuite<string>(syncValidatorSuite, asyncValidatorSuite, subscriptionManager);
-    let result : ValidatorSuiteResult<string>;
-    hybridValidatorSuite.evaluate('test').subscribe({
-      next: next => result = next,
-      complete: () => {
-        expect(result).toStrictEqual({
-          value: 'test',
-          validity: Validity.INVALID,
-          messages: [
-            {
-              type: MessageType.INVALID,
-              text: 'test was determined invalid synchronously.'
-            }
-          ]
-        })
+    const hybridValidatorSuite = new HybridSingleInputValidatorSuite<string>(syncValidatorSuite, asyncValidatorSuite);
+    expect(hybridValidatorSuite.evaluate('test')).toStrictEqual({
+      syncResult: {
+        value: 'test',
+        validity: Validity.INVALID,
+        messages: [
+          {
+            type: MessageType.INVALID,
+            text: 'test was determined invalid synchronously.'
+          }
+        ]
       }
-    })
+    });
   });
 
   test('it does not run async validators if the sync result is ERROR', () => {
-    const syncValidatorSuite = new SyncSingleInputValidatorSuite<string>([throwErrorSync as SyncValidator<string>], subscriptionManager);
+    const syncValidatorSuite = new SyncSingleInputValidatorSuite<string>([throwErrorSync as SyncValidator<string>]);
     const asyncValidatorSuite = new AsyncSingleInputValidatorSuite<string>([passingAsyncValidator], '', subscriptionManager);
-    const hybridValidatorSuite = new HybridSingleInputValidatorSuite<string>(syncValidatorSuite, asyncValidatorSuite, subscriptionManager);
-    let result : ValidatorSuiteResult<string>;
-    hybridValidatorSuite.evaluate('test').subscribe({
-      next: next => result = next,
-      complete: () => {
-        expect(result).toStrictEqual({
-          value: 'test',
-          validity: Validity.ERROR,
-          messages: [
-            {
-              type: MessageType.ERROR,
-              text: ErrorMessages.VALIDATION_ERROR
-            }
-          ]
-        })
+    const hybridValidatorSuite = new HybridSingleInputValidatorSuite<string>(syncValidatorSuite, asyncValidatorSuite);
+    expect(hybridValidatorSuite.evaluate('test')).toStrictEqual({
+      syncResult : {
+        value: 'test',
+        validity: Validity.ERROR,
+        messages: [
+          {
+            type: MessageType.ERROR,
+            text: ErrorMessages.VALIDATION_ERROR
+          }
+        ]
       }
-    })
+    });
   });
 
-  test('it returns the async result if all of the sync validators pass.', () => {
-    const syncValidatorSuite = new SyncSingleInputValidatorSuite<string>([passingSyncValidator], subscriptionManager);
+  test('the observable returns the async result if all sync validators pass.', () => {
+    const syncValidatorSuite = new SyncSingleInputValidatorSuite<string>([passingSyncValidator]);
     const asyncValidatorSuite = new AsyncSingleInputValidatorSuite<string>([passingAsyncValidator], '', subscriptionManager);
-    const hybridValidatorSuite = new HybridSingleInputValidatorSuite<string>(syncValidatorSuite, asyncValidatorSuite, subscriptionManager);
-    let result : ValidatorSuiteResult<string>;
-    hybridValidatorSuite.evaluate('test').subscribe({
-      next: next => result = next,
-      complete: () => {
-        expect(result).toStrictEqual({
+    const hybridValidatorSuite = new HybridSingleInputValidatorSuite<string>(syncValidatorSuite, asyncValidatorSuite);
+    hybridValidatorSuite.evaluate('test').observable?.subscribe({
+      next: next => {
+        expect(next).toStrictEqual({
           value: 'test',
           validity: Validity.VALID_FINALIZABLE,
           messages: [
-            {
-              type: MessageType.VALID,
-              text: 'test was determined valid synchronously.'
-            },
             {
               type: MessageType.VALID,
               text: 'test was determined valid asynchronously.'

@@ -9,7 +9,7 @@ import type { SubmissionManager } from "../types/forms/submission-manager.interf
 import type { Message } from "../types/state/messages/message.interface";
 
 export class RootFormImpl implements RootForm {
-  stateChanges?: ManagedSubject<State<any>>;
+  stateChanges: ManagedSubject<State<any>>;
   submissionChanges: ManagedSubject<boolean>;
   #formStateManager: FormStateManager;
   #subscriptionManager : SubscriptionManager;
@@ -43,16 +43,17 @@ export class RootFormImpl implements RootForm {
     this.#submissionManager = submissionManager;
     this.#subscriptionManager = subscriptionManager;
 
-    this.#formStateManager.stateChanges?.subscribe(() => {
+    this.#formStateManager.stateChanges.subscribe(() => {
       this.#submissionManager.clearMessage();
-      if(this.stateChanges) this.stateChanges.next(this.state);
-      else this.stateChanges = this.#subscriptionManager.registerSubject(new BehaviorSubject(this.state));
+      this.stateChanges?.next(this.state);
     });
 
     this.submissionChanges = this.#subscriptionManager.registerSubject(new BehaviorSubject(this.hasSubmitted));
     submissionManager.submissionChanges.subscribe(() => {
       this.stateChanges?.next(this.state);
     });
+
+    this.stateChanges = this.#subscriptionManager.registerSubject(new BehaviorSubject(this.state));
   }
 
   async submit() {
