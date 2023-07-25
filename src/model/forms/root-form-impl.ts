@@ -49,7 +49,7 @@ export class RootFormImpl implements RootForm {
     });
 
     this.submissionChanges = this.#subscriptionManager.registerSubject(new BehaviorSubject(this.hasSubmitted));
-    submissionManager.submissionChanges.subscribe(() => {
+    this.#submissionManager.submissionChanges.subscribe(() => {
       this.stateChanges?.next(this.state);
     });
 

@@ -24,8 +24,12 @@ describe('ManagedObservable', () => {
     const subject = new Subject();
     const managedSubject = subscriptionManager.registerSubject(subject);
     managedSubject.subscribe({
-      next: next => console.log(next),
-      complete: () => console.log("complete")
+      next: () => {
+        return;
+      },
+      complete: () => {
+        return;
+      }
     });
     expect(subscriptionManager.count).toBe(1);
     (managedSubject as ManagedSubject<any>).complete();

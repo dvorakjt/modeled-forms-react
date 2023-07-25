@@ -1,4 +1,4 @@
-import { describe, test, expect, beforeEach } from "vitest";
+import { describe, test, expect, beforeEach, vi } from "vitest";
 import { SubscriptionManager } from "../../../../model/types/subscriptions/subscription-manager.interface";
 import { SubscriptionManagerImpl } from "../../../../model/subscriptions/subscription-manager-impl";
 import { Validity } from "../../../../model/types/state/validity.enum";
@@ -8,6 +8,7 @@ import { AsyncSingleInputValidatorSuite } from "../../../../model/validators/sin
 import { ValidatorResult } from "../../../../model/types/validators/validator-result.interface";
 import { ValidatorSuiteResult } from "../../../../model/types/validators/validator-suite-result.interface";
 import { AsyncValidator } from "../../../../model/types/validators/async-validator.type";
+import { copyObject } from "../../../../model/util/copy-object";
 
 describe('SyncSingleInputValidatorSuite', () => {
   let subscriptionManager : SubscriptionManager;
@@ -104,6 +105,22 @@ describe('SyncSingleInputValidatorSuite', () => {
         });
       }
     })
+  });
+
+  test('it should log an error when a validator throws an error in development mode.', () => {
+    const originalProcess = copyObject(process.env);
+    process.env = {
+      ...process.env,
+      NODE_ENV : 'development'
+    }
+    console.error = vi.fn();
+    const validatorSuite = new AsyncSingleInputValidatorSuite<string>([throwErrorAsync as AsyncValidator<string>], 'Checking field', subscriptionManager);
+    validatorSuite.evaluate('test').observable?.subscribe({
+      complete: () => {
+        expect(console.error).toHaveBeenCalled();
+        process.env = originalProcess;
+      }
+    });
   });
 });
 

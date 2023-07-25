@@ -1,5 +1,5 @@
 import { describe, test, expect, beforeEach, afterEach } from "vitest";
-import { SimpleField } from "../../../model/fields/simple-field";
+import { FieldImpl } from "../../../model/fields/field-impl";
 import { SubscriptionManagerImpl } from "../../../model/subscriptions/subscription-manager-impl";
 import { SyncSingleInputValidatorSuiteStub } from "../stub/sync-single-input-validator-suite.stub";
 import { Validity } from "../../../model/types/state/validity.enum";
@@ -30,7 +30,7 @@ describe('SimpleField', () => {
         messages: []
       }
     );
-    const field = new SimpleField(syncValidatorSuite, "", subscriptionManager, false);
+    const field = new FieldImpl(syncValidatorSuite, "", subscriptionManager, false);
     field.omit = true;
     expect(field.omit).toBe(true);
   });
@@ -44,7 +44,7 @@ describe('SimpleField', () => {
         messages: []
       }
     );
-    const field = new SimpleField(syncValidatorSuite, "", subscriptionManager, false);
+    const field = new FieldImpl(syncValidatorSuite, "", subscriptionManager, false);
     field.setValue("some new value");
     field.omit = true;
     field.reset();
@@ -55,7 +55,7 @@ describe('SimpleField', () => {
   test('handleValidityObservable should appropriately manage asyncValidatorSuite results.', () => {
     const trigger = subscriptionManager.registerSubject(new Subject<void>());
     const asyncValidatorSuite = new AsyncSingleInputValidatorSuite([triggerablePassingAsyncValidator(trigger)], 'Checking field', subscriptionManager);
-    const field = new SimpleField(asyncValidatorSuite, '', subscriptionManager, false);
+    const field = new FieldImpl(asyncValidatorSuite, '', subscriptionManager, false);
     expect(field.state).toStrictEqual({
       value: '',
       validity: Validity.PENDING,
@@ -90,7 +90,7 @@ describe('SimpleField', () => {
   test('setValue should appropriately set value based on ValidatorSuiteResultObject.syncResult and ValidatorSuiteResultObject.observable.', () => {
     const trigger = subscriptionManager.registerSubject(new Subject<void>());
     const asyncValidatorSuite = new AsyncSingleInputValidatorSuite([triggerablePassingAsyncValidator(trigger)], 'Checking field', subscriptionManager);
-    const field = new SimpleField(asyncValidatorSuite, '', subscriptionManager, false);
+    const field = new FieldImpl(asyncValidatorSuite, '', subscriptionManager, false);
     field.setValue('test');
     expect(field.state).toStrictEqual({
       value: 'test',

@@ -3,33 +3,33 @@ import { ManagedSubject } from "../subscriptions/managed-subject";
 import { DualField } from "../types/fields/dual-field.interface";
 import { DualFieldState } from "../types/state/dual-field-state.interface";
 import { SubscriptionManager } from "../types/subscriptions/subscription-manager.interface";
-import { SimpleField } from "./simple-field";
 import { DualFieldSetValueArg } from "../types/state/dual-field-set-value-arg.interface";
 import { DualFieldSetStateArg } from "../types/state/dual-field-set-state-arg.interface";
+import { Field } from "../types/fields/field.interface";
 
 export class DualFieldImpl implements DualField {
-  primaryField : SimpleField;
-  secondaryField : SimpleField;
+  primaryField : Field;
+  secondaryField : Field;
   stateChanges : ManagedSubject<DualFieldState>;
   #useSecondaryField : boolean = false;
   #omit : boolean;
   #omitByDefault : boolean;
   
   get state() {
-    const state = !this.#useSecondaryField ? this.primaryField.state : this.secondaryField.state;
+    const state = (!this.#useSecondaryField ? this.primaryField.state : this.secondaryField.state) as DualFieldState;
     state.useSecondaryField = this.#useSecondaryField
     state.omit = this.#omit;
     return state;
-  }
-
-  get useSecondaryField() {
-    return this.#useSecondaryField;
   }
 
   set useSecondaryField(useSecondaryField) {
     const changeDetected = this.useSecondaryField !== useSecondaryField;
     this.#useSecondaryField = useSecondaryField;
     if(this.stateChanges && changeDetected) this.stateChanges.next(this.state);
+  }
+
+  get useSecondaryField() {
+    return this.#useSecondaryField;
   }
 
   set omit(omit : boolean) {
@@ -42,8 +42,8 @@ export class DualFieldImpl implements DualField {
   }
 
   constructor(
-    primaryField : SimpleField, 
-    secondaryField : SimpleField, 
+    primaryField : Field, 
+    secondaryField : Field, 
     subscriptionManager : SubscriptionManager,
     omitByDefault : boolean
   ) {

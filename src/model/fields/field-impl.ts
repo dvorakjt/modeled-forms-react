@@ -11,7 +11,7 @@ import { ValidatorSuiteResult } from "../types/validators/validator-suite-result
 import { MessageType } from "../types/state/messages/message-type.enum";
 import { Message } from "../types/state/messages/message.interface";
 
-export class SimpleField implements Field {
+export class FieldImpl implements Field {
   stateChanges: ManagedSubject<FieldState>;
   #state : FieldState;
   #validatorSuite : SingleInputValidatorSuite<string>;
