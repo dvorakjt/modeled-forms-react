@@ -81,7 +81,7 @@ export class AsyncSingleInputValidatorSuite<T> implements SingleInputValidatorSu
             },
             error: e => {
               this.unsubscribeAll();
-              console.error(e);
+              process.env.NODE_ENV === 'development' && console.error(e);
               result.validity = Validity.ERROR;
               result.messages.push({
                 type : MessageType.ERROR,

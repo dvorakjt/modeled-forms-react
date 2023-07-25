@@ -1,6 +1,6 @@
 import { describe, test, expect, beforeEach, afterEach, vi } from "vitest";
 import { DualFieldImpl } from "../../../model/fields/dual-field-impl";
-import { SimpleField } from "../../../model/fields/simple-field";
+import { FieldImpl } from "../../../model/fields/field-impl";
 import { DualField } from "../../../model/types/fields/dual-field.interface";
 import { SubscriptionManagerImpl } from "../../../model/subscriptions/subscription-manager-impl";
 import { SyncSingleInputValidatorSuiteStub } from "../stub/sync-single-input-validator-suite.stub";
@@ -20,14 +20,14 @@ describe('DualFieldImpl', () => {
       messages: []
     }
 
-    const primaryField = new SimpleField(
+    const primaryField = new FieldImpl(
       new SyncSingleInputValidatorSuiteStub(subscriptionManager, validatorReturnValue), 
       "",
       subscriptionManager,
       false
     );
 
-    const secondaryField = new SimpleField(
+    const secondaryField = new FieldImpl(
       new SyncSingleInputValidatorSuiteStub(subscriptionManager, validatorReturnValue), 
       "",
       subscriptionManager,

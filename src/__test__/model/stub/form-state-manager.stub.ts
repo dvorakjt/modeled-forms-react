@@ -11,15 +11,13 @@ export class FormStateManagerStub implements FormStateManager {
     validity: Validity.PENDING,
     messages: []
   };
-  stateChanges?: ManagedSubject<State<any>> | undefined;
+  stateChanges: ManagedSubject<State<any>>;
   #state : State<any>;
   #subscriptionManager : SubscriptionManager;
 
   set state(state : State<any>) {
-    console.log(Object.getOwnPropertySymbols(state));
     this.#state = state;
-    if(this.stateChanges) this.stateChanges.next(this.state);
-    else this.stateChanges = this.#subscriptionManager.registerSubject(new BehaviorSubject(this.state));
+    this.stateChanges.next(this.state);
   }
   
   get state() {
@@ -28,7 +26,8 @@ export class FormStateManagerStub implements FormStateManager {
   
   constructor(subscriptionManager : SubscriptionManager) {
     this.#subscriptionManager = subscriptionManager;
-    this.state = FormStateManagerStub.defaultState;
+    this.#state = FormStateManagerStub.defaultState;
+    this.stateChanges = this.#subscriptionManager.registerSubject(new BehaviorSubject(this.state));
   }
 
   reset() {

@@ -36,7 +36,7 @@ export class SyncSingleInputValidatorSuite<T> implements SingleInputValidatorSui
         }
       }
     } catch(e) {
-      console.error(e);
+      process.env.NODE_ENV === 'development' && console.error(e);
       result.validity = Validity.ERROR;
       result.messages.push({
         type: MessageType.ERROR,

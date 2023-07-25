@@ -1,9 +1,10 @@
-import { describe, test, expect } from "vitest";
+import { describe, test, expect, vi } from "vitest";
 import { SyncSingleInputValidatorSuite } from "../../../../model/validators/single-input/sync-single-input-validator-suite";
 import { Validity } from "../../../../model/types/state/validity.enum";
 import { MessageType } from "../../../../model/types/state/messages/message-type.enum";
 import { SyncValidator } from "../../../../model/types/validators/sync-validator.type";
 import { ErrorMessages } from "../../../../model/constants/error-messages.enum";
+import { copyObject } from "../../../../model/util/copy-object";
 
 describe('SyncSingleInputValidatorSuite', () => {
   test('it immediately returns the passed value and a Validity of VALID_FINALIZABLE when no validators are passed to the constructor.', () => {
@@ -71,6 +72,19 @@ describe('SyncSingleInputValidatorSuite', () => {
         ]
       }
     });
+  });
+
+  test('it should log an error when a validator throws an error in development mode.', () => {
+    const originalProcess = copyObject(process.env);
+    process.env = {
+      ...process.env,
+      NODE_ENV : 'development'
+    }
+    console.error = vi.fn();
+    const validatorSuite = new SyncSingleInputValidatorSuite([throwError as SyncValidator<string>]);
+    validatorSuite.evaluate('test');
+    expect(console.error).toHaveBeenCalled();
+    process.env = originalProcess;
   });
 });
 
