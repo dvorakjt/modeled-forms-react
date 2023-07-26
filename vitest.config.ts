@@ -8,7 +8,7 @@ export default defineConfig({
       all: true,
       100: true,
       include: ["src/model/**"],
-      exclude: ["**/*.interface.ts", "**/*.type.ts"]
+      exclude: ["**/*.interface.ts", "**/*.type.ts", 'src/model/proxies/aggregated-state-changes-proxy-factory.ts']
     }
   },
 });

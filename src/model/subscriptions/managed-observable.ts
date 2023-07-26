@@ -6,10 +6,12 @@ import { ManagedSubscription } from "./managed-subscription";
 export class ManagedObservable<T> {
   protected observable : Observable<T>;
   protected subscriptionList : List<SubscriptionListItem>;
+  private postSubscriptionFn? : () => void;
 
-  constructor(observable : Observable<T>, subscriptionList : List<SubscriptionListItem>) {
+  constructor(observable : Observable<T>, subscriptionList : List<SubscriptionListItem>, postSubscriptionFn? : () => void) {
     this.observable = observable;
     this.subscriptionList = subscriptionList;
+    if(postSubscriptionFn) this.postSubscriptionFn = postSubscriptionFn;
   }
 
   subscribe(observerOrNext : Partial<Observer<T>> | ((value: T) => void)) {
@@ -37,6 +39,9 @@ export class ManagedObservable<T> {
     const subscription = new ManagedSubscription(this.observable.subscribe(observer), subscriptionListItem);
     subscriptionListItem.subscription = subscription;
     this.subscriptionList.append(subscriptionListItem);
+
+    if(this.postSubscriptionFn) this.postSubscriptionFn();
+
     return subscription;
   }
 }
