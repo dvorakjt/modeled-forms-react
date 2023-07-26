@@ -4,8 +4,8 @@ import { List } from 'linked-list';
 import { SubscriptionListItem } from './subscription-list-item';
 
 export class ManagedSubject<T> extends ManagedObservable<T> {
-  constructor(observable : Subject<T>, subscriptionList : List<SubscriptionListItem>) {
-    super(observable, subscriptionList);
+  constructor(observable : Subject<T>, subscriptionList : List<SubscriptionListItem>, postSubscriptionFn? : () => void) {
+    super(observable, subscriptionList, postSubscriptionFn);
   }
 
   next(value : T) {

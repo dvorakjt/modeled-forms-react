@@ -16,8 +16,8 @@ export class SubscriptionManagerImpl implements SubscriptionManager {
     return new ManagedObservable<T>(observable, this.#subscriptionList);
   }
 
-  registerSubject<T>(subject: Subject<T>) {
-    return new ManagedSubject<T>(subject, this.#subscriptionList);
+  registerSubject<T>(subject: Subject<T>, postSubscriptionFn? : () => void) {
+    return new ManagedSubject<T>(subject, this.#subscriptionList, postSubscriptionFn);
   }
 
   unsubscribeAll() {

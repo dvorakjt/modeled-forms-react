@@ -4,7 +4,7 @@ import { ManagedSubject } from "../../subscriptions/managed-subject";
 
 export interface SubscriptionManager {
   registerObservable : <T>(observable : Observable<T>) => ManagedObservable<T>;
-  registerSubject : <T>(subject : Subject<T>) => ManagedSubject<T>;
+  registerSubject : <T>(subject : Subject<T>, postSubscriptionFn? : () => void) => ManagedSubject<T>;
   unsubscribeAll : () => void;
   count: number;
 }
