@@ -1,26 +1,30 @@
-import { describe, test, expect, beforeEach, afterEach } from "vitest";
-import { RootFormImpl } from "../../../model/forms/root-form-impl";
-import { SubscriptionManagerImpl } from "../../../model/subscriptions/subscription-manager-impl";
-import { FormStateManagerStub } from "../stub/form-state-manager.stub";
-import { SubmissionManagerStub } from "../stub/submission-manager.stub";
-import { RootForm } from "../../../model/types/forms/root-form.interface";
-import { MessageType } from "../../../model/types/state/messages/message-type.enum";
-import { Validity } from "../../../model/types/state/validity.enum";
-import { SubscriptionManager } from "../../../model/types/subscriptions/subscription-manager.interface";
-import { ManagedSubject } from "../../../model/subscriptions/managed-subject";
-import type { State } from "../../../model/types/state/state.interface";
+import { describe, test, expect, beforeEach, afterEach } from 'vitest';
+import { RootFormImpl } from '../../../model/forms/root-form-impl';
+import { SubscriptionManagerImpl } from '../../../model/subscriptions/subscription-manager-impl';
+import { FormStateManagerStub } from '../stub/form-state-manager.stub';
+import { SubmissionManagerStub } from '../stub/submission-manager.stub';
+import { RootForm } from '../../../model/types/forms/root-form.interface';
+import { MessageType } from '../../../model/types/state/messages/message-type.enum';
+import { Validity } from '../../../model/types/state/validity.enum';
+import { SubscriptionManager } from '../../../model/types/subscriptions/subscription-manager.interface';
+import { ManagedSubject } from '../../../model/subscriptions/managed-subject';
+import type { State } from '../../../model/types/state/state.interface';
 
 describe('RootFormImpl', () => {
-  let rootForm : RootForm;
-  let subscriptionManager : SubscriptionManager;
-  let formStateManagerStub : FormStateManagerStub;
-  let submissionManagerStub : SubmissionManagerStub;
+  let rootForm: RootForm;
+  let subscriptionManager: SubscriptionManager;
+  let formStateManagerStub: FormStateManagerStub;
+  let submissionManagerStub: SubmissionManagerStub;
 
   beforeEach(() => {
     subscriptionManager = new SubscriptionManagerImpl();
     formStateManagerStub = new FormStateManagerStub(subscriptionManager);
     submissionManagerStub = new SubmissionManagerStub(subscriptionManager);
-    rootForm = new RootFormImpl(formStateManagerStub, submissionManagerStub, subscriptionManager);
+    rootForm = new RootFormImpl(
+      formStateManagerStub,
+      submissionManagerStub,
+      subscriptionManager,
+    );
   });
 
   afterEach(() => {
@@ -30,24 +34,24 @@ describe('RootFormImpl', () => {
   test('getting state returns the union of formStateManager.state and RootForm.aggregateMessages().', () => {
     const messages = [
       {
-        type : MessageType.VALID,
-        text : "This is a test of formStateManager messages."
-      }
-    ]
+        type: MessageType.VALID,
+        text: 'This is a test of formStateManager messages.',
+      },
+    ];
     const formStateWithMessages = {
       value: {},
       validity: Validity.PENDING,
-      messages
+      messages,
     };
     formStateManagerStub.state = formStateWithMessages;
     const subManagerMessage = {
       type: MessageType.VALID,
-      text: "This is a test of submissionManager messages."
+      text: 'This is a test of submissionManager messages.',
     };
     submissionManagerStub.message = subManagerMessage;
     const expectedState = {
       ...FormStateManagerStub.defaultState,
-      messages: [...messages, subManagerMessage]
+      messages: [...messages, subManagerMessage],
     };
     expect(rootForm.state).toStrictEqual(expectedState);
   });

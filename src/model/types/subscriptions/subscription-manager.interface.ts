@@ -1,10 +1,10 @@
-import { Observable, Subject } from "rxjs"
-import { ManagedObservable } from "../../subscriptions/managed-observable"
-import { ManagedSubject } from "../../subscriptions/managed-subject";
+import type { Observable, Observer } from 'rxjs';
+import type { ManagedSubscription } from './managed-subscription.interface';
 
 export interface SubscriptionManager {
-  registerObservable : <T>(observable : Observable<T>) => ManagedObservable<T>;
-  registerSubject : <T>(subject : Subject<T>, postSubscriptionFn? : () => void) => ManagedSubject<T>;
-  unsubscribeAll : () => void;
-  count: number;
+  createAndRegisterManagedSubscription<T>(
+    observable: Observable<T>,
+    observerOrNext: Partial<Observer<T>> | ((value: T) => void),
+  ): ManagedSubscription;
+  unsubscribeAll(): void;
 }

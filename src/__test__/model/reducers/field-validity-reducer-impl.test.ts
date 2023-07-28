@@ -1,6 +1,6 @@
-import { describe, test, expect } from "vitest";
-import { FieldValidityReducerImpl } from "../../../model/reducers/field-validity-reducer-impl";
-import { Validity } from "../../../model/types/state/validity.enum";
+import { describe, test, expect } from 'vitest';
+import { FieldValidityReducerImpl } from '../../../model/reducers/field-validity-reducer-impl';
+import { Validity } from '../../../model/types/state/validity.enum';
 
 describe('FieldValidityReducerImpl', () => {
   const fieldValidityReducer = new FieldValidityReducerImpl();
@@ -10,7 +10,6 @@ describe('FieldValidityReducerImpl', () => {
   fieldValidityReducer.updateTallies('d', Validity.VALID_UNFINALIZABLE);
   fieldValidityReducer.updateTallies('e', Validity.VALID_FINALIZABLE);
 
-  
   test('if there is at least one errant field, validity = Validity.ERROR.', () => {
     expect(fieldValidityReducer.validity).toBe(Validity.ERROR);
   });

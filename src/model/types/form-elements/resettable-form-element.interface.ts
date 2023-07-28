@@ -1,3 +1,3 @@
 export interface ResettableFormElement {
-  reset() : void;
+  reset(): void;
 }

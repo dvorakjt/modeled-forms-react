@@ -4,12 +4,12 @@ import type { SubscriptionManager } from '../../../model/types/subscriptions/sub
 import { Subject } from 'rxjs';
 
 describe('ManagedSubject', () => {
-  let subscriptionManager : SubscriptionManager;
+  let subscriptionManager: SubscriptionManager;
 
   beforeEach(() => {
     subscriptionManager = new SubscriptionManagerImpl();
   });
-  
+
   test('it should call .next on its subject when its own .next method is called.', () => {
     const subject = new Subject<any>();
     vi.spyOn(subject, 'next');

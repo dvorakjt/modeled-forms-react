@@ -1,6 +1,6 @@
-import { MessageType } from "./message-type.enum";
+import type { MessageType } from './message-type.enum';
 
 export interface Message {
-  type : MessageType;
-  text : string;
+  type: MessageType;
+  text: string;
 }
