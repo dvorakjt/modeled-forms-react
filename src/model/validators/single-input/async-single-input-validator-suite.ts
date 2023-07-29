@@ -45,11 +45,12 @@ export class AsyncSingleInputValidatorSuite<T>
     };
     result.observable = this.#managedObservableFactory.createManagedObservable(
       new Observable<ValidatorSuiteResult<T>>(subscriber => {
-        const result: ValidatorSuiteResult<T> = {
+        const observableResult: ValidatorSuiteResult<T> = {
           value,
           validity: Validity.VALID_FINALIZABLE,
           messages: [],
         };
+        let returnedValidators = 0;
         for (const validator of this.#validators) {
           const subscription = this.#managedObservableFactory
             .createManagedObservable(from(validator(value)))
@@ -58,18 +59,18 @@ export class AsyncSingleInputValidatorSuite<T>
                 const { isValid, message: messageTxt } = next;
                 if (!isValid) {
                   this.#validatorSubscriptionList.unsubscribeAll();
-                  result.validity = Validity.INVALID;
+                  observableResult.validity = Validity.INVALID;
                   if (messageTxt) {
-                    result.messages.push({
+                    observableResult.messages.push({
                       type: MessageType.INVALID,
                       text: messageTxt,
                     });
                   }
-                  subscriber.next(result);
+                  subscriber.next(observableResult);
                   subscriber.complete();
                 } else {
                   if (messageTxt) {
-                    result.messages.push({
+                    observableResult.messages.push({
                       type: MessageType.VALID,
                       text: messageTxt,
                     });
@@ -79,15 +80,15 @@ export class AsyncSingleInputValidatorSuite<T>
               error: e => {
                 this.#validatorSubscriptionList.unsubscribeAll();
                 process.env.NODE_ENV === 'development' && console.error(e);
-                result.validity = Validity.ERROR;
-                result.messages.push({
+                observableResult.validity = Validity.ERROR;
+                observableResult.messages.push({
                   type: MessageType.ERROR,
                   text: ErrorMessages.VALIDATION_ERROR,
                 });
               },
               complete: () => {
-                if (this.#validatorSubscriptionList.size === 0) {
-                  subscriber.next(result);
+                if (++returnedValidators === this.#validators.length) {
+                  subscriber.next(observableResult);
                   subscriber.complete();
                 }
               },

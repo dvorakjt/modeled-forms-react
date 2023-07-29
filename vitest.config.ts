@@ -11,7 +11,7 @@ export default defineConfig({
       exclude: [
         '**/*.interface.ts',
         '**/*.type.ts',
-        'src/model/proxies/aggregated-state-changes-proxy-factory.ts',
+        '**/*.enum.ts',
       ],
     },
   },

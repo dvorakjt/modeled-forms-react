@@ -1,18 +1,18 @@
-import { Observer, Subject } from 'rxjs';
-import { OnInitialSubscriptionHandlingSubject } from '../types/subscriptions/on-initial-subscription-handling-subject.interface';
+import { BehaviorSubject, Observer } from 'rxjs';
+import { OnInitialSubscriptionHandlingBehaviorSubject } from '../types/subscriptions/on-initial-subscription-handling-behavior-subject.interface';
 import { OneTimeEventEmitter } from '../types/subscriptions/one-time-event-emitter.interface';
 import { ManagedSubjectImpl } from './managed-subject-impl';
 import { SubscriptionManager } from '../types/subscriptions/subscription-manager.interface';
 import { ManagedSubscription } from '../types/subscriptions/managed-subscription.interface';
 
-export class OnInitialSubscriptionHandlingSubjectImpl<T>
+export class OnInitialSubscriptionHandlingBehaviorSubjectImpl<T>
   extends ManagedSubjectImpl<T>
-  implements OnInitialSubscriptionHandlingSubject<T>
+  implements OnInitialSubscriptionHandlingBehaviorSubject<T>
 {
   readonly #onInitialSubscriptionEventEmitter: OneTimeEventEmitter;
 
   constructor(
-    subject: Subject<T>,
+    subject: BehaviorSubject<T>,
     subscriptionManager: SubscriptionManager,
     onInitialSubscriptionEventEmitter: OneTimeEventEmitter,
   ) {

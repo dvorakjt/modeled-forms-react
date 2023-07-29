@@ -7,10 +7,10 @@ import type { OneTimeEventEmitterFactory } from '../types/subscriptions/one-time
 export class ManagedSubscriptionFactoryImpl
   implements ManagedSubscriptionFactory
 {
-  readonly #oneTimeEventEmitterFactory: OneTimeEventEmitterFactory;
+  readonly oneTimeEventEmitterFactory: OneTimeEventEmitterFactory;
 
   constructor(oneTimeEventEmitterFactory: OneTimeEventEmitterFactory) {
-    this.#oneTimeEventEmitterFactory = oneTimeEventEmitterFactory;
+    this.oneTimeEventEmitterFactory = oneTimeEventEmitterFactory;
   }
 
   createManagedSubscriptionFromObservableAndObserver<T>(
@@ -20,7 +20,7 @@ export class ManagedSubscriptionFactoryImpl
     return new ManagedSubscriptionImpl(
       observable,
       observerOrNext,
-      this.#oneTimeEventEmitterFactory.createOneTimeEventEmitter(),
+      this.oneTimeEventEmitterFactory.createOneTimeEventEmitter(),
     );
   }
 }
