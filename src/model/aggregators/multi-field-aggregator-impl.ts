@@ -6,7 +6,7 @@ import type { FieldStateReducer } from '../types/reducers/field-state-reducer.in
 import type { ManagedObservableFactory } from '../types/subscriptions/managed-observable-factory.interface';
 import type { AnyState } from '../types/state/any-state.type';
 import type { OnInitialSubscriptionHandlingBehaviorSubject } from '../types/subscriptions/on-initial-subscription-handling-behavior-subject.interface';
-import type { AggregatedStateChangesProxyProducer } from '../types/proxies/aggregated-state-changes-proxy-producer';
+import type { AggregatedStateChangesProxyProducer } from '../types/proxies/aggregated-state-changes-proxy-producer.interface';
 
 export class MultiFieldAggregatorImpl<Fields extends FormElementMap>
   implements MultiFieldAggregator<Fields>

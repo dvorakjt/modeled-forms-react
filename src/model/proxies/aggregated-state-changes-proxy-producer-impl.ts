@@ -1,6 +1,6 @@
 import type { AggregatedStateChanges } from '../types/aggregators/aggregated-state-changes.interface';
 import type { FormElementMap } from '../types/form-elements/form-element-map.type';
-import type { AggregatedStateChangesProxyProducer } from '../types/proxies/aggregated-state-changes-proxy-producer';
+import type { AggregatedStateChangesProxyProducer } from '../types/proxies/aggregated-state-changes-proxy-producer.interface';
 import type { FieldStateReducer } from '../types/reducers/field-state-reducer.interface';
 import type { AnyState } from '../types/state/any-state.type';
 
