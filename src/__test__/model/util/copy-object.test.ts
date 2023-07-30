@@ -4,24 +4,22 @@ import { copyObject } from '../../../model/util/copy-object';
 describe('copyObject', () => {
   test('It copies an object.', () => {
     const originalObject = {
-      foo : 'bar',
-      baz : 1
-    }
+      foo: 'bar',
+      baz: 1,
+    };
     const copiedObject = copyObject(originalObject);
     expect(copiedObject).toStrictEqual(originalObject);
   });
 
   test('It copies an array.', () => {
-    const originalArray = [
-      1, 2, 3
-    ];
+    const originalArray = [1, 2, 3];
     const copiedArray = copyObject(originalArray);
     expect(copiedArray).toStrictEqual(originalArray);
   });
 
   test('It copies a deeply nested object.', () => {
     const deeplyNestedObject = getDeeplyNestedObject();
-    const copiedObject = copyObject(deeplyNestedObject)
+    const copiedObject = copyObject(deeplyNestedObject);
     expect(copiedObject).toStrictEqual(deeplyNestedObject);
   });
 
@@ -35,16 +33,14 @@ describe('copyObject', () => {
 
   function getDeeplyNestedObject() {
     return {
-      foo : {
-        bar : {
-          baz : [
-            1, 2, 3
-          ]
+      foo: {
+        bar: {
+          baz: [1, 2, 3],
         },
-        qux : {
-          quux : 'corge'
-        }
-      }
-    }
+        qux: {
+          quux: 'corge',
+        },
+      },
+    };
   }
 });

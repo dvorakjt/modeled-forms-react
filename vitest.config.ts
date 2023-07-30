@@ -9,9 +9,11 @@ export default defineConfig({
       100: true,
       include: ['src/model/**'],
       exclude: [
+        '**/*.config.ts',
         '**/*.interface.ts',
         '**/*.type.ts',
         '**/*.enum.ts',
+        'src/model/validators/util/**',
       ],
     },
   },

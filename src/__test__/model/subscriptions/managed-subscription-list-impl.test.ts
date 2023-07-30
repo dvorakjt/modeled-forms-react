@@ -1,13 +1,17 @@
 import { describe, beforeEach, afterEach, test, expect, vi } from 'vitest';
 import { Subject } from 'rxjs';
-import { iocContainer } from './ioc-container';
+import { getTestContainer, Services } from '../test-container';
 import { ManagedSubscriptionListImpl } from '../../../model/subscriptions/managed-subscription-list-impl';
 import type { ManagedSubscriptionList } from '../../../model/types/subscriptions/managed-subscription-list.interface';
 import type { ManagedSubscription } from '../../../model/types/subscriptions/managed-subscription.interface';
+import type { ManagedSubscriptionFactory } from '../../../model/types/subscriptions/managed-subscription-factory.interface';
 
 describe('ManagedSubscriptionListImpl', () => {
-  const managedSubscriptionFactory = iocContainer.ManagedSubscriptionFactory;
-  let managedSubscriptionList : ManagedSubscriptionList;
+  const container = getTestContainer();
+  const managedSubscriptionFactory = container.get<ManagedSubscriptionFactory>(
+    Services.ManagedSubscriptionFactory,
+  );
+  let managedSubscriptionList: ManagedSubscriptionList;
 
   beforeEach(() => {
     managedSubscriptionList = new ManagedSubscriptionListImpl();
@@ -30,7 +34,9 @@ describe('ManagedSubscriptionListImpl', () => {
   });
 
   test('It calls unsubscribe on all managedSubscriptions when unsubscribeAll() is called.', () => {
-    const subscriptions : Array<ManagedSubscription> = [...generateManagedSubscriptions(3)];
+    const subscriptions: Array<ManagedSubscription> = [
+      ...generateManagedSubscriptions(3),
+    ];
 
     subscriptions.forEach(subscription => {
       vi.spyOn(subscription, 'unsubscribe');
@@ -45,7 +51,7 @@ describe('ManagedSubscriptionListImpl', () => {
   });
 
   test('It empties the list when unsubscribeAll() is called.', () => {
-    for(const subscription of generateManagedSubscriptions(3)) {
+    for (const subscription of generateManagedSubscriptions(3)) {
       managedSubscriptionList.add(subscription);
     }
     managedSubscriptionList.unsubscribeAll();
@@ -57,12 +63,12 @@ describe('ManagedSubscriptionListImpl', () => {
       new Subject<void>(),
       () => {
         return;
-      }
-    )
+      },
+    );
   }
 
-  function* generateManagedSubscriptions(numberToGenerate : number) {
-    for(let i = 0; i < numberToGenerate; i++) {
+  function* generateManagedSubscriptions(numberToGenerate: number) {
+    for (let i = 0; i < numberToGenerate; i++) {
       yield getDefaultManagedSubscription();
     }
   }

@@ -1,22 +1,26 @@
 import { describe, test, vi, afterEach, expect } from 'vitest';
 import { Subject } from 'rxjs';
-import { iocContainer } from './ioc-container';
+import { getTestContainer, Services } from '../test-container';
 import { ManagedSubscriptionImpl } from '../../../model/subscriptions/managed-subscription-impl';
 import type { ManagedSubscription } from '../../../model/types/subscriptions/managed-subscription.interface';
+import type { OneTimeEventEmitterFactory } from '../../../model/types/subscriptions/one-time-event-emitter-factory.interface';
 
 describe('ManagedSubscriptionImpl', () => {
-  const oneTimeEventEmitterFactory = iocContainer.OneTimeEventEmitterFactory;
-  let managedSubscription : ManagedSubscription;
+  const container = getTestContainer();
+  const oneTimeEventEmitterFactory = container.get<OneTimeEventEmitterFactory>(
+    Services.OneTimeEventEmitterFactory,
+  );
+  let managedSubscription: ManagedSubscription;
 
   afterEach(() => {
     managedSubscription.unsubscribe();
-  }); 
+  });
 
   test('It unsubscribes from the subscription when unsubscribe() is called.', () => {
     managedSubscription = new ManagedSubscriptionImpl(
       new Subject<void>(),
       {},
-      oneTimeEventEmitterFactory.createOneTimeEventEmitter()
+      oneTimeEventEmitterFactory.createOneTimeEventEmitter(),
     );
     managedSubscription.unsubscribe();
     expect(managedSubscription.closed).toBe(true);
@@ -27,7 +31,7 @@ describe('ManagedSubscriptionImpl', () => {
     managedSubscription = new ManagedSubscriptionImpl(
       new Subject<void>(),
       {},
-      oneTimeEventEmitterFactory.createOneTimeEventEmitter()
+      oneTimeEventEmitterFactory.createOneTimeEventEmitter(),
     );
     managedSubscription.onDisposed(onDisposeCb);
     managedSubscription.unsubscribe();
@@ -39,7 +43,7 @@ describe('ManagedSubscriptionImpl', () => {
     managedSubscription = new ManagedSubscriptionImpl(
       new Subject<void>(),
       {},
-      oneTimeEventEmitterFactory.createOneTimeEventEmitter()
+      oneTimeEventEmitterFactory.createOneTimeEventEmitter(),
     );
     managedSubscription.unsubscribe();
     managedSubscription.onDisposed(onDisposeCb);
@@ -52,7 +56,7 @@ describe('ManagedSubscriptionImpl', () => {
     managedSubscription = new ManagedSubscriptionImpl(
       subject,
       {},
-      oneTimeEventEmitterFactory.createOneTimeEventEmitter()
+      oneTimeEventEmitterFactory.createOneTimeEventEmitter(),
     );
     managedSubscription.onDisposed(onDisposeCb);
     subject.complete();
@@ -65,26 +69,26 @@ describe('ManagedSubscriptionImpl', () => {
     managedSubscription = new ManagedSubscriptionImpl(
       subject,
       {
-        complete : () => {
+        complete: () => {
           return;
-        }
+        },
       },
-      oneTimeEventEmitterFactory.createOneTimeEventEmitter()
+      oneTimeEventEmitterFactory.createOneTimeEventEmitter(),
     );
     managedSubscription.onDisposed(onDisposeCb);
     subject.complete();
     expect(onDisposeCb).toHaveBeenCalledOnce();
   });
 
-  test('It calls the complete method of the partial observer passed into the constructor.', () =>{
+  test('It calls the complete method of the partial observer passed into the constructor.', () => {
     const subject = new Subject<void>();
     const completeMethod = vi.fn();
     managedSubscription = new ManagedSubscriptionImpl(
       subject,
       {
-        complete : completeMethod
+        complete: completeMethod,
       },
-      oneTimeEventEmitterFactory.createOneTimeEventEmitter()
+      oneTimeEventEmitterFactory.createOneTimeEventEmitter(),
     );
     subject.complete();
     expect(completeMethod).toHaveBeenCalledOnce();
@@ -96,9 +100,9 @@ describe('ManagedSubscriptionImpl', () => {
     managedSubscription = new ManagedSubscriptionImpl(
       subject,
       {
-        next : nextMethod
+        next: nextMethod,
       },
-      oneTimeEventEmitterFactory.createOneTimeEventEmitter()
+      oneTimeEventEmitterFactory.createOneTimeEventEmitter(),
     );
     subject.next();
     subject.next();
@@ -112,9 +116,9 @@ describe('ManagedSubscriptionImpl', () => {
     managedSubscription = new ManagedSubscriptionImpl(
       subject,
       {
-        error : errorMethod
+        error: errorMethod,
       },
-      oneTimeEventEmitterFactory.createOneTimeEventEmitter()
+      oneTimeEventEmitterFactory.createOneTimeEventEmitter(),
     );
     subject.error(new Error());
     expect(errorMethod).toHaveBeenCalledOnce();
@@ -128,7 +132,7 @@ describe('ManagedSubscriptionImpl', () => {
       () => {
         return;
       },
-      oneTimeEventEmitterFactory.createOneTimeEventEmitter()
+      oneTimeEventEmitterFactory.createOneTimeEventEmitter(),
     );
     managedSubscription.onDisposed(onDisposeCb);
     subject.complete();
@@ -141,7 +145,7 @@ describe('ManagedSubscriptionImpl', () => {
     managedSubscription = new ManagedSubscriptionImpl(
       subject,
       subscribeFn,
-      oneTimeEventEmitterFactory.createOneTimeEventEmitter()
+      oneTimeEventEmitterFactory.createOneTimeEventEmitter(),
     );
     subject.next();
     subject.next();
@@ -155,12 +159,12 @@ describe('ManagedSubscriptionImpl', () => {
     const managedSubscription = new ManagedSubscriptionImpl(
       subject,
       {},
-      oneTimeEventEmitterFactory.createOneTimeEventEmitter()
+      oneTimeEventEmitterFactory.createOneTimeEventEmitter(),
     );
     subject.complete();
     managedSubscription.onDisposed(onDisposeCb);
     expect(onDisposeCb).toHaveBeenCalledOnce();
-  }); 
+  });
 
   test('Once set, onDispose is called only once even if the subject completes and unsubscribe() is called.', () => {
     const subject = new Subject<void>();
@@ -168,11 +172,11 @@ describe('ManagedSubscriptionImpl', () => {
     const managedSubscription = new ManagedSubscriptionImpl(
       subject,
       {},
-      oneTimeEventEmitterFactory.createOneTimeEventEmitter()
+      oneTimeEventEmitterFactory.createOneTimeEventEmitter(),
     );
     managedSubscription.onDisposed(onDisposeCb);
     subject.complete();
     managedSubscription.unsubscribe();
     expect(onDisposeCb).toHaveBeenCalledOnce();
-  }); 
+  });
 });

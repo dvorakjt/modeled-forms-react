@@ -3,8 +3,8 @@ import type { Validity } from '../state/validity.enum';
 
 export interface FieldStateReducer {
   get validity(): Validity;
-  get hasOmittedFields() : boolean;
+  get omit(): boolean;
 
-  updateTallies(fieldName: string, state : FieldState): void;
-  clear() : void;
+  updateTallies(fieldName: string, state: FieldState): void;
+  clear(): void;
 }

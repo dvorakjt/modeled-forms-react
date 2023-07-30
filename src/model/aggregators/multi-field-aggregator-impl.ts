@@ -15,7 +15,7 @@ export class MultiFieldAggregatorImpl<Fields extends FormElementMap>
     AggregatedStateChanges<Fields>
   >;
   readonly #fields: Fields;
-  readonly #aggregatedStateChangesProxyProducer : AggregatedStateChangesProxyProducer;
+  readonly #aggregatedStateChangesProxyProducer: AggregatedStateChangesProxyProducer;
   readonly #fieldStateReducer: FieldStateReducer;
   readonly #aggregatedFieldState: {
     [key: string]: AnyState;
@@ -26,22 +26,25 @@ export class MultiFieldAggregatorImpl<Fields extends FormElementMap>
     return {
       ...this.#aggregatedFieldState,
       overallValidity: this.#fieldStateReducer.validity,
-      hasOmittedFields: this.#fieldStateReducer.hasOmittedFields
+      hasOmittedFields: this.#fieldStateReducer.omit,
     } as AggregatedStateChanges<Fields>;
   }
 
   constructor(
     fields: Fields,
-    aggregatedStateChangesProxyProducer : AggregatedStateChangesProxyProducer,
+    aggregatedStateChangesProxyProducer: AggregatedStateChangesProxyProducer,
     fieldStateReducer: FieldStateReducer,
     managedObservableFactory: ManagedObservableFactory,
   ) {
     this.#fields = fields;
-    this.#aggregatedStateChangesProxyProducer = aggregatedStateChangesProxyProducer;
+    this.#aggregatedStateChangesProxyProducer =
+      aggregatedStateChangesProxyProducer;
     this.#fieldStateReducer = fieldStateReducer;
     this.aggregateChanges =
-      managedObservableFactory.createOnInitialSubscriptionHandlingSubject(
-        new BehaviorSubject(this.#aggregatedStateChangesProxyProducer.getProxy(this.#fields)),
+      managedObservableFactory.createOnInitialSubscriptionHandlingBehaviorSubject(
+        new BehaviorSubject(
+          this.#aggregatedStateChangesProxyProducer.getProxy(this.#fields),
+        ),
       );
     this.aggregateChanges.onInitialSubscription(this.subscribeToAccessedFields);
   }
@@ -49,19 +52,19 @@ export class MultiFieldAggregatorImpl<Fields extends FormElementMap>
   private subscribeToAccessedFields = () => {
     if (this.#accessedFieldsSubscriptionProcessCompleted === true) return;
 
-    const accessedFieldNames = this.#aggregatedStateChangesProxyProducer.accessedFieldNames
+    const accessedFieldNames =
+      this.#aggregatedStateChangesProxyProducer.accessedFieldNames;
 
     for (const fieldName of accessedFieldNames) {
-      this.#fields[fieldName].stateChanges.subscribe((stateChange: AnyState) => {
-        this.#aggregatedFieldState[fieldName] = stateChange;
-        this.#fieldStateReducer.updateTallies(
-          fieldName,
-          stateChange
-        );
-        if (this.#accessedFieldsSubscriptionProcessCompleted) {
-          this.aggregateChanges.next(this.aggregatedStateChanges);
-        }
-      });
+      this.#fields[fieldName].stateChanges.subscribe(
+        (stateChange: AnyState) => {
+          this.#aggregatedFieldState[fieldName] = stateChange;
+          this.#fieldStateReducer.updateTallies(fieldName, stateChange);
+          if (this.#accessedFieldsSubscriptionProcessCompleted) {
+            this.aggregateChanges.next(this.aggregatedStateChanges);
+          }
+        },
+      );
     }
 
     this.#aggregatedStateChangesProxyProducer.clear();

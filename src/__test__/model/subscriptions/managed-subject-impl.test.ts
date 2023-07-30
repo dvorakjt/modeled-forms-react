@@ -1,22 +1,24 @@
-import { describe, test, expect, beforeEach, afterEach, vi } from 'vitest';
+import { describe, test, expect, afterEach, vi } from 'vitest';
 import { Subject } from 'rxjs';
-import { iocContainer } from './ioc-container';
+import { getTestContainer, Services } from '../test-container';
 import { ManagedSubjectImpl } from '../../../model/subscriptions/managed-subject-impl';
 import type { SubscriptionManager } from '../../../model/types/subscriptions/subscription-manager.interface';
 
 describe('ManagedSubjectImpl', () => {
-  let subscriptionManager : SubscriptionManager;
-
-  beforeEach(() => {
-    subscriptionManager = iocContainer.SubscriptionManager;
-  });
+  const container = getTestContainer();
+  const subscriptionManager = container.get<SubscriptionManager>(
+    Services.SubscriptionManager,
+  );
 
   afterEach(() => {
     subscriptionManager.unsubscribeAll();
   });
 
   test('Subscribers receive a new value when next() is called.', () => {
-    const managedSubject = new ManagedSubjectImpl(new Subject<number>(), subscriptionManager);
+    const managedSubject = new ManagedSubjectImpl(
+      new Subject<number>(),
+      subscriptionManager,
+    );
     const nextFn = vi.fn();
     managedSubject.subscribe(nextFn);
     managedSubject.next(1);
@@ -24,23 +26,29 @@ describe('ManagedSubjectImpl', () => {
   });
 
   test('Subscribers receive an error when error() is called.', () => {
-    const managedSubject = new ManagedSubjectImpl(new Subject<void>(), subscriptionManager);
+    const managedSubject = new ManagedSubjectImpl(
+      new Subject<void>(),
+      subscriptionManager,
+    );
     const errorFn = vi.fn();
     const observer = {
-      error : errorFn
-    }
+      error: errorFn,
+    };
     managedSubject.subscribe(observer);
     const expectedError = Error('Test Error');
     managedSubject.error(expectedError);
     expect(errorFn).toHaveBeenCalledWith(expectedError);
   });
 
-  test('Subscribers are notified of the subject\'s completion when complete() is called.', () => {
-    const managedSubject = new ManagedSubjectImpl(new Subject<void>(), subscriptionManager);
+  test("Subscribers are notified of the subject's completion when complete() is called.", () => {
+    const managedSubject = new ManagedSubjectImpl(
+      new Subject<void>(),
+      subscriptionManager,
+    );
     const completeFn = vi.fn();
     const observer = {
-      complete : completeFn
-    }
+      complete: completeFn,
+    };
     managedSubject.subscribe(observer);
     managedSubject.complete();
     expect(completeFn).toHaveBeenCalledOnce();

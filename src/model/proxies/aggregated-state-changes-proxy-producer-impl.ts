@@ -1,18 +1,22 @@
-import type { AggregatedStateChanges } from "../types/aggregators/aggregated-state-changes.interface";
-import type { FormElementMap } from "../types/form-elements/form-element-map.type";
-import type { AggregatedStateChangesProxyProducer } from "../types/proxies/aggregated-state-changes-proxy-producer";
-import type { FieldStateReducer } from "../types/reducers/field-state-reducer.interface";
-import type { AnyState } from "../types/state/any-state.type";
+import type { AggregatedStateChanges } from '../types/aggregators/aggregated-state-changes.interface';
+import type { FormElementMap } from '../types/form-elements/form-element-map.type';
+import type { AggregatedStateChangesProxyProducer } from '../types/proxies/aggregated-state-changes-proxy-producer';
+import type { FieldStateReducer } from '../types/reducers/field-state-reducer.interface';
+import type { AnyState } from '../types/state/any-state.type';
 
-export class AggregatedStateChangesProxyProducerImpl implements AggregatedStateChangesProxyProducer {
+export class AggregatedStateChangesProxyProducerImpl
+  implements AggregatedStateChangesProxyProducer
+{
   readonly accessedFieldNames = new Set<string>();
-  readonly fieldStateReducer : FieldStateReducer;
+  readonly fieldStateReducer: FieldStateReducer;
 
-  constructor(fieldStateReducer : FieldStateReducer) {
+  constructor(fieldStateReducer: FieldStateReducer) {
     this.fieldStateReducer = fieldStateReducer;
   }
 
-  getProxy<Fields extends FormElementMap>(fields: Fields): AggregatedStateChanges<Fields> {
+  getProxy<Fields extends FormElementMap>(
+    fields: Fields,
+  ): AggregatedStateChanges<Fields> {
     const aggregatedState: {
       [key: string]: AnyState;
     } = {};
@@ -26,7 +30,7 @@ export class AggregatedStateChangesProxyProducerImpl implements AggregatedStateC
     return new Proxy(aggregatedState, {
       get(target, prop) {
         if (prop === 'overallValidity') return fieldStateReducer.validity;
-        else if (prop === 'hasOmittedFields') return fieldStateReducer.hasOmittedFields;
+        else if (prop === 'hasOmittedFields') return fieldStateReducer.omit;
         else {
           const propName = prop.toString();
           if (!(prop in fields))
