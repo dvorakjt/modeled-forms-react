@@ -1,31 +1,35 @@
-import { List } from "linked-list";
-import { SubscriptionListItem } from "./subscription-list-item";
-import type { SubscriptionManager } from "../types/subscriptions/subscription-manager.interface";
-import { Observable, Subject } from "rxjs";
-import { ManagedSubject } from "./managed-subject";
-import { ManagedObservable } from "./managed-observable";
+import { Observable, Observer } from 'rxjs';
+import { ManagedSubscription } from '../types/subscriptions/managed-subscription.interface';
+import { ManagedSubscriptionList } from '../types/subscriptions/managed-subscription-list.interface';
+import { SubscriptionManager } from '../types/subscriptions/subscription-manager.interface';
+import { ManagedSubscriptionFactory } from '../types/subscriptions/managed-subscription-factory.interface';
 
 export class SubscriptionManagerImpl implements SubscriptionManager {
-  #subscriptionList = new List<SubscriptionListItem>();
+  readonly #managedSubscriptionFactory: ManagedSubscriptionFactory;
+  readonly #managedSubscriptionList: ManagedSubscriptionList;
 
-  get count() {
-    return this.#subscriptionList.size;
+  constructor(
+    managedSubscriptionFactory: ManagedSubscriptionFactory,
+    managedSubscriptionList: ManagedSubscriptionList,
+  ) {
+    this.#managedSubscriptionFactory = managedSubscriptionFactory;
+    this.#managedSubscriptionList = managedSubscriptionList;
   }
 
-  registerObservable<T>(observable: Observable<T>) {
-    return new ManagedObservable<T>(observable, this.#subscriptionList);
+  createAndRegisterManagedSubscription<T>(
+    observable: Observable<T>,
+    observerOrNext: Partial<Observer<T>> | ((value: T) => void),
+  ): ManagedSubscription {
+    const managedSubscription =
+      this.#managedSubscriptionFactory.createManagedSubscriptionFromObservableAndObserver(
+        observable,
+        observerOrNext,
+      );
+    this.#managedSubscriptionList.add(managedSubscription);
+    return managedSubscription;
   }
 
-  registerSubject<T>(subject: Subject<T>, postSubscriptionFn? : () => void) {
-    return new ManagedSubject<T>(subject, this.#subscriptionList, postSubscriptionFn);
-  }
-
-  unsubscribeAll() {
-    let subscriptionListItem = this.#subscriptionList.head;
-    while(subscriptionListItem !== null) {
-      subscriptionListItem.subscription && subscriptionListItem.subscription.unsubscribe();
-      subscriptionListItem.detach();
-      subscriptionListItem = this.#subscriptionList.head;
-    }
+  unsubscribeAll(): void {
+    this.#managedSubscriptionList.unsubscribeAll();
   }
 }

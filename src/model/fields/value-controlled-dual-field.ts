@@ -1,10 +1,12 @@
-import { Adapter } from "../types/adapters/adapter.interface";
-import { DualField } from "../types/fields/dual-field.interface";
-import { DualFieldSetValueArg } from "../types/state/dual-field-set-value-arg.interface";
-import { ValueControlledField } from "./value-controlled-field";
+import { ValueControlledField } from './value-controlled-field';
+import type { Adapter } from '../types/adapters/adapter.interface';
+import type { DualField } from '../types/fields/dual-field.interface';
+import type { DualFieldSetValueArg } from '../types/state/dual-field-set-value-arg.interface';
 
-export class ValueControlledDualField extends ValueControlledField implements DualField {
-
+export class ValueControlledDualField
+  extends ValueControlledField
+  implements DualField
+{
   get primaryField() {
     return this.dualField.primaryField;
   }
@@ -13,7 +15,7 @@ export class ValueControlledDualField extends ValueControlledField implements Du
     return this.dualField.secondaryField;
   }
 
-  set useSecondaryField(useSecondaryField : boolean) {
+  set useSecondaryField(useSecondaryField: boolean) {
     this.dualField.useSecondaryField = useSecondaryField;
   }
 
@@ -25,7 +27,7 @@ export class ValueControlledDualField extends ValueControlledField implements Du
     return this.field as DualField;
   }
 
-  constructor(field : DualField, adapter : Adapter<DualFieldSetValueArg>) {
+  constructor(field: DualField, adapter: Adapter<DualFieldSetValueArg>) {
     super(field, adapter);
   }
 }

@@ -1,15 +1,15 @@
-import { ErrorMessages } from "../constants/error-messages.enum";
-import { Adapter } from "../types/adapters/adapter.interface";
-import { Field } from "../types/fields/field.interface";
-import { DualFieldSetStateArg } from "../types/state/dual-field-set-state-arg.interface";
-import { DualFieldSetValueArg } from "../types/state/dual-field-set-value-arg.interface";
-import { FieldState } from "../types/state/field-state.interface";
-import { MessageType } from "../types/state/messages/message-type.enum";
-import { Validity } from "../types/state/validity.enum";
+import { MessageType } from '../types/state/messages/message-type.enum';
+import { Validity } from '../types/state/validity.enum';
+import { ErrorMessages } from '../constants/error-messages.enum';
+import type { Adapter } from '../types/adapters/adapter.interface';
+import type { Field } from '../types/fields/field.interface';
+import type { DualFieldSetStateArg } from '../types/state/dual-field-set-state-arg.interface';
+import type { DualFieldSetValueArg } from '../types/state/dual-field-set-value-arg.interface';
+import type { FieldState } from '../types/state/field-state.interface';
 
 export class ValueControlledField implements Field {
-  protected field : Field;
-  protected adapter : Adapter<DualFieldSetValueArg | string>;
+  protected readonly field: Field;
+  protected readonly adapter: Adapter<DualFieldSetValueArg | string>;
 
   get stateChanges() {
     return this.field.stateChanges;
@@ -19,7 +19,7 @@ export class ValueControlledField implements Field {
     return this.field.state;
   }
 
-  set omit(omit : boolean) {
+  set omit(omit: boolean) {
     this.field.omit = omit;
   }
 
@@ -27,27 +27,27 @@ export class ValueControlledField implements Field {
     return this.field.omit;
   }
 
-  constructor(field : Field, adapter : Adapter<DualFieldSetValueArg | string>) {
+  constructor(field: Field, adapter: Adapter<DualFieldSetValueArg | string>) {
     this.field = field;
     this.adapter = adapter;
     this.adapter.stream.subscribe({
-      next : next => this.setValue(next),
+      next: (next: string | DualFieldSetValueArg) => this.setValue(next),
       error: () => {
         this.setState({
-          value : "",
+          value: '',
           validity: Validity.ERROR,
           messages: [
             {
               type: MessageType.ERROR,
-              text: ErrorMessages.FIELD_ADAPTER_ERROR
-            }
-          ]
+              text: ErrorMessages.FIELD_ADAPTER_ERROR,
+            },
+          ],
         });
-      }
+      },
     });
   }
 
-  setValue(value : DualFieldSetValueArg | string) {
+  setValue(value: DualFieldSetValueArg | string) {
     this.field.setValue(value);
   }
 

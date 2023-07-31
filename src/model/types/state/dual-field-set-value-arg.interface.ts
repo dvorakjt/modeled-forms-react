@@ -1,5 +1,5 @@
 export interface DualFieldSetValueArg {
-  primaryFieldValue? : string;
-  secondaryFieldValue? : string;
-  useSecondaryField? : boolean;
+  primaryFieldValue?: string;
+  secondaryFieldValue?: string;
+  useSecondaryField?: boolean;
 }

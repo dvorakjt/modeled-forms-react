@@ -1,14 +1,18 @@
-import { defineConfig } from 'vitest/config'
+import { defineConfig } from 'vitest/config';
 
 export default defineConfig({
   test: {
     watch: false,
     coverage: {
       enabled: true,
-      all: true,
       100: true,
-      include: ["src/model/**"],
-      exclude: ["**/*.interface.ts", "**/*.type.ts", 'src/model/proxies/aggregated-state-changes-proxy-factory.ts']
-    }
+      exclude: [
+        'src/__test__/**',
+        '**/*.config.ts',
+        '**/*.interface.ts',
+        '**/*.type.ts',
+        '**/*.enum.ts',
+      ],
+    },
   },
 });

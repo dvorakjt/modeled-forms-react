@@ -1,57 +1,56 @@
-import { describe, beforeEach, test, expect } from 'vitest';
-import { ManagedObservable } from "../../../model/subscriptions/managed-observable";
-import { SubscriptionManagerImpl } from "../../../model/subscriptions/subscription-manager-impl";
-import { Observable, from, BehaviorSubject, ReplaySubject, Subject } from "rxjs";
+import { describe, test, afterEach, expect, beforeEach } from 'vitest';
+import { Subject } from 'rxjs';
+import { Services, getTestContainer } from '../test-container';
+import { SubscriptionManagerImpl } from '../../../model/subscriptions/subscription-manager-impl';
+import { ManagedSubscriptionImpl } from '../../../model/subscriptions/managed-subscription-impl';
 import type { SubscriptionManager } from '../../../model/types/subscriptions/subscription-manager.interface';
-import { ManagedSubject } from '../../../model/subscriptions/managed-subject';
+import type { ManagedSubscription } from '../../../model/types/subscriptions/managed-subscription.interface';
+import type { ManagedSubscriptionFactory } from '../../../model/types/subscriptions/managed-subscription-factory.interface';
+import type { ManagedSubscriptionList } from '../../../model/types/subscriptions/managed-subscription-list.interface';
 
 describe('SubscriptionManagerImpl', () => {
-  let subscriptionManager : SubscriptionManager;
+  const container = getTestContainer();
+  let subscriptionManager: SubscriptionManager;
 
   beforeEach(() => {
-    subscriptionManager = new SubscriptionManagerImpl();
+    subscriptionManager = new SubscriptionManagerImpl(
+      container.get<ManagedSubscriptionFactory>(
+        Services.ManagedSubscriptionFactory,
+      ),
+      container.get<ManagedSubscriptionList>(Services.ManagedSubscriptionList),
+    );
   });
 
-  test('it returns a ManagedObservable when registerObservable is called with an Observable', () => {
-    const observable = new Observable<void>((subscriber) => {
-      subscriber.complete();
-    });
-    const managedObservable = subscriptionManager.registerObservable(observable);
-    expect(managedObservable).toBeInstanceOf(ManagedObservable);
-  });
-
-  test('it returns a ManagedObservable when registerObservable is called with an Observable created with \'from\'', () => {
-    const observable = from(new Promise<void>(resolve => resolve()));
-    const managedObservable = subscriptionManager.registerObservable(observable);
-    expect(managedObservable).toBeInstanceOf(ManagedObservable);
-  });
-
-  test('it returns a ManagedSubject when registerSubject is called with a BehaviorSubject.', () => {
-    const subject = new BehaviorSubject('test');
-    const managedSubject = subscriptionManager.registerSubject(subject);
-    expect(managedSubject).toBeInstanceOf(ManagedSubject);
-  });
-
-  test('it returns a ManagedSubject when registerSubject is called with a ReplaySubject.', () => {
-    const subject = new ReplaySubject();
-    const managedSubject = subscriptionManager.registerSubject(subject);
-    expect(managedSubject).toBeInstanceOf(ManagedSubject);
-  });
-
-  test('it unsubscribes from all subscriptions in its list and empties the list when unsubscribeAll is called.', () => {
-    const subject = subscriptionManager.registerObservable(new Subject());
-    const subscriptions = [];
-    for(let i = 0; i < 5; i++) {
-      subscriptions.push(subject.subscribe((next) => {
-        console.log(next);
-      }));
-    }
-    expect(subscriptionManager.count).toBe(5);
+  afterEach(() => {
     subscriptionManager.unsubscribeAll();
-    expect(subscriptionManager.count).toBe(0);
-    for(const sub of subscriptions) {
-      expect(sub.closed).toBe(true);
+  });
+
+  test('It returns a ManagedSubscription when createAndRegisterManagedSubscription is called.', () => {
+    const subscription =
+      subscriptionManager.createAndRegisterManagedSubscription(
+        new Subject<void>(),
+        () => {
+          return;
+        },
+      );
+    expect(subscription).toBeInstanceOf(ManagedSubscriptionImpl);
+  });
+
+  test('It unsubscribes from all subscriptions when unsubscribeAll() is called.', () => {
+    const subscriptions: Array<ManagedSubscription> = [];
+    for (let i = 0; i < 3; i++) {
+      subscriptions.push(
+        subscriptionManager.createAndRegisterManagedSubscription(
+          new Subject<void>(),
+          () => {
+            return;
+          },
+        ),
+      );
     }
+    subscriptionManager.unsubscribeAll();
+    subscriptions.forEach(subscription =>
+      expect(subscription.closed).toBe(true),
+    );
   });
 });
-

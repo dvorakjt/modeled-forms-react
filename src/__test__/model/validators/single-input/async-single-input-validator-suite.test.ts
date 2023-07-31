@@ -1,148 +1,299 @@
-import { describe, test, expect, beforeEach, vi } from "vitest";
-import { SubscriptionManager } from "../../../../model/types/subscriptions/subscription-manager.interface";
-import { SubscriptionManagerImpl } from "../../../../model/subscriptions/subscription-manager-impl";
-import { Validity } from "../../../../model/types/state/validity.enum";
-import { MessageType } from "../../../../model/types/state/messages/message-type.enum";
-import { ErrorMessages } from "../../../../model/constants/error-messages.enum";
-import { AsyncSingleInputValidatorSuite } from "../../../../model/validators/single-input/async-single-input-validator-suite";
-import { ValidatorResult } from "../../../../model/types/validators/validator-result.interface";
-import { ValidatorSuiteResult } from "../../../../model/types/validators/validator-suite-result.interface";
-import { AsyncValidator } from "../../../../model/types/validators/async-validator.type";
-import { copyObject } from "../../../../model/util/copy-object";
+import { describe, test, beforeEach, expect, vi, afterEach } from 'vitest';
+import { Subject } from 'rxjs';
+import { getTestContainer, Services } from '../../test-container';
+import { AsyncSingleInputValidatorSuite } from '../../../../model/validators/single-input/async-single-input-validator-suite';
+import { Validity } from '../../../../model/types/state/validity.enum';
+import { untriggerableAsyncValidator } from './mocks/async/untriggerable-async-validator';
+import { MessageType } from '../../../../model/types/state/messages/message-type.enum';
+import { createTriggerableValidAsyncValidator } from './mocks/async/create-triggerable-valid-async-validator';
+import { ValidatorSuiteResult } from '../../../../model/types/validators/validator-suite-result.interface';
+import { createTriggerableInvalidAsyncValidator } from './mocks/async/create-triggerable-invalid-async-validator';
+import { ErrorMessages } from '../../../../model/constants/error-messages.enum';
+import { createTriggerablePromiseRejectingAsyncValidator } from './mocks/async/create-triggerable-promise-rejecting-async-validator';
+import { createIntraPromiseErrorThrowingAsyncValidator } from './mocks/async/create-intra-promise-error-throwing-async-validator';
+import { createImmediateErrorThrowingAsyncValidator } from './mocks/async/create-immediate-error-throwing-async-validator';
+import { setNodeEnv } from '../../../util/set-node-env';
+import type { ManagedObservableFactory } from '../../../../model/types/subscriptions/managed-observable-factory.interface';
+import type { SubscriptionManager } from '../../../../model/types/subscriptions/subscription-manager.interface';
+import type { ManagedSubscriptionList } from '../../../../model/types/subscriptions/managed-subscription-list.interface';
 
-describe('SyncSingleInputValidatorSuite', () => {
-  let subscriptionManager : SubscriptionManager;
+describe('AsyncSingleInputValidatorSuite', () => {
+  const container = getTestContainer();
+  const subscriptionManager = container.get<SubscriptionManager>(
+    Services.SubscriptionManager,
+  );
+  const managedObservableFactory = container.get<ManagedObservableFactory>(
+    Services.ManagedObservableFactory,
+  );
+  let managedSubscriptionList: ManagedSubscriptionList;
 
   beforeEach(() => {
-    subscriptionManager = new SubscriptionManagerImpl();
+    managedSubscriptionList = container.get<ManagedSubscriptionList>(
+      Services.ManagedSubscriptionList,
+    );
   });
 
-  test('it synchronously returns a result including a validity of PENDING before any async validators run.', () => {
-    const validatorSuite = new AsyncSingleInputValidatorSuite<string>([], "Checking field", subscriptionManager);
-    expect(validatorSuite.evaluate('test').syncResult).toStrictEqual({
-      value: 'test',
+  afterEach(() => {
+    subscriptionManager.unsubscribeAll();
+  });
+
+  test('It immediately returns a result object when evaluate is called.', () => {
+    const expectedValue = 'test';
+    const expectedMessage = 'checking field';
+    const expectedSyncResult = {
+      value: expectedValue,
       validity: Validity.PENDING,
       messages: [
         {
           type: MessageType.PENDING,
-          text: 'Checking field'
-        }
-      ]
+          text: expectedMessage,
+        },
+      ],
+    };
+    const validatorSuite = new AsyncSingleInputValidatorSuite<string>(
+      [untriggerableAsyncValidator],
+      expectedMessage,
+      managedObservableFactory,
+      managedSubscriptionList,
+    );
+    expect(validatorSuite.evaluate(expectedValue).syncResult).toStrictEqual(
+      expectedSyncResult,
+    );
+  });
+
+  test("When evaluate is called, subscribers to the returned observable are notified of the suite's result when all validators pass.", () => {
+    const expectedValue = 'test';
+    const expectedResult = {
+      value: expectedValue,
+      validity: Validity.VALID_FINALIZABLE,
+      messages: [],
+    };
+    const trigger1 = new Subject<void>();
+    const trigger2 = new Subject<void>();
+    const trigger3 = new Subject<void>();
+
+    const validatorSuite = new AsyncSingleInputValidatorSuite<string>(
+      [
+        createTriggerableValidAsyncValidator(trigger1),
+        createTriggerableValidAsyncValidator(trigger2),
+        createTriggerableValidAsyncValidator(trigger3),
+      ],
+      'pending message',
+      managedObservableFactory,
+      managedSubscriptionList,
+    );
+    validatorSuite
+      .evaluate(expectedValue)
+      .observable?.subscribe((next: ValidatorSuiteResult<string>) => {
+        expect(next).toStrictEqual(expectedResult);
+      });
+    trigger1.complete();
+    trigger2.complete();
+    trigger3.complete();
+  });
+
+  test("When evaluate() is called, and one result is invalid, the messages from previously returned valid validators are returned together with the invalid result's message, and a validity of INVALID.", () => {
+    const expectedValue = 'test';
+    const expectedValidMessage = 'valid message';
+    const expectedInvalidMessage = 'invalid message';
+    const expectedResult = {
+      value: expectedValue,
+      validity: Validity.INVALID,
+      messages: [
+        {
+          text: expectedValidMessage,
+          type: MessageType.VALID,
+        },
+        {
+          text: expectedInvalidMessage,
+          type: MessageType.INVALID,
+        },
+      ],
+    };
+    const triggerValid = new Subject<void>();
+    const triggerInvalid = new Subject<void>();
+    const validatorSuite = new AsyncSingleInputValidatorSuite(
+      [
+        createTriggerableValidAsyncValidator(triggerValid, expectedValidMessage),
+        createTriggerableInvalidAsyncValidator(
+          triggerInvalid,
+          expectedInvalidMessage
+        ),
+        createTriggerableValidAsyncValidator(
+          new Subject<void>(),
+          'unreachable message',
+        ),
+      ],
+      'pending message',
+      managedObservableFactory,
+      managedSubscriptionList,
+    );
+    validatorSuite
+      .evaluate('test')
+      .observable?.subscribe((next: ValidatorSuiteResult<string>) => {
+        expect(next).toStrictEqual(expectedResult);
+      });
+    triggerValid.complete();
+    triggerInvalid.complete();
+  });
+
+  test("When evaluate() is called, and the Promise is rejected, the messages from previously returned valid validators are returned together with the errant result's message, and a validity of ERROR.", () => {
+    const expectedValue = 'test';
+    const expectedValidMessage = 'valid message';
+    const expectedError = new Error();
+    const expectedResult = {
+      value: expectedValue,
+      validity: Validity.ERROR,
+      messages: [
+        {
+          text: expectedValidMessage,
+          type: MessageType.VALID,
+        },
+        {
+          text: ErrorMessages.SINGLE_INPUT_VALIDATION_ERROR,
+          type: MessageType.ERROR,
+        },
+      ],
+    };
+    const triggerValid = new Subject<void>();
+    const triggerPromiseRejection = new Subject<void>();
+    const validatorSuite = new AsyncSingleInputValidatorSuite(
+      [
+        createTriggerableValidAsyncValidator(triggerValid, expectedValidMessage),
+        createTriggerablePromiseRejectingAsyncValidator(triggerPromiseRejection, expectedError),
+        createTriggerableValidAsyncValidator(
+          new Subject<void>(),
+          'unreachable message',
+        ),
+      ],
+      'pending message',
+      managedObservableFactory,
+      managedSubscriptionList,
+    );
+    validatorSuite
+      .evaluate('test')
+      .observable?.subscribe((next: ValidatorSuiteResult<string>) => {
+        expect(next).toStrictEqual(expectedResult);
+      });
+    triggerValid.complete();
+    triggerPromiseRejection.complete();
+  });
+
+  test("When evaluate() is called, and an error is thrown outside the Promise, the messages from previously returned valid validators are returned together with the errant result's message, and a validity of ERROR.", () => {
+    const expectedValue = 'test';
+    const expectedValidMessage = 'valid message';
+    const expectedError = new Error();
+    const expectedResult = {
+      value: expectedValue,
+      validity: Validity.ERROR,
+      messages: [
+        {
+          text: expectedValidMessage,
+          type: MessageType.VALID,
+        },
+        {
+          text: ErrorMessages.SINGLE_INPUT_VALIDATION_ERROR,
+          type: MessageType.ERROR,
+        },
+      ],
+    };
+    const triggerValid = new Subject<void>();
+    const validatorSuite = new AsyncSingleInputValidatorSuite(
+      [
+        createTriggerableValidAsyncValidator(triggerValid, expectedValidMessage),
+        createIntraPromiseErrorThrowingAsyncValidator(expectedError),
+        createTriggerableValidAsyncValidator(
+          new Subject<void>(),
+          'unreachable message',
+        ),
+      ],
+      'pending message',
+      managedObservableFactory,
+      managedSubscriptionList,
+    );
+    triggerValid.complete();
+    validatorSuite
+      .evaluate('test')
+      .observable?.subscribe((next: ValidatorSuiteResult<string>) => {
+        expect(next).toStrictEqual(expectedResult);
+      });
+  });
+
+  test("When evaluate() is called, and an error is inside the function that returns the promise, only the error message is returned, together with a validity of ERROR.", () => {
+    const expectedValue = 'test';
+    const unreachableMessage = 'valid message';
+    const expectedError = new Error();
+    const expectedResult = {
+      value: expectedValue,
+      validity: Validity.ERROR,
+      messages: [
+        {
+          text: ErrorMessages.SINGLE_INPUT_VALIDATION_ERROR,
+          type: MessageType.ERROR,
+        },
+      ],
+    };
+    const triggerAllValid = new Subject<void>();
+    const validatorSuite = new AsyncSingleInputValidatorSuite(
+      [
+        createTriggerableValidAsyncValidator(triggerAllValid, unreachableMessage),
+        createTriggerableValidAsyncValidator(triggerAllValid, unreachableMessage),
+        createImmediateErrorThrowingAsyncValidator(expectedError),
+      ],
+      'pending message',
+      managedObservableFactory,
+      managedSubscriptionList,
+    );
+    triggerAllValid.complete();
+    validatorSuite
+      .evaluate('test')
+      .observable?.subscribe((next: ValidatorSuiteResult<string>) => {
+        expect(next).toStrictEqual(expectedResult);
+      });
+  });
+
+  test("When evaluate() is called, and an error is observed while in development mode, it is logged to the console.", () => {
+    const resetProcessDotEnv = setNodeEnv('development');
+    vi.stubGlobal('console', {
+      error: vi.fn(),
     });
+    const expectedError = new Error();
+    const validatorSuite = new AsyncSingleInputValidatorSuite(
+      [
+        createImmediateErrorThrowingAsyncValidator(expectedError),
+      ],
+      'pending message',
+      managedObservableFactory,
+      managedSubscriptionList,
+    );
+    validatorSuite
+      .evaluate('test')
+      .observable?.subscribe(() => {
+        expect(console.error).toHaveBeenCalledWith(expectedError);
+        resetProcessDotEnv();
+        vi.unstubAllGlobals();
+      });
   });
 
-  test('it should return the appropriate result when all validators pass.', () => {
-    const validatorSuite = new AsyncSingleInputValidatorSuite<string>([isNotEmptyStrAsync, containsVowelAsync], 'Checking field', subscriptionManager);
-    let result : ValidatorSuiteResult<string>;
-    validatorSuite.evaluate('test').observable?.subscribe({
-      next: next => result = next,
-      complete: () => {
-        expect(result).toStrictEqual({
-          value: 'test',
-          validity: Validity.VALID_FINALIZABLE,
-          messages: [
-            {
-              type: MessageType.VALID,
-              text: "The value has a length greater than 0"
-            },
-            {
-              type: MessageType.VALID,
-              text: "The value contains a vowel"
-            }
-          ]
-        });
-      }
-    })
-  });
 
-  test('it should return the appropriate result when a validator fails.', () => {
-    const validatorSuite = new AsyncSingleInputValidatorSuite<string>([isNotEmptyStrAsync, containsVowelAsync], 'Checking field', subscriptionManager);
-    let result : ValidatorSuiteResult<string>;
-    validatorSuite.evaluate('tst').observable?.subscribe({
-      next: next => result = next,
-      complete: () => {
-        expect(result).toStrictEqual({
-          value: 'tst',
-          validity: Validity.INVALID,
-          messages: [
-            {
-              type: MessageType.VALID,
-              text: "The value has a length greater than 0"
-            },
-            {
-              type: MessageType.INVALID,
-              text: "The value does not contain a vowel"
-            }
-          ]
-        });
-      }
-    })
-  });
-
-  test('it should return the appropriate result when a validator throws an error.', () => {
-    const validatorSuite = new AsyncSingleInputValidatorSuite<string>([isNotEmptyStrAsync, containsVowelAsync, throwErrorAsync as AsyncValidator<string>], 'Checking field', subscriptionManager);
-    let result : ValidatorSuiteResult<string>;
-    validatorSuite.evaluate('test').observable?.subscribe({
-      next: next => result = next,
-      complete: () => {
-        expect(result).toStrictEqual({
-          value: 'test',
-          validity: Validity.ERROR,
-          messages: [
-            {
-              type: MessageType.VALID,
-              text: "The value has a length greater than 0"
-            },
-            {
-              type: MessageType.VALID,
-              text: "The value contains a vowel"
-            },
-            {
-              type: MessageType.ERROR,
-              text: ErrorMessages.VALIDATION_ERROR
-            }
-          ]
-        });
-      }
-    })
-  });
-
-  test('it should log an error when a validator throws an error in development mode.', () => {
-    const originalProcess = copyObject(process.env);
-    process.env = {
-      ...process.env,
-      NODE_ENV : 'development'
-    }
-    console.error = vi.fn();
-    const validatorSuite = new AsyncSingleInputValidatorSuite<string>([throwErrorAsync as AsyncValidator<string>], 'Checking field', subscriptionManager);
+  test('When evaluate() is called, and one result is invalid, remaining operations will be unsubscribed from.', () => {
+    const trigger = new Subject<void>();
+    const validatorSuite = new AsyncSingleInputValidatorSuite<string>(
+      [
+        createTriggerableInvalidAsyncValidator(trigger),
+        untriggerableAsyncValidator,
+        untriggerableAsyncValidator,
+      ],
+      'pending message',
+      managedObservableFactory,
+      managedSubscriptionList,
+    );
     validatorSuite.evaluate('test').observable?.subscribe({
       complete: () => {
-        expect(console.error).toHaveBeenCalled();
-        process.env = originalProcess;
-      }
+        expect(managedSubscriptionList.size).toBe(0);
+      },
     });
+    expect(managedSubscriptionList.size).toBe(3);
+    trigger.complete();
   });
 });
-
-function isNotEmptyStrAsync (value : string) {
-  return new Promise<ValidatorResult>(resolve => {
-    const isValid = value.length > 0;
-    resolve({
-      isValid,
-      message : isValid ? "The value has a length greater than 0" : "The value is an empty string."
-    });
-  })
-  
-} 
-async function containsVowelAsync(value : string) {
-  const isValid = /[aeiou]/gi.test(value);
-  return {
-    isValid,
-    message : isValid ? "The value contains a vowel" : "The value does not contain a vowel"
-  }
-}
-function throwErrorAsync(value : string) {
-  return new Promise((_resolve, reject) => {
-    reject(new Error(`An unexpected error was thrown by argument '${value}'`));
-  });
-}

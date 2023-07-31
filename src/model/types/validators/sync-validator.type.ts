@@ -1,3 +1,3 @@
-import { ValidatorResult } from "./validator-result.interface";
+import { ValidatorResult } from './validator-result.interface';
 
-export type SyncValidator<T> = (value : T) => ValidatorResult;
+export type SyncValidator<T> = (value: T) => ValidatorResult;

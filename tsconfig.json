@@ -2,9 +2,9 @@
   "compilerOptions": {
     "target": "es2016",
     "jsx": "react",
-    "module": "commonjs",                            
+    "module": "commonjs",
     "preserveConstEnums": true,
-    "esModuleInterop": true,                          
+    "esModuleInterop": true,
     "forceConsistentCasingInFileNames": true,
     "strict": true,
     "skipLibCheck": true
