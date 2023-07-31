@@ -75,7 +75,7 @@ describe('HybridSingleInputValidatorSuite', () => {
         messages: [
           {
             type : MessageType.ERROR,
-            text : ErrorMessages.VALIDATION_ERROR
+            text : ErrorMessages.SINGLE_INPUT_VALIDATION_ERROR
           }
         ]
       }

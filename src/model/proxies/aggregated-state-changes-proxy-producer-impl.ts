@@ -47,9 +47,4 @@ export class AggregatedStateChangesProxyProducerImpl
       },
     }) as AggregatedStateChanges<Fields>;
   }
-
-  clear() {
-    this.accessedFieldNames.clear();
-    this.fieldStateReducer.clear();
-  }
 }

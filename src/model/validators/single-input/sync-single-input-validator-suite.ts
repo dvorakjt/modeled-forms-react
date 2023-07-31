@@ -42,7 +42,7 @@ export class SyncSingleInputValidatorSuite<T>
       result.validity = Validity.ERROR;
       result.messages.push({
         type: MessageType.ERROR,
-        text: ErrorMessages.VALIDATION_ERROR,
+        text: ErrorMessages.SINGLE_INPUT_VALIDATION_ERROR,
       });
     }
     return result;

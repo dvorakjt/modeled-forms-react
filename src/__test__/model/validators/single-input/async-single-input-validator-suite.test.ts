@@ -150,7 +150,7 @@ describe('AsyncSingleInputValidatorSuite', () => {
           type: MessageType.VALID,
         },
         {
-          text: ErrorMessages.VALIDATION_ERROR,
+          text: ErrorMessages.SINGLE_INPUT_VALIDATION_ERROR,
           type: MessageType.ERROR,
         },
       ],
@@ -192,7 +192,7 @@ describe('AsyncSingleInputValidatorSuite', () => {
           type: MessageType.VALID,
         },
         {
-          text: ErrorMessages.VALIDATION_ERROR,
+          text: ErrorMessages.SINGLE_INPUT_VALIDATION_ERROR,
           type: MessageType.ERROR,
         },
       ],
@@ -228,7 +228,7 @@ describe('AsyncSingleInputValidatorSuite', () => {
       validity: Validity.ERROR,
       messages: [
         {
-          text: ErrorMessages.VALIDATION_ERROR,
+          text: ErrorMessages.SINGLE_INPUT_VALIDATION_ERROR,
           type: MessageType.ERROR,
         },
       ],

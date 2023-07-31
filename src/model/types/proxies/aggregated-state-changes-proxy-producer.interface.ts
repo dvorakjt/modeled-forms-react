@@ -6,5 +6,4 @@ export interface AggregatedStateChangesProxyProducer {
   getProxy<Fields extends FormElementMap>(
     fields: Fields,
   ): AggregatedStateChanges<Fields>;
-  clear(): void;
 }

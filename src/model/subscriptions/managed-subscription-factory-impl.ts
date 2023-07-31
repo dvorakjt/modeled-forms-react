@@ -2,15 +2,15 @@ import { ManagedSubscriptionImpl } from './managed-subscription-impl';
 import type { Observable, Observer } from 'rxjs';
 import type { ManagedSubscriptionFactory } from '../types/subscriptions/managed-subscription-factory.interface';
 import type { ManagedSubscription } from '../types/subscriptions/managed-subscription.interface';
-import type { OneTimeEventEmitterFactory } from '../types/subscriptions/one-time-event-emitter-factory.interface';
+import type { OneTimeEmitterFactory } from '../types/subscriptions/one-time-emitter-factory.interface';
 
 export class ManagedSubscriptionFactoryImpl
   implements ManagedSubscriptionFactory
 {
-  readonly oneTimeEventEmitterFactory: OneTimeEventEmitterFactory;
+  readonly OneTimeEmitterFactory: OneTimeEmitterFactory;
 
-  constructor(oneTimeEventEmitterFactory: OneTimeEventEmitterFactory) {
-    this.oneTimeEventEmitterFactory = oneTimeEventEmitterFactory;
+  constructor(OneTimeEmitterFactory: OneTimeEmitterFactory) {
+    this.OneTimeEmitterFactory = OneTimeEmitterFactory;
   }
 
   createManagedSubscriptionFromObservableAndObserver<T>(
@@ -20,7 +20,7 @@ export class ManagedSubscriptionFactoryImpl
     return new ManagedSubscriptionImpl(
       observable,
       observerOrNext,
-      this.oneTimeEventEmitterFactory.createOneTimeEventEmitter(),
+      this.OneTimeEmitterFactory.createOneTimeEventEmitter(),
     );
   }
 }

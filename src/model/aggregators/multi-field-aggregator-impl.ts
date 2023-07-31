@@ -7,6 +7,7 @@ import type { ManagedObservableFactory } from '../types/subscriptions/managed-ob
 import type { AnyState } from '../types/state/any-state.type';
 import type { OnInitialSubscriptionHandlingBehaviorSubject } from '../types/subscriptions/on-initial-subscription-handling-behavior-subject.interface';
 import type { AggregatedStateChangesProxyProducer } from '../types/proxies/aggregated-state-changes-proxy-producer.interface';
+import type { OneTimeValueEmitter } from '../types/subscriptions/one-time-value-emitter.interface';
 
 export class MultiFieldAggregatorImpl<Fields extends FormElementMap>
   implements MultiFieldAggregator<Fields>
@@ -14,12 +15,13 @@ export class MultiFieldAggregatorImpl<Fields extends FormElementMap>
   readonly aggregateChanges: OnInitialSubscriptionHandlingBehaviorSubject<
     AggregatedStateChanges<Fields>
   >;
+  readonly accessedFields : OneTimeValueEmitter<Set<string>>;
   readonly #fields: Fields;
-  readonly #aggregatedStateChangesProxyProducer: AggregatedStateChangesProxyProducer;
   readonly #fieldStateReducer: FieldStateReducer;
   readonly #aggregatedFieldState: {
     [key: string]: AnyState;
   } = {};
+  #aggregatedStateChangesProxyProducer: AggregatedStateChangesProxyProducer | null;
   #accessedFieldsSubscriptionProcessCompleted = false;
 
   get aggregatedStateChanges() {
@@ -35,6 +37,7 @@ export class MultiFieldAggregatorImpl<Fields extends FormElementMap>
     aggregatedStateChangesProxyProducer: AggregatedStateChangesProxyProducer,
     fieldStateReducer: FieldStateReducer,
     managedObservableFactory: ManagedObservableFactory,
+    accessedFields : OneTimeValueEmitter<Set<string>>
   ) {
     this.#fields = fields;
     this.#aggregatedStateChangesProxyProducer =
@@ -46,11 +49,12 @@ export class MultiFieldAggregatorImpl<Fields extends FormElementMap>
           this.#aggregatedStateChangesProxyProducer.getProxy(this.#fields),
         ),
       );
+    this.accessedFields = accessedFields;
     this.aggregateChanges.onInitialSubscription(this.subscribeToAccessedFields);
   }
 
   private subscribeToAccessedFields = () => {
-    if (this.#accessedFieldsSubscriptionProcessCompleted === true) return;
+    if(this.#accessedFieldsSubscriptionProcessCompleted || !this.#aggregatedStateChangesProxyProducer) return;
 
     const accessedFieldNames =
       this.#aggregatedStateChangesProxyProducer.accessedFieldNames;
@@ -67,7 +71,8 @@ export class MultiFieldAggregatorImpl<Fields extends FormElementMap>
       );
     }
 
-    this.#aggregatedStateChangesProxyProducer.clear();
+    this.accessedFields.setValue(accessedFieldNames);
+    this.#aggregatedStateChangesProxyProducer = null;
     this.#accessedFieldsSubscriptionProcessCompleted = true;
   };
 }

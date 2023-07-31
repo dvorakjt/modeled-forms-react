@@ -3,12 +3,12 @@ import { BehaviorSubject } from 'rxjs';
 import { getTestContainer, Services } from '../test-container';
 import { OnInitialSubscriptionHandlingBehaviorSubjectImpl } from '../../../model/subscriptions/on-initial-subscription-handling-behavior-subject-impl';
 import type { SubscriptionManager } from '../../../model/types/subscriptions/subscription-manager.interface';
-import type { OneTimeEventEmitterFactory } from '../../../model/types/subscriptions/one-time-event-emitter-factory.interface';
+import type { OneTimeEmitterFactory } from '../../../model/types/subscriptions/one-time-emitter-factory.interface';
 
 describe('OnInitialSubscriptionHandlingSubjectImpl', () => {
   const container = getTestContainer();
-  const oneTimeEventEmitterFactory = container.get<OneTimeEventEmitterFactory>(
-    Services.OneTimeEventEmitterFactory,
+  const OneTimeEmitterFactory = container.get<OneTimeEmitterFactory>(
+    Services.OneTimeEmitterFactory,
   );
   const subscriptionManager = container.get<SubscriptionManager>(
     Services.SubscriptionManager,
@@ -23,7 +23,7 @@ describe('OnInitialSubscriptionHandlingSubjectImpl', () => {
       new OnInitialSubscriptionHandlingBehaviorSubjectImpl(
         new BehaviorSubject<number>(1),
         subscriptionManager,
-        oneTimeEventEmitterFactory.createOneTimeEventEmitter(),
+        OneTimeEmitterFactory.createOneTimeEventEmitter(),
       );
     const onSubscribeFn = vi.fn();
     onInitialSubscriptionHandlingSubject.onInitialSubscription(onSubscribeFn);
@@ -38,7 +38,7 @@ describe('OnInitialSubscriptionHandlingSubjectImpl', () => {
       new OnInitialSubscriptionHandlingBehaviorSubjectImpl(
         new BehaviorSubject<number>(1),
         subscriptionManager,
-        oneTimeEventEmitterFactory.createOneTimeEventEmitter(),
+        OneTimeEmitterFactory.createOneTimeEventEmitter(),
       );
     const onSubscribeFn = vi.fn();
     onInitialSubscriptionHandlingSubject.subscribe(() => {
@@ -53,7 +53,7 @@ describe('OnInitialSubscriptionHandlingSubjectImpl', () => {
       new OnInitialSubscriptionHandlingBehaviorSubjectImpl(
         new BehaviorSubject<number>(1),
         subscriptionManager,
-        oneTimeEventEmitterFactory.createOneTimeEventEmitter(),
+        OneTimeEmitterFactory.createOneTimeEventEmitter(),
       );
     const onSubscribeFn = vi.fn();
     onInitialSubscriptionHandlingSubject.onInitialSubscription(onSubscribeFn);

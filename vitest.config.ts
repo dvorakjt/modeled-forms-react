@@ -5,15 +5,13 @@ export default defineConfig({
     watch: false,
     coverage: {
       enabled: true,
-      all: true,
       100: true,
-      include: ['src/model/**'],
       exclude: [
+        'src/__test__/**',
         '**/*.config.ts',
         '**/*.interface.ts',
         '**/*.type.ts',
         '**/*.enum.ts',
-        'src/model/validators/util/**',
       ],
     },
   },

@@ -6,5 +6,4 @@ export interface FieldStateReducer {
   get omit(): boolean;
 
   updateTallies(fieldName: string, state: FieldState): void;
-  clear(): void;
 }

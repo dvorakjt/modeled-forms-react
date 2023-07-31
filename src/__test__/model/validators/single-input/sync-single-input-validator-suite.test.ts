@@ -73,7 +73,7 @@ describe('SyncSingleInputValidatorSuite', () => {
         type: MessageType.INVALID,
       },
       {
-        text: ErrorMessages.VALIDATION_ERROR,
+        text: ErrorMessages.SINGLE_INPUT_VALIDATION_ERROR,
         type: MessageType.ERROR,
       },
     ];

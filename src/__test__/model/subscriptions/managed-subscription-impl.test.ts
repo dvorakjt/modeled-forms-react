@@ -3,12 +3,12 @@ import { Subject } from 'rxjs';
 import { getTestContainer, Services } from '../test-container';
 import { ManagedSubscriptionImpl } from '../../../model/subscriptions/managed-subscription-impl';
 import type { ManagedSubscription } from '../../../model/types/subscriptions/managed-subscription.interface';
-import type { OneTimeEventEmitterFactory } from '../../../model/types/subscriptions/one-time-event-emitter-factory.interface';
+import type { OneTimeEmitterFactory } from '../../../model/types/subscriptions/one-time-emitter-factory.interface';
 
 describe('ManagedSubscriptionImpl', () => {
   const container = getTestContainer();
-  const oneTimeEventEmitterFactory = container.get<OneTimeEventEmitterFactory>(
-    Services.OneTimeEventEmitterFactory,
+  const OneTimeEmitterFactory = container.get<OneTimeEmitterFactory>(
+    Services.OneTimeEmitterFactory,
   );
   let managedSubscription: ManagedSubscription;
 
@@ -20,7 +20,7 @@ describe('ManagedSubscriptionImpl', () => {
     managedSubscription = new ManagedSubscriptionImpl(
       new Subject<void>(),
       {},
-      oneTimeEventEmitterFactory.createOneTimeEventEmitter(),
+      OneTimeEmitterFactory.createOneTimeEventEmitter(),
     );
     managedSubscription.unsubscribe();
     expect(managedSubscription.closed).toBe(true);
@@ -31,7 +31,7 @@ describe('ManagedSubscriptionImpl', () => {
     managedSubscription = new ManagedSubscriptionImpl(
       new Subject<void>(),
       {},
-      oneTimeEventEmitterFactory.createOneTimeEventEmitter(),
+      OneTimeEmitterFactory.createOneTimeEventEmitter(),
     );
     managedSubscription.onDisposed(onDisposeCb);
     managedSubscription.unsubscribe();
@@ -43,7 +43,7 @@ describe('ManagedSubscriptionImpl', () => {
     managedSubscription = new ManagedSubscriptionImpl(
       new Subject<void>(),
       {},
-      oneTimeEventEmitterFactory.createOneTimeEventEmitter(),
+      OneTimeEmitterFactory.createOneTimeEventEmitter(),
     );
     managedSubscription.unsubscribe();
     managedSubscription.onDisposed(onDisposeCb);
@@ -56,7 +56,7 @@ describe('ManagedSubscriptionImpl', () => {
     managedSubscription = new ManagedSubscriptionImpl(
       subject,
       {},
-      oneTimeEventEmitterFactory.createOneTimeEventEmitter(),
+      OneTimeEmitterFactory.createOneTimeEventEmitter(),
     );
     managedSubscription.onDisposed(onDisposeCb);
     subject.complete();
@@ -73,7 +73,7 @@ describe('ManagedSubscriptionImpl', () => {
           return;
         },
       },
-      oneTimeEventEmitterFactory.createOneTimeEventEmitter(),
+      OneTimeEmitterFactory.createOneTimeEventEmitter(),
     );
     managedSubscription.onDisposed(onDisposeCb);
     subject.complete();
@@ -88,7 +88,7 @@ describe('ManagedSubscriptionImpl', () => {
       {
         complete: completeMethod,
       },
-      oneTimeEventEmitterFactory.createOneTimeEventEmitter(),
+      OneTimeEmitterFactory.createOneTimeEventEmitter(),
     );
     subject.complete();
     expect(completeMethod).toHaveBeenCalledOnce();
@@ -102,7 +102,7 @@ describe('ManagedSubscriptionImpl', () => {
       {
         next: nextMethod,
       },
-      oneTimeEventEmitterFactory.createOneTimeEventEmitter(),
+      OneTimeEmitterFactory.createOneTimeEventEmitter(),
     );
     subject.next();
     subject.next();
@@ -118,7 +118,7 @@ describe('ManagedSubscriptionImpl', () => {
       {
         error: errorMethod,
       },
-      oneTimeEventEmitterFactory.createOneTimeEventEmitter(),
+      OneTimeEmitterFactory.createOneTimeEventEmitter(),
     );
     subject.error(new Error());
     expect(errorMethod).toHaveBeenCalledOnce();
@@ -132,7 +132,7 @@ describe('ManagedSubscriptionImpl', () => {
       () => {
         return;
       },
-      oneTimeEventEmitterFactory.createOneTimeEventEmitter(),
+      OneTimeEmitterFactory.createOneTimeEventEmitter(),
     );
     managedSubscription.onDisposed(onDisposeCb);
     subject.complete();
@@ -145,7 +145,7 @@ describe('ManagedSubscriptionImpl', () => {
     managedSubscription = new ManagedSubscriptionImpl(
       subject,
       subscribeFn,
-      oneTimeEventEmitterFactory.createOneTimeEventEmitter(),
+      OneTimeEmitterFactory.createOneTimeEventEmitter(),
     );
     subject.next();
     subject.next();
@@ -159,7 +159,7 @@ describe('ManagedSubscriptionImpl', () => {
     const managedSubscription = new ManagedSubscriptionImpl(
       subject,
       {},
-      oneTimeEventEmitterFactory.createOneTimeEventEmitter(),
+      OneTimeEmitterFactory.createOneTimeEventEmitter(),
     );
     subject.complete();
     managedSubscription.onDisposed(onDisposeCb);
@@ -172,7 +172,7 @@ describe('ManagedSubscriptionImpl', () => {
     const managedSubscription = new ManagedSubscriptionImpl(
       subject,
       {},
-      oneTimeEventEmitterFactory.createOneTimeEventEmitter(),
+      OneTimeEmitterFactory.createOneTimeEventEmitter(),
     );
     managedSubscription.onDisposed(onDisposeCb);
     subject.complete();

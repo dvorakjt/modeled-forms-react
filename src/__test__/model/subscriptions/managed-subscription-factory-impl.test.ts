@@ -5,19 +5,19 @@ import { ManagedSubscriptionFactoryImpl } from '../../../model/subscriptions/man
 import { ManagedSubscriptionImpl } from '../../../model/subscriptions/managed-subscription-impl';
 import type { ManagedSubscription } from '../../../model/types/subscriptions/managed-subscription.interface';
 import type { ManagedSubscriptionFactory } from '../../../model/types/subscriptions/managed-subscription-factory.interface';
-import type { OneTimeEventEmitterFactory } from '../../../model/types/subscriptions/one-time-event-emitter-factory.interface';
+import type { OneTimeEmitterFactory } from '../../../model/types/subscriptions/one-time-emitter-factory.interface';
 
 describe('ManagedSubscriptionFactory', () => {
   const container = getTestContainer();
-  const oneTimeEventEmitterFactory = container.get<OneTimeEventEmitterFactory>(
-    Services.OneTimeEventEmitterFactory,
+  const OneTimeEmitterFactory = container.get<OneTimeEmitterFactory>(
+    Services.OneTimeEmitterFactory,
   );
   let managedSubscriptionFactory: ManagedSubscriptionFactory;
   let subscriptions: Array<ManagedSubscription>;
 
   beforeEach(() => {
     managedSubscriptionFactory = new ManagedSubscriptionFactoryImpl(
-      oneTimeEventEmitterFactory,
+      OneTimeEmitterFactory,
     );
     subscriptions = [];
   });

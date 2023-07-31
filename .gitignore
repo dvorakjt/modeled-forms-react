@@ -1,4 +1,2 @@
 node_modules
 coverage
-src/model/validators/util
-src/model/types/state/state-control-agents.enum.ts

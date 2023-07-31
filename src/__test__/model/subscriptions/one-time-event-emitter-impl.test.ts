@@ -13,7 +13,7 @@ describe('OneTimeEventEmitterImpl', () => {
 
   test('It does not call the cb passed to onEvent() if triggerEvent() has not been called.', () => {
     oneTimeEventEmitter.onEvent(cb);
-    expect(cb).not.toHaveBeenCalledOnce();
+    expect(cb).not.toHaveBeenCalled();
   });
 
   test('It calls the cb immediately if triggerEvent() has been called.', () => {
