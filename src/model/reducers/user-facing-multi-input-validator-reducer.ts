@@ -10,6 +10,10 @@ export class UserFacingMultiInputValidatorReducer implements MultiInputValidityR
   validityChanges: ManagedSubject<Validity>;
   #validityReducer : ValidityReducer;
   #multiInputValidators : Array<MultiInputValidator> = [];
+
+  get validity() {
+    return this.#validityReducer.validity;
+  }
   
   constructor(managedObservableFactory : ManagedObservableFactory, validityReducer : ValidityReducer) {
     this.#validityReducer = validityReducer;

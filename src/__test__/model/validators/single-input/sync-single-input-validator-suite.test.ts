@@ -5,7 +5,7 @@ import { createValidSyncValidator } from './mocks/sync/create-valid-sync-validat
 import { createInvalidSyncValidator } from './mocks/sync/create-invalid-sync-validator';
 import { createErrantSyncValidator } from './mocks/sync/create-errant-sync-validator';
 import { MessageType } from '../../../../model/types/state/messages/message-type.enum';
-import { ErrorMessages } from '../../../../model/constants/error-messages.enum';
+import { GlobalMessages } from '../../../../model/constants/global-messages.enum';
 import { setNodeEnv } from '../../../util/set-node-env';
 
 describe('SyncSingleInputValidatorSuite', () => {
@@ -73,7 +73,7 @@ describe('SyncSingleInputValidatorSuite', () => {
         type: MessageType.INVALID,
       },
       {
-        text: ErrorMessages.SINGLE_INPUT_VALIDATION_ERROR,
+        text: GlobalMessages.SINGLE_INPUT_VALIDATION_ERROR,
         type: MessageType.ERROR,
       },
     ];

@@ -6,6 +6,7 @@ import type { MultiFieldAggregator } from '../types/aggregators/multi-field-aggr
 import type { FormElementMap } from '../types/form-elements/form-element-map.type';
 import type { ManagedObservableFactory } from '../types/subscriptions/managed-observable-factory.interface';
 import type { AggregatedStateChanges } from '../types/aggregators/aggregated-state-changes.interface';
+import { logErrorInDevMode } from '../util/log-error-in-dev-mode';
 
 export class SyncAdapter<Fields extends FormElementMap, V>
   implements Adapter<V>
@@ -20,15 +21,15 @@ export class SyncAdapter<Fields extends FormElementMap, V>
   ) {
     this.#aggregator = aggregator;
     this.stream = managedObservableFactory.createManagedSubject(
-      new ReplaySubject<V>(),
+      new ReplaySubject<V>(1),
     );
     this.#aggregator.aggregateChanges.subscribe(
       (aggregateChange: AggregatedStateChanges<Fields>) => {
         try {
-          const nextValue = adapterFn(aggregateChange);
+          const nextValue = adapterFn(aggregateChange); //adapters can return no value
           this.stream.next(nextValue);
         } catch (e) {
-          process.env.NODE_ENV === 'development' && console.error(e);
+          logErrorInDevMode(e);
           this.stream.error(e);
         }
       },

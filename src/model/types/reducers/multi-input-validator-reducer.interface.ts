@@ -4,5 +4,6 @@ import type { MultiInputValidator } from "../validators/multi-input/multi-input-
 
 export interface MultiInputValidityReducer {
   validityChanges : ManagedSubject<Validity>;
+  validity : Validity;
   addValidator(multiFieldValidator : MultiInputValidator) : void;
 }

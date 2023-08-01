@@ -11,7 +11,7 @@ import { AsyncSingleInputValidatorSuite } from '../../../../model/validators/sin
 import { createTriggerableValidAsyncValidator } from './mocks/async/create-triggerable-valid-async-validator';
 import { HybridSingleInputValidatorSuite } from '../../../../model/validators/single-input/hybrid-single-input-validator-suite';
 import { Subject } from 'rxjs';
-import { ErrorMessages } from '../../../../model/constants/error-messages.enum';
+import { GlobalMessages } from '../../../../model/constants/global-messages.enum';
 import { createErrantSyncValidator } from './mocks/sync/create-errant-sync-validator';
 import { createValidSyncValidator } from './mocks/sync/create-valid-sync-validator';
 
@@ -75,7 +75,7 @@ describe('HybridSingleInputValidatorSuite', () => {
         messages: [
           {
             type : MessageType.ERROR,
-            text : ErrorMessages.SINGLE_INPUT_VALIDATION_ERROR
+            text : GlobalMessages.SINGLE_INPUT_VALIDATION_ERROR
           }
         ]
       }

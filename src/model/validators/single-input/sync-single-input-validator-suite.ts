@@ -1,6 +1,7 @@
 import { Validity } from '../../types/state/validity.enum';
 import { MessageType } from '../../types/state/messages/message-type.enum';
-import { ErrorMessages } from '../../constants/error-messages.enum';
+import { GlobalMessages } from '../../constants/global-messages.enum';
+import { logErrorInDevMode } from '../../util/log-error-in-dev-mode';
 import type { SingleInputValidatorSuite } from '../../types/validators/single-input/single-input-validator-suite.interface';
 import type { SyncValidator } from '../../types/validators/sync-validator.type';
 import type { ValidatorSuiteResult } from '../../types/validators/validator-suite-result.interface';
@@ -38,11 +39,11 @@ export class SyncSingleInputValidatorSuite<T>
         }
       }
     } catch (e) {
-      process.env.NODE_ENV === 'development' && console.error(e);
+      logErrorInDevMode(e);
       result.validity = Validity.ERROR;
       result.messages.push({
         type: MessageType.ERROR,
-        text: ErrorMessages.SINGLE_INPUT_VALIDATION_ERROR,
+        text: GlobalMessages.SINGLE_INPUT_VALIDATION_ERROR,
       });
     }
     return result;
