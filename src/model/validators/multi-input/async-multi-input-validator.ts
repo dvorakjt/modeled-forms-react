@@ -1,4 +1,4 @@
-import { ReplaySubject } from "rxjs";
+import { ReplaySubject, from } from "rxjs";
 import { AggregatedStateChanges } from "../../types/aggregators/aggregated-state-changes.interface";
 import { MultiFieldAggregator } from "../../types/aggregators/multi-field-aggregator.interface";
 import { FormElementMap } from "../../types/form-elements/form-element-map.type";
@@ -6,34 +6,43 @@ import { ManagedObservableFactory } from "../../types/subscriptions/managed-obse
 import { ManagedSubject } from "../../types/subscriptions/managed-subject.interface";
 import { OneTimeValueEmitter } from "../../types/subscriptions/one-time-value-emitter.interface";
 import { MultiInputValidator } from "../../types/validators/multi-input/multi-input-validator.interface";
-import { SyncValidator } from "../../types/validators/sync-validator.type";
+import { AsyncValidator } from "../../types/validators/async-validator.type";
 import { Validity } from "../../types/state/validity.enum";
 import { Message } from "../../types/state/messages/message.interface";
 import { MessageType } from "../../types/state/messages/message-type.enum";
 import { GlobalMessages } from "../../constants/global-messages.enum";
+import { ManagedSubscription } from "../../types/subscriptions/managed-subscription.interface";
 import { logErrorInDevMode } from "../../util/log-error-in-dev-mode";
 
-export class SyncMultiInputValidator<Fields extends FormElementMap> implements MultiInputValidator {
+export class AsyncMultiInputValidator<Fields extends FormElementMap> implements MultiInputValidator {
   //messages, calculatedValidity, and overallValidityChanges all go to different destinations
   readonly calculatedValidityChanges: ManagedSubject<Validity>; 
   readonly overallValidityChanges: ManagedSubject<Validity>;
   readonly messageChanges : ManagedSubject<Message | null>;
   readonly accessedFields : OneTimeValueEmitter<Set<string>>;
+  readonly #pendingMessage : string;
   readonly #multiFieldAggregator : MultiFieldAggregator<Fields>;
-  readonly #validator : SyncValidator<AggregatedStateChanges<Fields>>;
+  readonly #validator : AsyncValidator<AggregatedStateChanges<Fields>>;
+  readonly #managedObservableFactory : ManagedObservableFactory;
+  #validatorSubscription? : ManagedSubscription;
 
   constructor(
     managedObservableFactory : ManagedObservableFactory,
     multiFieldAggregator : MultiFieldAggregator<Fields>, 
-    validator : SyncValidator<AggregatedStateChanges<Fields>>
+    validator : AsyncValidator<AggregatedStateChanges<Fields>>,
+    pendingMessage : string
   ) {
     this.#validator = validator;
     this.#multiFieldAggregator = multiFieldAggregator;
+    this.#managedObservableFactory = managedObservableFactory;
+    this.#pendingMessage = pendingMessage;
     this.accessedFields = multiFieldAggregator.accessedFields;
-    this.calculatedValidityChanges = managedObservableFactory.createManagedSubject(new ReplaySubject<Validity>(1));
-    this.overallValidityChanges = managedObservableFactory.createManagedSubject(new ReplaySubject<Validity>(1));
-    this.messageChanges = managedObservableFactory.createManagedSubject(new ReplaySubject<Message | null>(1));
+    this.calculatedValidityChanges = this.#managedObservableFactory.createManagedSubject(new ReplaySubject<Validity>(1));
+    this.overallValidityChanges = this.#managedObservableFactory.createManagedSubject(new ReplaySubject<Validity>(1));
+    this.messageChanges = this.#managedObservableFactory.createManagedSubject(new ReplaySubject<Message | null>(1));
     this.#multiFieldAggregator.aggregateChanges.subscribe((aggregateChange : AggregatedStateChanges<Fields>) => {
+      //unsubscribe from currently running validator
+      this.#validatorSubscription && this.#validatorSubscription.unsubscribe();
       //if there are omitted fields, this validator is effectively not checked
       if(aggregateChange.hasOmittedFields) {
         this.calculatedValidityChanges.next(Validity.VALID_FINALIZABLE);
@@ -48,19 +57,37 @@ export class SyncMultiInputValidator<Fields extends FormElementMap> implements M
         this.overallValidityChanges.next(aggregateChange.overallValidity);
         this.messageChanges.next(null);
       } else {
-        //otherwise, run the validator, and return the result
+        this.calculatedValidityChanges.next(Validity.PENDING);
+        this.overallValidityChanges.next(Validity.PENDING);
+        this.messageChanges.next({
+          type : MessageType.PENDING,
+          text: this.#pendingMessage
+        });
         try {
-          const result = this.#validator(aggregateChange);
-          const validity = result.isValid ? Validity.VALID_FINALIZABLE : Validity.INVALID;
-          this.calculatedValidityChanges.next(validity);
-          this.overallValidityChanges.next(validity);
-          if(result.message) {
-            const message = {
-              type : result.isValid ? MessageType.VALID : MessageType.INVALID,
-              text : result.message
+          const promise = this.#validator(aggregateChange);
+          this.#validatorSubscription = this.#managedObservableFactory.createManagedObservable(from(promise)).subscribe({
+            next: (result) => {
+              const validity = result.isValid ? Validity.VALID_FINALIZABLE : Validity.INVALID;
+              this.calculatedValidityChanges.next(validity);
+              this.overallValidityChanges.next(validity);
+              if(result.message) {
+                const message = {
+                type : result.isValid ? MessageType.VALID : MessageType.INVALID,
+                text : result.message
+              }
+              this.messageChanges.next(message);
+              } else this.messageChanges.next(null);
+            },
+            error: (e) => {
+              logErrorInDevMode(e);
+              this.calculatedValidityChanges.next(Validity.ERROR);
+              this.overallValidityChanges.next(Validity.ERROR);
+              this.messageChanges.next({
+                type: MessageType.ERROR,
+                text: GlobalMessages.MULTI_INPUT_VALIDATION_ERROR
+              });
             }
-            this.messageChanges.next(message);
-          } else this.messageChanges.next(null);
+          });
         } catch (e) {
           logErrorInDevMode(e);
           this.calculatedValidityChanges.next(Validity.ERROR);

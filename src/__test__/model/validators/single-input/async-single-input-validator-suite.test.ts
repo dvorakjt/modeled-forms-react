@@ -8,7 +8,7 @@ import { MessageType } from '../../../../model/types/state/messages/message-type
 import { createTriggerableValidAsyncValidator } from './mocks/async/create-triggerable-valid-async-validator';
 import { ValidatorSuiteResult } from '../../../../model/types/validators/validator-suite-result.interface';
 import { createTriggerableInvalidAsyncValidator } from './mocks/async/create-triggerable-invalid-async-validator';
-import { ErrorMessages } from '../../../../model/constants/error-messages.enum';
+import { GlobalMessages } from '../../../../model/constants/global-messages.enum';
 import { createTriggerablePromiseRejectingAsyncValidator } from './mocks/async/create-triggerable-promise-rejecting-async-validator';
 import { createIntraPromiseErrorThrowingAsyncValidator } from './mocks/async/create-intra-promise-error-throwing-async-validator';
 import { createImmediateErrorThrowingAsyncValidator } from './mocks/async/create-immediate-error-throwing-async-validator';
@@ -150,7 +150,7 @@ describe('AsyncSingleInputValidatorSuite', () => {
           type: MessageType.VALID,
         },
         {
-          text: ErrorMessages.SINGLE_INPUT_VALIDATION_ERROR,
+          text: GlobalMessages.SINGLE_INPUT_VALIDATION_ERROR,
           type: MessageType.ERROR,
         },
       ],
@@ -192,7 +192,7 @@ describe('AsyncSingleInputValidatorSuite', () => {
           type: MessageType.VALID,
         },
         {
-          text: ErrorMessages.SINGLE_INPUT_VALIDATION_ERROR,
+          text: GlobalMessages.SINGLE_INPUT_VALIDATION_ERROR,
           type: MessageType.ERROR,
         },
       ],
@@ -228,7 +228,7 @@ describe('AsyncSingleInputValidatorSuite', () => {
       validity: Validity.ERROR,
       messages: [
         {
-          text: ErrorMessages.SINGLE_INPUT_VALIDATION_ERROR,
+          text: GlobalMessages.SINGLE_INPUT_VALIDATION_ERROR,
           type: MessageType.ERROR,
         },
       ],

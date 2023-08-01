@@ -1,6 +1,6 @@
 import { MessageType } from '../types/state/messages/message-type.enum';
 import { Validity } from '../types/state/validity.enum';
-import { ErrorMessages } from '../constants/error-messages.enum';
+import { GlobalMessages } from '../constants/global-messages.enum';
 import type { Adapter } from '../types/adapters/adapter.interface';
 import type { Field } from '../types/fields/field.interface';
 import type { DualFieldSetStateArg } from '../types/state/dual-field-set-state-arg.interface';
@@ -9,7 +9,7 @@ import type { FieldState } from '../types/state/field-state.interface';
 
 export class ValueControlledField implements Field {
   protected readonly field: Field;
-  protected readonly adapter: Adapter<DualFieldSetValueArg | string>;
+  protected readonly adapter: Adapter<DualFieldSetValueArg | string | undefined>;
 
   get stateChanges() {
     return this.field.stateChanges;
@@ -27,11 +27,13 @@ export class ValueControlledField implements Field {
     return this.field.omit;
   }
 
-  constructor(field: Field, adapter: Adapter<DualFieldSetValueArg | string>) {
+  constructor(field: Field, adapter: Adapter<DualFieldSetValueArg | string | undefined>) {
     this.field = field;
     this.adapter = adapter;
     this.adapter.stream.subscribe({
-      next: (next: string | DualFieldSetValueArg) => this.setValue(next),
+      next: (next: string | DualFieldSetValueArg | undefined) => {
+        if(next) this.setValue(next)
+      },
       error: () => {
         this.setState({
           value: '',
@@ -39,7 +41,7 @@ export class ValueControlledField implements Field {
           messages: [
             {
               type: MessageType.ERROR,
-              text: ErrorMessages.FIELD_ADAPTER_ERROR,
+              text: GlobalMessages.FIELD_ADAPTER_ERROR,
             },
           ],
         });

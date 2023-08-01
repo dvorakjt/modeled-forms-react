@@ -4,18 +4,26 @@ import type { NestedForm } from '../types/forms/nested-form.interface';
 import type { ManagedObservableFactory } from '../types/subscriptions/managed-observable-factory.interface';
 import type { ManagedSubject } from '../types/subscriptions/managed-subject.interface';
 import type { State } from '../types/state/state.interface';
-import type { FormStateManager } from '../types/forms/form-state-manager.interface';
+import { FinalizerManager } from '../types/finalizers/finalizer-manager.interface';
+import { FormElementMap } from '../types/form-elements/form-element-map.type';
+import { MultiFieldValidatorMessagesAggregator } from '../types/aggregators/multi-field-validator-messages-aggregator';
 
 export class NestedFormImpl implements NestedForm {
   readonly stateChanges: ManagedSubject<State<any>>;
-  readonly #formStateManager: FormStateManager;
+  readonly userFacingFields : FormElementMap;
+  readonly #finalizerManager : FinalizerManager;
+  readonly #multiFieldValidatorMessagesAggregator : MultiFieldValidatorMessagesAggregator;
   readonly #managedObservableFactory: ManagedObservableFactory;
   readonly #omitByDefault;
   #omit;
 
   get state() {
     return copyObject({
-      ...this.#formStateManager.state,
+      ...this.#finalizerManager.state,
+      messages: [
+        ...this.#multiFieldValidatorMessagesAggregator.messages,
+        ...this.#finalizerManager.state.messages
+      ],
       omit: this.#omit,
     });
   }
@@ -30,16 +38,24 @@ export class NestedFormImpl implements NestedForm {
   }
 
   constructor(
-    formStateManager: FormStateManager,
+    userFacingFields : FormElementMap,
+    finalizerManager : FinalizerManager,
+    multiFieldValidatorMessagesAggregator : MultiFieldValidatorMessagesAggregator,
     managedObservableFactory: ManagedObservableFactory,
     omitByDefault: boolean,
   ) {
-    this.#formStateManager = formStateManager;
+    this.userFacingFields = userFacingFields;
+    this.#finalizerManager = finalizerManager;
+    this.#multiFieldValidatorMessagesAggregator = multiFieldValidatorMessagesAggregator;
     this.#managedObservableFactory = managedObservableFactory;
     this.#omitByDefault = omitByDefault;
     this.#omit = this.#omitByDefault;
 
-    this.#formStateManager.stateChanges.subscribe(() => {
+    this.#multiFieldValidatorMessagesAggregator.messagesChanges.subscribe(() => {
+      this.stateChanges?.next(this.state);
+    });
+
+    this.#finalizerManager.stateChanges.subscribe(() => {
       if (this.stateChanges) this.stateChanges?.next(this.state);
     });
 
@@ -50,6 +66,8 @@ export class NestedFormImpl implements NestedForm {
 
   reset() {
     this.#omit = this.#omitByDefault;
-    this.#formStateManager.reset();
+    for(const fieldName in this.userFacingFields) {
+      this.userFacingFields[fieldName].reset();
+    }
   }
 }

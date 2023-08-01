@@ -4,15 +4,19 @@ import type { ManagedObservableFactory } from '../types/subscriptions/managed-ob
 import type { ManagedSubject } from '../types/subscriptions/managed-subject.interface';
 import type { State } from '../types/state/state.interface';
 import type { RootForm } from '../types/forms/root-form.interface';
-import type { FormStateManager } from '../types/forms/form-state-manager.interface';
 import type { SubmissionManager } from '../types/submission/submission-manager.interface';
 import type { Message } from '../types/state/messages/message.interface';
 import type { SubscriptionManager } from '../types/subscriptions/subscription-manager.interface';
+import { FinalizerManager } from '../types/finalizers/finalizer-manager.interface';
+import { FormElementMap } from '../types/form-elements/form-element-map.type';
+import { MultiFieldValidatorMessagesAggregator } from '../types/aggregators/multi-field-validator-messages-aggregator';
 
 export class RootFormImpl implements RootForm {
   readonly stateChanges: ManagedSubject<State<any>>;
   readonly submissionChanges: ManagedSubject<boolean>;
-  readonly #formStateManager: FormStateManager;
+  readonly userFacingFields : FormElementMap;
+  readonly #finalizerManager : FinalizerManager;
+  readonly #multiFieldValidatorMessagesAggregator : MultiFieldValidatorMessagesAggregator;
   readonly #managedObservableFactory: ManagedObservableFactory;
   readonly #subscriptionManager: SubscriptionManager;
   readonly #submissionManager: SubmissionManager;
@@ -21,7 +25,7 @@ export class RootFormImpl implements RootForm {
   get state() {
     const messages = this.aggregateMessages();
     return copyObject({
-      ...this.#formStateManager.state,
+      ...this.#finalizerManager.state,
       messages,
     });
   }
@@ -37,17 +41,25 @@ export class RootFormImpl implements RootForm {
   }
 
   constructor(
-    formStateManager: FormStateManager,
+    userFacingFields : FormElementMap,
+    finalizerManager : FinalizerManager,
+    multiFieldValidatorMessagesAggregator : MultiFieldValidatorMessagesAggregator,
     submissionManager: SubmissionManager,
     managedObservableFactory: ManagedObservableFactory,
     subscriptionManager: SubscriptionManager,
   ) {
-    this.#formStateManager = formStateManager;
+    this.userFacingFields = userFacingFields;
+    this.#finalizerManager = finalizerManager;
+    this.#multiFieldValidatorMessagesAggregator = multiFieldValidatorMessagesAggregator;
     this.#submissionManager = submissionManager;
     this.#managedObservableFactory = managedObservableFactory;
     this.#subscriptionManager = subscriptionManager;
 
-    this.#formStateManager.stateChanges.subscribe(() => {
+    this.#multiFieldValidatorMessagesAggregator.messagesChanges.subscribe(() => {
+      this.stateChanges?.next(this.state);
+    });
+
+    this.#finalizerManager.stateChanges.subscribe(() => {
       this.#submissionManager.clearMessage();
       this.stateChanges?.next(this.state);
     });
@@ -73,7 +85,9 @@ export class RootFormImpl implements RootForm {
   reset() {
     this.hasSubmitted = false;
     this.#submissionManager.clearMessage();
-    this.#formStateManager.reset();
+    for(const fieldName in this.userFacingFields) {
+      this.userFacingFields[fieldName].reset();
+    }
   }
 
   unsubscribeAll() {
@@ -81,7 +95,10 @@ export class RootFormImpl implements RootForm {
   }
 
   private aggregateMessages(): Array<Message> {
-    const messages = [...this.#formStateManager.state.messages];
+    const messages = [
+      ...this.#multiFieldValidatorMessagesAggregator.messages,
+      ...this.#finalizerManager.state.messages
+    ];
     if (this.#submissionManager.message)
       messages.push(this.#submissionManager.message);
     return messages;

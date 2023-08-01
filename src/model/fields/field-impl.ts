@@ -82,6 +82,7 @@ export class FieldImpl implements Field {
   private handleValidityObservable(
     observable: ManagedObservable<ValidatorSuiteResult<string>>,
   ) {
+    this.#validatorSuiteSubscription?.unsubscribe();
     this.#validatorSuiteSubscription = observable.subscribe(result => {
       this.setState({
         ...result,

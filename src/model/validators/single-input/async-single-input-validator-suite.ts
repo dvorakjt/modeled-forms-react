@@ -1,7 +1,7 @@
 import { Observable, Subscriber, from } from 'rxjs';
 import { Validity } from '../../types/state/validity.enum';
 import { MessageType } from '../../types/state/messages/message-type.enum';
-import { ErrorMessages } from '../../constants/error-messages.enum';
+import { GlobalMessages } from '../../constants/global-messages.enum';
 import type { ManagedObservableFactory } from '../../types/subscriptions/managed-observable-factory.interface';
 import type { ManagedSubscriptionList } from '../../types/subscriptions/managed-subscription-list.interface';
 import type { AsyncValidator } from '../../types/validators/async-validator.type';
@@ -9,6 +9,7 @@ import type { SingleInputValidatorSuite } from '../../types/validators/single-in
 import type { ValidatorSuiteResult } from '../../types/validators/validator-suite-result.interface';
 import type { ValidatorSuiteResultsObject } from '../../types/validators/validator-suite-results-object.interface';
 import type { ValidatorResult } from '../../types/validators/validator-result.interface';
+import { logErrorInDevMode } from '../../util/log-error-in-dev-mode';
 
 export class AsyncSingleInputValidatorSuite<T>
   implements SingleInputValidatorSuite<T>
@@ -130,11 +131,11 @@ export class AsyncSingleInputValidatorSuite<T>
   ) {
     const errorMethod = (e: any) => {
       this.#validatorSubscriptionList.unsubscribeAll();
-      process.env.NODE_ENV === 'development' && console.error(e);
+      logErrorInDevMode(e);
       observableResult.validity = Validity.ERROR;
       observableResult.messages.push({
         type: MessageType.ERROR,
-        text: ErrorMessages.SINGLE_INPUT_VALIDATION_ERROR,
+        text: GlobalMessages.SINGLE_INPUT_VALIDATION_ERROR,
       });
       outerSubscriber.next(observableResult);
       outerSubscriber.complete();
