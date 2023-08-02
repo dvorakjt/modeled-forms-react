@@ -10,17 +10,17 @@ import type { SubscriptionManager } from '../types/subscriptions/subscription-ma
 import { FinalizerManager } from '../types/finalizers/finalizer-manager.interface';
 import { FormElementMap } from '../types/form-elements/form-element-map.type';
 import { MultiFieldValidatorMessagesAggregator } from '../types/aggregators/multi-field-validator-messages-aggregator';
+import { SubmissionState } from '../types/submission/submission-state.interface';
 
 export class RootFormImpl implements RootForm {
   readonly stateChanges: ManagedSubject<State<any>>;
-  readonly submissionChanges: ManagedSubject<boolean>;
+  readonly submissionStateChanges: ManagedSubject<SubmissionState>;
   readonly userFacingFields : FormElementMap;
   readonly #finalizerManager : FinalizerManager;
   readonly #multiFieldValidatorMessagesAggregator : MultiFieldValidatorMessagesAggregator;
   readonly #managedObservableFactory: ManagedObservableFactory;
   readonly #subscriptionManager: SubscriptionManager;
   readonly #submissionManager: SubmissionManager;
-  #hasSubmitted: boolean = false;
 
   get state() {
     const messages = this.aggregateMessages();
@@ -30,14 +30,10 @@ export class RootFormImpl implements RootForm {
     });
   }
 
-  set hasSubmitted(hasSubmitted: boolean) {
-    const changeDetected = hasSubmitted !== this.#hasSubmitted;
-    this.#hasSubmitted = hasSubmitted;
-    if (changeDetected) this.submissionChanges.next(this.hasSubmitted);
-  }
-
-  get hasSubmitted() {
-    return this.#hasSubmitted;
+  get submissionState() {
+    return {
+      submissionAttempted : this.#submissionManager.submissionState.submissionAttempted
+    }
   }
 
   constructor(
@@ -64,13 +60,12 @@ export class RootFormImpl implements RootForm {
       this.stateChanges?.next(this.state);
     });
 
-    this.submissionChanges =
-      this.#managedObservableFactory.createManagedSubject(
-        new BehaviorSubject(this.hasSubmitted),
-      );
-    this.#submissionManager.submissionChanges.subscribe(() => {
-      this.stateChanges?.next(this.state);
+    this.#submissionManager.submissionStateChanges.subscribe(() => {
+      if(this.stateChanges) this.stateChanges.next(this.state);
+      if(this.submissionStateChanges) this.submissionStateChanges.next(this.submissionState);
     });
+
+    this.submissionStateChanges = this.#managedObservableFactory.createManagedSubject(new BehaviorSubject(this.submissionState));
 
     this.stateChanges = this.#managedObservableFactory.createManagedSubject(
       new BehaviorSubject(this.state),
@@ -78,13 +73,11 @@ export class RootFormImpl implements RootForm {
   }
 
   async submit() {
-    this.hasSubmitted = true;
     return this.#submissionManager.submit(this.state);
   }
 
   reset() {
-    this.hasSubmitted = false;
-    this.#submissionManager.clearMessage();
+    this.#submissionManager.reset();
     for(const fieldName in this.userFacingFields) {
       this.userFacingFields[fieldName].reset();
     }
@@ -99,8 +92,8 @@ export class RootFormImpl implements RootForm {
       ...this.#multiFieldValidatorMessagesAggregator.messages,
       ...this.#finalizerManager.state.messages
     ];
-    if (this.#submissionManager.message)
-      messages.push(this.#submissionManager.message);
+    if (this.#submissionManager.submissionState.message)
+      messages.push(this.#submissionManager.submissionState.message);
     return messages;
   }
 }
