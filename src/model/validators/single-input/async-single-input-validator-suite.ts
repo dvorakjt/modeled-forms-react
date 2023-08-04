@@ -84,11 +84,7 @@ export class AsyncSingleInputValidatorSuite<T>
       error: this.createValidatorObserverErrorMethod(
         observableResult,
         outerSubscriber
-      ),
-      complete: this.createValidatorObserverCompleteMethod(
-        observableResult,
-        outerSubscriber
-      ),
+      )
     };
   }
 
@@ -118,6 +114,10 @@ export class AsyncSingleInputValidatorSuite<T>
           });
         }
         this.unsubscribeById(validatorId);
+        if (this.allValidatorsCompleted()) {
+          outerSubscriber.next(observableResult);
+          outerSubscriber.complete();
+        }
       }
     };
     return nextMethod;
@@ -139,19 +139,6 @@ export class AsyncSingleInputValidatorSuite<T>
       outerSubscriber.complete();
     };
     return errorMethod;
-  }
-
-  private createValidatorObserverCompleteMethod(
-    observableResult: ValidatorSuiteResult<T>,
-    outerSubscriber: Subscriber<ValidatorSuiteResult<T>>,
-  ) {
-    const completeMethod = () => {
-      if (this.allValidatorsCompleted()) {
-        outerSubscriber.next(observableResult);
-        outerSubscriber.complete();
-      }
-    };
-    return completeMethod;
   }
 
   private unsubscribeAll() {
