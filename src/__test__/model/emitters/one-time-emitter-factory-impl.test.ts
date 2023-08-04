@@ -1,8 +1,8 @@
 import { describe, test, expect, beforeEach } from 'vitest';
-import { OneTimeEmitterFactoryImpl } from '../../../model/subscriptions/one-time-event-emitter-factory-impl';
-import { OneTimeEventEmitterImpl } from '../../../model/subscriptions/one-time-event-emitter-impl';
-import { OneTimeValueEmitterImpl } from '../../../model/subscriptions/one-time-value-emitter-impl';
-import type { OneTimeEmitterFactory } from '../../../model/types/subscriptions/one-time-emitter-factory.interface';
+import { OneTimeEmitterFactoryImpl } from '../../../model/emitters/one-time-event-emitter-factory-impl';
+import { OneTimeEventEmitterImpl } from '../../../model/emitters/one-time-event-emitter-impl';
+import { OneTimeValueEmitterImpl } from '../../../model/emitters/one-time-value-emitter-impl';
+import type { OneTimeEmitterFactory } from '../../../model/types/emitters/one-time-emitter-factory.interface';
 
 describe('OneTimeEmitterFactoryImpl', () => {
   let OneTimeEmitterFactory: OneTimeEmitterFactory;

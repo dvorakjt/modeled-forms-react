@@ -1,13 +1,12 @@
-import { BehaviorSubject } from 'rxjs';
 import type { AggregatedStateChanges } from '../types/aggregators/aggregated-state-changes.interface';
 import type { MultiFieldAggregator } from '../types/aggregators/multi-field-aggregator.interface';
 import type { FormElementMap } from '../types/form-elements/form-element-map.type';
 import type { FieldStateReducer } from '../types/reducers/field-state-reducer.interface';
-import type { ManagedObservableFactory } from '../types/subscriptions/managed-observable-factory.interface';
 import type { AnyState } from '../types/state/any-state.type';
-import type { OnInitialSubscriptionHandlingBehaviorSubject } from '../types/subscriptions/on-initial-subscription-handling-behavior-subject.interface';
+import type { OnInitialSubscriptionHandlingBehaviorSubject } from '../types/subjects/on-initial-subscription-handling-behavior-subject.interface';
 import type { AggregatedStateChangesProxyProducer } from '../types/proxies/aggregated-state-changes-proxy-producer.interface';
-import type { OneTimeValueEmitter } from '../types/subscriptions/one-time-value-emitter.interface';
+import type { OneTimeValueEmitter } from '../types/emitters/one-time-value-emitter.interface';
+import type { SubjectFactory } from '../types/subjects/subject-factory.interface';
 
 export class MultiFieldAggregatorImpl<Fields extends FormElementMap>
   implements MultiFieldAggregator<Fields>
@@ -36,19 +35,16 @@ export class MultiFieldAggregatorImpl<Fields extends FormElementMap>
     fields: Fields,
     aggregatedStateChangesProxyProducer: AggregatedStateChangesProxyProducer,
     fieldStateReducer: FieldStateReducer,
-    managedObservableFactory: ManagedObservableFactory,
-    accessedFields : OneTimeValueEmitter<Set<string>>
+    accessedFields : OneTimeValueEmitter<Set<string>>,
+    subjectFactory : SubjectFactory
   ) {
     this.#fields = fields;
     this.#aggregatedStateChangesProxyProducer =
       aggregatedStateChangesProxyProducer;
     this.#fieldStateReducer = fieldStateReducer;
-    this.aggregateChanges =
-      managedObservableFactory.createOnInitialSubscriptionHandlingBehaviorSubject(
-        new BehaviorSubject(
-          this.#aggregatedStateChangesProxyProducer.getProxy(this.#fields),
-        ),
-      );
+    this.aggregateChanges = subjectFactory.createOnInitialSubscriptionHandlingBehaviorSubject(
+      this.#aggregatedStateChangesProxyProducer.getProxy(this.#fields),
+    );
     this.accessedFields = accessedFields;
     this.aggregateChanges.onInitialSubscription(this.subscribeToAccessedFields);
   }

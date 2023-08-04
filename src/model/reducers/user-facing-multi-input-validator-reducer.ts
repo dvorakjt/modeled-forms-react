@@ -1,13 +1,11 @@
-import { BehaviorSubject } from "rxjs";
+import { BehaviorSubject, type Subject } from "rxjs";
 import { MultiInputValidityReducer } from "../types/reducers/multi-input-validator-reducer.interface";
 import { Validity } from "../types/state/validity.enum";
-import { ManagedObservableFactory } from "../types/subscriptions/managed-observable-factory.interface";
-import { ManagedSubject } from "../types/subscriptions/managed-subject.interface";
 import { MultiInputValidator } from "../types/validators/multi-input/multi-input-validator.interface";
 import { ValidityReducer } from "../types/reducers/validity-reducer.interface";
 
 export class UserFacingMultiInputValidatorReducer implements MultiInputValidityReducer {
-  validityChanges: ManagedSubject<Validity>;
+  validityChanges: Subject<Validity>;
   #validityReducer : ValidityReducer;
   #multiInputValidators : Array<MultiInputValidator> = [];
 
@@ -15,9 +13,9 @@ export class UserFacingMultiInputValidatorReducer implements MultiInputValidityR
     return this.#validityReducer.validity;
   }
   
-  constructor(managedObservableFactory : ManagedObservableFactory, validityReducer : ValidityReducer) {
+  constructor(validityReducer : ValidityReducer) {
     this.#validityReducer = validityReducer;
-    this.validityChanges = managedObservableFactory.createManagedSubject(new BehaviorSubject<Validity>(this.#validityReducer.validity));
+    this.validityChanges = new BehaviorSubject<Validity>(this.#validityReducer.validity);
   }
 
   addValidator(multiFieldValidator: MultiInputValidator): void {

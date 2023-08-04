@@ -1,16 +1,14 @@
-import { BehaviorSubject } from 'rxjs';
-import type { ManagedSubject } from '../types/subscriptions/managed-subject.interface';
+import { BehaviorSubject, type Subject } from 'rxjs';
 import type { DualField } from '../types/fields/dual-field.interface';
-import type { DualFieldState } from '../types/state/dual-field-state.interface';
-import type { ManagedObservableFactory } from '../types/subscriptions/managed-observable-factory.interface';
 import type { DualFieldSetValueArg } from '../types/state/dual-field-set-value-arg.interface';
 import type { DualFieldSetStateArg } from '../types/state/dual-field-set-state-arg.interface';
 import type { Field } from '../types/fields/field.interface';
+import type { FieldState } from '../types/state/field-state.interface';
 
 export class DualFieldImpl implements DualField {
   readonly primaryField: Field;
   readonly secondaryField: Field;
-  readonly stateChanges: ManagedSubject<DualFieldState>;
+  readonly stateChanges: Subject<FieldState>;
   #useSecondaryField: boolean = false;
   #omit: boolean;
   #omitByDefault: boolean;
@@ -20,7 +18,7 @@ export class DualFieldImpl implements DualField {
       !this.#useSecondaryField
         ? this.primaryField.state
         : this.secondaryField.state
-    ) as DualFieldState;
+    )
     state.useSecondaryField = this.#useSecondaryField;
     state.omit = this.#omit;
     return state;
@@ -48,7 +46,6 @@ export class DualFieldImpl implements DualField {
   constructor(
     primaryField: Field,
     secondaryField: Field,
-    managedObservableFactory: ManagedObservableFactory,
     omitByDefault: boolean,
   ) {
     this.primaryField = primaryField;
@@ -61,9 +58,7 @@ export class DualFieldImpl implements DualField {
     this.secondaryField.stateChanges.subscribe(() => {
       if (this.#useSecondaryField) this.stateChanges?.next(this.state);
     });
-    this.stateChanges = managedObservableFactory.createManagedSubject(
-      new BehaviorSubject(this.state),
-    );
+    this.stateChanges = new BehaviorSubject(this.state);
   }
 
   setValue(valueObj: DualFieldSetValueArg) {

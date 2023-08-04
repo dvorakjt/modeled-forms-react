@@ -1,6 +1,6 @@
 import { config } from '../../model.config';
-import type { SyncValidator } from "../../types/validators/single-input/sync-validator.type";
-import type { ValidatorResult } from "../../types/validators/single-input/validator-result.interface";
+import type { SyncValidator } from '../../types/validators/sync-validator.type';
+import type { ValidatorResult } from '../../types/validators/validator-result.interface';
 
 export function required(errorMessage : string, successMessage? : string) : SyncValidator<string> {
   return (value : string) => {

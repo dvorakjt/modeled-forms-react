@@ -1,12 +1,10 @@
-import { BehaviorSubject } from "rxjs";
+import { BehaviorSubject, type Subject } from "rxjs";
 import { FinalizerManager } from "../types/finalizers/finalizer-manager.interface";
 import { FinalizerMap } from "../types/finalizers/finalizer-map.type";
 import { FinalizerValidityTranslator } from "../types/finalizers/finalizer-validity-to-validity-translator.interface";
 import { FormValue } from "../types/forms/form-value.type";
 import { FinalizerValidityReducer } from "../types/reducers/finalizer-validity-reducer.interface";
 import { State } from "../types/state/state.interface";
-import { ManagedObservableFactory } from "../types/subscriptions/managed-observable-factory.interface";
-import { ManagedSubject } from "../types/subscriptions/managed-subject.interface";
 import { copyObject } from "../util/copy-object";
 import { Message } from "../types/state/messages/message.interface";
 import { FinalizerValidity } from "../types/state/finalizer-validity.enum";
@@ -14,7 +12,7 @@ import { MessageType } from "../types/state/messages/message-type.enum";
 import { GlobalMessages } from "../constants/global-messages.enum";
 
 export class FinalizerManagerImpl implements FinalizerManager {
-  stateChanges: ManagedSubject<State<any>>;
+  stateChanges: Subject<State<any>>;
   #value : FormValue = {};
   #finalizerMap : FinalizerMap;
   #finalizerValidityReducer : FinalizerValidityReducer;
@@ -31,8 +29,7 @@ export class FinalizerManagerImpl implements FinalizerManager {
   constructor(
     finalizerMap : FinalizerMap, 
     finalizerValidityReducer : FinalizerValidityReducer, 
-    finalizerValidityTranslator : FinalizerValidityTranslator,
-    managedObservableFactory : ManagedObservableFactory
+    finalizerValidityTranslator : FinalizerValidityTranslator
   ) {
     this.#finalizerMap = finalizerMap;
     this.#finalizerValidityReducer = finalizerValidityReducer;
@@ -46,7 +43,7 @@ export class FinalizerManagerImpl implements FinalizerManager {
         if(this.stateChanges) this.stateChanges.next(this.state); 
       });
     }
-    this.stateChanges = managedObservableFactory.createManagedSubject(new BehaviorSubject(this.state));
+    this.stateChanges = new BehaviorSubject(this.state);
   }
 
   private getValidity() {

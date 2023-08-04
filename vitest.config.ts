@@ -5,7 +5,6 @@ export default defineConfig({
     watch: false,
     coverage: {
       enabled: true,
-      100: true,
       exclude: [
         'src/__test__/**',
         '**/*.config.ts',

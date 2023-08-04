@@ -2,7 +2,7 @@ import type { FieldStateReducer } from '../types/reducers/field-state-reducer.in
 import type { FieldState } from '../types/state/field-state.interface';
 import { ValidityReducer } from '../types/reducers/validity-reducer.interface';
 
-export class FieldValidityReducerImpl implements FieldStateReducer {
+export class FieldStateReducerImpl implements FieldStateReducer {
   #validityReducer : ValidityReducer;
   #omittedFields = new Set<string>();
 

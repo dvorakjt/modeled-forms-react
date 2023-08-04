@@ -1,10 +1,8 @@
-import { ReplaySubject } from "rxjs";
+import { ReplaySubject, Subject } from "rxjs";
 import { AggregatedStateChanges } from "../../types/aggregators/aggregated-state-changes.interface";
 import { MultiFieldAggregator } from "../../types/aggregators/multi-field-aggregator.interface";
 import { FormElementMap } from "../../types/form-elements/form-element-map.type";
-import { ManagedObservableFactory } from "../../types/subscriptions/managed-observable-factory.interface";
-import { ManagedSubject } from "../../types/subscriptions/managed-subject.interface";
-import { OneTimeValueEmitter } from "../../types/subscriptions/one-time-value-emitter.interface";
+import { OneTimeValueEmitter } from "../../types/emitters/one-time-value-emitter.interface";
 import { MultiInputValidator } from "../../types/validators/multi-input/multi-input-validator.interface";
 import { SyncValidator } from "../../types/validators/sync-validator.type";
 import { Validity } from "../../types/state/validity.enum";
@@ -15,24 +13,23 @@ import { logErrorInDevMode } from "../../util/log-error-in-dev-mode";
 
 export class SyncMultiInputValidator<Fields extends FormElementMap> implements MultiInputValidator {
   //messages, calculatedValidity, and overallValidityChanges all go to different destinations
-  readonly calculatedValidityChanges: ManagedSubject<Validity>; 
-  readonly overallValidityChanges: ManagedSubject<Validity>;
-  readonly messageChanges : ManagedSubject<Message | null>;
+  readonly calculatedValidityChanges: Subject<Validity>;
+  readonly overallValidityChanges: Subject<Validity>;
+  readonly messageChanges : Subject<Message | null>;
   readonly accessedFields : OneTimeValueEmitter<Set<string>>;
   readonly #multiFieldAggregator : MultiFieldAggregator<Fields>;
   readonly #validator : SyncValidator<AggregatedStateChanges<Fields>>;
 
   constructor(
-    managedObservableFactory : ManagedObservableFactory,
     multiFieldAggregator : MultiFieldAggregator<Fields>, 
     validator : SyncValidator<AggregatedStateChanges<Fields>>
   ) {
     this.#validator = validator;
     this.#multiFieldAggregator = multiFieldAggregator;
     this.accessedFields = multiFieldAggregator.accessedFields;
-    this.calculatedValidityChanges = managedObservableFactory.createManagedSubject(new ReplaySubject<Validity>(1));
-    this.overallValidityChanges = managedObservableFactory.createManagedSubject(new ReplaySubject<Validity>(1));
-    this.messageChanges = managedObservableFactory.createManagedSubject(new ReplaySubject<Message | null>(1));
+    this.calculatedValidityChanges = new ReplaySubject<Validity>(1);
+    this.overallValidityChanges = new ReplaySubject<Validity>(1);
+    this.messageChanges = new ReplaySubject<Message | null>(1);
     this.#multiFieldAggregator.aggregateChanges.subscribe((aggregateChange : AggregatedStateChanges<Fields>) => {
       //if there are omitted fields, this validator is effectively not checked
       if(aggregateChange.hasOmittedFields) {

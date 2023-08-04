@@ -1,6 +1,6 @@
-import type { ManagedSubject } from './managed-subject.interface';
+import type { BehaviorSubject } from 'rxjs';
 
 export interface OnInitialSubscriptionHandlingBehaviorSubject<T>
-  extends ManagedSubject<T> {
+  extends BehaviorSubject<T> {
   onInitialSubscription(cb: () => void): void;
 }
