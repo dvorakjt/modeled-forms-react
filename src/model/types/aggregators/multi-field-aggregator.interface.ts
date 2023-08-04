@@ -1,9 +1,9 @@
-import type { ManagedSubject } from '../subscriptions/managed-subject.interface';
+import type { Subject } from 'rxjs';
 import type { FormElementMap } from '../form-elements/form-element-map.type';
 import type { AggregatedStateChanges } from './aggregated-state-changes.interface';
-import { OneTimeValueEmitter } from '../subscriptions/one-time-value-emitter.interface';
+import { OneTimeValueEmitter } from '../emitters/one-time-value-emitter.interface';
 
 export interface MultiFieldAggregator<Fields extends FormElementMap> {
-  aggregateChanges: ManagedSubject<AggregatedStateChanges<Fields>>;
+  aggregateChanges: Subject<AggregatedStateChanges<Fields>>;
   accessedFields : OneTimeValueEmitter<Set<string>>;
 }

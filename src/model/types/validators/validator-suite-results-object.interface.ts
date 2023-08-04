@@ -1,7 +1,7 @@
-import { ManagedObservable } from '../../subscriptions/managed-observable';
+import type { Observable } from 'rxjs';
 import { ValidatorSuiteResult } from './validator-suite-result.interface';
 
 export interface ValidatorSuiteResultsObject<T> {
   syncResult: ValidatorSuiteResult<T>;
-  observable?: ManagedObservable<ValidatorSuiteResult<T>>;
+  observable?: Observable<ValidatorSuiteResult<T>>;
 }

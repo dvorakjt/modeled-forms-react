@@ -1,10 +1,6 @@
-import { BehaviorSubject } from 'rxjs';
+import { BehaviorSubject, Observable, type Subject, type Subscription } from 'rxjs';
 import { copyObject } from '../util/copy-object';
 import { MessageType } from '../types/state/messages/message-type.enum';
-import type { ManagedObservableFactory } from '../types/subscriptions/managed-observable-factory.interface';
-import type { ManagedObservable } from '../types/subscriptions/managed-observable.interface';
-import type { ManagedSubject } from '../types/subscriptions/managed-subject.interface';
-import type { ManagedSubscription } from '../types/subscriptions/managed-subscription.interface';
 import type { Field } from '../types/fields/field.interface';
 import type { FieldState } from '../types/state/field-state.interface';
 import type { SingleInputValidatorSuite } from '../types/validators/single-input/single-input-validator-suite.interface';
@@ -12,13 +8,12 @@ import type { ValidatorSuiteResult } from '../types/validators/validator-suite-r
 import type { Message } from '../types/state/messages/message.interface';
 
 export class FieldImpl implements Field {
-  readonly stateChanges: ManagedSubject<FieldState>;
+  readonly stateChanges: Subject<FieldState>;
   readonly #validatorSuite: SingleInputValidatorSuite<string>;
-  readonly #managedObservableFactory: ManagedObservableFactory;
   readonly #defaultValue: string;
   readonly #omitByDefault;
   #state: FieldState;
-  #validatorSuiteSubscription?: ManagedSubscription;
+  #validatorSuiteSubscription?: Subscription;
 
   get state() {
     return copyObject(this.#state);
@@ -38,21 +33,17 @@ export class FieldImpl implements Field {
   constructor(
     validatorSuite: SingleInputValidatorSuite<string>,
     defaultValue: string,
-    managedObservableFactory: ManagedObservableFactory,
     omitByDefault: boolean,
   ) {
     this.#validatorSuite = validatorSuite;
     this.#defaultValue = defaultValue;
     this.#omitByDefault = omitByDefault;
-    this.#managedObservableFactory = managedObservableFactory;
     const initialState = this.#validatorSuite.evaluate(this.#defaultValue);
     this.#state = {
       ...initialState.syncResult,
       omit: this.#omitByDefault,
     };
-    this.stateChanges = this.#managedObservableFactory.createManagedSubject(
-      new BehaviorSubject(this.state),
-    );
+    this.stateChanges = new BehaviorSubject(this.state);
     if (initialState.observable)
       this.handleValidityObservable(initialState.observable);
   }
@@ -80,7 +71,7 @@ export class FieldImpl implements Field {
   }
 
   private handleValidityObservable(
-    observable: ManagedObservable<ValidatorSuiteResult<string>>,
+    observable: Observable<ValidatorSuiteResult<string>>,
   ) {
     this.#validatorSuiteSubscription?.unsubscribe();
     this.#validatorSuiteSubscription = observable.subscribe(result => {

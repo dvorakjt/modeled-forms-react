@@ -1,13 +1,13 @@
 import { describe, test, expect } from 'vitest';
 import { getTestContainer, Services } from '../test-container';
-import { FieldValidityReducerImpl } from '../../../model/reducers/field-state-reducer-impl';
+import { FieldStateReducerImpl } from '../../../model/reducers/field-state-reducer-impl';
 import { Validity } from '../../../model/types/state/validity.enum';
 import { ValidityReducer } from '../../../model/types/reducers/validity-reducer.interface';
 
 describe('FieldStateReducerImpl', () => {
   const container = getTestContainer();
   const validityReducer = container.get<ValidityReducer>(Services.ValidityReducer);
-  const fieldValidityReducer = new FieldValidityReducerImpl(validityReducer);
+  const fieldValidityReducer = new FieldStateReducerImpl(validityReducer);
   fieldValidityReducer.updateTallies('a', createState(Validity.ERROR));
   fieldValidityReducer.updateTallies('b', createState(Validity.INVALID));
   fieldValidityReducer.updateTallies('c', createState(Validity.PENDING));

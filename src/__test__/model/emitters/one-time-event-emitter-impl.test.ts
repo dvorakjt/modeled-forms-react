@@ -1,6 +1,6 @@
 import { describe, beforeEach, test, vi, expect } from 'vitest';
-import { OneTimeEventEmitterImpl } from '../../../model/subscriptions/one-time-event-emitter-impl';
-import type { OneTimeEventEmitter } from '../../../model/types/subscriptions/one-time-event-emitter.interface';
+import { OneTimeEventEmitterImpl } from '../../../model/emitters/one-time-event-emitter-impl';
+import type { OneTimeEventEmitter } from '../../../model/types/emitters/one-time-event-emitter.interface';
 
 describe('OneTimeEventEmitterImpl', () => {
   let oneTimeEventEmitter: OneTimeEventEmitter;

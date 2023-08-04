@@ -1,17 +1,15 @@
-import { BehaviorSubject } from "rxjs";
+import { BehaviorSubject, type Subject } from "rxjs";
 import { State } from "../types/state/state.interface";
 import { SubmissionManager } from "../types/submission/submission-manager.interface";
 import { SubmissionState } from "../types/submission/submission-state.interface";
 import { SubmitFn } from "../types/submission/submit-fn.type";
-import { ManagedObservableFactory } from "../types/subscriptions/managed-observable-factory.interface";
-import { ManagedSubject } from "../types/subscriptions/managed-subject.interface";
 import { copyObject } from "../util/copy-object";
 import { Validity } from "../types/state/validity.enum";
 import { MessageType } from "../types/state/messages/message-type.enum";
 import { GlobalMessages } from "../constants/global-messages.enum";
 
 export class SubmissionManagerImpl implements SubmissionManager {
-  submissionStateChanges: ManagedSubject<SubmissionState>;
+  submissionStateChanges: Subject<SubmissionState>;
   #submitFn : SubmitFn;
 
   #submissionState: SubmissionState = {
@@ -28,8 +26,8 @@ export class SubmissionManagerImpl implements SubmissionManager {
   }
   
 
-  constructor(managedObservableFactory : ManagedObservableFactory, submitFn : SubmitFn) {
-    this.submissionStateChanges = managedObservableFactory.createManagedSubject(new BehaviorSubject(this.submissionState));
+  constructor(submitFn : SubmitFn) {
+    this.submissionStateChanges = new BehaviorSubject(this.submissionState);
     this.#submitFn = submitFn;
   }
 

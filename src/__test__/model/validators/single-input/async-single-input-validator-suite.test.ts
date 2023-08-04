@@ -1,6 +1,5 @@
-import { describe, test, beforeEach, expect, vi, afterEach } from 'vitest';
+import { describe, test, expect, vi } from 'vitest';
 import { Subject } from 'rxjs';
-import { getTestContainer, Services } from '../../test-container';
 import { AsyncSingleInputValidatorSuite } from '../../../../model/validators/single-input/async-single-input-validator-suite';
 import { Validity } from '../../../../model/types/state/validity.enum';
 import { untriggerableAsyncValidator } from './mocks/async/untriggerable-async-validator';
@@ -13,29 +12,8 @@ import { createTriggerablePromiseRejectingAsyncValidator } from './mocks/async/c
 import { createIntraPromiseErrorThrowingAsyncValidator } from './mocks/async/create-intra-promise-error-throwing-async-validator';
 import { createImmediateErrorThrowingAsyncValidator } from './mocks/async/create-immediate-error-throwing-async-validator';
 import { setNodeEnv } from '../../../util/set-node-env';
-import type { ManagedObservableFactory } from '../../../../model/types/subscriptions/managed-observable-factory.interface';
-import type { SubscriptionManager } from '../../../../model/types/subscriptions/subscription-manager.interface';
-import type { ManagedSubscriptionList } from '../../../../model/types/subscriptions/managed-subscription-list.interface';
 
 describe('AsyncSingleInputValidatorSuite', () => {
-  const container = getTestContainer();
-  const subscriptionManager = container.get<SubscriptionManager>(
-    Services.SubscriptionManager,
-  );
-  const managedObservableFactory = container.get<ManagedObservableFactory>(
-    Services.ManagedObservableFactory,
-  );
-  let managedSubscriptionList: ManagedSubscriptionList;
-
-  beforeEach(() => {
-    managedSubscriptionList = container.get<ManagedSubscriptionList>(
-      Services.ManagedSubscriptionList,
-    );
-  });
-
-  afterEach(() => {
-    subscriptionManager.unsubscribeAll();
-  });
 
   test('It immediately returns a result object when evaluate is called.', () => {
     const expectedValue = 'test';
@@ -52,9 +30,7 @@ describe('AsyncSingleInputValidatorSuite', () => {
     };
     const validatorSuite = new AsyncSingleInputValidatorSuite<string>(
       [untriggerableAsyncValidator],
-      expectedMessage,
-      managedObservableFactory,
-      managedSubscriptionList,
+      expectedMessage
     );
     expect(validatorSuite.evaluate(expectedValue).syncResult).toStrictEqual(
       expectedSyncResult,
@@ -78,9 +54,7 @@ describe('AsyncSingleInputValidatorSuite', () => {
         createTriggerableValidAsyncValidator(trigger2),
         createTriggerableValidAsyncValidator(trigger3),
       ],
-      'pending message',
-      managedObservableFactory,
-      managedSubscriptionList,
+      'pending message'
     );
     validatorSuite
       .evaluate(expectedValue)
@@ -112,7 +86,7 @@ describe('AsyncSingleInputValidatorSuite', () => {
     };
     const triggerValid = new Subject<void>();
     const triggerInvalid = new Subject<void>();
-    const validatorSuite = new AsyncSingleInputValidatorSuite(
+    const validatorSuite = new AsyncSingleInputValidatorSuite<string>(
       [
         createTriggerableValidAsyncValidator(triggerValid, expectedValidMessage),
         createTriggerableInvalidAsyncValidator(
@@ -124,9 +98,7 @@ describe('AsyncSingleInputValidatorSuite', () => {
           'unreachable message',
         ),
       ],
-      'pending message',
-      managedObservableFactory,
-      managedSubscriptionList,
+      'pending message'
     );
     validatorSuite
       .evaluate('test')
@@ -157,7 +129,7 @@ describe('AsyncSingleInputValidatorSuite', () => {
     };
     const triggerValid = new Subject<void>();
     const triggerPromiseRejection = new Subject<void>();
-    const validatorSuite = new AsyncSingleInputValidatorSuite(
+    const validatorSuite = new AsyncSingleInputValidatorSuite<string>(
       [
         createTriggerableValidAsyncValidator(triggerValid, expectedValidMessage),
         createTriggerablePromiseRejectingAsyncValidator(triggerPromiseRejection, expectedError),
@@ -167,8 +139,6 @@ describe('AsyncSingleInputValidatorSuite', () => {
         ),
       ],
       'pending message',
-      managedObservableFactory,
-      managedSubscriptionList,
     );
     validatorSuite
       .evaluate('test')
@@ -198,7 +168,7 @@ describe('AsyncSingleInputValidatorSuite', () => {
       ],
     };
     const triggerValid = new Subject<void>();
-    const validatorSuite = new AsyncSingleInputValidatorSuite(
+    const validatorSuite = new AsyncSingleInputValidatorSuite<string>(
       [
         createTriggerableValidAsyncValidator(triggerValid, expectedValidMessage),
         createIntraPromiseErrorThrowingAsyncValidator(expectedError),
@@ -208,8 +178,6 @@ describe('AsyncSingleInputValidatorSuite', () => {
         ),
       ],
       'pending message',
-      managedObservableFactory,
-      managedSubscriptionList,
     );
     triggerValid.complete();
     validatorSuite
@@ -234,15 +202,13 @@ describe('AsyncSingleInputValidatorSuite', () => {
       ],
     };
     const triggerAllValid = new Subject<void>();
-    const validatorSuite = new AsyncSingleInputValidatorSuite(
+    const validatorSuite = new AsyncSingleInputValidatorSuite<string>(
       [
         createTriggerableValidAsyncValidator(triggerAllValid, unreachableMessage),
         createTriggerableValidAsyncValidator(triggerAllValid, unreachableMessage),
         createImmediateErrorThrowingAsyncValidator(expectedError),
       ],
-      'pending message',
-      managedObservableFactory,
-      managedSubscriptionList,
+      'pending message'
     );
     triggerAllValid.complete();
     validatorSuite
@@ -262,9 +228,7 @@ describe('AsyncSingleInputValidatorSuite', () => {
       [
         createImmediateErrorThrowingAsyncValidator(expectedError),
       ],
-      'pending message',
-      managedObservableFactory,
-      managedSubscriptionList,
+      'pending message'
     );
     validatorSuite
       .evaluate('test')
@@ -273,27 +237,5 @@ describe('AsyncSingleInputValidatorSuite', () => {
         resetProcessDotEnv();
         vi.unstubAllGlobals();
       });
-  });
-
-
-  test('When evaluate() is called, and one result is invalid, remaining operations will be unsubscribed from.', () => {
-    const trigger = new Subject<void>();
-    const validatorSuite = new AsyncSingleInputValidatorSuite<string>(
-      [
-        createTriggerableInvalidAsyncValidator(trigger),
-        untriggerableAsyncValidator,
-        untriggerableAsyncValidator,
-      ],
-      'pending message',
-      managedObservableFactory,
-      managedSubscriptionList,
-    );
-    validatorSuite.evaluate('test').observable?.subscribe({
-      complete: () => {
-        expect(managedSubscriptionList.size).toBe(0);
-      },
-    });
-    expect(managedSubscriptionList.size).toBe(3);
-    trigger.complete();
   });
 });

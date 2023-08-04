@@ -1,18 +1,16 @@
+import { copyObject } from "../util/copy-object";
+import { BehaviorSubject, type Subject } from "rxjs";
 import type { MultiInputValidatedField } from "../types/fields/multi-input-validated-field.interface";
 import type { Field } from "../types/fields/field.interface";
-import { MultiInputValidityReducer } from "../types/reducers/multi-input-validator-reducer.interface";
-import { State } from "../types/state/state.interface";
-import { ManagedSubject } from "../types/subscriptions/managed-subject.interface";
-import { FieldState } from "../types/state/field-state.interface";
-import { copyObject } from "../util/copy-object";
-import { ManagedObservableFactory } from "../types/subscriptions/managed-observable-factory.interface";
-import { BehaviorSubject } from "rxjs";
-import { DualFieldSetStateArg } from "../types/state/dual-field-set-state-arg.interface";
-import { DualFieldSetValueArg } from "../types/state/dual-field-set-value-arg.interface";
-import { MultiInputValidator } from "../types/validators/multi-input/multi-input-validator.interface";
+import type { MultiInputValidityReducer } from "../types/reducers/multi-input-validator-reducer.interface";
+import type { State } from "../types/state/state.interface";
+import type { FieldState } from "../types/state/field-state.interface";
+import type { DualFieldSetStateArg } from "../types/state/dual-field-set-state-arg.interface";
+import type { DualFieldSetValueArg } from "../types/state/dual-field-set-value-arg.interface";
+import type { MultiInputValidator } from "../types/validators/multi-input/multi-input-validator.interface";
 
 export abstract class AbstractMultiInputValidatedField implements MultiInputValidatedField {
-  readonly stateChanges: ManagedSubject<State<string>>;
+  readonly stateChanges: Subject<State<string>>;
   protected readonly baseField : Field;
   readonly #multiInputValidatorReducer : MultiInputValidityReducer;
 
@@ -27,7 +25,7 @@ export abstract class AbstractMultiInputValidatedField implements MultiInputVali
     return this.baseField.omit;
   }
 
-  constructor(baseField : Field, multiInputValidityReducer : MultiInputValidityReducer, managedObservableFactory : ManagedObservableFactory) {
+  constructor(baseField : Field, multiInputValidityReducer : MultiInputValidityReducer) {
     this.baseField = baseField;
     this.#multiInputValidatorReducer = multiInputValidityReducer;
     this.baseField.stateChanges.subscribe(() => {
@@ -36,7 +34,7 @@ export abstract class AbstractMultiInputValidatedField implements MultiInputVali
     this.#multiInputValidatorReducer.validityChanges.subscribe(() => {
       if(this.stateChanges) this.stateChanges.next(this.state);
     });
-    this.stateChanges = managedObservableFactory.createManagedSubject(new BehaviorSubject(this.state));
+    this.stateChanges = new BehaviorSubject(this.state);
   }
 
   setState(state: FieldState | DualFieldSetStateArg): void {

@@ -1,4 +1,4 @@
-import { OneTimeEventEmitter } from '../types/subscriptions/one-time-event-emitter.interface';
+import { OneTimeEventEmitter } from '../types/emitters/one-time-event-emitter.interface';
 
 export class OneTimeEventEmitterImpl implements OneTimeEventEmitter {
   #eventOccurred: boolean = false;

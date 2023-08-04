@@ -1,5 +1,5 @@
-import type { ManagedSubject } from '../subscriptions/managed-subject.interface';
+import type { Subject } from "rxjs";
 
 export interface Adapter<T> {
-  stream: ManagedSubject<T>;
+  stream: Subject<T>;
 }

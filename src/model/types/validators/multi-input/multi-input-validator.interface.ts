@@ -1,11 +1,11 @@
-import { Message } from "../../state/messages/message.interface";
-import { Validity } from "../../state/validity.enum";
-import { ManagedSubject } from "../../subscriptions/managed-subject.interface";
-import { OneTimeValueEmitter } from "../../subscriptions/one-time-value-emitter.interface";
+import type { Subject } from "rxjs";
+import type { Message } from "../../state/messages/message.interface";
+import type { Validity } from "../../state/validity.enum";
+import type { OneTimeValueEmitter } from "../../emitters/one-time-value-emitter.interface";
 
 export interface MultiInputValidator {
-  calculatedValidityChanges : ManagedSubject<Validity>;
-  overallValidityChanges : ManagedSubject<Validity>;
-  messageChanges : ManagedSubject<Message>;
+  calculatedValidityChanges : Subject<Validity>;
+  overallValidityChanges : Subject<Validity>;
+  messageChanges : Subject<Message | null>;
   accessedFields : OneTimeValueEmitter<Set<string>>;
 }

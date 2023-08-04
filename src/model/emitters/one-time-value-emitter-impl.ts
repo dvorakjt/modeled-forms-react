@@ -1,4 +1,4 @@
-import type { OneTimeValueEmitter } from "../types/subscriptions/one-time-value-emitter.interface";
+import type { OneTimeValueEmitter } from "../types/emitters/one-time-value-emitter.interface";
 
 export class OneTimeValueEmitterImpl<T> implements OneTimeValueEmitter<T> {
   #value? : T;
