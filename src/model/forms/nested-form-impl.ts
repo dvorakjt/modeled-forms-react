@@ -4,13 +4,13 @@ import type { NestedForm } from '../types/forms/nested-form.interface';
 import type { State } from '../types/state/state.interface';
 import type { FinalizerManager } from '../types/finalizers/finalizer-manager.interface';
 import type { FormElementMap } from '../types/form-elements/form-element-map.type';
-import type { MultiFieldValidatorMessagesAggregator } from '../types/aggregators/multi-field-validator-messages-aggregator.interface';
+import type { MultiInputValidatorMessagesAggregator } from '../types/aggregators/multi-input-validator-messages-aggregator.interface';
 
 export class NestedFormImpl implements NestedForm {
   readonly stateChanges: Subject<State<any>>;
   readonly userFacingFields : FormElementMap;
   readonly #finalizerManager : FinalizerManager;
-  readonly #multiFieldValidatorMessagesAggregator : MultiFieldValidatorMessagesAggregator;
+  readonly #multiFieldValidatorMessagesAggregator : MultiInputValidatorMessagesAggregator;
   readonly #omitByDefault;
   #omit;
 
@@ -37,7 +37,7 @@ export class NestedFormImpl implements NestedForm {
   constructor(
     userFacingFields : FormElementMap,
     finalizerManager : FinalizerManager,
-    multiFieldValidatorMessagesAggregator : MultiFieldValidatorMessagesAggregator,
+    multiFieldValidatorMessagesAggregator : MultiInputValidatorMessagesAggregator,
     omitByDefault: boolean,
   ) {
     this.userFacingFields = userFacingFields;

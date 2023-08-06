@@ -1,14 +1,14 @@
 import { describe, test, expect, beforeEach } from 'vitest';
-import { OneTimeEmitterFactoryImpl } from '../../../model/emitters/one-time-event-emitter-factory-impl';
+import { EmitterFactoryImpl } from '../../../model/emitters/event-emitter-factory-impl';
 import { OneTimeEventEmitterImpl } from '../../../model/emitters/one-time-event-emitter-impl';
 import { OneTimeValueEmitterImpl } from '../../../model/emitters/one-time-value-emitter-impl';
-import type { OneTimeEmitterFactory } from '../../../model/types/emitters/one-time-emitter-factory.interface';
+import type { EmitterFactory } from '../../../model/types/emitters/emitter-factory.interface';
 
 describe('OneTimeEmitterFactoryImpl', () => {
-  let OneTimeEmitterFactory: OneTimeEmitterFactory;
+  let OneTimeEmitterFactory: EmitterFactory;
 
   beforeEach(() => {
-    OneTimeEmitterFactory = new OneTimeEmitterFactoryImpl();
+    OneTimeEmitterFactory = new EmitterFactoryImpl();
   });
 
   test('It returns an instance of OneTimeEventEmitter when createOneTimeEventEmitter() is called.', () => {

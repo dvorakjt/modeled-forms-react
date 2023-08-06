@@ -1,13 +1,13 @@
 import { describe, test, expect, vi } from 'vitest';
 import { getTestContainer, Services } from '../test-container';
 import { OnInitialSubscriptionHandlingBehaviorSubjectImpl } from '../../../model/subjects/on-initial-subscription-handling-behavior-subject-impl';
-import type { OneTimeEmitterFactory } from '../../../model/types/emitters/one-time-emitter-factory.interface';
+import type { EmitterFactory } from '../../../model/types/emitters/emitter-factory.interface';
 import { BehaviorSubject } from 'rxjs';
 
 describe('OnInitialSubscriptionHandlingSubjectImpl', () => {
   const container = getTestContainer();
-  const OneTimeEmitterFactory = container.get<OneTimeEmitterFactory>(
-    Services.OneTimeEmitterFactory,
+  const OneTimeEmitterFactory = container.get<EmitterFactory>(
+    Services.EmitterFactory,
   );
 
   test('It calls the cb passed into onInitialSubscription when it is subscribed to the first time.', () => {

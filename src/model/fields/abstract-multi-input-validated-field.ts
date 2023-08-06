@@ -2,7 +2,7 @@ import { copyObject } from "../util/copy-object";
 import { BehaviorSubject, type Subject } from "rxjs";
 import type { MultiInputValidatedField } from "../types/fields/multi-input-validated-field.interface";
 import type { Field } from "../types/fields/field.interface";
-import type { MultiInputValidityReducer } from "../types/reducers/multi-input-validator-reducer.interface";
+import type { MultiInputValidatorValidityReducer } from "../types/reducers/multi-input-validator-validity-reducer.interface";
 import type { State } from "../types/state/state.interface";
 import type { FieldState } from "../types/state/field-state.interface";
 import type { DualFieldSetStateArg } from "../types/state/dual-field-set-state-arg.interface";
@@ -12,7 +12,7 @@ import type { MultiInputValidator } from "../types/validators/multi-input/multi-
 export abstract class AbstractMultiInputValidatedField implements MultiInputValidatedField {
   readonly stateChanges: Subject<State<string>>;
   protected readonly baseField : Field;
-  readonly #multiInputValidatorReducer : MultiInputValidityReducer;
+  readonly #multiInputValidatorReducer : MultiInputValidatorValidityReducer;
 
   get state() : FieldState {
     return {
@@ -25,7 +25,7 @@ export abstract class AbstractMultiInputValidatedField implements MultiInputVali
     return this.baseField.omit;
   }
 
-  constructor(baseField : Field, multiInputValidityReducer : MultiInputValidityReducer) {
+  constructor(baseField : Field, multiInputValidityReducer : MultiInputValidatorValidityReducer) {
     this.baseField = baseField;
     this.#multiInputValidatorReducer = multiInputValidityReducer;
     this.baseField.stateChanges.subscribe(() => {

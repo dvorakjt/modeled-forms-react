@@ -1,4 +1,4 @@
-import { copyObject } from '../../model/util/copy-object';
+import { copyObject } from '../../../model/util/copy-object';
 
 type NodeEnvMode = 'development' | 'test' | 'production';
 
