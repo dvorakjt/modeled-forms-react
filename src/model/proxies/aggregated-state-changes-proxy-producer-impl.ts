@@ -33,10 +33,7 @@ export class AggregatedStateChangesProxyProducerImpl
         else if (prop === 'hasOmittedFields') return fieldStateReducer.omit;
         else {
           const propName = prop.toString();
-          if (!(prop in fields))
-            throw new Error(
-              `Property ${propName} does not exist in AggregateStateChanges object.`,
-            );
+          if (!(prop in fields) || propName === 'constructor') return target[propName];
 
           accessedFieldNames.add(propName);
           const state = target[propName];
