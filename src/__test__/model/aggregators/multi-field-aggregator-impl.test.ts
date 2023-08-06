@@ -12,7 +12,7 @@ import { EmitterFactory } from "../../../model/types/emitters/emitter-factory.in
 import { Validity } from "../../../model/types/state/validity.enum";
 import { FormElementMap } from "../../../model/types/form-elements/form-element-map.type";
 
-describe.only('MultiFieldAggregatorImpl', () => {
+describe('MultiFieldAggregatorImpl', () => {
   const container = getTestContainer();
   const subjectFactory = container.get<SubjectFactory>(Services.SubjectFactory);
   const proxyProducerFactory = container.get<ProxyProducerFactory>(Services.ProxyProducerFactory);
