@@ -11,7 +11,7 @@ import { GlobalMessages } from '../../../../model/constants/global-messages.enum
 import { createTriggerablePromiseRejectingAsyncValidator } from './mocks/async/create-triggerable-promise-rejecting-async-validator';
 import { createIntraPromiseErrorThrowingAsyncValidator } from './mocks/async/create-intra-promise-error-throwing-async-validator';
 import { createImmediateErrorThrowingAsyncValidator } from './mocks/async/create-immediate-error-throwing-async-validator';
-import { setNodeEnv } from '../../../util/set-node-env';
+import { setNodeEnv } from '../../../util/funcs/set-node-env';
 
 describe('AsyncSingleInputValidatorSuite', () => {
 

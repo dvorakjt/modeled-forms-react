@@ -1,10 +1,10 @@
 import { BehaviorSubject, type Subject } from "rxjs";
-import { MultiInputValidityReducer } from "../types/reducers/multi-input-validator-reducer.interface";
+import { MultiInputValidatorValidityReducer } from "../types/reducers/multi-input-validator-validity-reducer.interface";
 import { Validity } from "../types/state/validity.enum";
 import { MultiInputValidator } from "../types/validators/multi-input/multi-input-validator.interface";
 import { ValidityReducer } from "../types/reducers/validity-reducer.interface";
 
-export class FinalizerFacingMultiInputValidatorReducer implements MultiInputValidityReducer {
+export class FinalizerFacingMultiInputValidatorReducer implements MultiInputValidatorValidityReducer {
   validityChanges: Subject<Validity>;
   #validityReducer : ValidityReducer;
   #multiInputValidators : Array<MultiInputValidator> = [];

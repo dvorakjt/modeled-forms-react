@@ -6,7 +6,7 @@ import { createInvalidSyncValidator } from './mocks/sync/create-invalid-sync-val
 import { createErrantSyncValidator } from './mocks/sync/create-errant-sync-validator';
 import { MessageType } from '../../../../model/types/state/messages/message-type.enum';
 import { GlobalMessages } from '../../../../model/constants/global-messages.enum';
-import { setNodeEnv } from '../../../util/set-node-env';
+import { setNodeEnv } from '../../../util/funcs/set-node-env';
 
 describe('SyncSingleInputValidatorSuite', () => {
   test('When evaluate() is called and no validators were passed in to the constructor, the object is returns has a property syncResult.validity which equals Validity.VALID_FINALIZABLE.', () => {

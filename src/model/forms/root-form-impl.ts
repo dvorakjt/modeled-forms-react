@@ -6,7 +6,7 @@ import type { SubmissionManager } from '../types/submission/submission-manager.i
 import type { Message } from '../types/state/messages/message.interface';
 import type { FinalizerManager } from '../types/finalizers/finalizer-manager.interface';
 import type { FormElementMap } from '../types/form-elements/form-element-map.type';
-import type { MultiFieldValidatorMessagesAggregator } from '../types/aggregators/multi-field-validator-messages-aggregator.interface';
+import type { MultiInputValidatorMessagesAggregator } from '../types/aggregators/multi-input-validator-messages-aggregator.interface';
 import type { SubmissionState } from '../types/submission/submission-state.interface';
 
 export class RootFormImpl implements RootForm {
@@ -14,7 +14,7 @@ export class RootFormImpl implements RootForm {
   readonly submissionStateChanges: Subject<SubmissionState>;
   readonly userFacingFields : FormElementMap;
   readonly #finalizerManager : FinalizerManager;
-  readonly #multiFieldValidatorMessagesAggregator : MultiFieldValidatorMessagesAggregator;
+  readonly #multiFieldValidatorMessagesAggregator : MultiInputValidatorMessagesAggregator;
   readonly #submissionManager: SubmissionManager;
 
   get state() {
@@ -34,7 +34,7 @@ export class RootFormImpl implements RootForm {
   constructor(
     userFacingFields : FormElementMap,
     finalizerManager : FinalizerManager,
-    multiFieldValidatorMessagesAggregator : MultiFieldValidatorMessagesAggregator,
+    multiFieldValidatorMessagesAggregator : MultiInputValidatorMessagesAggregator,
     submissionManager: SubmissionManager
   ) {
     this.userFacingFields = userFacingFields;

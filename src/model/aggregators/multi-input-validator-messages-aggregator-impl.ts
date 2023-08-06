@@ -1,6 +1,6 @@
 import { BehaviorSubject, Subject } from "rxjs";
 import { copyObject } from "../util/copy-object";
-import type { MultiFieldValidatorMessagesAggregator } from "../types/aggregators/multi-field-validator-messages-aggregator.interface";
+import type { MultiInputValidatorMessagesAggregator } from "../types/aggregators/multi-input-validator-messages-aggregator.interface";
 import { Message } from "../types/state/messages/message.interface";
 import { MultiInputValidator } from "../types/validators/multi-input/multi-input-validator.interface";
 
@@ -8,7 +8,7 @@ type MessagesByValidatorId = {
   [id : number] : Message
 }
 
-export class MultiInputValidatorMessagesAggregatorImpl implements MultiFieldValidatorMessagesAggregator {
+export class MultiInputValidatorMessagesAggregatorImpl implements MultiInputValidatorMessagesAggregator {
   messagesChanges: Subject<Message[]>;
   #messages : MessagesByValidatorId = {}
 

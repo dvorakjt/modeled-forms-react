@@ -50,25 +50,25 @@ export class MultiFieldAggregatorImpl<Fields extends FormElementMap>
   }
 
   private subscribeToAccessedFields = () => {
-    if(this.#accessedFieldsSubscriptionProcessCompleted || !this.#aggregatedStateChangesProxyProducer) return;
+    if(!this.#accessedFieldsSubscriptionProcessCompleted && this.#aggregatedStateChangesProxyProducer) {
+      const accessedFieldNames =
+        this.#aggregatedStateChangesProxyProducer.accessedFieldNames;
 
-    const accessedFieldNames =
-      this.#aggregatedStateChangesProxyProducer.accessedFieldNames;
+      for (const fieldName of accessedFieldNames) {
+        this.#fields[fieldName].stateChanges.subscribe(
+          (stateChange: AnyState) => {
+            this.#aggregatedFieldState[fieldName] = stateChange;
+            this.#fieldStateReducer.updateTallies(fieldName, stateChange);
+            if (this.#accessedFieldsSubscriptionProcessCompleted) {
+              this.aggregateChanges.next(this.aggregatedStateChanges);
+            }
+          },
+        );
+      }
 
-    for (const fieldName of accessedFieldNames) {
-      this.#fields[fieldName].stateChanges.subscribe(
-        (stateChange: AnyState) => {
-          this.#aggregatedFieldState[fieldName] = stateChange;
-          this.#fieldStateReducer.updateTallies(fieldName, stateChange);
-          if (this.#accessedFieldsSubscriptionProcessCompleted) {
-            this.aggregateChanges.next(this.aggregatedStateChanges);
-          }
-        },
-      );
+      this.accessedFields.setValue(accessedFieldNames);
+      this.#aggregatedStateChangesProxyProducer = null;
+      this.#accessedFieldsSubscriptionProcessCompleted = true;
     }
-
-    this.accessedFields.setValue(accessedFieldNames);
-    this.#aggregatedStateChangesProxyProducer = null;
-    this.#accessedFieldsSubscriptionProcessCompleted = true;
   };
 }
