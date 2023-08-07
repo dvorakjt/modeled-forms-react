@@ -1,16 +1,17 @@
 import { describe, test, expect, beforeEach, vi } from "vitest";
 import { getTestContainer, Services } from "../test-container";
-import { MultiFieldAggregatorImpl } from "../../../model/aggregators/multi-field-aggregator-impl";
+import { MultiFieldAggregatorImpl } from "../../../model/constituents/aggregators/multi-field-aggregator-impl";
 import { MockField } from "../../util/mocks/mock-field";
-import { AggregatedStateChangesProxyProducer } from "../../../model/types/proxies/aggregated-state-changes-proxy-producer.interface";
-import { FieldStateReducer } from "../../../model/types/reducers/field-state-reducer.interface";
-import { OneTimeValueEmitter } from "../../../model/types/emitters/one-time-value-emitter.interface";
-import { SubjectFactory } from "../../../model/types/subjects/subject-factory.interface";
-import { ProxyProducerFactory } from "../../../model/types/proxies/proxy-producer-factory.interface";
-import { ReducerFactory } from "../../../model/types/reducers/reducer-factory.interface";
-import { EmitterFactory } from "../../../model/types/emitters/emitter-factory.interface";
-import { Validity } from "../../../model/types/state/validity.enum";
-import { FormElementMap } from "../../../model/types/form-elements/form-element-map.type";
+import { AggregatedStateChangesProxyProducer } from "../../../model/types/constituents/proxies/aggregated-state-changes-proxy-producer.interface";
+import { FieldStateReducer } from "../../../model/types/constituents/reducers/field-state-reducer.interface";
+import { OneTimeValueEmitter } from "../../../model/types/constituents/emitters/one-time-value-emitter.interface";
+import { SubjectFactory } from "../../../model/types/constituents/subjects/subject-factory.interface";
+import { ProxyProducerFactory } from "../../../model/types/constituents/proxies/proxy-producer-factory.interface";
+import { ReducerFactory } from "../../../model/types/constituents/reducers/reducer-factory.interface";
+import { EmitterFactory } from "../../../model/types/constituents/emitters/emitter-factory.interface";
+import { Validity } from "../../../model/types/constituents/state/validity.enum";
+import { FormElementMap } from "../../../model/types/constituents/form-elements/form-element-map.type";
+import { AggregatedStateChanges } from "../../../model/types/constituents/aggregators/aggregated-state-changes.interface";
 
 describe('MultiFieldAggregatorImpl', () => {
   const container = getTestContainer();
@@ -44,7 +45,7 @@ describe('MultiFieldAggregatorImpl', () => {
       accessedFields,
       subjectFactory
     );
-    multiFieldAggregator.aggregateChanges.subscribe(next => {
+    multiFieldAggregator.aggregateChanges.subscribe((next : AggregatedStateChanges<typeof fields>)=> {
       expect(next).toStrictEqual({
         errantField : {
           value : 'errant field',
@@ -96,7 +97,7 @@ describe('MultiFieldAggregatorImpl', () => {
     );
     vi.spyOn(fields.fieldA.stateChanges, 'subscribe');
     vi.spyOn(fields.fieldB.stateChanges, 'subscribe');
-    multiFieldAggregator.aggregateChanges.subscribe(({ fieldA }) => {
+    multiFieldAggregator.aggregateChanges.subscribe(({ fieldA } : AggregatedStateChanges<typeof fields>) => {
       expect(fieldA.value).toBe('field a');
     });
     expect(fields.fieldA.stateChanges.subscribe).toHaveBeenCalledOnce();

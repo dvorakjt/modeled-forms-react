@@ -1,12 +1,12 @@
 import { describe, expect, test, vi } from "vitest";
 import { getTestContainer, Services } from "../test-container";
-import { AggregatorFactory } from "../../../model/types/aggregators/aggregator-factory.interface";
-import { FormElementMap } from "../../../model/types/form-elements/form-element-map.type";
+import { AggregatorFactory } from "../../../model/types/constituents/aggregators/aggregator-factory.interface";
+import { FormElementMap } from "../../../model/types/constituents/form-elements/form-element-map.type";
 import { MockField } from "../../util/mocks/mock-field";
-import { AggregatedStateChanges } from "../../../model/types/aggregators/aggregated-state-changes.interface";
-import { AsyncAdapter } from "../../../model/adapters/async-adapter";
+import { AggregatedStateChanges } from "../../../model/types/constituents/aggregators/aggregated-state-changes.interface";
+import { AsyncAdapter } from "../../../model/constituents/adapters/async-adapter";
 import { Observable, Subscription } from "rxjs";
-import { Field } from "../../../model/types/fields/field.interface";
+import { Field } from "../../../model/types/constituents/fields/field.interface";
 
 describe('AsyncAdapter', () => {
   const container = getTestContainer();

@@ -1,5 +1,5 @@
-import { SyncValidator } from '../../../../../../model/types/validators/sync-validator.type';
-import { ValidatorResult } from '../../../../../../model/types/validators/validator-result.interface';
+import { SyncValidator } from '../../../../../../model/types/constituents/validators/sync-validator.type';
+import { ValidatorResult } from '../../../../../../model/types/constituents/validators/validator-result.interface';
 
 export function createSyncValidator<T>(isValid: boolean, message?: string) {
   const result: ValidatorResult = {
