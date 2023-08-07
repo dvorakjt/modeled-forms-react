@@ -1,7 +1,7 @@
 import { describe, test, expect, vi } from 'vitest';
 import { getTestContainer, Services } from '../test-container';
-import { OnInitialSubscriptionHandlingBehaviorSubjectImpl } from '../../../model/subjects/on-initial-subscription-handling-behavior-subject-impl';
-import type { EmitterFactory } from '../../../model/types/emitters/emitter-factory.interface';
+import { OnInitialSubscriptionHandlingBehaviorSubjectImpl } from '../../../model/constituents/subjects/on-initial-subscription-handling-behavior-subject-impl';
+import type { EmitterFactory } from '../../../model/types/constituents/emitters/emitter-factory.interface';
 import { BehaviorSubject } from 'rxjs';
 
 describe('OnInitialSubscriptionHandlingSubjectImpl', () => {

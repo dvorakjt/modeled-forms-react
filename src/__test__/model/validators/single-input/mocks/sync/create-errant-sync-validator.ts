@@ -1,4 +1,4 @@
-import { SyncValidator } from '../../../../../../model/types/validators/sync-validator.type';
+import { SyncValidator } from '../../../../../../model/types/constituents/validators/sync-validator.type';
 
 type CreateErrantSyncValidatorArg = Error | string;
 

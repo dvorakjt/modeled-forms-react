@@ -1,10 +1,10 @@
 import { describe, expect, test } from "vitest";
 import { getTestContainer, Services } from "../test-container";
-import { AggregatorFactory } from "../../../model/types/aggregators/aggregator-factory.interface";
-import { SyncAdapter } from "../../../model/adapters/sync-adapter";
-import { FormElementMap } from "../../../model/types/form-elements/form-element-map.type";
+import { AggregatorFactory } from "../../../model/types/constituents/aggregators/aggregator-factory.interface";
+import { SyncAdapter } from "../../../model/constituents/adapters/sync-adapter";
+import { FormElementMap } from "../../../model/types/constituents/form-elements/form-element-map.type";
 import { MockField } from "../../util/mocks/mock-field";
-import { AggregatedStateChanges } from "../../../model/types/aggregators/aggregated-state-changes.interface";
+import { AggregatedStateChanges } from "../../../model/types/constituents/aggregators/aggregated-state-changes.interface";
 
 describe('SyncAdapter', () => {
   const container = getTestContainer();

@@ -1,13 +1,13 @@
 import { describe, test, expect, vi } from 'vitest';
 import { Subject } from 'rxjs';
-import { AsyncSingleInputValidatorSuite } from '../../../../model/validators/single-input/async-single-input-validator-suite';
-import { Validity } from '../../../../model/types/state/validity.enum';
+import { AsyncSingleInputValidatorSuite } from '../../../../model/constituents/validators/single-input/async-single-input-validator-suite';
+import { Validity } from '../../../../model/types/constituents/state/validity.enum';
 import { untriggerableAsyncValidator } from './mocks/async/untriggerable-async-validator';
-import { MessageType } from '../../../../model/types/state/messages/message-type.enum';
+import { MessageType } from '../../../../model/types/constituents/state/messages/message-type.enum';
 import { createTriggerableValidAsyncValidator } from './mocks/async/create-triggerable-valid-async-validator';
-import { ValidatorSuiteResult } from '../../../../model/types/validators/validator-suite-result.interface';
+import { ValidatorSuiteResult } from '../../../../model/types/constituents/validators/validator-suite-result.interface';
 import { createTriggerableInvalidAsyncValidator } from './mocks/async/create-triggerable-invalid-async-validator';
-import { GlobalMessages } from '../../../../model/constants/global-messages.enum';
+import { GlobalMessages } from '../../../../model/constituents/constants/global-messages.enum';
 import { createTriggerablePromiseRejectingAsyncValidator } from './mocks/async/create-triggerable-promise-rejecting-async-validator';
 import { createIntraPromiseErrorThrowingAsyncValidator } from './mocks/async/create-intra-promise-error-throwing-async-validator';
 import { createImmediateErrorThrowingAsyncValidator } from './mocks/async/create-immediate-error-throwing-async-validator';

@@ -1,5 +1,5 @@
 import { describe, test, expect } from 'vitest';
-import { copyObject } from '../../../model/util/copy-object';
+import { copyObject } from '../../../model/constituents/util/copy-object';
 
 describe('copyObject', () => {
   test('It copies an object.', () => {
