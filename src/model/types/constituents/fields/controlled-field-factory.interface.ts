@@ -9,6 +9,7 @@ import { AsyncFieldStateControlFn } from "./async-field-state-control-fn.type";
 import { AsyncFieldValueControlFn } from "./async-field-value-control-fn.type";
 import { DualField } from "./dual-field.interface";
 import { Field } from "./field.interface";
+import { SyncDualStateControlFn } from "./sync-dual-state-control-fn.type";
 import { SyncDualValueControlFn } from "./sync-dual-value-control-fn.type";
 import { SyncFieldStateControlFn } from "./sync-field-state-control-fn.type";
 import { SyncFieldValueControlFn } from "./sync-field-value-control-fn.type";
@@ -36,7 +37,7 @@ export interface ControlledFieldFactory {
   ) : ValueControlledField;
   createStateControlledDualFieldWithSyncControlFn<Fields extends FormElementMap>(
     baseField : DualField,
-    stateControlFn : SyncFieldStateControlFn<Fields>,
+    stateControlFn : SyncDualStateControlFn<Fields>,
     fields : Fields
   ) : StateControlledDualField;
   createStateControlledDualFieldWithAsyncControlFn<Fields extends FormElementMap>(
