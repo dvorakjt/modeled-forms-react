@@ -1,4 +1,5 @@
 export enum GlobalMessages {
+  PENDING_ASYNC_VALIDATOR_SUITE_MESSAGE = 'Checking field...',
   SINGLE_INPUT_VALIDATION_ERROR = 'An unexpected error occurred while validating the field.',
   MULTI_INPUT_VALIDATION_ERROR = 'An unexpected error occurred while validating the validity of the form.',
   FIELD_ADAPTER_ERROR = "An unexpected error occurred while generating this field's value.",

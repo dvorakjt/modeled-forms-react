@@ -1,10 +1,8 @@
-import { AsyncAdapterFn } from "../../constituents/adapters/async-adapter-fn.type";
-import { SyncAdapterFn } from "../../constituents/adapters/sync-adapter-fn.type";
 import { TemplateDerivedFormElementMap } from "./template-derived-form-element-map.type";
-import { BaseFieldTemplate } from "./base-field-template.type";
+import { SimpleValueControlFn } from "../../constituents/fields/simple-value-control-fn.type";
+import { FieldTemplate } from "./field-template.type";
 
-export type ValueControlledFieldTemplate<K extends string> = BaseFieldTemplate & {
-  valueControlFn : SyncAdapterFn<TemplateDerivedFormElementMap<K>, string> | 
-    AsyncAdapterFn<TemplateDerivedFormElementMap<K>, string>;
+export type ValueControlledFieldTemplate<K extends string> = FieldTemplate & {
+  valueControlFn : SimpleValueControlFn<TemplateDerivedFormElementMap<K>>;
   stateControlFn : undefined;
 }

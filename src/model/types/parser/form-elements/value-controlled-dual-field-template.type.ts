@@ -1,11 +1,8 @@
-import { AsyncAdapterFn } from "../../constituents/adapters/async-adapter-fn.type";
-import { SyncAdapterFn } from "../../constituents/adapters/sync-adapter-fn.type";
-import { DualFieldSetValueArg } from "../../constituents/state/dual-field-set-value-arg.interface";
-import { DualFieldTemplate } from "./dual-field-template.type";
+import { DualValueControlFn } from "../../constituents/fields/dual-value-control-fn.type";
+import { DualFieldTemplate } from "./dual-field-template.interface";
 import { TemplateDerivedFormElementMap } from "./template-derived-form-element-map.type";
 
 export type ValueControlledDualFieldTemplate<K extends string> = DualFieldTemplate & {
-  valueControlFn : SyncAdapterFn<TemplateDerivedFormElementMap<K>, DualFieldSetValueArg> | 
-  AsyncAdapterFn<TemplateDerivedFormElementMap<K>, DualFieldSetValueArg>;
+  valueControlFn : DualValueControlFn<TemplateDerivedFormElementMap<K>>;
   stateControlFn? : undefined;
 }

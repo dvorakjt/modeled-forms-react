@@ -1,4 +1,4 @@
-import { DualFieldTemplate } from "./dual-field-template.type";
+import { DualFieldTemplate } from "./dual-field-template.interface";
 import { FieldTemplate } from "./field-template.type";
 import { StateControlledDualFieldTemplate } from "./state-controlled-dual-field-template.type";
 import { StateControlledFieldTemplate } from "./state-controlled-field-template.type";
