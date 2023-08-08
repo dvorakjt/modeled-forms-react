@@ -15,7 +15,7 @@ const formElementMap = formElementsParser.parseTemplate({
   },
   fieldC : {
     defaultValue: 'field c',
-    valueControlFn: ({ fieldB }) => {
+    syncValueControlFn: ({ fieldB }) => {
       return fieldB.value.toUpperCase()
     }
   },

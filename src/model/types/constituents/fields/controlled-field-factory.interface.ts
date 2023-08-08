@@ -3,28 +3,55 @@ import { StateControlledField } from "../../../constituents/fields/state-control
 import { ValueControlledDualField } from "../../../constituents/fields/value-controlled-dual-field";
 import { ValueControlledField } from "../../../constituents/fields/value-controlled-field";
 import { FormElementMap } from "../form-elements/form-element-map.type";
+import { AsyncDualStateControlFn } from "./async-dual-state-control-fn.type";
+import { AsyncDualValueControlFn } from "./async-dual-value-control-fn.type";
+import { AsyncFieldStateControlFn } from "./async-field-state-control-fn.type";
+import { AsyncFieldValueControlFn } from "./async-field-value-control-fn.type";
 import { DualField } from "./dual-field.interface";
-import { DualStateControlFn } from "./dual-state-control-fn.type";
-import { DualValueControlFn } from "./dual-value-control-fn.type";
 import { Field } from "./field.interface";
-import { SimpleStateControlFn } from "./simple-state-control-fn.type";
-import { SimpleValueControlFn } from "./simple-value-control-fn.type";
+import { SyncDualValueControlFn } from "./sync-dual-value-control-fn.type";
+import { SyncFieldStateControlFn } from "./sync-field-state-control-fn.type";
+import { SyncFieldValueControlFn } from "./sync-field-value-control-fn.type";
 
 export interface ControlledFieldFactory {
-  createStateControlledField<Fields extends FormElementMap>(
+  createStateControlledFieldWithSyncControlFn<Fields extends FormElementMap>(
     baseField : Field,
-    stateControlFn : SimpleStateControlFn<Fields>
+    stateControlFn : SyncFieldStateControlFn<Fields>,
+    fields : Fields
   ) : StateControlledField;
-  createValueControlledField<Fields extends FormElementMap>(
+  createStateControlledFieldWithAsyncControlFn<Fields extends FormElementMap>(
     baseField : Field,
-    valueControlFn : SimpleValueControlFn<Fields>
+    stateControlFn : AsyncFieldStateControlFn<Fields>,
+    fields : Fields
+  ) : StateControlledField;
+  createValueControlledFieldWithSyncControlFn<Fields extends FormElementMap>(
+    baseField : Field,
+    valueControlFn : SyncFieldValueControlFn<Fields>,
+    fields : Fields
   ) : ValueControlledField;
-  createStateControlledDualField<Fields extends FormElementMap>(
+  createValueControlledFieldWithAsyncControlFn<Fields extends FormElementMap>(
+    baseField : Field,
+    valueControlFn : AsyncFieldValueControlFn<Fields>,
+    fields : Fields
+  ) : ValueControlledField;
+  createStateControlledDualFieldWithSyncControlFn<Fields extends FormElementMap>(
     baseField : DualField,
-    stateControlFn : DualStateControlFn<Fields>
+    stateControlFn : SyncFieldStateControlFn<Fields>,
+    fields : Fields
   ) : StateControlledDualField;
-  createValueControlledDualField<Fields extends FormElementMap>(
+  createStateControlledDualFieldWithAsyncControlFn<Fields extends FormElementMap>(
     baseField : DualField,
-    valueControlFn : DualValueControlFn<Fields>
+    stateControlFn : AsyncDualStateControlFn<Fields>,
+    fields : Fields
+  ) : StateControlledDualField;
+  createValueControlledDualFieldWithSyncControlFn<Fields extends FormElementMap>(
+    baseField : DualField,
+    valueControlFn : SyncDualValueControlFn<Fields>,
+    fields : Fields
+  ) : ValueControlledDualField;
+  createValueControlledDualFieldWithAsyncControlFn<Fields extends FormElementMap>(
+    baseField : DualField,
+    valueControlFn : AsyncDualValueControlFn<Fields>,
+    fields : Fields
   ) : ValueControlledDualField;
 }
