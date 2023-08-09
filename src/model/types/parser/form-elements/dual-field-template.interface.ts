@@ -1,6 +1,6 @@
 import { BaseFieldTemplate } from "./base-field-template.type"
 
-export type DualFieldTemplate = BaseFieldTemplate & {
+export interface DualFieldTemplate extends BaseFieldTemplate {
   defaultValue? : undefined;
   primaryDefaultValue : string;
   secondaryDefaultValue : string;
