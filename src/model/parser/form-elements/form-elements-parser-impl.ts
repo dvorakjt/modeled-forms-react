@@ -14,21 +14,26 @@ import { SyncFieldStateControlFn } from "../../types/constituents/fields/sync-fi
 import { SyncFieldValueControlFn } from "../../types/constituents/fields/sync-field-value-control-fn.type";
 import { SyncDualStateControlFn } from "../../types/constituents/fields/sync-dual-state-control-fn.type";
 import { AsyncDualValueControlFn } from "../../types/constituents/fields/async-dual-value-control-fn.type";
+import { ControlledFieldFactory } from "../../types/constituents/fields/controlled-field-factory.interface";
+import { Field } from "../../types/constituents/fields/field.interface";
+import { DualField } from "../../types/constituents/fields/dual-field.interface";
 
 export class FormElementsParserImpl implements FormElementsParser {
-  #baseFieldFactory : BaseFieldFactory;
-  #fields : FormElementMap = {};
-  #syncStateControlledFields = new Map<string, SyncFieldStateControlFn<FormElementMap>>();
-  #syncValueControlledFields = new Map<string, SyncFieldValueControlFn<FormElementMap>>();
-  #asyncStateControlledFields = new Map<string, AsyncFieldStateControlFn<FormElementMap>>();
-  #asyncValueControlledFields = new Map<string, AsyncFieldValueControlFn<FormElementMap>>();
-  #syncStateControlledDualFields = new Map<string, SyncDualStateControlFn<FormElementMap>>();
-  #syncValueControlledDualFields = new Map<string, SyncDualValueControlFn<FormElementMap>>();
-  #asyncStateControlledDualFields = new Map<string, AsyncDualStateControlFn<FormElementMap>>();
-  #asyncValueControlledDualFields = new Map<string, AsyncDualValueControlFn<FormElementMap>>();
+  readonly #baseFieldFactory : BaseFieldFactory;
+  readonly #controlledFieldFactory : ControlledFieldFactory;
+  readonly #fields : FormElementMap = {};
+  readonly #syncStateControlledFields = new Map<string, SyncFieldStateControlFn<FormElementMap>>();
+  readonly #syncValueControlledFields = new Map<string, SyncFieldValueControlFn<FormElementMap>>();
+  readonly #asyncStateControlledFields = new Map<string, AsyncFieldStateControlFn<FormElementMap>>();
+  readonly #asyncValueControlledFields = new Map<string, AsyncFieldValueControlFn<FormElementMap>>();
+  readonly #syncStateControlledDualFields = new Map<string, SyncDualStateControlFn<FormElementMap>>();
+  readonly #syncValueControlledDualFields = new Map<string, SyncDualValueControlFn<FormElementMap>>();
+  readonly #asyncStateControlledDualFields = new Map<string, AsyncDualStateControlFn<FormElementMap>>();
+  readonly #asyncValueControlledDualFields = new Map<string, AsyncDualValueControlFn<FormElementMap>>();
 
-  constructor(baseFieldFactory : BaseFieldFactory) {
+  constructor(baseFieldFactory : BaseFieldFactory, controlledFieldFactory : ControlledFieldFactory) {
     this.#baseFieldFactory = baseFieldFactory;
+    this.#controlledFieldFactory = controlledFieldFactory;
   }
 
   parseTemplate<K extends string>(fields: { [P in K]: NestedForm | FieldTemplateVariations<K>; }): FormElementMap {
@@ -71,8 +76,30 @@ export class FormElementsParserImpl implements FormElementsParser {
     }
 
     //transform controlled fields
-
+    for(const [fieldName, controlFn] of this.#syncStateControlledFields.entries()) {
+      this.#fields[fieldName] = this.#controlledFieldFactory.createStateControlledFieldWithSyncControlFn(this.#fields[fieldName] as Field, controlFn, this.#fields);
+    }
+    for(const [fieldName, controlFn] of this.#syncValueControlledFields.entries()) {
+      this.#fields[fieldName] = this.#controlledFieldFactory.createValueControlledFieldWithSyncControlFn(this.#fields[fieldName] as Field, controlFn, this.#fields);
+    }
+    for(const [fieldName, controlFn] of this.#asyncStateControlledFields.entries()) {
+      this.#fields[fieldName] = this.#controlledFieldFactory.createStateControlledFieldWithAsyncControlFn(this.#fields[fieldName] as Field, controlFn, this.#fields);
+    }
+    for(const [fieldName, controlFn] of this.#asyncValueControlledFields.entries()) {
+      this.#fields[fieldName] = this.#controlledFieldFactory.createValueControlledFieldWithAsyncControlFn(this.#fields[fieldName] as Field, controlFn, this.#fields);
+    }
+    for(const [fieldName, controlFn] of this.#syncStateControlledDualFields.entries()) {
+      this.#fields[fieldName] = this.#controlledFieldFactory.createStateControlledDualFieldWithSyncControlFn(this.#fields[fieldName] as DualField, controlFn, this.#fields);
+    }
+    for(const [fieldName, controlFn] of this.#syncValueControlledDualFields.entries()) {
+      this.#fields[fieldName] = this.#controlledFieldFactory.createValueControlledDualFieldWithSyncControlFn(this.#fields[fieldName] as DualField, controlFn, this.#fields);
+    }
+    for(const [fieldName, controlFn] of this.#asyncStateControlledDualFields.entries()) {
+      this.#fields[fieldName] = this.#controlledFieldFactory.createStateControlledDualFieldWithAsyncControlFn(this.#fields[fieldName] as DualField, controlFn, this.#fields);
+    }
+    for(const [fieldName, controlFn] of this.#asyncValueControlledDualFields.entries()) {
+      this.#fields[fieldName] = this.#controlledFieldFactory.createValueControlledDualFieldWithAsyncControlFn(this.#fields[fieldName] as DualField, controlFn, this.#fields);
+    }
     return this.#fields;
   }
-  
 }

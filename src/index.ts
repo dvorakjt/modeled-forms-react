@@ -1,6 +1,8 @@
 import { email } from "./model/constituents/validators/util/email";
 import { required } from "./model/constituents/validators/util/required";
 import { Services, getContainer } from "./model/container";
+import { Field } from "./model/types/constituents/fields/field.interface";
+import { Validity } from "./model/types/constituents/state/validity.enum";
 import { FormElementsParser } from "./model/types/parser/form-elements/form-elements-parser.interface";
 
 const container = getContainer();
@@ -16,6 +18,7 @@ const formElementMap = formElementsParser.parseTemplate({
   fieldC : {
     defaultValue: 'field c',
     syncValueControlFn: ({ fieldB }) => {
+      if(fieldB.validity < Validity.VALID_FINALIZABLE) return;
       return fieldB.value.toUpperCase()
     }
   },
@@ -25,6 +28,9 @@ const formElementMap = formElementsParser.parseTemplate({
     omitByDefault: true
   }
 });
+
+(formElementMap.fieldB as Field).setValue('new value in field B');
+(formElementMap.fieldB as Field).setValue('user@example.com');
 
 for(const key in formElementMap) {
   console.log(key);
