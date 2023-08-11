@@ -1,4 +1,4 @@
-import { AsyncValidator } from '../../../../../../model/types/constituents/validators/async-validator.type';
+import { AsyncValidator } from '../../../../../../model/validators/async-validator.type';
 
 export function createIntraPromiseErrorThrowingAsyncValidator(
   error: Error,

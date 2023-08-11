@@ -1,13 +1,13 @@
 import { describe, test, expect } from 'vitest';
-import { SyncSingleInputValidatorSuite } from '../../../../model/constituents/validators/single-input/sync-single-input-validator-suite';
+import { SyncSingleInputValidatorSuite } from '../../../../model/validators/single-input/sync-single-input-validator-suite';
 import { createInvalidSyncValidator } from './mocks/sync/create-invalid-sync-validator';
-import { Validity } from '../../../../model/types/constituents/state/validity.enum';
-import { MessageType } from '../../../../model/types/constituents/state/messages/message-type.enum';
-import { AsyncSingleInputValidatorSuite } from '../../../../model/constituents/validators/single-input/async-single-input-validator-suite';
+import { Validity } from '../../../../model/state/validity.enum';
+import { MessageType } from '../../../../model/state/messages/message-type.enum';
+import { AsyncSingleInputValidatorSuite } from '../../../../model/validators/single-input/async-single-input-validator-suite';
 import { createTriggerableValidAsyncValidator } from './mocks/async/create-triggerable-valid-async-validator';
-import { HybridSingleInputValidatorSuite } from '../../../../model/constituents/validators/single-input/hybrid-single-input-validator-suite';
+import { HybridSingleInputValidatorSuite } from '../../../../model/validators/single-input/hybrid-single-input-validator-suite';
 import { Subject } from 'rxjs';
-import { GlobalMessages } from '../../../../model/constituents/constants/global-messages.enum';
+import { GlobalMessages } from '../../../../model/constants/global-messages.enum';
 import { createErrantSyncValidator } from './mocks/sync/create-errant-sync-validator';
 import { createValidSyncValidator } from './mocks/sync/create-valid-sync-validator';
 

@@ -1,8 +1,8 @@
 import { email } from "./model/constituents/validators/util/email";
 import { required } from "./model/constituents/validators/util/required";
 import { Services, getContainer } from "./model/container";
-import { Field } from "./model/types/constituents/fields/field.interface";
-import { Validity } from "./model/types/constituents/state/validity.enum";
+import { Field } from "./model/constituents/fields/base/field.interface";
+import { Validity } from "./model/constituents/state/validity.enum";
 import { FormElementsParser } from "./model/types/parser/form-elements/form-elements-parser.interface";
 
 const container = getContainer();

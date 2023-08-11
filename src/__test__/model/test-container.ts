@@ -1,18 +1,18 @@
 import 'reflect-metadata';
 import { Container } from 'inversify';
 import { helpers } from 'inversify-vanillajs-helpers';
-import { EmitterFactoryImpl } from '../../model/constituents/emitters/event-emitter-factory-impl';
-import { ValidityReducerImpl } from '../../model/constituents/reducers/validity-reducer-impl';
-import { ReducerFactoryImpl } from '../../model/constituents/reducers/reducer-factory-impl';
-import { ProxyProducerFactory } from '../../model/types/constituents/proxies/proxy-producer-factory.interface';
-import { AggregatorFactoryImpl } from '../../model/constituents/aggregators/aggregator-factory-impl';
-import type { EmitterFactory } from '../../model/types/constituents/emitters/emitter-factory.interface';
-import type { ValidityReducer } from '../../model/types/constituents/reducers/validity-reducer.interface';
-import type { ReducerFactory } from '../../model/types/constituents/reducers/reducer-factory.interface';
-import type { AggregatorFactory } from '../../model/types/constituents/aggregators/aggregator-factory.interface';
-import { ProxyProducerFactoryImpl } from '../../model/constituents/proxies/proxy-producer-factory-impl';
-import { SubjectFactoryImpl } from '../../model/constituents/subjects/subject-factory-impl';
-import { SubjectFactory } from '../../model/types/constituents/subjects/subject-factory.interface';
+import { EmitterFactoryImpl } from '../../model/emitters/event-emitter-factory-impl';
+import { ValidityReducerImpl } from '../../model/reducers/validity/validity-reducer-impl';
+import { ReducerFactoryImpl } from '../../model/reducers/reducer-factory-impl';
+import { ProxyProducerFactory } from '../../model/proxies/proxy-producer-factory.interface';
+import { AggregatorFactoryImpl } from '../../model/aggregators/aggregator-factory-impl';
+import type { EmitterFactory } from '../../model/emitters/emitter-factory.interface';
+import type { ValidityReducer } from '../../model/reducers/validity/validity-reducer.interface';
+import type { ReducerFactory } from '../../model/reducers/reducer-factory.interface';
+import type { AggregatorFactory } from '../../model/aggregators/aggregator-factory.interface';
+import { ProxyProducerFactoryImpl } from '../../model/proxies/proxy-producer-factory-impl';
+import { SubjectFactoryImpl } from '../../model/subjects/subject-factory-impl';
+import { SubjectFactory } from '../../model/submission/subject-factory.interface';
 
 export enum Services {
   EmitterFactory = 'EmitterFactory',

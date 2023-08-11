@@ -1,8 +1,8 @@
 import { BehaviorSubject, Subject } from "rxjs";
-import { Field } from "../../../model/types/constituents/fields/field.interface";
-import { FieldState } from "../../../model/types/constituents/state/field-state.interface";
-import { State } from "../../../model/types/constituents/state/state.interface";
-import { Validity } from "../../../model/types/constituents/state/validity.enum";
+import { Field } from "../../../model/fields/base/field.interface";
+import { FieldState } from "../../../model/state/field-state.interface";
+import { State } from "../../../model/state/state.interface";
+import { Validity } from "../../../model/state/validity.enum";
 
 export class MockField implements Field {
   stateChanges : Subject<FieldState>;

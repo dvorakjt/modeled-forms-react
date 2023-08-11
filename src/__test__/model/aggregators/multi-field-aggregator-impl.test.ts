@@ -1,17 +1,17 @@
 import { describe, test, expect, beforeEach, vi } from "vitest";
 import { getTestContainer, Services } from "../test-container";
-import { MultiFieldAggregatorImpl } from "../../../model/constituents/aggregators/multi-field-aggregator-impl";
+import { MultiFieldAggregatorImpl } from "../../../model/aggregators/multi-field-aggregator-impl";
 import { MockField } from "../../util/mocks/mock-field";
-import { AggregatedStateChangesProxyProducer } from "../../../model/types/constituents/proxies/aggregated-state-changes-proxy-producer.interface";
-import { FieldStateReducer } from "../../../model/types/constituents/reducers/field-state-reducer.interface";
-import { OneTimeValueEmitter } from "../../../model/types/constituents/emitters/one-time-value-emitter.interface";
-import { SubjectFactory } from "../../../model/types/constituents/subjects/subject-factory.interface";
-import { ProxyProducerFactory } from "../../../model/types/constituents/proxies/proxy-producer-factory.interface";
-import { ReducerFactory } from "../../../model/types/constituents/reducers/reducer-factory.interface";
-import { EmitterFactory } from "../../../model/types/constituents/emitters/emitter-factory.interface";
-import { Validity } from "../../../model/types/constituents/state/validity.enum";
-import { FormElementMap } from "../../../model/types/constituents/form-elements/form-element-map.type";
-import { AggregatedStateChanges } from "../../../model/types/constituents/aggregators/aggregated-state-changes.interface";
+import { AggregatedStateChangesProxyProducer } from "../../../model/proxies/aggregated-state-changes-proxy-producer.interface";
+import { FieldStateReducer } from "../../../model/reducers/field-state/field-state-reducer.interface";
+import { OneTimeValueEmitter } from "../../../model/emitters/one-time-value-emitter.interface";
+import { SubjectFactory } from "../../../model/submission/subject-factory.interface";
+import { ProxyProducerFactory } from "../../../model/proxies/proxy-producer-factory.interface";
+import { ReducerFactory } from "../../../model/reducers/reducer-factory.interface";
+import { EmitterFactory } from "../../../model/emitters/emitter-factory.interface";
+import { Validity } from "../../../model/state/validity.enum";
+import { FormElementMap } from "../../../model/form-elements/form-element-map.type";
+import { AggregatedStateChanges } from "../../../model/aggregators/aggregated-state-changes.interface";
 
 describe('MultiFieldAggregatorImpl', () => {
   const container = getTestContainer();
@@ -38,14 +38,14 @@ describe('MultiFieldAggregatorImpl', () => {
       validFinalizableField : new MockField('valid finalizable field', Validity.VALID_FINALIZABLE)
     }
     fields.validFinalizableField.omit = true;
-    const multiFieldAggregator = new MultiFieldAggregatorImpl<typeof fields>(
+    const multiFieldAggregator = new MultiFieldAggregatorImpl(
       fields,
       aggregatedStateChangesProxyProducer,
       fieldStateReducer,
       accessedFields,
       subjectFactory
     );
-    multiFieldAggregator.aggregateChanges.subscribe((next : AggregatedStateChanges<typeof fields>)=> {
+    multiFieldAggregator.aggregateChanges.subscribe((next : AggregatedStateChanges)=> {
       expect(next).toStrictEqual({
         errantField : {
           value : 'errant field',
@@ -88,7 +88,7 @@ describe('MultiFieldAggregatorImpl', () => {
       fieldA : new MockField('field a', Validity.VALID_FINALIZABLE),
       fieldB : new MockField('field b', Validity.VALID_FINALIZABLE)
     }
-    const multiFieldAggregator = new MultiFieldAggregatorImpl<typeof fields>(
+    const multiFieldAggregator = new MultiFieldAggregatorImpl(
       fields,
       aggregatedStateChangesProxyProducer,
       fieldStateReducer,
@@ -97,7 +97,7 @@ describe('MultiFieldAggregatorImpl', () => {
     );
     vi.spyOn(fields.fieldA.stateChanges, 'subscribe');
     vi.spyOn(fields.fieldB.stateChanges, 'subscribe');
-    multiFieldAggregator.aggregateChanges.subscribe(({ fieldA } : AggregatedStateChanges<typeof fields>) => {
+    multiFieldAggregator.aggregateChanges.subscribe(({ fieldA } : AggregatedStateChanges) => {
       expect(fieldA.value).toBe('field a');
     });
     expect(fields.fieldA.stateChanges.subscribe).toHaveBeenCalledOnce();

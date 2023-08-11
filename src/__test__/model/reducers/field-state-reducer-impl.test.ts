@@ -1,8 +1,8 @@
 import { describe, test, expect } from 'vitest';
 import { getTestContainer, Services } from '../test-container';
-import { FieldStateReducerImpl } from '../../../model/constituents/reducers/field-state-reducer-impl';
-import { Validity } from '../../../model/types/constituents/state/validity.enum';
-import { ValidityReducer } from '../../../model/types/constituents/reducers/validity-reducer.interface';
+import { FieldStateReducerImpl } from '../../../model/reducers/field-state/field-state-reducer-impl';
+import { Validity } from '../../../model/state/validity.enum';
+import { ValidityReducer } from '../../../model/reducers/validity/validity-reducer.interface';
 
 describe('FieldStateReducerImpl', () => {
   const container = getTestContainer();

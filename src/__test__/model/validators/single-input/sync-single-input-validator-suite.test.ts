@@ -1,11 +1,11 @@
 import { describe, test, expect, vi } from 'vitest';
-import { SyncSingleInputValidatorSuite } from '../../../../model/constituents/validators/single-input/sync-single-input-validator-suite';
-import { Validity } from '../../../../model/types/constituents/state/validity.enum';
+import { SyncSingleInputValidatorSuite } from '../../../../model/validators/single-input/sync-single-input-validator-suite';
+import { Validity } from '../../../../model/state/validity.enum';
 import { createValidSyncValidator } from './mocks/sync/create-valid-sync-validator';
 import { createInvalidSyncValidator } from './mocks/sync/create-invalid-sync-validator';
 import { createErrantSyncValidator } from './mocks/sync/create-errant-sync-validator';
-import { MessageType } from '../../../../model/types/constituents/state/messages/message-type.enum';
-import { GlobalMessages } from '../../../../model/constituents/constants/global-messages.enum';
+import { MessageType } from '../../../../model/state/messages/message-type.enum';
+import { GlobalMessages } from '../../../../model/constants/global-messages.enum';
 import { setNodeEnv } from '../../../util/funcs/set-node-env';
 
 describe('SyncSingleInputValidatorSuite', () => {

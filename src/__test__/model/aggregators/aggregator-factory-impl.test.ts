@@ -1,14 +1,14 @@
 import { describe, test, expect } from 'vitest';
-import { AggregatorFactoryImpl } from '../../../model/constituents/aggregators/aggregator-factory-impl';
+import { AggregatorFactoryImpl } from '../../../model/aggregators/aggregator-factory-impl';
 import { getTestContainer, Services } from '../test-container';
-import { ProxyProducerFactory } from '../../../model/types/constituents/proxies/proxy-producer-factory.interface';
-import { ReducerFactory } from '../../../model/types/constituents/reducers/reducer-factory.interface';
-import { EmitterFactory } from '../../../model/types/constituents/emitters/emitter-factory.interface';
-import { SubjectFactory } from '../../../model/types/constituents/subjects/subject-factory.interface';
-import { FormElementMap } from '../../../model/types/constituents/form-elements/form-element-map.type';
+import { ProxyProducerFactory } from '../../../model/proxies/proxy-producer-factory.interface';
+import { ReducerFactory } from '../../../model/reducers/reducer-factory.interface';
+import { EmitterFactory } from '../../../model/emitters/emitter-factory.interface';
+import { SubjectFactory } from '../../../model/submission/subject-factory.interface';
+import { FormElementMap } from '../../../model/form-elements/form-element-map.type';
 import { MockField } from '../../util/mocks/mock-field';
-import { MultiFieldAggregatorImpl } from '../../../model/constituents/aggregators/multi-field-aggregator-impl';
-import { MultiInputValidatorMessagesAggregatorImpl } from '../../../model/constituents/aggregators/multi-input-validator-messages-aggregator-impl';
+import { MultiFieldAggregatorImpl } from '../../../model/aggregators/multi-field-aggregator-impl';
+import { MultiInputValidatorMessagesAggregatorImpl } from '../../../model/aggregators/multi-input-validator-messages-aggregator-impl';
 
 describe('AggregatorFactoryImpl', () => {
   const container = getTestContainer();
