@@ -1,22 +1,21 @@
 import { describe, expect, test, vi } from "vitest";
-import { getTestContainer, Services } from "../test-container";
-import { AggregatorFactory } from "../../../model/types/constituents/aggregators/aggregator-factory.interface";
-import { FormElementMap } from "../../../model/types/constituents/form-elements/form-element-map.type";
+import { getTestContainer } from "../test-container";
+import { FormElementMap } from "../../../model/form-elements/form-element-map.type";
 import { MockField } from "../../util/mocks/mock-field";
-import { AggregatedStateChanges } from "../../../model/types/constituents/aggregators/aggregated-state-changes.interface";
-import { AsyncAdapter } from "../../../model/constituents/adapters/async-adapter";
+import { AggregatedStateChanges } from "../../../model/aggregators/aggregated-state-changes.interface";
+import { AsyncAdapter } from "../../../model/adapters/async-adapter";
 import { Observable, Subscription } from "rxjs";
-import { Field } from "../../../model/types/constituents/fields/field.interface";
+import { Field } from "../../../model/fields/base/field.interface";
 
 describe('AsyncAdapter', () => {
   const container = getTestContainer();
-  const aggregatorFactory = container.get<AggregatorFactory>(Services.AggregatorFactory);
+  const aggregatorFactory = container.services.AggregatorFactory;
 
   test('It emits adapted values through its stream property when the adapterFn resolves.', () => {
     const fields : FormElementMap = {
       fieldA : new MockField('a field')
     }
-    const adapterFn = ({ fieldA } : AggregatedStateChanges<typeof fields>) => {
+    const adapterFn = ({ fieldA } : AggregatedStateChanges) => {
       return new Promise((resolve) => {
         resolve(fieldA.value.toUpperCase());
       });
@@ -81,7 +80,7 @@ describe('AsyncAdapter', () => {
     const fields : FormElementMap = {
       fieldA : new MockField('test')
     }
-    const adapterFn = ({ fieldA } : AggregatedStateChanges<typeof fields>) => {
+    const adapterFn = ({ fieldA } : AggregatedStateChanges) => {
       return new Observable(subscriber => {
         subscriber.next(fieldA.value.toUpperCase());
         subscriber.next(fieldA.value.split('').reverse().join(''));
@@ -125,7 +124,7 @@ describe('AsyncAdapter', () => {
       fieldA : new MockField('test')
     }
     vi.spyOn(Subscription.prototype, 'unsubscribe');
-    const adapterFn = ({ fieldA } : AggregatedStateChanges<typeof fields>) => new Promise((resolve) => {
+    const adapterFn = ({ fieldA } : AggregatedStateChanges) => new Promise((resolve) => {
       setTimeout(() => {
         resolve(fieldA.value.toUpperCase());
       }, 1000)

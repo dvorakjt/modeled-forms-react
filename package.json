@@ -55,10 +55,9 @@
     "vitest": "^0.33.0"
   },
   "dependencies": {
-    "inversify": "^6.0.1",
     "inversify-vanillajs-helpers": "^2.0.0",
-    "linked-list": "^3.1.0",
     "reflect-metadata": "^0.1.13",
-    "rxjs": "^7.8.1"
+    "rxjs": "^7.8.1",
+    "undecorated-di": "^1.0.0"
   }
 }
