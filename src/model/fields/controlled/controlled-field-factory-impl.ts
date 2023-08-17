@@ -1,11 +1,9 @@
-import { makeInjectable } from "../../util/make-injectable";
-import { Services } from "../../container";
-import { AdapterFactory } from "../../adapters/adapter-factory.interface";
+import { AdapterFactory, AdapterFactoryKey } from "../../adapters/adapter-factory.interface";
 import { AsyncDualFieldStateControlFn } from "./control-functions/dual-fields/async-dual-field-state-control-fn.type";
 import { AsyncDualFieldValueControlFn } from "./control-functions/dual-fields/async-dual-field-value-control-fn.type";
 import { AsyncFieldStateControlFn } from "./control-functions/fields/async-field-state-control-fn.type";
 import { AsyncFieldValueControlFn } from "./control-functions/fields/async-field-value-control-fn.type";
-import { ControlledFieldFactory } from "./controlled-field-factory.interface";
+import { ControlledFieldFactory, ControlledFieldFactoryKey, ControlledFieldFactoryKeyType } from "./controlled-field-factory.interface";
 import { DualField } from "../base/dual-field.interface";
 import { Field } from "../base/field.interface";
 import { SyncDualFieldStateControlFn } from "./control-functions/dual-fields/sync-dual-field-state-control-fn.type";
@@ -22,8 +20,9 @@ import { StateControlledDualField } from "./state-controlled-dual-field";
 import { StateControlledField } from "./state-controlled-field";
 import { ValueControlledDualField } from "./value-controlled-dual-field";
 import { ValueControlledField } from "./value-controlled-field";
+import { autowire } from "undecorated-di";
 
-class ControlledFieldFactoryImpl implements ControlledFieldFactory {
+export class ControlledFieldFactoryImpl implements ControlledFieldFactory {
   readonly #adapterFactory : AdapterFactory;
 
   constructor(adapterFactory : AdapterFactory) {
@@ -63,6 +62,10 @@ class ControlledFieldFactoryImpl implements ControlledFieldFactory {
   }
 }
 
-makeInjectable(ControlledFieldFactoryImpl, [Services.AdapterFactory]);
-
-export { ControlledFieldFactoryImpl };
+export default autowire<ControlledFieldFactoryKeyType, ControlledFieldFactory, ControlledFieldFactoryImpl>(
+  ControlledFieldFactoryImpl,
+  ControlledFieldFactoryKey,
+  [
+    AdapterFactoryKey
+  ]
+);

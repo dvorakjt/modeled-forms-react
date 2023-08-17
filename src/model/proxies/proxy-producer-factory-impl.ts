@@ -1,11 +1,10 @@
-import { makeInjectable } from "../util/make-injectable";
-import { Services } from "../container";
 import { AggregatedStateChangesProxyProducer } from "./aggregated-state-changes-proxy-producer.interface";
-import { ProxyProducerFactory } from "./proxy-producer-factory.interface";
-import { ReducerFactory } from "../reducers/reducer-factory.interface";
+import { ProxyProducerFactory, ProxyProducerFactoryKey, ProxyProducerFactoryKeyType } from "./proxy-producer-factory.interface";
+import { ReducerFactory, ReducerFactoryKey } from "../reducers/reducer-factory.interface";
 import { AggregatedStateChangesProxyProducerImpl } from "./aggregated-state-changes-proxy-producer-impl";
+import { autowire } from "undecorated-di";
 
-class ProxyProducerFactoryImpl implements ProxyProducerFactory {
+export class ProxyProducerFactoryImpl implements ProxyProducerFactory {
   #reducerFactory : ReducerFactory;
 
   constructor(reducerFactory : ReducerFactory) {
@@ -17,6 +16,10 @@ class ProxyProducerFactoryImpl implements ProxyProducerFactory {
   }
 }
 
-makeInjectable(ProxyProducerFactoryImpl, [Services.ReducerFactory]);
-
-export { ProxyProducerFactoryImpl };
+export default autowire<ProxyProducerFactoryKeyType, ProxyProducerFactory, ProxyProducerFactoryImpl>(
+  ProxyProducerFactoryImpl,
+  ProxyProducerFactoryKey,
+  [
+    ReducerFactoryKey
+  ]
+);

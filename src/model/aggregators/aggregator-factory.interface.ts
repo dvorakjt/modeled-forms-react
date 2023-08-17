@@ -7,3 +7,7 @@ export interface AggregatorFactory {
   createMultiFieldAggregatorFromFields(fields : FormElementMap) : MultiFieldAggregator;
   createMultiInputValidatorMessagesAggregatorFromValidators(validators : Array<MultiInputValidator>) : MultiInputValidatorMessagesAggregator;
 }
+
+export const AggregatorFactoryKey = 'AggregatorFactory';
+
+export type AggregatorFactoryKeyType = typeof AggregatorFactoryKey;

@@ -1,6 +1,6 @@
 import { email } from "./model/constituents/validators/util/email";
 import { required } from "./model/constituents/validators/util/required";
-import { Services, getContainer } from "./model/container";
+import { Services, getContainer } from "./model/container2";
 import { Field } from "./model/constituents/fields/base/field.interface";
 import { Validity } from "./model/constituents/state/validity.enum";
 import { FormElementsParser } from "./model/types/parser/form-elements/form-elements-parser.interface";

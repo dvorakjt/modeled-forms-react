@@ -1,15 +1,14 @@
-import { makeInjectable } from "../../util/make-injectable";
-import { Services } from "../../container";
 import { DualField } from "./dual-field.interface";
-import { BaseFieldFactory } from "./base-field-factory.interface";
+import { BaseFieldFactory, BaseFieldFactoryKey, BaseFieldFactoryKeyType } from "./base-field-factory.interface";
 import { Field } from "./field.interface";
 import { AsyncValidator } from "../../validators/async-validator.type";
-import { SingleInputValidatorSuiteFactory } from "../../validators/single-input/single-input-validator-suite-factory.interface";
+import { SingleInputValidatorFactoryKey, SingleInputValidatorSuiteFactory } from "../../validators/single-input/single-input-validator-suite-factory.interface";
 import { SyncValidator } from "../../validators/sync-validator.type";
 import { DualFieldImpl } from "./dual-field-impl";
 import { FieldImpl } from "./field-impl";
+import { autowire } from 'undecorated-di';
 
-class BaseFieldFactoryImpl implements BaseFieldFactory {
+export class BaseFieldFactoryImpl implements BaseFieldFactory {
   #singleInputValidatorSuiteFactory : SingleInputValidatorSuiteFactory;
   
   constructor(singleInputValidatorSuiteFactory : SingleInputValidatorSuiteFactory) {
@@ -28,6 +27,10 @@ class BaseFieldFactoryImpl implements BaseFieldFactory {
   }  
 }
 
-makeInjectable(BaseFieldFactoryImpl, [Services.SingleInputValidatorFactory]);
-
-export { BaseFieldFactoryImpl };
+export default autowire<BaseFieldFactoryKeyType, BaseFieldFactory, BaseFieldFactoryImpl>(
+  BaseFieldFactoryImpl,
+  BaseFieldFactoryKey,
+  [
+    SingleInputValidatorFactoryKey
+  ]
+);

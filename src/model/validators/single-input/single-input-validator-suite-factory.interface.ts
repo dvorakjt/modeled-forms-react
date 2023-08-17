@@ -5,3 +5,7 @@ import { SingleInputValidatorSuite } from "./single-input-validator-suite.interf
 export interface SingleInputValidatorSuiteFactory {
   createSingleInputValidatorSuite<T>(syncValidators: SyncValidator<T>[], asyncValidators: AsyncValidator<T>[], pendingAsyncValidatorMessage? : string) : SingleInputValidatorSuite<T>;
 }
+
+export const SingleInputValidatorFactoryKey = 'SingleInputValidatorSuiteFactory';
+
+export type SingleInputValidatorFactoryKeyType = typeof SingleInputValidatorFactoryKey;

@@ -1,24 +1,20 @@
 import { describe, test, expect, beforeEach, vi } from "vitest";
-import { getTestContainer, Services } from "../test-container";
+import { getTestContainer } from "../test-container";
 import { MultiFieldAggregatorImpl } from "../../../model/aggregators/multi-field-aggregator-impl";
 import { MockField } from "../../util/mocks/mock-field";
 import { AggregatedStateChangesProxyProducer } from "../../../model/proxies/aggregated-state-changes-proxy-producer.interface";
 import { FieldStateReducer } from "../../../model/reducers/field-state/field-state-reducer.interface";
 import { OneTimeValueEmitter } from "../../../model/emitters/one-time-value-emitter.interface";
-import { SubjectFactory } from "../../../model/submission/subject-factory.interface";
-import { ProxyProducerFactory } from "../../../model/proxies/proxy-producer-factory.interface";
-import { ReducerFactory } from "../../../model/reducers/reducer-factory.interface";
-import { EmitterFactory } from "../../../model/emitters/emitter-factory.interface";
 import { Validity } from "../../../model/state/validity.enum";
 import { FormElementMap } from "../../../model/form-elements/form-element-map.type";
 import { AggregatedStateChanges } from "../../../model/aggregators/aggregated-state-changes.interface";
 
 describe('MultiFieldAggregatorImpl', () => {
   const container = getTestContainer();
-  const subjectFactory = container.get<SubjectFactory>(Services.SubjectFactory);
-  const proxyProducerFactory = container.get<ProxyProducerFactory>(Services.ProxyProducerFactory);
-  const reducerFactory = container.get<ReducerFactory>(Services.ReducerFactory);
-  const emitterFactory = container.get<EmitterFactory>(Services.EmitterFactory);
+  const subjectFactory = container.services.SubjectFactory;
+  const proxyProducerFactory = container.services.ProxyProducerFactory;
+  const reducerFactory = container.services.ReducerFactory;
+  const emitterFactory = container.services.EmitterFactory;
   let aggregatedStateChangesProxyProducer : AggregatedStateChangesProxyProducer;
   let fieldStateReducer : FieldStateReducer;
   let accessedFields : OneTimeValueEmitter<Set<string>>;

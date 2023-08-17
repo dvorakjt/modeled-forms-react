@@ -1,6 +1,5 @@
 import { describe, expect, test } from "vitest";
-import { getTestContainer, Services } from "../test-container";
-import { AggregatorFactory } from "../../../model/aggregators/aggregator-factory.interface";
+import { getTestContainer } from "../test-container";
 import { SyncAdapter } from "../../../model/adapters/sync-adapter";
 import { FormElementMap } from "../../../model/form-elements/form-element-map.type";
 import { MockField } from "../../util/mocks/mock-field";
@@ -8,7 +7,7 @@ import { AggregatedStateChanges } from "../../../model/aggregators/aggregated-st
 
 describe('SyncAdapter', () => {
   const container = getTestContainer();
-  const aggregatorFactory = container.get<AggregatorFactory>(Services.AggregatorFactory);
+  const aggregatorFactory = container.services.AggregatorFactory;
 
   test('It emits adapted values through its stream property.', () => {
     const fields : FormElementMap = {

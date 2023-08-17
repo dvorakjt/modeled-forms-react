@@ -21,7 +21,7 @@ export class AggregatedStateChangesProxyProducerImpl
       [key: string]: AnyState;
     } = {};
     for (const key in fields) {
-      aggregatedState[key as keyof typeof aggregatedState] = fields[key].state;
+      aggregatedState[key] = fields[key].state;
     }
 
     const fieldStateReducer = this.fieldStateReducer;

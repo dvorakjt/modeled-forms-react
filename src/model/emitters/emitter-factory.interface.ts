@@ -5,3 +5,7 @@ export interface EmitterFactory {
   createOneTimeEventEmitter(): OneTimeEventEmitter;
   createOneTimeValueEmitter<T>() : OneTimeValueEmitter<T>;
 }
+
+export const EmitterFactoryKey = 'EmitterFactory';
+
+export type EmitterFactoryKeyType = typeof EmitterFactoryKey;

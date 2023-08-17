@@ -56,3 +56,7 @@ export interface ControlledFieldFactory {
     fields : FormElementMap
   ) : ValueControlledDualField;
 }
+
+export const ControlledFieldFactoryKey = 'ControlledFieldFactory';
+
+export type ControlledFieldFactoryKeyType = typeof ControlledFieldFactoryKey;

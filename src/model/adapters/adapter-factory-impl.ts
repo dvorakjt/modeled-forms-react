@@ -1,14 +1,13 @@
-import { makeInjectable } from "../util/make-injectable";
-import { Services } from "../container";
-import { AdapterFactory } from "./adapter-factory.interface";
+import { autowire } from "undecorated-di";
+import { AdapterFactory, AdapterFactoryKey, AdapterFactoryKeyType } from "./adapter-factory.interface";
 import { AsyncAdapterFn } from "./async-adapter-fn.type";
 import { SyncAdapterFn } from "./sync-adapter-fn.type";
-import { AggregatorFactory } from "../aggregators/aggregator-factory.interface";
+import { AggregatorFactory, AggregatorFactoryKey } from "../aggregators/aggregator-factory.interface";
 import { FormElementMap } from "../form-elements/form-element-map.type";
 import { AsyncAdapter } from "./async-adapter";
 import { SyncAdapter } from "./sync-adapter";
 
-class AdapterFactoryImpl implements AdapterFactory {
+export class AdapterFactoryImpl implements AdapterFactory {
   readonly #aggregatorFactory : AggregatorFactory;
 
   constructor(aggregatorFactory : AggregatorFactory) {
@@ -25,6 +24,8 @@ class AdapterFactoryImpl implements AdapterFactory {
   }
 }
 
-makeInjectable(AdapterFactoryImpl, [Services.AggregatorFactory]);
-
-export { AdapterFactoryImpl };
+export default autowire<AdapterFactoryKeyType, AdapterFactory, AdapterFactoryImpl>(
+  AdapterFactoryImpl, 
+  AdapterFactoryKey, 
+  [AggregatorFactoryKey]
+);

@@ -3,14 +3,15 @@ import { Observable } from "rxjs";
 import { AsyncAdapterFn } from "../../adapters/async-adapter-fn.type";
 import { SyncAdapterFn } from "../../adapters/sync-adapter-fn.type";
 import { AggregatedStateChanges } from "../../aggregators/aggregated-state-changes.interface";
-import { FinalizerFnFactory } from "./finalizer-fn-factory.interface";
-import { FinalizerValidityTranslator } from "../finalizer-validity-translator.interface";
+import { FinalizerFnFactory, FinalizerFnFactoryKey, FinalizerFnFactoryKeyType } from "./finalizer-fn-factory.interface";
+import { FinalizerValidityTranslator, FinalizerValidityTranslatorKey } from "../finalizer-validity-translator.interface";
 import { FinalizerState } from "../../state/finalizer-state.interface";
 import { FinalizerValidity } from "../../state/finalizer-validity.enum";
 import { Validity } from "../../state/validity.enum";
 import { SyncBaseFinalizerFunction } from "./sync-base-finalizer-fn.type";
 import { AsyncBaseFinalizerFn } from "./async-base-finalizer-fn.type";
 import { logErrorInDevMode } from "../../util/log-error-in-dev-mode";
+import { autowire } from 'undecorated-di';
 
 export class FinalizerFnFactoryImpl implements FinalizerFnFactory {
   #finalizerValidityTranslator : FinalizerValidityTranslator;
@@ -91,3 +92,11 @@ export class FinalizerFnFactoryImpl implements FinalizerFnFactory {
     });
   }
 }
+
+export default autowire<FinalizerFnFactoryKeyType, FinalizerFnFactory, FinalizerFnFactoryImpl>(
+  FinalizerFnFactoryImpl,
+  FinalizerFnFactoryKey,
+  [
+    FinalizerValidityTranslatorKey
+  ]
+);

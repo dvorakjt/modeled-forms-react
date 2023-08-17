@@ -1,18 +1,17 @@
-import { makeInjectable } from "../util/make-injectable";
-import { Services } from "../container";
-import { AggregatorFactory } from "./aggregator-factory.interface";
+import { AggregatorFactory, AggregatorFactoryKey, AggregatorFactoryKeyType } from "./aggregator-factory.interface";
 import { MultiFieldAggregator } from "./multi-field-aggregator.interface";
 import { MultiInputValidatorMessagesAggregator } from "./multi-input-validator-messages-aggregator.interface";
-import { EmitterFactory } from "../emitters/emitter-factory.interface";
+import { EmitterFactory, EmitterFactoryKey } from "../emitters/emitter-factory.interface";
 import { FormElementMap } from "../form-elements/form-element-map.type";
-import { ProxyProducerFactory } from "../proxies/proxy-producer-factory.interface";
-import { ReducerFactory } from "../reducers/reducer-factory.interface";
-import { SubjectFactory } from "../submission/subject-factory.interface";
+import { ProxyProducerFactory, ProxyProducerFactoryKey } from "../proxies/proxy-producer-factory.interface";
+import { ReducerFactory, ReducerFactoryKey } from "../reducers/reducer-factory.interface";
+import { SubjectFactory, SubjectFactoryKey } from "../subjects/subject-factory.interface";
 import { MultiInputValidator } from "../validators/multi-input/multi-input-validator.interface";
 import { MultiFieldAggregatorImpl } from "./multi-field-aggregator-impl";
 import { MultiInputValidatorMessagesAggregatorImpl } from "./multi-input-validator-messages-aggregator-impl";
+import { autowire } from "undecorated-di";
 
-class AggregatorFactoryImpl implements AggregatorFactory {
+export class AggregatorFactoryImpl implements AggregatorFactory {
   #proxyProducerFactory : ProxyProducerFactory;
   #reducerFactory : ReducerFactory;
   #emitterFactory : EmitterFactory;
@@ -44,6 +43,13 @@ class AggregatorFactoryImpl implements AggregatorFactory {
   }
 }
 
-makeInjectable(AggregatorFactoryImpl, [Services.ProxyProducerFactory, Services.ReducerFactory, Services.EmitterFactory, Services.SubjectFactory]);
-
-export { AggregatorFactoryImpl };
+export default autowire<AggregatorFactoryKeyType, AggregatorFactory, AggregatorFactoryImpl>(
+  AggregatorFactoryImpl,
+  AggregatorFactoryKey,
+  [
+    ProxyProducerFactoryKey,
+    ReducerFactoryKey,
+    EmitterFactoryKey,
+    SubjectFactoryKey
+  ]
+)

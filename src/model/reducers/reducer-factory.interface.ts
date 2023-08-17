@@ -10,3 +10,7 @@ export interface ReducerFactory {
   createFinalizerFacingMultiInputValidatorValidityReducer() : MultiInputValidatorValidityReducer;
   createValidityReducer() : ValidityReducer;
 }
+
+export const ReducerFactoryKey = 'ReducerFactory';
+
+export type ReducerFactoryKeyType = typeof ReducerFactoryKey;

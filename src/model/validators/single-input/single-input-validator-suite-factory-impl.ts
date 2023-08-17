@@ -1,14 +1,14 @@
-import { makeInjectable } from "../../util/make-injectable";
 import { AsyncValidator } from "../async-validator.type";
-import { SingleInputValidatorSuiteFactory } from "./single-input-validator-suite-factory.interface";
+import { SingleInputValidatorFactoryKey, SingleInputValidatorFactoryKeyType, SingleInputValidatorSuiteFactory } from "./single-input-validator-suite-factory.interface";
 import { SingleInputValidatorSuite } from "./single-input-validator-suite.interface";
 import { SyncValidator } from "../sync-validator.type";
 import { GlobalMessages } from "../../constants/global-messages.enum";
 import { AsyncSingleInputValidatorSuite } from "./async-single-input-validator-suite";
 import { HybridSingleInputValidatorSuite } from "./hybrid-single-input-validator-suite";
 import { SyncSingleInputValidatorSuite } from "./sync-single-input-validator-suite";
+import { autowire } from "undecorated-di";
 
-class SingleInputValidatorSuiteFactoryImpl implements SingleInputValidatorSuiteFactory {
+export class SingleInputValidatorSuiteFactoryImpl implements SingleInputValidatorSuiteFactory {
   createSingleInputValidatorSuite<T>(syncValidators: SyncValidator<T>[], asyncValidators: AsyncValidator<T>[], pendingAsyncValidatorMessage : string = GlobalMessages.PENDING_ASYNC_VALIDATOR_SUITE_MESSAGE): SingleInputValidatorSuite<T> {
     const syncValidatorSuite = new SyncSingleInputValidatorSuite(syncValidators);
     if(asyncValidators.length > 0) {
@@ -19,6 +19,7 @@ class SingleInputValidatorSuiteFactoryImpl implements SingleInputValidatorSuiteF
   }
 }
 
-makeInjectable(SingleInputValidatorSuiteFactoryImpl);
-
-export { SingleInputValidatorSuiteFactoryImpl };
+export default autowire<SingleInputValidatorFactoryKeyType, SingleInputValidatorSuiteFactory, SingleInputValidatorSuiteFactoryImpl>(
+  SingleInputValidatorSuiteFactoryImpl,
+  SingleInputValidatorFactoryKey
+);

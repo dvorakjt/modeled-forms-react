@@ -1,6 +1,7 @@
-import { FinalizerValidityTranslator } from "./finalizer-validity-translator.interface";
+import { FinalizerValidityTranslator, FinalizerValidityTranslatorKey, FinalizerValidityTranslatorKeyType } from "./finalizer-validity-translator.interface";
 import { FinalizerValidity } from "../state/finalizer-validity.enum";
 import { Validity } from "../state/validity.enum";
+import { autowire } from "undecorated-di";
 
 export class FinalizerValidityTranslatorImpl implements FinalizerValidityTranslator {
   translateFinalizerValidityToValidity(finalizerValidity: FinalizerValidity): Validity {
@@ -35,5 +36,9 @@ export class FinalizerValidityTranslatorImpl implements FinalizerValidityTransla
         return FinalizerValidity.VALID_FINALIZING;
     }
   }
-  
 }
+
+export default autowire<FinalizerValidityTranslatorKeyType, FinalizerValidityTranslator, FinalizerValidityTranslatorImpl>(
+  FinalizerValidityTranslatorImpl,
+  FinalizerValidityTranslatorKey
+);

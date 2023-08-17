@@ -8,3 +8,7 @@ export interface AdapterFactory {
   createSyncAdapterFromFnWithFields<V>(syncAdapterFn : SyncAdapterFn<V>, fields : FormElementMap) : SyncAdapter<V>;
   createAsyncAdapterFromFnWithFields<V>(asyncAdapterFn : AsyncAdapterFn<V>, fields : FormElementMap) : AsyncAdapter<V>;
 }
+
+export const AdapterFactoryKey = 'AdapterFactory';
+
+export type AdapterFactoryKeyType = typeof AdapterFactoryKey;

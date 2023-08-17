@@ -6,7 +6,7 @@ import type { AnyState } from '../state/any-state.type';
 import type { OnInitialSubscriptionHandlingBehaviorSubject } from '../subjects/on-initial-subscription-handling-behavior-subject.interface';
 import type { AggregatedStateChangesProxyProducer } from '../proxies/aggregated-state-changes-proxy-producer.interface';
 import type { OneTimeValueEmitter } from '../emitters/one-time-value-emitter.interface';
-import type { SubjectFactory } from '../submission/subject-factory.interface';
+import type { SubjectFactory } from '../subjects/subject-factory.interface';
 
 export class MultiFieldAggregatorImpl
   implements MultiFieldAggregator

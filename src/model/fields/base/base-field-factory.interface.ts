@@ -20,3 +20,7 @@ export interface BaseFieldFactory {
     pendingAsyncValidatorMessage? : string
   ) : DualField;
 }
+
+export const BaseFieldFactoryKey = 'BaseFieldFactory';
+
+export type BaseFieldFactoryKeyType = typeof BaseFieldFactoryKey;

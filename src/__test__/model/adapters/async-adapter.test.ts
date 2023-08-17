@@ -1,6 +1,5 @@
 import { describe, expect, test, vi } from "vitest";
-import { getTestContainer, Services } from "../test-container";
-import { AggregatorFactory } from "../../../model/aggregators/aggregator-factory.interface";
+import { getTestContainer } from "../test-container";
 import { FormElementMap } from "../../../model/form-elements/form-element-map.type";
 import { MockField } from "../../util/mocks/mock-field";
 import { AggregatedStateChanges } from "../../../model/aggregators/aggregated-state-changes.interface";
@@ -10,7 +9,7 @@ import { Field } from "../../../model/fields/base/field.interface";
 
 describe('AsyncAdapter', () => {
   const container = getTestContainer();
-  const aggregatorFactory = container.get<AggregatorFactory>(Services.AggregatorFactory);
+  const aggregatorFactory = container.services.AggregatorFactory;
 
   test('It emits adapted values through its stream property when the adapterFn resolves.', () => {
     const fields : FormElementMap = {

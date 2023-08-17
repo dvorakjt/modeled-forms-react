@@ -7,3 +7,7 @@ export interface FinalizerFnFactory {
   createSyncFinalizerFn(baseAdapterFn : SyncBaseFinalizerFunction) : SyncFinalizerFn;
   createAsyncFinalizerFn(baseAdapterFn : AsyncBaseFinalizerFn) : AsyncFinalizerFn;
 }
+
+export const FinalizerFnFactoryKey = 'FinalizerFnFactory';
+
+export type FinalizerFnFactoryKeyType = typeof FinalizerFnFactoryKey;

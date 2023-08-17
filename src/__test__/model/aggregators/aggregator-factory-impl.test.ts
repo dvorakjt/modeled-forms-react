@@ -1,10 +1,6 @@
 import { describe, test, expect } from 'vitest';
 import { AggregatorFactoryImpl } from '../../../model/aggregators/aggregator-factory-impl';
-import { getTestContainer, Services } from '../test-container';
-import { ProxyProducerFactory } from '../../../model/proxies/proxy-producer-factory.interface';
-import { ReducerFactory } from '../../../model/reducers/reducer-factory.interface';
-import { EmitterFactory } from '../../../model/emitters/emitter-factory.interface';
-import { SubjectFactory } from '../../../model/submission/subject-factory.interface';
+import { getTestContainer } from '../test-container';
 import { FormElementMap } from '../../../model/form-elements/form-element-map.type';
 import { MockField } from '../../util/mocks/mock-field';
 import { MultiFieldAggregatorImpl } from '../../../model/aggregators/multi-field-aggregator-impl';
@@ -12,10 +8,10 @@ import { MultiInputValidatorMessagesAggregatorImpl } from '../../../model/aggreg
 
 describe('AggregatorFactoryImpl', () => {
   const container = getTestContainer();
-  const proxyProducerFactory = container.get<ProxyProducerFactory>(Services.ProxyProducerFactory);
-  const reducerFactory = container.get<ReducerFactory>(Services.ReducerFactory);
-  const emitterFactory = container.get<EmitterFactory>(Services.EmitterFactory);
-  const subjectFactory = container.get<SubjectFactory>(Services.SubjectFactory);
+  const proxyProducerFactory = container.services.ProxyProducerFactory;
+  const reducerFactory = container.services.ReducerFactory;
+  const emitterFactory = container.services.EmitterFactory;
+  const subjectFactory = container.services.SubjectFactory;
   const aggregatorFactoryImpl = new AggregatorFactoryImpl(
     proxyProducerFactory,
     reducerFactory,
