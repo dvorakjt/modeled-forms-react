@@ -8,9 +8,9 @@ import type { MultiInputValidatorMessagesAggregator } from '../aggregators/multi
 
 export class NestedFormImpl implements NestedForm {
   readonly stateChanges: Subject<State<any>>;
-  readonly userFacingFields : FormElementMap;
-  readonly #finalizerManager : FinalizerManager;
-  readonly #multiFieldValidatorMessagesAggregator : MultiInputValidatorMessagesAggregator;
+  readonly userFacingFields: FormElementMap;
+  readonly #finalizerManager: FinalizerManager;
+  readonly #multiFieldValidatorMessagesAggregator: MultiInputValidatorMessagesAggregator;
   readonly #omitByDefault;
   #omit;
 
@@ -19,7 +19,7 @@ export class NestedFormImpl implements NestedForm {
       ...this.#finalizerManager.state,
       messages: [
         ...this.#multiFieldValidatorMessagesAggregator.messages,
-        ...this.#finalizerManager.state.messages
+        ...this.#finalizerManager.state.messages,
       ],
       omit: this.#omit,
     });
@@ -35,20 +35,23 @@ export class NestedFormImpl implements NestedForm {
   }
 
   constructor(
-    userFacingFields : FormElementMap,
-    finalizerManager : FinalizerManager,
-    multiFieldValidatorMessagesAggregator : MultiInputValidatorMessagesAggregator,
+    userFacingFields: FormElementMap,
+    finalizerManager: FinalizerManager,
+    multiFieldValidatorMessagesAggregator: MultiInputValidatorMessagesAggregator,
     omitByDefault: boolean,
   ) {
     this.userFacingFields = userFacingFields;
     this.#finalizerManager = finalizerManager;
-    this.#multiFieldValidatorMessagesAggregator = multiFieldValidatorMessagesAggregator;
+    this.#multiFieldValidatorMessagesAggregator =
+      multiFieldValidatorMessagesAggregator;
     this.#omitByDefault = omitByDefault;
     this.#omit = this.#omitByDefault;
 
-    this.#multiFieldValidatorMessagesAggregator.messagesChanges.subscribe(() => {
-      this.stateChanges?.next(this.state);
-    });
+    this.#multiFieldValidatorMessagesAggregator.messagesChanges.subscribe(
+      () => {
+        this.stateChanges?.next(this.state);
+      },
+    );
 
     this.#finalizerManager.stateChanges.subscribe(() => {
       if (this.stateChanges) this.stateChanges?.next(this.state);
@@ -59,7 +62,7 @@ export class NestedFormImpl implements NestedForm {
 
   reset() {
     this.#omit = this.#omitByDefault;
-    for(const fieldName in this.userFacingFields) {
+    for (const fieldName in this.userFacingFields) {
       this.userFacingFields[fieldName].reset();
     }
   }

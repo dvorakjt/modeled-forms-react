@@ -16,19 +16,25 @@ describe('AggregatorFactoryImpl', () => {
     proxyProducerFactory,
     reducerFactory,
     emitterFactory,
-    subjectFactory
+    subjectFactory,
   );
 
   test('It returns an instance of MultiFieldAggregator when createMultiFieldAggregatorFromFields() is called.', () => {
-    const fields : FormElementMap = {
-      fieldA : new MockField('a field')
-    }
-    const multiFieldAggregator = aggregatorFactoryImpl.createMultiFieldAggregatorFromFields(fields);
+    const fields: FormElementMap = {
+      fieldA: new MockField('a field'),
+    };
+    const multiFieldAggregator =
+      aggregatorFactoryImpl.createMultiFieldAggregatorFromFields(fields);
     expect(multiFieldAggregator).toBeInstanceOf(MultiFieldAggregatorImpl);
   });
 
   test('It returns an instance of MultiInputValidatorMessagesAggregator when createMultiInputValidatorMessagesAggregatorFromValidators() is called.', () => {
-    const multiInputValidatorMessagesAggregator = aggregatorFactoryImpl.createMultiInputValidatorMessagesAggregatorFromValidators([]);
-    expect(multiInputValidatorMessagesAggregator).toBeInstanceOf(MultiInputValidatorMessagesAggregatorImpl);
+    const multiInputValidatorMessagesAggregator =
+      aggregatorFactoryImpl.createMultiInputValidatorMessagesAggregatorFromValidators(
+        [],
+      );
+    expect(multiInputValidatorMessagesAggregator).toBeInstanceOf(
+      MultiInputValidatorMessagesAggregatorImpl,
+    );
   });
 });

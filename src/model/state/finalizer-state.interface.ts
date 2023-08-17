@@ -1,6 +1,6 @@
-import { FinalizerValidity } from "./finalizer-validity.enum";
+import { FinalizerValidity } from './finalizer-validity.enum';
 
 export interface FinalizerState {
-  value? : any;
-  finalizerValidity : FinalizerValidity;
+  value?: any;
+  finalizerValidity: FinalizerValidity;
 }

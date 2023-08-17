@@ -7,7 +7,6 @@ interface OverallValidity {
   hasOmittedFields: boolean;
 }
 
-
 export type AggregatedStateChanges = Omit<
   {
     [K in keyof FormElementMap]: AnyState;

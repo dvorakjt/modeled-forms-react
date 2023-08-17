@@ -1,24 +1,27 @@
-import { BehaviorSubject, Subject } from "rxjs";
-import { Field } from "../../../model/fields/base/field.interface";
-import { FieldState } from "../../../model/state/field-state.interface";
-import { State } from "../../../model/state/state.interface";
-import { Validity } from "../../../model/state/validity.enum";
+import { BehaviorSubject, Subject } from 'rxjs';
+import { Field } from '../../../model/fields/base/field.interface';
+import { FieldState } from '../../../model/state/field-state.interface';
+import { State } from '../../../model/state/state.interface';
+import { Validity } from '../../../model/state/validity.enum';
 
 export class MockField implements Field {
-  stateChanges : Subject<FieldState>;
-  #state : FieldState;
-  #defaultValue : string;
-  #defaultValidity : Validity;
+  stateChanges: Subject<FieldState>;
+  #state: FieldState;
+  #defaultValue: string;
+  #defaultValidity: Validity;
 
-  constructor(defaultValue : string, defaultValidity : Validity = Validity.VALID_FINALIZABLE) {
+  constructor(
+    defaultValue: string,
+    defaultValidity: Validity = Validity.VALID_FINALIZABLE,
+  ) {
     this.#defaultValue = defaultValue;
     this.#defaultValidity = defaultValidity;
     this.#state = {
-      value : defaultValue,
-      validity : defaultValidity,
-      messages : [],
-      omit : false
-    }
+      value: defaultValue,
+      validity: defaultValidity,
+      messages: [],
+      omit: false,
+    };
     this.stateChanges = new BehaviorSubject(this.state);
   }
 
@@ -29,7 +32,7 @@ export class MockField implements Field {
   setValue(value: string): void {
     this.setState({
       ...this.state,
-      value
+      value,
     });
   }
   get state(): State<string> {
@@ -38,7 +41,7 @@ export class MockField implements Field {
   set omit(omit: boolean) {
     this.setState({
       ...this.state,
-      omit
+      omit,
     });
   }
   get omit(): boolean {
@@ -46,10 +49,10 @@ export class MockField implements Field {
   }
   reset(): void {
     this.setState({
-      value : this.#defaultValue,
-      validity : this.#defaultValidity,
-      messages : [],
-      omit : false
+      value: this.#defaultValue,
+      validity: this.#defaultValidity,
+      messages: [],
+      omit: false,
     });
   }
 }

@@ -9,7 +9,9 @@ import type { FieldState } from '../../state/field-state.interface';
 
 export class ValueControlledField implements Field {
   protected readonly field: Field;
-  protected readonly adapter: Adapter<DualFieldSetValueArg | string | undefined>;
+  protected readonly adapter: Adapter<
+    DualFieldSetValueArg | string | undefined
+  >;
 
   get stateChanges() {
     return this.field.stateChanges;
@@ -27,12 +29,15 @@ export class ValueControlledField implements Field {
     return this.field.omit;
   }
 
-  constructor(field: Field, adapter: Adapter<DualFieldSetValueArg | string | undefined>) {
+  constructor(
+    field: Field,
+    adapter: Adapter<DualFieldSetValueArg | string | undefined>,
+  ) {
     this.field = field;
     this.adapter = adapter;
     this.adapter.stream.subscribe({
       next: (next: string | DualFieldSetValueArg | undefined) => {
-        if(next) this.setValue(next)
+        if (next) this.setValue(next);
       },
       error: () => {
         this.setState({

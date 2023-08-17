@@ -10,7 +10,7 @@ export class OnInitialSubscriptionHandlingBehaviorSubjectImpl<T>
   readonly #onInitialSubscriptionEventEmitter: OneTimeEventEmitter;
 
   constructor(
-    initialValue : T,
+    initialValue: T,
     onInitialSubscriptionEventEmitter: OneTimeEventEmitter,
   ) {
     super(initialValue);
@@ -20,11 +20,12 @@ export class OnInitialSubscriptionHandlingBehaviorSubjectImpl<T>
   subscribe(
     observerOrNext?: Partial<Observer<T>> | ((value: T) => void) | null,
     error?: ((error: any) => void) | null,
-    complete?: (() => void) | null
+    complete?: (() => void) | null,
   ): Subscription {
-    let subscription : Subscription;
-    if(observerOrNext) {
-      if(typeof observerOrNext === 'function') subscription = super.subscribe(observerOrNext, error, complete);
+    let subscription: Subscription;
+    if (observerOrNext) {
+      if (typeof observerOrNext === 'function')
+        subscription = super.subscribe(observerOrNext, error, complete);
       else subscription = super.subscribe(observerOrNext);
     } else subscription = super.subscribe();
     this.#onInitialSubscriptionEventEmitter.triggerEvent();

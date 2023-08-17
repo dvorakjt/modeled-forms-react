@@ -3,10 +3,10 @@ import type { FieldState } from '../../state/field-state.interface';
 import { ValidityReducer } from '../validity/validity-reducer.interface';
 
 export class FieldStateReducerImpl implements FieldStateReducer {
-  #validityReducer : ValidityReducer;
+  #validityReducer: ValidityReducer;
   #omittedFields = new Set<string>();
 
-  constructor(validityReducer : ValidityReducer) {
+  constructor(validityReducer: ValidityReducer) {
     this.#validityReducer = validityReducer;
   }
 
@@ -24,5 +24,4 @@ export class FieldStateReducerImpl implements FieldStateReducer {
     if (omit) this.#omittedFields.add(fieldName);
     else this.#omittedFields.delete(fieldName);
   }
-
 }

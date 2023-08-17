@@ -1,4 +1,4 @@
-import type { Validity } from "../../state/validity.enum";
+import type { Validity } from '../../state/validity.enum';
 
 export interface ValidityReducer {
   get validity(): Validity;

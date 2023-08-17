@@ -14,9 +14,7 @@ export class AggregatedStateChangesProxyProducerImpl
     this.fieldStateReducer = fieldStateReducer;
   }
 
-  getProxy(
-    fields: FormElementMap,
-  ): AggregatedStateChanges {
+  getProxy(fields: FormElementMap): AggregatedStateChanges {
     const aggregatedState: {
       [key: string]: AnyState;
     } = {};
@@ -33,7 +31,8 @@ export class AggregatedStateChangesProxyProducerImpl
         else if (prop === 'hasOmittedFields') return fieldStateReducer.omit;
         else {
           const propName = prop.toString();
-          if (!(prop in fields) || propName === 'constructor') return target[propName];
+          if (!(prop in fields) || propName === 'constructor')
+            return target[propName];
 
           accessedFieldNames.add(propName);
           const state = target[propName];

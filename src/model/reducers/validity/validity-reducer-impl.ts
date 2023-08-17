@@ -1,4 +1,4 @@
-import { Validity } from "../../state/validity.enum";
+import { Validity } from '../../state/validity.enum';
 
 export class ValidityReducerImpl {
   readonly #errantFields = new Set<string>();
@@ -15,21 +15,35 @@ export class ValidityReducerImpl {
     return Validity.VALID_FINALIZABLE;
   }
 
-  updateTallies(elementId : string, validity : Validity) {
+  updateTallies(elementId: string, validity: Validity) {
     this.updateTally(elementId, validity, Validity.ERROR, this.#errantFields);
-    this.updateTally(elementId, validity, Validity.INVALID, this.#invalidFields);
-    this.updateTally(elementId, validity, Validity.PENDING, this.#pendingFields);
+    this.updateTally(
+      elementId,
+      validity,
+      Validity.INVALID,
+      this.#invalidFields,
+    );
+    this.updateTally(
+      elementId,
+      validity,
+      Validity.PENDING,
+      this.#pendingFields,
+    );
     this.updateTally(
       elementId,
       validity,
       Validity.VALID_UNFINALIZABLE,
-      this.#validUnfinalizableFields
+      this.#validUnfinalizableFields,
     );
   }
 
-  private updateTally(elementId : string, actualValidity : Validity, expectedValidity : Validity, set : Set<string>) {
-    if (actualValidity === expectedValidity)
-    set.add(elementId);
+  private updateTally(
+    elementId: string,
+    actualValidity: Validity,
+    expectedValidity: Validity,
+    set: Set<string>,
+  ) {
+    if (actualValidity === expectedValidity) set.add(elementId);
     else set.delete(elementId);
   }
 }

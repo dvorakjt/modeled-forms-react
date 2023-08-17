@@ -1,9 +1,13 @@
-import { AggregatedStateChangesProxyProducer } from "./aggregated-state-changes-proxy-producer.interface";
+import { AggregatedStateChangesProxyProducer } from './aggregated-state-changes-proxy-producer.interface';
 
-export interface ProxyProducerFactory {
-  createAggregatedStateChangesProxyProducer() : AggregatedStateChangesProxyProducer;
+interface ProxyProducerFactory {
+  createAggregatedStateChangesProxyProducer(): AggregatedStateChangesProxyProducer;
 }
+const ProxyProducerFactoryKey = 'ProxyProducerFactory';
+type ProxyProducerFactoryKeyType = typeof ProxyProducerFactoryKey;
 
-export const ProxyProducerFactoryKey = 'ProxyProducerFactory';
-
-export type ProxyProducerFactoryKeyType = typeof ProxyProducerFactoryKey;
+export {
+  ProxyProducerFactoryKey,
+  type ProxyProducerFactory,
+  type ProxyProducerFactoryKeyType,
+};

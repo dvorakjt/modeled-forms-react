@@ -1,4 +1,4 @@
-import type { Subject } from "rxjs";
+import type { Subject } from 'rxjs';
 
 export interface Adapter<T> {
   stream: Subject<T>;

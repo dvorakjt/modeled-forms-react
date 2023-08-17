@@ -1,3 +1,3 @@
-import { BaseFormTemplate } from "./base-form-template.interface";
+import { BaseFormTemplate } from './base-form-template.interface';
 
 export interface NestedFormTemplate extends BaseFormTemplate {}

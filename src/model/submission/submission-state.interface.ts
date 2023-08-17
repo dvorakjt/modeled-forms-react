@@ -1,6 +1,6 @@
-import { Message } from "../state/messages/message.interface";
+import { Message } from '../state/messages/message.interface';
 
 export interface SubmissionState {
-  message? : Message;
-  submissionAttempted : boolean;
+  message?: Message;
+  submissionAttempted: boolean;
 }

@@ -28,7 +28,10 @@ export class ValueControlledDualField
     return this.field as DualField;
   }
 
-  constructor(field: DualField, adapter: Adapter<DualFieldSetValueArg | string | undefined>) {
+  constructor(
+    field: DualField,
+    adapter: Adapter<DualFieldSetValueArg | string | undefined>,
+  ) {
     super(field, adapter);
   }
 

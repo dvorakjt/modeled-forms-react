@@ -2,10 +2,10 @@ import { AsyncValidator } from '../../../../../../model/validators/async-validat
 
 export function createIntraPromiseErrorThrowingAsyncValidator(
   error: Error,
-) : AsyncValidator<any> {
+): AsyncValidator<any> {
   return () => {
     return new Promise(() => {
       throw error;
     });
-  }
+  };
 }
