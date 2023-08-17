@@ -25,7 +25,7 @@ import { ControlledFieldFactoryKey, ControlledFieldFactoryKeyType } from "./cont
 class ControlledFieldFactoryImpl implements ControlledFieldFactory {
   #adapterFactory : AdapterFactory;
 
-  constructor(adapterFactory : AdapterFactory) {
+  constructor(adapterFactory: AdapterFactory) {
     this.#adapterFactory = adapterFactory;
   }
 

@@ -18,7 +18,7 @@ describe('OneTimeEmitterFactoryImpl', () => {
   });
 
   test('It returns an instance of OneTimeValueEmitter when createOneTimeValueEmitter() is called.', () => {
-    const oneTimeValueEmitter = 
+    const oneTimeValueEmitter =
       OneTimeEmitterFactory.createOneTimeValueEmitter<string>();
     expect(oneTimeValueEmitter).toBeInstanceOf(OneTimeValueEmitterImpl);
   });

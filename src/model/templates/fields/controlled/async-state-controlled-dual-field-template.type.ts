@@ -2,8 +2,8 @@ import { AsyncDualFieldStateControlFn } from "../../../fields/controlled/control
 import { DualFieldTemplate } from "../base/dual-field-template.interface";
 
 export type AsyncStateControlledDualFieldTemplate = DualFieldTemplate & {
-  asyncStateControlFn : AsyncDualFieldStateControlFn;
-  syncStateControlFn? : undefined;
-  asyncValueControlFn? : undefined;
-  syncValueControlFn? : undefined;
-}
+  asyncStateControlFn: AsyncDualFieldStateControlFn;
+  syncStateControlFn?: undefined;
+  asyncValueControlFn?: undefined;
+  syncValueControlFn?: undefined;
+};

@@ -1,4 +1,9 @@
-import { BehaviorSubject, Observable, type Subject, type Subscription } from 'rxjs';
+import {
+  BehaviorSubject,
+  Observable,
+  type Subject,
+  type Subscription,
+} from 'rxjs';
 import { copyObject } from '../../util/copy-object';
 import { MessageType } from '../../state/messages/message-type.enum';
 import { AbstractField } from './abstract-field';

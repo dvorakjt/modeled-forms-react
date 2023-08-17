@@ -14,11 +14,9 @@ export class DualField extends AbstractDualField {
   #omitByDefault: boolean;
 
   get state() {
-    const state = (
-      !this.#useSecondaryField
-        ? this.primaryField.state
-        : this.secondaryField.state
-    )
+    const state = !this.#useSecondaryField
+      ? this.primaryField.state
+      : this.secondaryField.state;
     state.useSecondaryField = this.#useSecondaryField;
     state.omit = this.#omit;
     return state;

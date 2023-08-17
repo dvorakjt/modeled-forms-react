@@ -1,6 +1,6 @@
 import { BaseFieldFactory, BaseFieldFactoryKey, BaseFieldFactoryKeyType } from "./base-field-factory.interface";
 import { AsyncValidator } from "../../validators/async-validator.type";
-import { SingleInputValidatorFactoryKey, SingleInputValidatorSuiteFactory } from "../../validators/single-input/single-input-validator-suite-factory.interface";
+import { SingleInputValidatorSuiteFactoryKey, SingleInputValidatorSuiteFactory } from "../../validators/single-input/single-input-validator-suite-factory.interface";
 import { SyncValidator } from "../../validators/sync-validator.type";
 import { AbstractField } from "./abstract-field";
 import { AbstractDualField } from "./abstract-dual-field";
@@ -8,10 +8,12 @@ import { DualField } from "./dual-field";
 import { Field } from "./field";
 import { autowire } from 'undecorated-di';
 
-export class BaseFieldFactoryImpl implements BaseFieldFactory {
-  #singleInputValidatorSuiteFactory : SingleInputValidatorSuiteFactory;
-  
-  constructor(singleInputValidatorSuiteFactory : SingleInputValidatorSuiteFactory) {
+class BaseFieldFactoryImpl implements BaseFieldFactory {
+  #singleInputValidatorSuiteFactory: SingleInputValidatorSuiteFactory;
+
+  constructor(
+    singleInputValidatorSuiteFactory: SingleInputValidatorSuiteFactory,
+  ) {
     this.#singleInputValidatorSuiteFactory = singleInputValidatorSuiteFactory;
   }
 
@@ -27,10 +29,12 @@ export class BaseFieldFactoryImpl implements BaseFieldFactory {
   }  
 }
 
-export default autowire<BaseFieldFactoryKeyType, BaseFieldFactory, BaseFieldFactoryImpl>(
-  BaseFieldFactoryImpl,
-  BaseFieldFactoryKey,
-  [
-    SingleInputValidatorFactoryKey
-  ]
-);
+const BaseFieldFactoryService = autowire<
+  BaseFieldFactoryKeyType,
+  BaseFieldFactory,
+  BaseFieldFactoryImpl
+>(BaseFieldFactoryImpl, BaseFieldFactoryKey, [
+  SingleInputValidatorSuiteFactoryKey,
+]);
+
+export { BaseFieldFactoryImpl, BaseFieldFactoryService };

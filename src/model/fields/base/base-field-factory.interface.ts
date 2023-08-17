@@ -3,7 +3,7 @@ import { SyncValidator } from "../../validators/sync-validator.type";
 import { AbstractField } from "./abstract-field";
 import { AbstractDualField } from "./abstract-dual-field";
 
-export interface BaseFieldFactory {
+interface BaseFieldFactory {
   createField(
     defaultValue : string, 
     omitByDefault : boolean,
@@ -20,7 +20,11 @@ export interface BaseFieldFactory {
     pendingAsyncValidatorMessage? : string
   ) : AbstractDualField;
 }
+const BaseFieldFactoryKey = 'BaseFieldFactory';
+type BaseFieldFactoryKeyType = typeof BaseFieldFactoryKey;
 
-export const BaseFieldFactoryKey = 'BaseFieldFactory';
-
-export type BaseFieldFactoryKeyType = typeof BaseFieldFactoryKey;
+export {
+  BaseFieldFactoryKey,
+  type BaseFieldFactory,
+  type BaseFieldFactoryKeyType,
+};

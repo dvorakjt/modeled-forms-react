@@ -14,7 +14,6 @@ import { createImmediateErrorThrowingAsyncValidator } from './mocks/async/create
 import { setNodeEnv } from '../../../util/funcs/set-node-env';
 
 describe('AsyncSingleInputValidatorSuite', () => {
-
   test('It immediately returns a result object when evaluate is called.', () => {
     const expectedValue = 'test';
     const expectedMessage = 'checking field';
@@ -30,7 +29,7 @@ describe('AsyncSingleInputValidatorSuite', () => {
     };
     const validatorSuite = new AsyncSingleInputValidatorSuite<string>(
       [untriggerableAsyncValidator],
-      expectedMessage
+      expectedMessage,
     );
     expect(validatorSuite.evaluate(expectedValue).syncResult).toStrictEqual(
       expectedSyncResult,
@@ -54,7 +53,7 @@ describe('AsyncSingleInputValidatorSuite', () => {
         createTriggerableValidAsyncValidator(trigger2),
         createTriggerableValidAsyncValidator(trigger3),
       ],
-      'pending message'
+      'pending message',
     );
     validatorSuite
       .evaluate(expectedValue)
@@ -88,17 +87,20 @@ describe('AsyncSingleInputValidatorSuite', () => {
     const triggerInvalid = new Subject<void>();
     const validatorSuite = new AsyncSingleInputValidatorSuite<string>(
       [
-        createTriggerableValidAsyncValidator(triggerValid, expectedValidMessage),
+        createTriggerableValidAsyncValidator(
+          triggerValid,
+          expectedValidMessage,
+        ),
         createTriggerableInvalidAsyncValidator(
           triggerInvalid,
-          expectedInvalidMessage
+          expectedInvalidMessage,
         ),
         createTriggerableValidAsyncValidator(
           new Subject<void>(),
           'unreachable message',
         ),
       ],
-      'pending message'
+      'pending message',
     );
     validatorSuite
       .evaluate('test')
@@ -131,8 +133,14 @@ describe('AsyncSingleInputValidatorSuite', () => {
     const triggerPromiseRejection = new Subject<void>();
     const validatorSuite = new AsyncSingleInputValidatorSuite<string>(
       [
-        createTriggerableValidAsyncValidator(triggerValid, expectedValidMessage),
-        createTriggerablePromiseRejectingAsyncValidator(triggerPromiseRejection, expectedError),
+        createTriggerableValidAsyncValidator(
+          triggerValid,
+          expectedValidMessage,
+        ),
+        createTriggerablePromiseRejectingAsyncValidator(
+          triggerPromiseRejection,
+          expectedError,
+        ),
         createTriggerableValidAsyncValidator(
           new Subject<void>(),
           'unreachable message',
@@ -170,7 +178,10 @@ describe('AsyncSingleInputValidatorSuite', () => {
     const triggerValid = new Subject<void>();
     const validatorSuite = new AsyncSingleInputValidatorSuite<string>(
       [
-        createTriggerableValidAsyncValidator(triggerValid, expectedValidMessage),
+        createTriggerableValidAsyncValidator(
+          triggerValid,
+          expectedValidMessage,
+        ),
         createIntraPromiseErrorThrowingAsyncValidator(expectedError),
         createTriggerableValidAsyncValidator(
           new Subject<void>(),
@@ -187,7 +198,7 @@ describe('AsyncSingleInputValidatorSuite', () => {
       });
   });
 
-  test("When evaluate() is called, and an error is inside the function that returns the promise, only the error message is returned, together with a validity of ERROR.", () => {
+  test('When evaluate() is called, and an error is inside the function that returns the promise, only the error message is returned, together with a validity of ERROR.', () => {
     const expectedValue = 'test';
     const unreachableMessage = 'valid message';
     const expectedError = new Error();
@@ -204,11 +215,17 @@ describe('AsyncSingleInputValidatorSuite', () => {
     const triggerAllValid = new Subject<void>();
     const validatorSuite = new AsyncSingleInputValidatorSuite<string>(
       [
-        createTriggerableValidAsyncValidator(triggerAllValid, unreachableMessage),
-        createTriggerableValidAsyncValidator(triggerAllValid, unreachableMessage),
+        createTriggerableValidAsyncValidator(
+          triggerAllValid,
+          unreachableMessage,
+        ),
+        createTriggerableValidAsyncValidator(
+          triggerAllValid,
+          unreachableMessage,
+        ),
         createImmediateErrorThrowingAsyncValidator(expectedError),
       ],
-      'pending message'
+      'pending message',
     );
     triggerAllValid.complete();
     validatorSuite
@@ -218,24 +235,20 @@ describe('AsyncSingleInputValidatorSuite', () => {
       });
   });
 
-  test("When evaluate() is called, and an error is observed while in development mode, it is logged to the console.", () => {
+  test('When evaluate() is called, and an error is observed while in development mode, it is logged to the console.', () => {
     const resetProcessDotEnv = setNodeEnv('development');
     vi.stubGlobal('console', {
       error: vi.fn(),
     });
     const expectedError = new Error();
     const validatorSuite = new AsyncSingleInputValidatorSuite(
-      [
-        createImmediateErrorThrowingAsyncValidator(expectedError),
-      ],
-      'pending message'
+      [createImmediateErrorThrowingAsyncValidator(expectedError)],
+      'pending message',
     );
-    validatorSuite
-      .evaluate('test')
-      .observable?.subscribe(() => {
-        expect(console.error).toHaveBeenCalledWith(expectedError);
-        resetProcessDotEnv();
-        vi.unstubAllGlobals();
-      });
+    validatorSuite.evaluate('test').observable?.subscribe(() => {
+      expect(console.error).toHaveBeenCalledWith(expectedError);
+      resetProcessDotEnv();
+      vi.unstubAllGlobals();
+    });
   });
 });

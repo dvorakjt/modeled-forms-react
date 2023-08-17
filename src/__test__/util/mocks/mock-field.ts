@@ -15,11 +15,11 @@ export class MockField extends AbstractField {
     this.#defaultValue = defaultValue;
     this.#defaultValidity = defaultValidity;
     this.#state = {
-      value : defaultValue,
-      validity : defaultValidity,
-      messages : [],
-      omit : false
-    }
+      value: defaultValue,
+      validity: defaultValidity,
+      messages: [],
+      omit: false,
+    };
     this.stateChanges = new BehaviorSubject(this.state);
   }
 
@@ -30,7 +30,7 @@ export class MockField extends AbstractField {
   setValue(value: string): void {
     this.setState({
       ...this.state,
-      value
+      value,
     });
   }
   get state(): State<string> {
@@ -39,7 +39,7 @@ export class MockField extends AbstractField {
   set omit(omit: boolean) {
     this.setState({
       ...this.state,
-      omit
+      omit,
     });
   }
   get omit(): boolean {
@@ -47,10 +47,10 @@ export class MockField extends AbstractField {
   }
   reset(): void {
     this.setState({
-      value : this.#defaultValue,
-      validity : this.#defaultValidity,
-      messages : [],
-      omit : false
+      value: this.#defaultValue,
+      validity: this.#defaultValidity,
+      messages: [],
+      omit: false,
     });
   }
 }

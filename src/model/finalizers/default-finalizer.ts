@@ -15,20 +15,26 @@ export class DefaultFinalizer implements Finalizer {
   constructor(field : AbstractField, finalizerValidityTranslator : FinalizerValidityTranslator) {
     this.#field = field;
     this.#finalizerValidityTranslator = finalizerValidityTranslator;
-    this.#field.stateChanges.subscribe((stateChange) => {
+    this.#field.stateChanges.subscribe(stateChange => {
       this.stream?.next(this.getFinalizerState(stateChange));
     });
-    this.stream = new BehaviorSubject(this.getFinalizerState(this.#field.state));
+    this.stream = new BehaviorSubject(
+      this.getFinalizerState(this.#field.state),
+    );
   }
 
-  private getFinalizerState(fieldState : State<any>) {
-    if(fieldState.validity < Validity.VALID_FINALIZABLE) return {
-      finalizerValidity : this.#finalizerValidityTranslator.translateValidityToFinalizerValidity(fieldState.validity)
-    }
+  private getFinalizerState(fieldState: State<any>) {
+    if (fieldState.validity < Validity.VALID_FINALIZABLE)
+      return {
+        finalizerValidity:
+          this.#finalizerValidityTranslator.translateValidityToFinalizerValidity(
+            fieldState.validity,
+          ),
+      };
 
     return {
-      finalizerValidity : FinalizerValidity.VALID_FINALIZED,
-      value : fieldState.value
-    }
+      finalizerValidity: FinalizerValidity.VALID_FINALIZED,
+      value: fieldState.value,
+    };
   }
 }

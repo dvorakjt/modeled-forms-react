@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 import { UserFacingMultiInputValidatedField } from "./user-facing-multi-input-validated-field";
 import { AbstractDualField } from "../base/abstract-dual-field";
 import type { UserFacingMultiInputValidatorReducer } from "../../reducers/multi-input-validator-validity/user-facing-multi-input-validator-reducer";
@@ -5,6 +6,18 @@ import type { DualFieldSetValueArg } from "../../state/dual-field-set-value-arg.
 import type { DualFieldSetStateArg } from "../../state/dual-field-set-state-arg.interface";
 
 export class UserFacingMultiInputValidatedDualField extends UserFacingMultiInputValidatedField implements AbstractDualField {
+=======
+import { UserFacingMultiInputValidatedField } from './user-facing-multi-input-validated-field';
+import type { DualField } from '../base/dual-field.interface';
+import type { UserFacingMultiInputValidatorReducer } from '../../reducers/multi-input-validator-validity/user-facing-multi-input-validator-reducer';
+import type { DualFieldSetValueArg } from '../../state/dual-field-set-value-arg.interface';
+import type { DualFieldSetStateArg } from '../../state/dual-field-set-state-arg.interface';
+
+export class UserFacingMultiInputValidatedDualField
+  extends UserFacingMultiInputValidatedField
+  implements DualField
+{
+>>>>>>> origin/main
   get primaryField() {
     return this.baseDualField.primaryField;
   }
@@ -21,12 +34,18 @@ export class UserFacingMultiInputValidatedDualField extends UserFacingMultiInput
     return this.baseDualField.useSecondaryField;
   }
 
-
   private get baseDualField() {
     return this.baseField as AbstractDualField;
   }
 
+<<<<<<< HEAD
   constructor(baseField : AbstractDualField, userFacingMultiInputValidityReducer : UserFacingMultiInputValidatorReducer) {
+=======
+  constructor(
+    baseField: DualField,
+    userFacingMultiInputValidityReducer: UserFacingMultiInputValidatorReducer,
+  ) {
+>>>>>>> origin/main
     super(baseField, userFacingMultiInputValidityReducer);
   }
 

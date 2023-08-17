@@ -2,8 +2,8 @@ import { AsyncFieldValueControlFn } from "../../../fields/controlled/control-fun
 import { FieldTemplate } from "../base/field-template.type";
 
 export type AsyncValueControlledFieldTemplate = FieldTemplate & {
-  asyncValueControlFn : AsyncFieldValueControlFn;
-  syncValueControlFn? : undefined;
-  asyncStateControlFn? : undefined;
-  syncStateControlFn? : undefined;
-}
+  asyncValueControlFn: AsyncFieldValueControlFn;
+  syncValueControlFn?: undefined;
+  asyncStateControlFn?: undefined;
+  syncStateControlFn?: undefined;
+};

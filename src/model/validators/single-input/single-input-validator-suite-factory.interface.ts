@@ -1,11 +1,20 @@
-import { AsyncValidator } from "../async-validator.type";
-import { SyncValidator } from "../sync-validator.type";
-import { SingleInputValidatorSuite } from "./single-input-validator-suite.interface";
+import { AsyncValidator } from '../async-validator.type';
+import { SyncValidator } from '../sync-validator.type';
+import { SingleInputValidatorSuite } from './single-input-validator-suite.interface';
 
-export interface SingleInputValidatorSuiteFactory {
-  createSingleInputValidatorSuite<T>(syncValidators: SyncValidator<T>[], asyncValidators: AsyncValidator<T>[], pendingAsyncValidatorMessage? : string) : SingleInputValidatorSuite<T>;
+interface SingleInputValidatorSuiteFactory {
+  createSingleInputValidatorSuite<T>(
+    syncValidators: SyncValidator<T>[],
+    asyncValidators: AsyncValidator<T>[],
+    pendingAsyncValidatorMessage?: string,
+  ): SingleInputValidatorSuite<T>;
 }
+const SingleInputValidatorSuiteFactoryKey = 'SingleInputValidatorSuiteFactory';
+type SingleInputValidatorSuiteFactoryKeyType =
+  typeof SingleInputValidatorSuiteFactoryKey;
 
-export const SingleInputValidatorFactoryKey = 'SingleInputValidatorSuiteFactory';
-
-export type SingleInputValidatorFactoryKeyType = typeof SingleInputValidatorFactoryKey;
+export {
+  SingleInputValidatorSuiteFactoryKey,
+  type SingleInputValidatorSuiteFactory,
+  type SingleInputValidatorSuiteFactoryKeyType,
+};

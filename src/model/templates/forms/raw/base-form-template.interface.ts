@@ -1,5 +1,5 @@
-import { FieldsObjectOrMap } from "./fields-object-or-map.type";
+import { FieldsObjectOrMap } from './fields-object-or-map.type';
 
 export interface BaseFormTemplate {
-  fields : FieldsObjectOrMap
+  fields: FieldsObjectOrMap;
 }

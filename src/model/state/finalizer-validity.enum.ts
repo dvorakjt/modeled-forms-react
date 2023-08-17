@@ -1,4 +1,4 @@
-import { Validity } from "./validity.enum";
+import { Validity } from './validity.enum';
 
 export enum FinalizerValidity {
   FINALIZER_ERROR = Validity.ERROR - 1,
