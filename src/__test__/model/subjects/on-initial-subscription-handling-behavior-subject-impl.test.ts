@@ -67,19 +67,17 @@ describe('OnInitialSubscriptionHandlingSubjectImpl', () => {
         OneTimeEmitterFactory.createOneTimeEventEmitter(),
       );
     vi.spyOn(BehaviorSubject.prototype, 'subscribe');
-    const subscription = onInitialSubscriptionHandlingSubject.subscribe(
-      {
-        next: () => {
-          return;
-        },
-        error: () => {
-          return;
-        },
-        complete: () => {
-          return;
-        }
-      }
-    );
+    const subscription = onInitialSubscriptionHandlingSubject.subscribe({
+      next: () => {
+        return;
+      },
+      error: () => {
+        return;
+      },
+      complete: () => {
+        return;
+      },
+    });
     expect(BehaviorSubject.prototype.subscribe).toHaveBeenCalledOnce();
     subscription.unsubscribe();
   });

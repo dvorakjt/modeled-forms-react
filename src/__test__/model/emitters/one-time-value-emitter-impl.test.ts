@@ -26,7 +26,7 @@ describe('OneTimeEventEmitterImpl', () => {
   test('If onValue() is called first, the callback is called when setValue() is called.', () => {
     const expectedValue = 'test';
     oneTimeEventEmitter.onValue(cb);
-    oneTimeEventEmitter.setValue(expectedValue)
+    oneTimeEventEmitter.setValue(expectedValue);
     expect(cb).toHaveBeenCalledWith(expectedValue);
   });
 });

@@ -1,38 +1,44 @@
-import { describe, expect, test } from "vitest";
-import { getTestContainer } from "../test-container";
-import { SyncAdapter } from "../../../model/adapters/sync-adapter";
-import { FormElementMap } from "../../../model/form-elements/form-element-map.type";
-import { MockField } from "../../util/mocks/mock-field";
-import { AggregatedStateChanges } from "../../../model/aggregators/aggregated-state-changes.interface";
+import { describe, expect, test } from 'vitest';
+import { getTestContainer } from '../test-container';
+import { SyncAdapter } from '../../../model/adapters/sync-adapter';
+import { FormElementMap } from '../../../model/form-elements/form-element-map.type';
+import { MockField } from '../../util/mocks/mock-field';
+import { AggregatedStateChanges } from '../../../model/aggregators/aggregated-state-changes.interface';
 
 describe('SyncAdapter', () => {
   const container = getTestContainer();
   const aggregatorFactory = container.services.AggregatorFactory;
 
   test('It emits adapted values through its stream property.', () => {
-    const fields : FormElementMap = {
-      fieldA : new MockField('a field')
-    }
-    const adapterFn = ({ fieldA } : AggregatedStateChanges) => {
+    const fields: FormElementMap = {
+      fieldA: new MockField('a field'),
+    };
+    const adapterFn = ({ fieldA }: AggregatedStateChanges) => {
       return fieldA.value.toUpperCase();
-    }
-    const syncAdapter = new SyncAdapter(adapterFn, aggregatorFactory.createMultiFieldAggregatorFromFields(fields));
+    };
+    const syncAdapter = new SyncAdapter(
+      adapterFn,
+      aggregatorFactory.createMultiFieldAggregatorFromFields(fields),
+    );
     syncAdapter.stream.subscribe(value => expect(value).toBe('A FIELD'));
   });
 
   test('It emits errors through its stream property if they are thrown by the adapterFn.', () => {
-    const fields : FormElementMap = {
-      fieldA : new MockField('a field')
-    }
+    const fields: FormElementMap = {
+      fieldA: new MockField('a field'),
+    };
     const expectedError = new Error();
     const adapterFn = () => {
       throw expectedError;
-    }
-    const syncAdapter = new SyncAdapter(adapterFn, aggregatorFactory.createMultiFieldAggregatorFromFields(fields));
+    };
+    const syncAdapter = new SyncAdapter(
+      adapterFn,
+      aggregatorFactory.createMultiFieldAggregatorFromFields(fields),
+    );
     syncAdapter.stream.subscribe({
-      error : err => {
+      error: err => {
         expect(err).toBe(expectedError);
-      }
+      },
     });
   });
 });

@@ -12,9 +12,9 @@ import type { SubmissionState } from '../submission/submission-state.interface';
 export class RootFormImpl implements RootForm {
   readonly stateChanges: Subject<State<any>>;
   readonly submissionStateChanges: Subject<SubmissionState>;
-  readonly userFacingFields : FormElementMap;
-  readonly #finalizerManager : FinalizerManager;
-  readonly #multiFieldValidatorMessagesAggregator : MultiInputValidatorMessagesAggregator;
+  readonly userFacingFields: FormElementMap;
+  readonly #finalizerManager: FinalizerManager;
+  readonly #multiFieldValidatorMessagesAggregator: MultiInputValidatorMessagesAggregator;
   readonly #submissionManager: SubmissionManager;
 
   get state() {
@@ -27,24 +27,28 @@ export class RootFormImpl implements RootForm {
 
   get submissionState() {
     return {
-      submissionAttempted : this.#submissionManager.submissionState.submissionAttempted
-    }
+      submissionAttempted:
+        this.#submissionManager.submissionState.submissionAttempted,
+    };
   }
 
   constructor(
-    userFacingFields : FormElementMap,
-    finalizerManager : FinalizerManager,
-    multiFieldValidatorMessagesAggregator : MultiInputValidatorMessagesAggregator,
-    submissionManager: SubmissionManager
+    userFacingFields: FormElementMap,
+    finalizerManager: FinalizerManager,
+    multiFieldValidatorMessagesAggregator: MultiInputValidatorMessagesAggregator,
+    submissionManager: SubmissionManager,
   ) {
     this.userFacingFields = userFacingFields;
     this.#finalizerManager = finalizerManager;
-    this.#multiFieldValidatorMessagesAggregator = multiFieldValidatorMessagesAggregator;
+    this.#multiFieldValidatorMessagesAggregator =
+      multiFieldValidatorMessagesAggregator;
     this.#submissionManager = submissionManager;
 
-    this.#multiFieldValidatorMessagesAggregator.messagesChanges.subscribe(() => {
-      this.stateChanges?.next(this.state);
-    });
+    this.#multiFieldValidatorMessagesAggregator.messagesChanges.subscribe(
+      () => {
+        this.stateChanges?.next(this.state);
+      },
+    );
 
     this.#finalizerManager.stateChanges.subscribe(() => {
       this.#submissionManager.clearMessage();
@@ -52,8 +56,9 @@ export class RootFormImpl implements RootForm {
     });
 
     this.#submissionManager.submissionStateChanges.subscribe(() => {
-      if(this.stateChanges) this.stateChanges.next(this.state);
-      if(this.submissionStateChanges) this.submissionStateChanges.next(this.submissionState);
+      if (this.stateChanges) this.stateChanges.next(this.state);
+      if (this.submissionStateChanges)
+        this.submissionStateChanges.next(this.submissionState);
     });
 
     this.submissionStateChanges = new BehaviorSubject(this.submissionState);
@@ -67,7 +72,7 @@ export class RootFormImpl implements RootForm {
 
   reset() {
     this.#submissionManager.reset();
-    for(const fieldName in this.userFacingFields) {
+    for (const fieldName in this.userFacingFields) {
       this.userFacingFields[fieldName].reset();
     }
   }
@@ -75,7 +80,7 @@ export class RootFormImpl implements RootForm {
   private aggregateMessages(): Array<Message> {
     const messages = [
       ...this.#multiFieldValidatorMessagesAggregator.messages,
-      ...this.#finalizerManager.state.messages
+      ...this.#finalizerManager.state.messages,
     ];
     if (this.#submissionManager.submissionState.message)
       messages.push(this.#submissionManager.submissionState.message);

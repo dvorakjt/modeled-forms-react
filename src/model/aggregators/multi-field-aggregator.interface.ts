@@ -4,5 +4,5 @@ import { OneTimeValueEmitter } from '../emitters/one-time-value-emitter.interfac
 
 export interface MultiFieldAggregator {
   aggregateChanges: Subject<AggregatedStateChanges>;
-  accessedFields : OneTimeValueEmitter<Set<string>>;
+  accessedFields: OneTimeValueEmitter<Set<string>>;
 }

@@ -1,8 +1,9 @@
-import { FirstNonValidFormElementTracker } from "./first-nonvalid-form-element-tracker.interface";
+import { FirstNonValidFormElementTracker } from './first-nonvalid-form-element-tracker.interface';
 
-export interface TrackerFactory {
-  createFirstNonValidFormElementTracker() : FirstNonValidFormElementTracker;
+interface TrackerFactory {
+  createFirstNonValidFormElementTracker(): FirstNonValidFormElementTracker;
 }
+const TrackerFactoryKey = 'TrackerFactory';
+type TrackerFactoryKeyType = typeof TrackerFactoryKey;
 
-export const TrackerFactoryKey = 'TrackerFactory';
-export type TrackerFactoryKeyType = typeof TrackerFactoryKey;
+export { TrackerFactoryKey, type TrackerFactory, type TrackerFactoryKeyType };

@@ -5,7 +5,8 @@ import { Validity } from '../../../model/state/validity.enum';
 
 describe('FieldStateReducerImpl', () => {
   const container = getTestContainer();
-  const validityReducer = container.services.ReducerFactory.createValidityReducer();
+  const validityReducer =
+    container.services.ReducerFactory.createValidityReducer();
   const fieldValidityReducer = new FieldStateReducerImpl(validityReducer);
   fieldValidityReducer.updateTallies('a', createState(Validity.ERROR));
   fieldValidityReducer.updateTallies('b', createState(Validity.INVALID));

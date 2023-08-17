@@ -8,13 +8,9 @@ import type { AggregatedStateChangesProxyProducer } from '../proxies/aggregated-
 import type { OneTimeValueEmitter } from '../emitters/one-time-value-emitter.interface';
 import type { SubjectFactory } from '../subjects/subject-factory.interface';
 
-export class MultiFieldAggregatorImpl
-  implements MultiFieldAggregator
-{
-  readonly aggregateChanges: OnInitialSubscriptionHandlingBehaviorSubject<
-    AggregatedStateChanges
-  >;
-  readonly accessedFields : OneTimeValueEmitter<Set<string>>;
+export class MultiFieldAggregatorImpl implements MultiFieldAggregator {
+  readonly aggregateChanges: OnInitialSubscriptionHandlingBehaviorSubject<AggregatedStateChanges>;
+  readonly accessedFields: OneTimeValueEmitter<Set<string>>;
   readonly #fields: FormElementMap;
   readonly #fieldStateReducer: FieldStateReducer;
   readonly #aggregatedFieldState: {
@@ -35,22 +31,26 @@ export class MultiFieldAggregatorImpl
     fields: FormElementMap,
     aggregatedStateChangesProxyProducer: AggregatedStateChangesProxyProducer,
     fieldStateReducer: FieldStateReducer,
-    accessedFields : OneTimeValueEmitter<Set<string>>,
-    subjectFactory : SubjectFactory
+    accessedFields: OneTimeValueEmitter<Set<string>>,
+    subjectFactory: SubjectFactory,
   ) {
     this.#fields = fields;
     this.#aggregatedStateChangesProxyProducer =
       aggregatedStateChangesProxyProducer;
     this.#fieldStateReducer = fieldStateReducer;
-    this.aggregateChanges = subjectFactory.createOnInitialSubscriptionHandlingBehaviorSubject(
-      this.#aggregatedStateChangesProxyProducer.getProxy(this.#fields),
-    );
+    this.aggregateChanges =
+      subjectFactory.createOnInitialSubscriptionHandlingBehaviorSubject(
+        this.#aggregatedStateChangesProxyProducer.getProxy(this.#fields),
+      );
     this.accessedFields = accessedFields;
     this.aggregateChanges.onInitialSubscription(this.subscribeToAccessedFields);
   }
 
   private subscribeToAccessedFields = () => {
-    if(!this.#accessedFieldsSubscriptionProcessCompleted && this.#aggregatedStateChangesProxyProducer) {
+    if (
+      !this.#accessedFieldsSubscriptionProcessCompleted &&
+      this.#aggregatedStateChangesProxyProducer
+    ) {
       const accessedFieldNames =
         this.#aggregatedStateChangesProxyProducer.accessedFieldNames;
 

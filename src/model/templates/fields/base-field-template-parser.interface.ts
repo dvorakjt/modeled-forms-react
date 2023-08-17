@@ -1,10 +1,15 @@
-import { DualField } from "../../fields/base/dual-field.interface";
-import { Field } from "../../fields/base/field.interface";
-import { FieldTemplateVariations } from "./raw/field-template-variations.type";
+import { DualField } from '../../fields/base/dual-field.interface';
+import { Field } from '../../fields/base/field.interface';
+import { FieldTemplateVariations } from './raw/field-template-variations.type';
 
-export interface BaseFieldTemplateParser {
-  parseTemplate(template : FieldTemplateVariations) : Field | DualField;
+interface BaseFieldTemplateParser {
+  parseTemplate(template: FieldTemplateVariations): Field | DualField;
 }
+const BaseFieldTemplateParserKey = 'BaseFieldTemplateParser';
+type BaseFieldTemplateParserKeyType = typeof BaseFieldTemplateParserKey;
 
-export const BaseFieldTemplateParserKey = 'BaseFieldTemplateParser';
-export type BaseFieldTemplateParserKeyType = typeof BaseFieldTemplateParserKey;
+export {
+  BaseFieldTemplateParserKey,
+  type BaseFieldTemplateParser,
+  type BaseFieldTemplateParserKeyType,
+};
