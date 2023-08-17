@@ -1,5 +1,5 @@
-import { AsyncValidator } from "../../../../validators/async-validator.type";
-import { SyncValidator } from "../../../../validators/sync-validator.type";
+import { AsyncValidator } from "../../../validators/async-validator.type";
+import { SyncValidator } from "../../../validators/sync-validator.type";
 
 export type BaseFieldTemplate = {
   omitByDefault? : boolean;

@@ -4,7 +4,7 @@ import { StateControlledDualField } from "../../fields/controlled/state-controll
 import { StateControlledField } from "../../fields/controlled/state-controlled-field";
 import { ValueControlledDualField } from "../../fields/controlled/value-controlled-dual-field";
 import { ValueControlledField } from "../../fields/controlled/value-controlled-field";
-import { ControlledFieldTemplateVariations } from "./raw/controlled/controlled-field-template-variations.type";
+import { ControlledFieldTemplateVariations } from "./controlled/controlled-field-template-variations.type";
 
 export interface ControlledFieldTemplateParser {
   parseTemplateAndDecorateField(baseField : Field | DualField, template : ControlledFieldTemplateVariations) : 
