@@ -5,7 +5,7 @@ import { MockField } from "../../util/mocks/mock-field";
 import { AggregatedStateChanges } from "../../../model/aggregators/aggregated-state-changes.interface";
 import { AsyncAdapter } from "../../../model/adapters/async-adapter";
 import { Observable, Subscription } from "rxjs";
-import { Field } from "../../../model/fields/base/field.interface";
+import { AbstractField } from "../../../model/fields/base/abstract-field";
 
 describe('AsyncAdapter', () => {
   const container = getTestContainer();
@@ -97,7 +97,7 @@ describe('AsyncAdapter', () => {
     syncAdapter.stream.subscribe(next => {
       expect(next).toBe(expectedReturnValues[returnValueIndex++]);
     });
-    (fields.fieldA as Field).setValue('a field');
+    (fields.fieldA as AbstractField).setValue('a field');
   });
 
   test('It emits errors through its stream property as they are emitted by the Observable returned by the adapterFn.', () => {
@@ -130,7 +130,7 @@ describe('AsyncAdapter', () => {
       }, 1000)
     });
     new AsyncAdapter(adapterFn, aggregatorFactory.createMultiFieldAggregatorFromFields(fields));
-    (fields.fieldA as Field).setValue('new value');
+    (fields.fieldA as AbstractField).setValue('new value');
     expect(Subscription.prototype.unsubscribe).toHaveBeenCalledOnce();
   });
 });

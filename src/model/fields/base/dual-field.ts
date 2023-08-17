@@ -1,13 +1,13 @@
 import { BehaviorSubject, type Subject } from 'rxjs';
-import type { DualField } from './dual-field.interface';
+import { AbstractField } from './abstract-field';
+import { AbstractDualField } from './abstract-dual-field';
 import type { DualFieldSetValueArg } from '../../state/dual-field-set-value-arg.interface';
 import type { DualFieldSetStateArg } from '../../state/dual-field-set-state-arg.interface';
-import type { Field } from './field.interface';
 import type { FieldState } from '../../state/field-state.interface';
 
-export class DualFieldImpl implements DualField {
-  readonly primaryField: Field;
-  readonly secondaryField: Field;
+export class DualField extends AbstractDualField {
+  readonly primaryField: AbstractField;
+  readonly secondaryField: AbstractField;
   readonly stateChanges: Subject<FieldState>;
   #useSecondaryField: boolean = false;
   #omit: boolean;
@@ -44,10 +44,11 @@ export class DualFieldImpl implements DualField {
   }
 
   constructor(
-    primaryField: Field,
-    secondaryField: Field,
+    primaryField: AbstractField,
+    secondaryField: AbstractField,
     omitByDefault: boolean,
   ) {
+    super();
     this.primaryField = primaryField;
     this.secondaryField = secondaryField;
     this.#omitByDefault = omitByDefault;

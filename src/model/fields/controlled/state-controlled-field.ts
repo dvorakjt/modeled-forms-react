@@ -1,40 +1,39 @@
 import { MessageType } from '../../state/messages/message-type.enum';
 import { Validity } from '../../state/validity.enum';
 import { GlobalMessages } from '../../constants/global-messages.enum';
+import { AbstractField } from '../base/abstract-field';
 import type { Adapter } from '../../adapters/adapter.interface';
-import type { Field } from '../base/field.interface';
-import type { DualFieldSetStateArg } from '../../state/dual-field-set-state-arg.interface';
-import type { DualFieldSetValueArg } from '../../state/dual-field-set-value-arg.interface';
 import type { FieldState } from '../../state/field-state.interface';
 
-export class StateControlledField implements Field {
-  protected readonly field: Field;
-  protected readonly adapter: Adapter<DualFieldSetStateArg | FieldState>;
+export class StateControlledField extends AbstractField {
+  readonly #field: AbstractField;
+  readonly #adapter: Adapter<FieldState>;
 
   get stateChanges() {
-    return this.field.stateChanges;
+    return this.#field.stateChanges;
   }
 
   get state() {
-    return this.field.state;
+    return this.#field.state;
   }
 
   set omit(omit: boolean) {
-    this.field.omit = omit;
+    this.#field.omit = omit;
   }
 
   get omit() {
-    return this.field.omit;
+    return this.#field.omit;
   }
 
   constructor(
-    field: Field,
-    adapter: Adapter<DualFieldSetStateArg | FieldState>,
+    field: AbstractField,
+    adapter: Adapter<FieldState>,
   ) {
-    this.field = field;
-    this.adapter = adapter;
-    this.adapter.stream.subscribe({
-      next: (next: DualFieldSetStateArg | FieldState) => this.setState(next),
+    super();
+    this.#field = field;
+    this.#adapter = adapter;
+    this.#adapter.stream.subscribe({
+      next: (next: FieldState) => this.setState(next),
       error: () => {
         this.setState({
           value: '',
@@ -50,15 +49,15 @@ export class StateControlledField implements Field {
     });
   }
 
-  setValue(value: DualFieldSetValueArg | string) {
-    this.field.setValue(value);
+  setValue(value: string) {
+    this.#field.setValue(value);
   }
 
-  setState(state: DualFieldSetStateArg | FieldState): void {
-    this.field.setState(state);
+  setState(state: FieldState): void {
+    this.#field.setState(state);
   }
 
   reset() {
-    this.field.reset();
+    this.#field.reset();
   }
 }

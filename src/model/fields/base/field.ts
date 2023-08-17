@@ -1,13 +1,13 @@
 import { BehaviorSubject, Observable, type Subject, type Subscription } from 'rxjs';
 import { copyObject } from '../../util/copy-object';
 import { MessageType } from '../../state/messages/message-type.enum';
-import type { Field } from './field.interface';
+import { AbstractField } from './abstract-field';
 import type { FieldState } from '../../state/field-state.interface';
 import type { SingleInputValidatorSuite } from '../../validators/single-input/single-input-validator-suite.interface';
 import type { ValidatorSuiteResult } from '../../validators/validator-suite-result.interface';
 import type { Message } from '../../state/messages/message.interface';
 
-export class FieldImpl implements Field {
+export class Field extends AbstractField {
   readonly stateChanges: Subject<FieldState>;
   readonly #validatorSuite: SingleInputValidatorSuite<string>;
   readonly #defaultValue: string;
@@ -35,6 +35,7 @@ export class FieldImpl implements Field {
     defaultValue: string,
     omitByDefault: boolean,
   ) {
+    super();
     this.#validatorSuite = validatorSuite;
     this.#defaultValue = defaultValue;
     this.#omitByDefault = omitByDefault;

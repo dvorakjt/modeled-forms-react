@@ -1,6 +1,6 @@
 import { autowire } from "undecorated-di";
-import { DualField } from "../../../fields/base/dual-field.interface";
-import { Field } from "../../../fields/base/field.interface";
+import { AbstractField } from "../../../fields/base/abstract-field";
+import { AbstractDualField } from "../../../fields/base/abstract-dual-field";
 import { FieldTemplateVariations } from "../field-template-variations.type";
 import { BaseFieldTemplateParserKey, type BaseFieldTemplateParser, type BaseFieldTemplateParserKeyType } from "./base-field-template-parser.interface";
 import { type BaseFieldFactory, BaseFieldFactoryKey } from "../../../fields/base/base-field-factory.interface";
@@ -25,7 +25,7 @@ class BaseFieldTemplateParserImpl implements BaseFieldTemplateParser {
     this.#baseFieldFactory = baseFieldFactory;
   }
 
-  parseTemplate(template: FieldTemplateVariations): Field | DualField {
+  parseTemplate(template: FieldTemplateVariations): AbstractField | AbstractDualField {
     if(typeof template === 'string') return this.parseString(template);
 
     else {
@@ -55,7 +55,7 @@ class BaseFieldTemplateParserImpl implements BaseFieldTemplateParser {
   }
 
   //at this point, we know the field has a defaultValue property and lacks primaryDefaultValue/secondaryDefaultValue
-  private parseFieldTemplate(template : FieldTemplate) : Field {
+  private parseFieldTemplate(template : FieldTemplate) : AbstractField {
     if(typeof template.defaultValue !== 'string') {
       throw new BaseFieldParsingError('BaseFieldTemplateParser received a template object whose defaultValue was not of type \'string\'');
     }
@@ -64,7 +64,7 @@ class BaseFieldTemplateParserImpl implements BaseFieldTemplateParser {
     return this.#baseFieldFactory.createField(template.defaultValue, ...baseFieldProps, template.pendingAsyncValidatorMessage);
   }
 
-  private parseDualFieldTemplate(template : DualFieldTemplate) {
+  private parseDualFieldTemplate(template : DualFieldTemplate) : AbstractDualField {
     if(!('primaryDefaultValue' in template)) {
       throw new BaseFieldParsingError('BaseFieldTemplateParser received a template object containing a secondaryDefaultValue property, but not a primaryDefaultValue property. If you wish to create a dual field, ensure that both properties are included in the template.');
     }

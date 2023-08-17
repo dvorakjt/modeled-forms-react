@@ -1,7 +1,7 @@
 import { AsyncValidator } from "../../validators/async-validator.type";
 import { SyncValidator } from "../../validators/sync-validator.type";
-import { DualField } from "./dual-field.interface";
-import { Field } from "./field.interface";
+import { AbstractField } from "./abstract-field";
+import { AbstractDualField } from "./abstract-dual-field";
 
 export interface BaseFieldFactory {
   createField(
@@ -10,7 +10,7 @@ export interface BaseFieldFactory {
     syncValidators: Array<SyncValidator<string>>, 
     asyncValidators: Array<AsyncValidator<string>>, 
     pendingAsyncValidatorMessage? : string
-  ) : Field;
+  ) : AbstractField;
   createDualField(
     primaryDefaultValue : string,
     secondaryDefaultValue : string,
@@ -18,7 +18,7 @@ export interface BaseFieldFactory {
     syncValidators: Array<SyncValidator<string>>, 
     asyncValidators: Array<AsyncValidator<string>>, 
     pendingAsyncValidatorMessage? : string
-  ) : DualField;
+  ) : AbstractDualField;
 }
 
 export const BaseFieldFactoryKey = 'BaseFieldFactory';
