@@ -1,4 +1,3 @@
-import { config } from '../../../model.config';
 import type { SyncValidator } from '../sync-validator.type';
 import type { ValidatorResult } from '../validator-result.interface';
 
@@ -7,7 +6,7 @@ export function required(
   successMessage?: string,
 ): SyncValidator<string> {
   return (value: string) => {
-    if (config.autoTrim) value = value.trim();
+    //if (config.autoTrim) value = value.trim();
 
     const result: ValidatorResult = {
       isValid: value.length > 0,

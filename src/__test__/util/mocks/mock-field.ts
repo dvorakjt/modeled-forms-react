@@ -1,16 +1,19 @@
-import { BehaviorSubject, Subject } from "rxjs";
-import { AbstractField } from "../../../model/fields/base/abstract-field";
-import { FieldState } from "../../../model/state/field-state.interface";
-import { State } from "../../../model/state/state.interface";
-import { Validity } from "../../../model/state/validity.enum";
+import { BehaviorSubject, Subject } from 'rxjs';
+import { AbstractField } from '../../../model/fields/base/abstract-field';
+import { FieldState } from '../../../model/state/field-state.interface';
+import { State } from '../../../model/state/state.interface';
+import { Validity } from '../../../model/state/validity.enum';
 
 export class MockField extends AbstractField {
-  stateChanges : Subject<FieldState>;
-  #state : FieldState;
-  #defaultValue : string;
-  #defaultValidity : Validity;
+  stateChanges: Subject<FieldState>;
+  #state: FieldState;
+  #defaultValue: string;
+  #defaultValidity: Validity;
 
-  constructor(defaultValue : string, defaultValidity : Validity = Validity.VALID_FINALIZABLE) {
+  constructor(
+    defaultValue: string,
+    defaultValidity: Validity = Validity.VALID_FINALIZABLE,
+  ) {
     super();
     this.#defaultValue = defaultValue;
     this.#defaultValidity = defaultValidity;

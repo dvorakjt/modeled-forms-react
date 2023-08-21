@@ -1,7 +1,7 @@
 import { describe, expect, test } from 'vitest';
 import { getTestContainer } from '../test-container';
 import { SyncAdapter } from '../../../model/adapters/sync-adapter';
-import { FormElementMap } from '../../../model/form-elements/form-element-map.type';
+import { FormElementDictionary } from '../../../model/form-elements/form-element-dictionary.type';
 import { MockField } from '../../util/mocks/mock-field';
 import { AggregatedStateChanges } from '../../../model/aggregators/aggregated-state-changes.interface';
 
@@ -10,7 +10,7 @@ describe('SyncAdapter', () => {
   const aggregatorFactory = container.services.AggregatorFactory;
 
   test('It emits adapted values through its stream property.', () => {
-    const fields: FormElementMap = {
+    const fields: FormElementDictionary = {
       fieldA: new MockField('a field'),
     };
     const adapterFn = ({ fieldA }: AggregatedStateChanges) => {
@@ -24,7 +24,7 @@ describe('SyncAdapter', () => {
   });
 
   test('It emits errors through its stream property if they are thrown by the adapterFn.', () => {
-    const fields: FormElementMap = {
+    const fields: FormElementDictionary = {
       fieldA: new MockField('a field'),
     };
     const expectedError = new Error();

@@ -1,18 +1,20 @@
 import { BehaviorSubject, type Subject } from 'rxjs';
 import { copyObject } from '../util/copy-object';
 import type { State } from '../state/state.interface';
-import type { RootForm } from './root-form.interface';
+import { AbstractRootForm } from './abstract-root-form';
 import type { SubmissionManager } from '../submission/submission-manager.interface';
 import type { Message } from '../state/messages/message.interface';
 import type { FinalizerManager } from '../finalizers/finalizer-manager.interface';
-import type { FormElementMap } from '../form-elements/form-element-map.type';
+import type { FormElementDictionary } from '../form-elements/form-element-dictionary.type';
 import type { MultiInputValidatorMessagesAggregator } from '../aggregators/multi-input-validator-messages-aggregator.interface';
 import type { SubmissionState } from '../submission/submission-state.interface';
+import { FirstNonValidFormElementTracker } from '../trackers/first-nonvalid-form-element-tracker.interface';
 
-export class RootFormImpl implements RootForm {
+export class RootForm extends AbstractRootForm {
   readonly stateChanges: Subject<State<any>>;
   readonly submissionStateChanges: Subject<SubmissionState>;
-  readonly userFacingFields: FormElementMap;
+  readonly userFacingFields: FormElementDictionary;
+  readonly #firstNonValidFormElementTracker : FirstNonValidFormElementTracker;
   readonly #finalizerManager: FinalizerManager;
   readonly #multiFieldValidatorMessagesAggregator: MultiInputValidatorMessagesAggregator;
   readonly #submissionManager: SubmissionManager;
@@ -25,20 +27,27 @@ export class RootFormImpl implements RootForm {
     });
   }
 
+  get firstNonValidFormElement() : Subject<string | undefined> {
+    return this.#firstNonValidFormElementTracker.firstNonValidFormElement;
+  }
+
   get submissionState() {
     return {
       submissionAttempted:
         this.#submissionManager.submissionState.submissionAttempted,
     };
   }
-
+  
   constructor(
-    userFacingFields: FormElementMap,
+    userFacingFields: FormElementDictionary,
+    firstNonValidFormElementTracker : FirstNonValidFormElementTracker,
     finalizerManager: FinalizerManager,
     multiFieldValidatorMessagesAggregator: MultiInputValidatorMessagesAggregator,
     submissionManager: SubmissionManager,
   ) {
+    super();
     this.userFacingFields = userFacingFields;
+    this.#firstNonValidFormElementTracker = firstNonValidFormElementTracker;
     this.#finalizerManager = finalizerManager;
     this.#multiFieldValidatorMessagesAggregator =
       multiFieldValidatorMessagesAggregator;

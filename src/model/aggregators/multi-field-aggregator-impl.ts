@@ -1,6 +1,6 @@
 import type { AggregatedStateChanges } from './aggregated-state-changes.interface';
 import type { MultiFieldAggregator } from './multi-field-aggregator.interface';
-import type { FormElementMap } from '../form-elements/form-element-map.type';
+import type { FormElementDictionary } from '../form-elements/form-element-dictionary.type';
 import type { FieldStateReducer } from '../reducers/field-state/field-state-reducer.interface';
 import type { AnyState } from '../state/any-state.type';
 import type { OnInitialSubscriptionHandlingBehaviorSubject } from '../subjects/on-initial-subscription-handling-behavior-subject.interface';
@@ -11,7 +11,7 @@ import type { SubjectFactory } from '../subjects/subject-factory.interface';
 export class MultiFieldAggregatorImpl implements MultiFieldAggregator {
   readonly aggregateChanges: OnInitialSubscriptionHandlingBehaviorSubject<AggregatedStateChanges>;
   readonly accessedFields: OneTimeValueEmitter<Set<string>>;
-  readonly #fields: FormElementMap;
+  readonly #fields: FormElementDictionary;
   readonly #fieldStateReducer: FieldStateReducer;
   readonly #aggregatedFieldState: {
     [key: string]: AnyState;
@@ -28,7 +28,7 @@ export class MultiFieldAggregatorImpl implements MultiFieldAggregator {
   }
 
   constructor(
-    fields: FormElementMap,
+    fields: FormElementDictionary,
     aggregatedStateChangesProxyProducer: AggregatedStateChangesProxyProducer,
     fieldStateReducer: FieldStateReducer,
     accessedFields: OneTimeValueEmitter<Set<string>>,

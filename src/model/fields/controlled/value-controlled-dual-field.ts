@@ -47,16 +47,19 @@ export class ValueControlledDualField extends AbstractDualField {
     return this.#field as AbstractDualField;
   }
 
-  constructor(field: AbstractDualField, adapter: Adapter<DualFieldSetValueArg>) {
+  constructor(
+    field: AbstractDualField,
+    adapter: Adapter<DualFieldSetValueArg>,
+  ) {
     super();
     this.#field = field;
     this.#adapter = adapter;
     this.#adapter.stream.subscribe({
-      next: (next: DualFieldSetValueArg ) => {
-        if(next) this.setValue(next)
+      next: (next: DualFieldSetValueArg) => {
+        if (next) this.setValue(next);
       },
       error: () => {
-        const errorState : FieldState = {
+        const errorState: FieldState = {
           value: '',
           validity: Validity.ERROR,
           messages: [
@@ -65,12 +68,15 @@ export class ValueControlledDualField extends AbstractDualField {
               text: GlobalMessages.FIELD_ADAPTER_ERROR,
             },
           ],
-        }
-        const setStateArg : DualFieldSetStateArg = this.dualField.useSecondaryField ? {
-          secondaryFieldState : errorState
-        } : {
-          primaryFieldState : errorState
-        }
+        };
+        const setStateArg: DualFieldSetStateArg = this.dualField
+          .useSecondaryField
+          ? {
+              secondaryFieldState: errorState,
+            }
+          : {
+              primaryFieldState: errorState,
+            };
         this.setState(setStateArg);
       },
     });

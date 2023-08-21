@@ -1,5 +1,5 @@
 import { BehaviorSubject, type Subject } from 'rxjs';
-import { FinalizerMap } from './finalizer-map.type';
+import { FinalizerDictionary } from './finalizer-map.type';
 import { FinalizerValidityTranslator } from './finalizer-validity-translator.interface';
 import { FormValue } from '../forms/form-value.type';
 import { FinalizerValidityReducer } from '../reducers/finalizer-validity/finalizer-validity-reducer.interface';
@@ -15,7 +15,7 @@ import { FinalizerManager } from './finalizer-manager.interface';
 export class FinalizerManagerImpl implements FinalizerManager {
   stateChanges: Subject<State<any>>;
   #value: FormValue = {};
-  #finalizerMap: FinalizerMap;
+  #finalizerMap: FinalizerDictionary;
   #finalizerValidityReducer: FinalizerValidityReducer;
   #finalizerValidityTranslator: FinalizerValidityTranslator;
 
@@ -28,7 +28,7 @@ export class FinalizerManagerImpl implements FinalizerManager {
   }
 
   constructor(
-    finalizerMap: FinalizerMap,
+    finalizerMap: FinalizerDictionary,
     finalizerValidityReducer: FinalizerValidityReducer,
     finalizerValidityTranslator: FinalizerValidityTranslator,
   ) {

@@ -1,14 +1,16 @@
 import { BehaviorSubject, type Subject } from 'rxjs';
 import { copyObject } from '../util/copy-object';
-import type { NestedForm } from './nested-form.interface';
+import { AbstractNestedForm } from './abstract-nested-form';
 import type { State } from '../state/state.interface';
 import type { FinalizerManager } from '../finalizers/finalizer-manager.interface';
-import type { FormElementMap } from '../form-elements/form-element-map.type';
+import type { FormElementDictionary } from '../form-elements/form-element-dictionary.type';
 import type { MultiInputValidatorMessagesAggregator } from '../aggregators/multi-input-validator-messages-aggregator.interface';
+import { FirstNonValidFormElementTracker } from '../trackers/first-nonvalid-form-element-tracker.interface';
 
-export class NestedFormImpl implements NestedForm {
+export class NestedForm extends AbstractNestedForm {
   readonly stateChanges: Subject<State<any>>;
-  readonly userFacingFields: FormElementMap;
+  readonly userFacingFields: FormElementDictionary;
+  readonly #firstNonValidFormElementTracker : FirstNonValidFormElementTracker;
   readonly #finalizerManager: FinalizerManager;
   readonly #multiFieldValidatorMessagesAggregator: MultiInputValidatorMessagesAggregator;
   readonly #omitByDefault;
@@ -25,6 +27,10 @@ export class NestedFormImpl implements NestedForm {
     });
   }
 
+  get firstNonValidFormElement() : Subject<string | undefined> {
+    return this.#firstNonValidFormElementTracker.firstNonValidFormElement;
+  }
+
   set omit(omit: boolean) {
     this.#omit = omit;
     if (this.stateChanges) this.stateChanges.next(this.state);
@@ -35,12 +41,15 @@ export class NestedFormImpl implements NestedForm {
   }
 
   constructor(
-    userFacingFields: FormElementMap,
+    userFacingFields: FormElementDictionary,
+    firstNonValidFormElementTracker : FirstNonValidFormElementTracker,
     finalizerManager: FinalizerManager,
     multiFieldValidatorMessagesAggregator: MultiInputValidatorMessagesAggregator,
     omitByDefault: boolean,
   ) {
+    super();
     this.userFacingFields = userFacingFields;
+    this.#firstNonValidFormElementTracker = firstNonValidFormElementTracker;
     this.#finalizerManager = finalizerManager;
     this.#multiFieldValidatorMessagesAggregator =
       multiFieldValidatorMessagesAggregator;

@@ -7,12 +7,17 @@ import type { DualFieldSetValueArg } from '../../state/dual-field-set-value-arg.
 import { Subject } from 'rxjs';
 import { State } from '../../state/state.interface';
 
-export abstract class AbstractField implements StatefulFormElement<string>, OmittableFormElement, ResettableFormElement {
-  abstract state : FieldState;
-  abstract stateChanges: Subject<State<string>>; 
-  abstract omit : boolean;
-  
+export abstract class AbstractField
+  implements
+    StatefulFormElement<string>,
+    OmittableFormElement,
+    ResettableFormElement
+{
+  abstract state: FieldState;
+  abstract stateChanges: Subject<State<string>>;
+  abstract omit: boolean;
+
   abstract setState(state: FieldState | DualFieldSetStateArg): void;
   abstract setValue(value: string | DualFieldSetValueArg): void;
-  abstract reset() : void;
+  abstract reset(): void;
 }

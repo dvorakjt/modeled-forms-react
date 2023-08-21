@@ -1,18 +1,20 @@
-import { copyObject } from "../../util/copy-object";
-import { BehaviorSubject, type Subject } from "rxjs";
-import { AbstractField } from "../base/abstract-field";
-import type { MultiInputValidatedField } from "./multi-input-validated-field.interface";
-import type { MultiInputValidatorValidityReducer } from "../../reducers/multi-input-validator-validity/multi-input-validator-validity-reducer.interface";
-import type { State } from "../../state/state.interface";
-import type { FieldState } from "../../state/field-state.interface";
-import type { DualFieldSetStateArg } from "../../state/dual-field-set-state-arg.interface";
-import type { DualFieldSetValueArg } from "../../state/dual-field-set-value-arg.interface";
-import type { MultiInputValidator } from "../../validators/multi-input/multi-input-validator.interface";
+import { copyObject } from '../../util/copy-object';
+import { BehaviorSubject, type Subject } from 'rxjs';
+import { AbstractField } from '../../fields/base/abstract-field';
+import type { MultiInputValidatedFormElement } from './multi-input-validated-field.interface';
+import type { MultiInputValidatorValidityReducer } from '../../reducers/multi-input-validator-validity/multi-input-validator-validity-reducer.interface';
+import type { State } from '../../state/state.interface';
+import type { FieldState } from '../../state/field-state.interface';
+import type { DualFieldSetStateArg } from '../../state/dual-field-set-state-arg.interface';
+import type { DualFieldSetValueArg } from '../../state/dual-field-set-value-arg.interface';
+import type { MultiInputValidator } from '../../validators/multi-input/multi-input-validator.interface';
 
-export abstract class AbstractMultiInputValidatedField implements MultiInputValidatedField {
+export abstract class AbstractMultiInputValidatedField
+  implements MultiInputValidatedFormElement
+{
   readonly stateChanges: Subject<State<string>>;
-  protected readonly baseField : AbstractField;
-  readonly #multiInputValidatorReducer : MultiInputValidatorValidityReducer;
+  protected readonly baseField: AbstractField;
+  readonly #multiInputValidatorReducer: MultiInputValidatorValidityReducer;
 
   get state(): FieldState {
     return {
@@ -25,7 +27,10 @@ export abstract class AbstractMultiInputValidatedField implements MultiInputVali
     return this.baseField.omit;
   }
 
-  constructor(baseField : AbstractField, multiInputValidityReducer : MultiInputValidatorValidityReducer) {
+  constructor(
+    baseField: AbstractField,
+    multiInputValidityReducer: MultiInputValidatorValidityReducer,
+  ) {
     this.baseField = baseField;
     this.#multiInputValidatorReducer = multiInputValidityReducer;
     this.baseField.stateChanges.subscribe(() => {

@@ -1,5 +1,3 @@
 import { Finalizer } from './finalizer.interface';
 
-export type FinalizerMap = {
-  [key: string]: Finalizer;
-};
+export type FinalizerDictionary = Record<string, Finalizer>;

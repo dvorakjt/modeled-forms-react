@@ -14,7 +14,7 @@ import {
 import { FinalizerState } from '../../state/finalizer-state.interface';
 import { FinalizerValidity } from '../../state/finalizer-validity.enum';
 import { Validity } from '../../state/validity.enum';
-import { SyncBaseFinalizerFunction } from './sync-base-finalizer-fn.type';
+import { SyncBaseFinalizerFn } from './sync-base-finalizer-fn.type';
 import { AsyncBaseFinalizerFn } from './async-base-finalizer-fn.type';
 import { logErrorInDevMode } from '../../util/log-error-in-dev-mode';
 import { autowire } from 'undecorated-di';
@@ -27,7 +27,7 @@ class FinalizerFnFactoryImpl implements FinalizerFnFactory {
   }
 
   createSyncFinalizerFn(
-    baseAdapterFn: SyncBaseFinalizerFunction,
+    baseAdapterFn: SyncBaseFinalizerFn,
   ): SyncAdapterFn<FinalizerState> {
     return (aggregatedStateChanges: AggregatedStateChanges) => {
       if (aggregatedStateChanges.hasOmittedFields) {

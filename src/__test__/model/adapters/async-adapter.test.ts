@@ -1,18 +1,18 @@
-import { describe, expect, test, vi } from "vitest";
-import { getTestContainer } from "../test-container";
-import { FormElementMap } from "../../../model/form-elements/form-element-map.type";
-import { MockField } from "../../util/mocks/mock-field";
-import { AggregatedStateChanges } from "../../../model/aggregators/aggregated-state-changes.interface";
-import { AsyncAdapter } from "../../../model/adapters/async-adapter";
-import { Observable, Subscription } from "rxjs";
-import { AbstractField } from "../../../model/fields/base/abstract-field";
+import { describe, expect, test, vi } from 'vitest';
+import { getTestContainer } from '../test-container';
+import { FormElementDictionary } from '../../../model/form-elements/form-element-dictionary.type';
+import { MockField } from '../../util/mocks/mock-field';
+import { AggregatedStateChanges } from '../../../model/aggregators/aggregated-state-changes.interface';
+import { AsyncAdapter } from '../../../model/adapters/async-adapter';
+import { Observable, Subscription } from 'rxjs';
+import { AbstractField } from '../../../model/fields/base/abstract-field';
 
 describe('AsyncAdapter', () => {
   const container = getTestContainer();
   const aggregatorFactory = container.services.AggregatorFactory;
 
   test('It emits adapted values through its stream property when the adapterFn resolves.', () => {
-    const fields: FormElementMap = {
+    const fields: FormElementDictionary = {
       fieldA: new MockField('a field'),
     };
     const adapterFn = ({ fieldA }: AggregatedStateChanges) => {
@@ -28,7 +28,7 @@ describe('AsyncAdapter', () => {
   });
 
   test('It emits errors through its stream property if they are thrown by the adapterFn outside of the Promise.', () => {
-    const fields: FormElementMap = {
+    const fields: FormElementDictionary = {
       fieldA: new MockField('a field'),
     };
     const expectedError = new Error();
@@ -47,7 +47,7 @@ describe('AsyncAdapter', () => {
   });
 
   test('It emits errors through its stream property if they are thrown by the adapterFn within the Promise.', () => {
-    const fields: FormElementMap = {
+    const fields: FormElementDictionary = {
       fieldA: new MockField('a field'),
     };
     const expectedError = new Error();
@@ -68,7 +68,7 @@ describe('AsyncAdapter', () => {
   });
 
   test('It emits errors through its stream property if the Promise is rejected.', () => {
-    const fields: FormElementMap = {
+    const fields: FormElementDictionary = {
       fieldA: new MockField('a field'),
     };
     const expectedError = new Error();
@@ -89,7 +89,7 @@ describe('AsyncAdapter', () => {
   });
 
   test('It emits adapted values through its stream property as they are emitted by the Observable returned by the adapterFn.', () => {
-    const fields: FormElementMap = {
+    const fields: FormElementDictionary = {
       fieldA: new MockField('test'),
     };
     const adapterFn = ({ fieldA }: AggregatedStateChanges) => {
@@ -112,7 +112,7 @@ describe('AsyncAdapter', () => {
   });
 
   test('It emits errors through its stream property as they are emitted by the Observable returned by the adapterFn.', () => {
-    const fields: FormElementMap = {
+    const fields: FormElementDictionary = {
       fieldA: new MockField('test'),
     };
     const expectedError = new Error();
@@ -134,16 +134,20 @@ describe('AsyncAdapter', () => {
   });
 
   test('It unsubscribes from a pending adapterFn when it receives a new value.', () => {
-    const fields: FormElementMap = {
+    const fields: FormElementDictionary = {
       fieldA: new MockField('test'),
     };
     vi.spyOn(Subscription.prototype, 'unsubscribe');
-    const adapterFn = ({ fieldA } : AggregatedStateChanges) => new Promise((resolve) => {
-      setTimeout(() => {
-        resolve(fieldA.value.toUpperCase());
-      }, 1000)
-    });
-    new AsyncAdapter(adapterFn, aggregatorFactory.createMultiFieldAggregatorFromFields(fields));
+    const adapterFn = ({ fieldA }: AggregatedStateChanges) =>
+      new Promise(resolve => {
+        setTimeout(() => {
+          resolve(fieldA.value.toUpperCase());
+        }, 1000);
+      });
+    new AsyncAdapter(
+      adapterFn,
+      aggregatorFactory.createMultiFieldAggregatorFromFields(fields),
+    );
     (fields.fieldA as AbstractField).setValue('new value');
     expect(Subscription.prototype.unsubscribe).toHaveBeenCalledOnce();
   });

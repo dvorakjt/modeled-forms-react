@@ -7,8 +7,7 @@ import type { DualFieldSetStateArg } from '../../state/dual-field-set-state-arg.
 import type { DualFieldSetValueArg } from '../../state/dual-field-set-value-arg.interface';
 import type { FieldState } from '../../state/field-state.interface';
 
-export class StateControlledDualField extends AbstractDualField
-{
+export class StateControlledDualField extends AbstractDualField {
   readonly #field: AbstractDualField;
   readonly #adapter: Adapter<DualFieldSetStateArg>;
 
@@ -48,14 +47,17 @@ export class StateControlledDualField extends AbstractDualField
     return this.#field as AbstractDualField;
   }
 
-  constructor(field: AbstractDualField, adapter: Adapter<DualFieldSetStateArg>) {
+  constructor(
+    field: AbstractDualField,
+    adapter: Adapter<DualFieldSetStateArg>,
+  ) {
     super();
     this.#field = field;
     this.#adapter = adapter;
     this.#adapter.stream.subscribe({
       next: (next: DualFieldSetStateArg) => this.setState(next),
       error: () => {
-        const errorState : FieldState = {
+        const errorState: FieldState = {
           value: '',
           validity: Validity.ERROR,
           messages: [
@@ -64,12 +66,15 @@ export class StateControlledDualField extends AbstractDualField
               text: GlobalMessages.FIELD_ADAPTER_ERROR,
             },
           ],
-        }
-        const setStateArg : DualFieldSetStateArg = this.dualField.useSecondaryField ? {
-          secondaryFieldState : errorState
-        } : {
-          primaryFieldState : errorState
-        }
+        };
+        const setStateArg: DualFieldSetStateArg = this.dualField
+          .useSecondaryField
+          ? {
+              secondaryFieldState: errorState,
+            }
+          : {
+              primaryFieldState: errorState,
+            };
         this.setState(setStateArg);
       },
     });

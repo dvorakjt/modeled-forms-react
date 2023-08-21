@@ -25,10 +25,7 @@ export class StateControlledField extends AbstractField {
     return this.#field.omit;
   }
 
-  constructor(
-    field: AbstractField,
-    adapter: Adapter<FieldState>,
-  ) {
+  constructor(field: AbstractField, adapter: Adapter<FieldState>) {
     super();
     this.#field = field;
     this.#adapter = adapter;

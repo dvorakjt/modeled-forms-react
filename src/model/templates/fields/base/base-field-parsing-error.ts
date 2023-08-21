@@ -1,6 +1,6 @@
 export class BaseFieldParsingError extends Error {
   name = 'BaseFieldParsingError';
-  constructor(message : any) {
+  constructor(message: any) {
     super(message);
   }
 }

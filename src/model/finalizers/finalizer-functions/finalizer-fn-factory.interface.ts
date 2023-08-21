@@ -1,11 +1,11 @@
 import { AsyncBaseFinalizerFn } from './async-base-finalizer-fn.type';
 import { AsyncFinalizerFn } from './async-finalizer-fn.type';
-import { SyncBaseFinalizerFunction } from './sync-base-finalizer-fn.type';
+import { SyncBaseFinalizerFn } from './sync-base-finalizer-fn.type';
 import { SyncFinalizerFn } from './sync-finalizer-fn.type';
 
 interface FinalizerFnFactory {
   createSyncFinalizerFn(
-    baseAdapterFn: SyncBaseFinalizerFunction,
+    baseAdapterFn: SyncBaseFinalizerFn,
   ): SyncFinalizerFn;
   createAsyncFinalizerFn(baseAdapterFn: AsyncBaseFinalizerFn): AsyncFinalizerFn;
 }

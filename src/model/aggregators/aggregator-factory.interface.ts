@@ -1,11 +1,11 @@
-import { FormElementMap } from '../form-elements/form-element-map.type';
+import { FormElementDictionary } from '../form-elements/form-element-dictionary.type';
 import { MultiInputValidator } from '../validators/multi-input/multi-input-validator.interface';
 import { MultiFieldAggregator } from './multi-field-aggregator.interface';
 import { MultiInputValidatorMessagesAggregator } from './multi-input-validator-messages-aggregator.interface';
 
 interface AggregatorFactory {
   createMultiFieldAggregatorFromFields(
-    fields: FormElementMap,
+    fields: FormElementDictionary,
   ): MultiFieldAggregator;
   createMultiInputValidatorMessagesAggregatorFromValidators(
     validators: Array<MultiInputValidator>,

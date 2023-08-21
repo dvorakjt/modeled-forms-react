@@ -6,7 +6,7 @@ import { AggregatedStateChangesProxyProducer } from '../../../model/proxies/aggr
 import { FieldStateReducer } from '../../../model/reducers/field-state/field-state-reducer.interface';
 import { OneTimeValueEmitter } from '../../../model/emitters/one-time-value-emitter.interface';
 import { Validity } from '../../../model/state/validity.enum';
-import { FormElementMap } from '../../../model/form-elements/form-element-map.type';
+import { FormElementDictionary } from '../../../model/form-elements/form-element-dictionary.type';
 import { AggregatedStateChanges } from '../../../model/aggregators/aggregated-state-changes.interface';
 
 describe('MultiFieldAggregatorImpl', () => {
@@ -27,7 +27,7 @@ describe('MultiFieldAggregatorImpl', () => {
   });
 
   test('It emits an object containing the values of all fields as well as overallValidity and hasOmittedFields properties.', () => {
-    const fields: FormElementMap = {
+    const fields: FormElementDictionary = {
       errantField: new MockField('errant field', Validity.ERROR),
       invalidField: new MockField('invalid field', Validity.INVALID),
       pendingField: new MockField('pending field', Validity.PENDING),
@@ -89,7 +89,7 @@ describe('MultiFieldAggregatorImpl', () => {
   });
 
   test('It subscribes to fields accessed on initial subscription.', () => {
-    const fields: FormElementMap = {
+    const fields: FormElementDictionary = {
       fieldA: new MockField('field a', Validity.VALID_FINALIZABLE),
       fieldB: new MockField('field b', Validity.VALID_FINALIZABLE),
     };
