@@ -29,9 +29,9 @@ export class FinalizerFacingMultiInputValidatedFormElement implements StatefulFo
   ) {
     this.#baseFormElement = baseFormElement;
     this.#multiInputValidatorReducer = finalizerFacingMultiInputValidityReducer;
-    this.#baseFormElement.stateChanges.subscribe(() => {
-      if (this.stateChanges) this.stateChanges.next(this.state);
-    });
+    // this.#baseFormElement.stateChanges.subscribe(() => {
+    //   if (this.stateChanges) this.stateChanges.next(this.state);
+    // });
     this.#multiInputValidatorReducer.validityChanges.subscribe(() => {
       if (this.stateChanges) this.stateChanges.next(this.state);
     });

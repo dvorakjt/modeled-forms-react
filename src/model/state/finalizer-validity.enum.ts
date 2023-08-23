@@ -1,7 +1,6 @@
-import { Validity } from './validity.enum';
 
 export enum FinalizerValidity {
-  FINALIZER_ERROR = Validity.ERROR - 1,
+  FINALIZER_ERROR = -1,
   FIELD_ERROR,
   FIELD_INVALID,
   FIELD_PENDING,

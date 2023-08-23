@@ -20,6 +20,7 @@ export class AsyncMultiInputValidator implements MultiInputValidator {
   readonly #multiFieldAggregator: MultiFieldAggregator;
   readonly #validator: AsyncValidator<AggregatedStateChanges>;
   #validatorSubscription?: Subscription;
+  #firstRunCompleted = false;
 
   constructor(
     multiFieldAggregator: MultiFieldAggregator,
@@ -38,6 +39,19 @@ export class AsyncMultiInputValidator implements MultiInputValidator {
         //unsubscribe from currently running validator
         this.#validatorSubscription &&
           this.#validatorSubscription.unsubscribe();
+        let observableResult;
+        let error;
+
+        if(!this.#firstRunCompleted) {
+          try {
+            observableResult = from(this.#validator(aggregateChange));
+            this.#firstRunCompleted = true;
+          } catch (e) {
+            logErrorInDevMode(e);
+            error = e;
+          }
+        }
+
         //if there are omitted fields, this validator is effectively not checked
         if (aggregateChange.hasOmittedFields) {
           this.calculatedValidityChanges.next(Validity.VALID_FINALIZABLE);
@@ -53,6 +67,13 @@ export class AsyncMultiInputValidator implements MultiInputValidator {
           //overallValidity, however, emits the overall validity, meaning that finalizers won't run until overallValidity === Validity.VALID_FINALIZABLE
           this.overallValidityChanges.next(aggregateChange.overallValidity);
           this.messageChanges.next(null);
+        } else if(error) {
+          this.calculatedValidityChanges.next(Validity.ERROR);
+            this.overallValidityChanges.next(Validity.ERROR);
+            this.messageChanges.next({
+              type: MessageType.ERROR,
+              text: GlobalMessages.MULTI_INPUT_VALIDATION_ERROR,
+            });
         } else {
           this.calculatedValidityChanges.next(Validity.PENDING);
           this.overallValidityChanges.next(Validity.PENDING);
@@ -61,8 +82,8 @@ export class AsyncMultiInputValidator implements MultiInputValidator {
             text: this.#pendingMessage,
           });
           try {
-            const promise = this.#validator(aggregateChange);
-            this.#validatorSubscription = from(promise).subscribe({
+            if(!observableResult) observableResult = from(this.#validator(aggregateChange));
+            this.#validatorSubscription = observableResult.subscribe({
               next: result => {
                 const validity = result.isValid
                   ? Validity.VALID_FINALIZABLE

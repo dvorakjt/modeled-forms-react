@@ -11,7 +11,6 @@ import { MessageType } from '../state/messages/message-type.enum';
 import { GlobalMessages } from '../constants/global-messages.enum';
 import { FinalizerManager } from './finalizer-manager.interface';
 
-//need a factory
 export class FinalizerManagerImpl implements FinalizerManager {
   stateChanges: Subject<State<any>>;
   #value: FormValue = {};

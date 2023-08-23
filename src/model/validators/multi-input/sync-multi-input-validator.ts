@@ -18,6 +18,7 @@ export class SyncMultiInputValidator implements MultiInputValidator {
   readonly accessedFields: OneTimeValueEmitter<Set<string>>;
   readonly #multiFieldAggregator: MultiFieldAggregator;
   readonly #validator: SyncValidator<AggregatedStateChanges>;
+  #completedFirstRun = false;
 
   constructor(
     multiFieldAggregator: MultiFieldAggregator,
@@ -31,6 +32,12 @@ export class SyncMultiInputValidator implements MultiInputValidator {
     this.messageChanges = new ReplaySubject<Message | null>(1);
     this.#multiFieldAggregator.aggregateChanges.subscribe(
       (aggregateChange: AggregatedStateChanges) => {
+        //first, run the validator so hasOmittedFields and overallValidity are accurate
+        let result;
+        if(!this.#completedFirstRun) {
+          result = this.runValidator(aggregateChange);
+          this.#completedFirstRun = true;
+        }
         //if there are omitted fields, this validator is effectively not checked
         if (aggregateChange.hasOmittedFields) {
           this.calculatedValidityChanges.next(Validity.VALID_FINALIZABLE);
@@ -46,33 +53,46 @@ export class SyncMultiInputValidator implements MultiInputValidator {
           //overallValidity, however, emits the overall validity, meaning that finalizers won't run until overallValidity === Validity.VALID_FINALIZABLE
           this.overallValidityChanges.next(aggregateChange.overallValidity);
           this.messageChanges.next(null);
+        } else if(result) {
+          this.calculatedValidityChanges.next(result.validity);
+          this.overallValidityChanges.next(result.validity);
+          this.messageChanges.next(result.message);
         } else {
-          //otherwise, run the validator, and return the result
-          try {
-            const result = this.#validator(aggregateChange);
-            const validity = result.isValid
-              ? Validity.VALID_FINALIZABLE
-              : Validity.INVALID;
-            this.calculatedValidityChanges.next(validity);
-            this.overallValidityChanges.next(validity);
-            if (result.message) {
-              const message = {
-                type: result.isValid ? MessageType.VALID : MessageType.INVALID,
-                text: result.message,
-              };
-              this.messageChanges.next(message);
-            } else this.messageChanges.next(null);
-          } catch (e) {
-            logErrorInDevMode(e);
-            this.calculatedValidityChanges.next(Validity.ERROR);
-            this.overallValidityChanges.next(Validity.ERROR);
-            this.messageChanges.next({
-              type: MessageType.ERROR,
-              text: GlobalMessages.MULTI_INPUT_VALIDATION_ERROR,
-            });
-          }
+          result = this.runValidator(aggregateChange);
+          this.calculatedValidityChanges.next(result.validity);
+          this.overallValidityChanges.next(result.validity);
+          this.messageChanges.next(result.message);
         }
       },
     );
+  }
+
+  private runValidator(aggregateChange : AggregatedStateChanges) : { validity : Validity, message : Message | null} {
+    try {
+      let message : Message | null;
+      const result = this.#validator(aggregateChange);
+      const validity = result.isValid
+        ? Validity.VALID_FINALIZABLE
+        : Validity.INVALID;
+      if (result.message) {
+        message = {
+          type: result.isValid ? MessageType.VALID : MessageType.INVALID,
+          text: result.message,
+        };
+      } else message = null;
+      return {
+        validity,
+        message 
+      }
+    } catch (e) {
+      logErrorInDevMode(e);
+      return {
+        validity : Validity.ERROR,
+        message : {
+          type : MessageType.ERROR,
+          text : GlobalMessages.MULTI_INPUT_VALIDATION_ERROR
+        }
+      }
+    }
   }
 }

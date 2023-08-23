@@ -29,8 +29,8 @@ class NestedFormTemplateParserImpl implements NestedFormTemplateParser {
       finalizerFacingFields,
       multiInputValidatorMessagesAggregator
     ] = this.#multiFieldValidatorsTemplateParser.parseTemplate(multiFieldValidatorsTemplate, baseFields);
-    const finalizerTemplateDictionary = template.finalizerTemplateDictionary ?? {};
-    const finalizerManager = this.#finalizerTemplateDictionaryParser.parseTemplate(finalizerTemplateDictionary, finalizerFacingFields);
+    const finalizedFields = template.finalizedFields ?? {};
+    const finalizerManager = this.#finalizerTemplateDictionaryParser.parseTemplate(finalizedFields, finalizerFacingFields);
     const form = new NestedForm(userFacingFields, firstNonValidFormElementTracker, finalizerManager, multiInputValidatorMessagesAggregator, template.omitByDefault ?? false);
     return form; //the new form part should come from a factory
   }

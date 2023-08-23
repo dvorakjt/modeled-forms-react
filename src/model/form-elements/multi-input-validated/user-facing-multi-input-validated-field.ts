@@ -35,9 +35,9 @@ export class UserFacingMultiInputValidatedField extends AbstractField {
     super();
     this.#baseField = baseField;
     this.#multiInputValidatorReducer = userFacingMultiInputValidityReducer;
-    this.#baseField.stateChanges.subscribe(() => {
-      if (this.stateChanges) this.stateChanges.next(this.state);
-    });
+    // this.#baseField.stateChanges.subscribe(() => {
+    //   if (this.stateChanges) this.stateChanges.next(this.state);
+    // });
     this.#multiInputValidatorReducer.validityChanges.subscribe(() => {
       if (this.stateChanges) this.stateChanges.next(this.state);
     });

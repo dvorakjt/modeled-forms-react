@@ -30,10 +30,22 @@ class FinalizerFnFactoryImpl implements FinalizerFnFactory {
     baseAdapterFn: SyncBaseFinalizerFn,
   ): SyncAdapterFn<FinalizerState> {
     return (aggregatedStateChanges: AggregatedStateChanges) => {
+      let value : any;
+      let error : any;
+
+      //attempt to create the value first so that fields are accessed and hasOmittedFields, overallValidity
+      //can be accessed the first time
+      try {
+        value = baseAdapterFn(aggregatedStateChanges);
+      } catch (e) {
+        logErrorInDevMode(e);
+        error = e;
+      }
+
       if (aggregatedStateChanges.hasOmittedFields) {
         return { finalizerValidity: FinalizerValidity.VALID_FINALIZED };
       }
-      if (aggregatedStateChanges.overallValidity < Validity.VALID_FINALIZABLE) {
+      else if (aggregatedStateChanges.overallValidity < Validity.VALID_FINALIZABLE) {
         return {
           finalizerValidity:
             this.#finalizerValidityTranslator.translateValidityToFinalizerValidity(
@@ -41,16 +53,16 @@ class FinalizerFnFactoryImpl implements FinalizerFnFactory {
             ),
         };
       }
-      try {
-        const value = baseAdapterFn(aggregatedStateChanges);
+      else if(error) {
+        return {
+          finalizerValidity : FinalizerValidity.FINALIZER_ERROR
+        }
+      }
+      else {
         return {
           value,
-          finalizerValidity: FinalizerValidity.VALID_FINALIZED,
-        };
-      } catch (e) {
-        return {
-          finalizerValidity: FinalizerValidity.FINALIZER_ERROR,
-        };
+          finalizerValidity : FinalizerValidity.VALID_FINALIZED
+        }
       }
     };
   }
@@ -60,49 +72,54 @@ class FinalizerFnFactoryImpl implements FinalizerFnFactory {
   ): AsyncAdapterFn<FinalizerState> {
     return (aggregatedStateChanges: AggregatedStateChanges) => {
       return new Observable<FinalizerState>(subscriber => {
-        if (aggregatedStateChanges.hasOmittedFields) {
+        //first attempt to create the promise so that hasOmittedFields and overallValidity can be accessed the first time
+        let promise : Promise<any> | undefined = undefined;
+        let error : any;
+
+        try {
+          promise = baseAdapterFn(aggregatedStateChanges);
+        } catch (e) {
+          error = e;
+        }
+
+        if(error) {
+          logErrorInDevMode(error);
           subscriber.next({
-            finalizerValidity: FinalizerValidity.VALID_FINALIZED,
+            finalizerValidity : FinalizerValidity.FINALIZER_ERROR
           });
           subscriber.complete();
-        } else if (
-          aggregatedStateChanges.overallValidity < Validity.VALID_FINALIZABLE
-        ) {
+        } else if(aggregatedStateChanges.hasOmittedFields) {
           subscriber.next({
-            finalizerValidity:
-              this.#finalizerValidityTranslator.translateValidityToFinalizerValidity(
-                aggregatedStateChanges.overallValidity,
-              ),
+            finalizerValidity : FinalizerValidity.VALID_FINALIZED
           });
           subscriber.complete();
-        } else {
+        } else if(aggregatedStateChanges.overallValidity < Validity.VALID_FINALIZABLE) {
+          subscriber.next({
+            finalizerValidity: this.#finalizerValidityTranslator.translateValidityToFinalizerValidity(
+              aggregatedStateChanges.overallValidity,
+            ),
+          });
+        } else if(promise) {
           subscriber.next({
             finalizerValidity: FinalizerValidity.VALID_FINALIZING,
           });
-          try {
-            const promise = baseAdapterFn(aggregatedStateChanges);
-            promise
-              .then(value => {
-                subscriber.next({
-                  value,
-                  finalizerValidity: FinalizerValidity.VALID_FINALIZED,
-                });
-                subscriber.complete();
-              })
-              .catch(e => {
-                logErrorInDevMode(e);
-                subscriber.next({
-                  finalizerValidity: FinalizerValidity.FINALIZER_ERROR,
-                });
-                subscriber.complete();
+          promise
+            .then(value => {
+              subscriber.next({
+                value,
+                finalizerValidity: FinalizerValidity.VALID_FINALIZED,
               });
-          } catch (e) {
-            logErrorInDevMode(e);
-            subscriber.next({
-              finalizerValidity: FinalizerValidity.FINALIZER_ERROR,
+              subscriber.complete();
+            })
+            .catch(e => {
+              logErrorInDevMode(e);
+              subscriber.next({
+                finalizerValidity: FinalizerValidity.FINALIZER_ERROR,
+              });
+              subscriber.complete();
             });
-            subscriber.complete();
-          }
+        } else {
+          throw new Error('Async finalizer function did not return a promise.');
         }
       });
     };
@@ -113,7 +130,8 @@ const FinalizerFnFactoryService = autowire<
   FinalizerFnFactoryKeyType,
   FinalizerFnFactory,
   FinalizerFnFactoryImpl
->(FinalizerFnFactoryImpl, FinalizerFnFactoryKey, [
+>(FinalizerFnFactoryImpl, FinalizerFnFactoryKey, 
+[
   FinalizerValidityTranslatorKey,
 ]);
 

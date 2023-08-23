@@ -2,17 +2,19 @@ import { OneTimeEventEmitter } from './one-time-event-emitter.interface';
 
 export class OneTimeEventEmitterImpl implements OneTimeEventEmitter {
   #eventOccurred: boolean = false;
-  #cb?: () => void;
+  #callbacks: Array<() => void> = [];
 
   onEvent(cb: () => void) {
     if (this.#eventOccurred) cb();
-    else this.#cb = cb;
+    else this.#callbacks.push(cb);
   }
 
   triggerEvent() {
     if (!this.#eventOccurred) {
       this.#eventOccurred = true;
-      if (this.#cb) this.#cb();
+      for(const cb of this.#callbacks) {
+        cb();
+      }
     }
   }
 }

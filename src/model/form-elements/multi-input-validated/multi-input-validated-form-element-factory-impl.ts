@@ -27,11 +27,8 @@ class MultiInputValidatedFormElementFactoryImpl implements MultiInputValidatedFo
     FinalizerFacingMultiInputValidatedFormElement
   ] {
     const userFacingReducer = this.#reducerFactory.createUserMultiInputValidatorValidityReducer();
-    console.log('1.1');
     const finalizerFacingReducer = this.#reducerFactory.createFinalizerFacingMultiInputValidatorValidityReducer();
-    console.log('1.2');
     const finalizerFacingFormElement = new FinalizerFacingMultiInputValidatedFormElement(baseField, finalizerFacingReducer);
-    console.log('1.3');
 
     if(baseField instanceof AbstractNestedForm) {
       const userFacingNestedForm = new UserFacingMultiInputValidatedNestedForm(baseField, userFacingReducer);

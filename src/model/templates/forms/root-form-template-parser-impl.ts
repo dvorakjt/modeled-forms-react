@@ -27,21 +27,16 @@ class RootFormTemplateParserImpl implements RootFormTemplateParser {
   }
   parseTemplate(template: RootFormTemplate): AbstractRootForm {
     const [baseFields, firstNonValidFormElementTracker] = this.#formElementTemplateDictionaryParser.parseTemplate(template.fields);
-    console.log('1')
     const multiFieldValidatorsTemplate = template.multiFieldValidators ?? {};
     const [
       userFacingFields, 
       finalizerFacingFields,
       multiInputValidatorMessagesAggregator
     ] = this.#multiFieldValidatorsTemplateParser.parseTemplate(multiFieldValidatorsTemplate, baseFields);
-    console.log('2')
-    const finalizerTemplateDictionary = template.finalizerTemplateDictionary ?? {};
-    const finalizerManager = this.#finalizerTemplateDictionaryParser.parseTemplate(finalizerTemplateDictionary, finalizerFacingFields);
-    console.log('3')
+    const finalizedFields = template.finalizedFields ?? {};
+    const finalizerManager = this.#finalizerTemplateDictionaryParser.parseTemplate(finalizedFields, finalizerFacingFields);
     const submissionManager = this.#submissionManagerFactory.createSubmissionManager(template.submitFn);
-    console.log('4')
     const form = new RootForm(userFacingFields, firstNonValidFormElementTracker, finalizerManager, multiInputValidatorMessagesAggregator, submissionManager);
-    console.log('5')
     return form; //the new form part should come from a factory
   }
 }
