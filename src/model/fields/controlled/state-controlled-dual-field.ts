@@ -1,7 +1,7 @@
 import { AbstractDualField } from '../base/abstract-dual-field';
 import { Validity } from '../../state/validity.enum';
 import { MessageType } from '../../state/messages/message-type.enum';
-import { GlobalMessages } from '../../constants/global-messages.enum';
+import { config } from '../../../config';
 import type { Adapter } from '../../adapters/adapter.interface';
 import type { DualFieldSetStateArg } from '../../state/dual-field-set-state-arg.interface';
 import type { DualFieldSetValueArg } from '../../state/dual-field-set-value-arg.interface';
@@ -63,7 +63,7 @@ export class StateControlledDualField extends AbstractDualField {
           messages: [
             {
               type: MessageType.ERROR,
-              text: GlobalMessages.FIELD_ADAPTER_ERROR,
+              text: config.globalMessages.adapterError
             },
           ],
         };

@@ -6,7 +6,7 @@ import { SubmitFn } from './submit-fn.type';
 import { copyObject } from '../util/copy-object';
 import { Validity } from '../state/validity.enum';
 import { MessageType } from '../state/messages/message-type.enum';
-import { GlobalMessages } from '../constants/global-messages.enum';
+import { config } from '../../config';
 
 export class SubmissionManagerImpl implements SubmissionManager {
   submissionStateChanges: Subject<SubmissionState>;
@@ -40,10 +40,10 @@ export class SubmissionManagerImpl implements SubmissionManager {
           ...this.#submissionState,
           message: {
             type: MessageType.INVALID,
-            text: GlobalMessages.SUBMISSION_FAILED,
+            text: config.globalMessages.submissionFailed
           },
         };
-        reject(new Error(GlobalMessages.SUBMISSION_FAILED));
+        reject(new Error(config.globalMessages.submissionFailed));
       } else {
         this.#submitFn(state)
           .then(res => {

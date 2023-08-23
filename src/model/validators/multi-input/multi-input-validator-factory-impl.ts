@@ -1,6 +1,6 @@
 import { autowire } from "undecorated-di";
 import { AggregatedStateChanges } from "../../aggregators/aggregated-state-changes.interface";
-import { GlobalMessages } from "../../constants/global-messages.enum";
+import { config } from "../../../config";
 import { AsyncValidator } from "../async-validator.type";
 import { SyncValidator } from "../sync-validator.type";
 import { AsyncMultiInputValidator } from "./async-multi-input-validator";
@@ -21,7 +21,7 @@ class MultiInputValidatorFactoryImpl implements MultiInputValidatorFactory {
     const multiFieldAggregator = this.#aggregatorFactory.createMultiFieldAggregatorFromFields(fields);
     return new SyncMultiInputValidator(multiFieldAggregator, validator);
   }
-  createAsyncMultiInputValidator(validator: AsyncValidator<AggregatedStateChanges>, fields : FormElementDictionary, pendingMessage : string = GlobalMessages.PENDING_ASYNC_MULTI_INPUT_VALIDATOR): MultiInputValidator {
+  createAsyncMultiInputValidator(validator: AsyncValidator<AggregatedStateChanges>, fields : FormElementDictionary, pendingMessage : string = config.globalMessages.pendingAsyncMultiFieldValidator): MultiInputValidator {
     const multiFieldAggregator = this.#aggregatorFactory.createMultiFieldAggregatorFromFields(fields);
     return new AsyncMultiInputValidator(multiFieldAggregator, validator, pendingMessage);
   }
