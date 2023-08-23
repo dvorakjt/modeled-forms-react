@@ -17,7 +17,7 @@ class FinalizerValidityTranslatorImpl implements FinalizerValidityTranslator {
       case FinalizerValidity.FIELD_ERROR:
         return Validity.ERROR;
       case FinalizerValidity.FIELD_INVALID:
-        return Validity.ERROR;
+        return Validity.INVALID;
       case FinalizerValidity.FIELD_PENDING:
         return Validity.PENDING;
       case FinalizerValidity.FIELD_VALID_UNFINALIZABLE:
@@ -29,18 +29,25 @@ class FinalizerValidityTranslatorImpl implements FinalizerValidityTranslator {
     }
   }
   translateValidityToFinalizerValidity(validity: Validity): FinalizerValidity {
+    let returnValue;
     switch (validity) {
       case Validity.ERROR:
-        return FinalizerValidity.FIELD_ERROR;
+        returnValue = FinalizerValidity.FIELD_ERROR;
+        break;
       case Validity.INVALID:
-        return FinalizerValidity.FIELD_ERROR;
+        returnValue = FinalizerValidity.FIELD_INVALID;
+        break;
       case Validity.PENDING:
-        return FinalizerValidity.FIELD_PENDING;
+        returnValue = FinalizerValidity.FIELD_PENDING;
+        break;
       case Validity.VALID_UNFINALIZABLE:
-        return FinalizerValidity.FIELD_VALID_UNFINALIZABLE;
+        returnValue = FinalizerValidity.FIELD_VALID_UNFINALIZABLE;
+        break;
       case Validity.VALID_FINALIZABLE:
-        return FinalizerValidity.VALID_FINALIZING;
+        returnValue = FinalizerValidity.VALID_FINALIZING;
+        break;
     }
+    return returnValue;
   }
 }
 

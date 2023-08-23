@@ -1,5 +1,5 @@
 import type { AggregatedStateChanges } from '../aggregators/aggregated-state-changes.interface';
-import type { FormElementMap } from '../form-elements/form-element-map.type';
+import type { FormElementDictionary } from '../form-elements/form-element-dictionary.type';
 import type { AggregatedStateChangesProxyProducer } from './aggregated-state-changes-proxy-producer.interface';
 import type { FieldStateReducer } from '../reducers/field-state/field-state-reducer.interface';
 import type { AnyState } from '../state/any-state.type';
@@ -14,7 +14,7 @@ export class AggregatedStateChangesProxyProducerImpl
     this.fieldStateReducer = fieldStateReducer;
   }
 
-  getProxy(fields: FormElementMap): AggregatedStateChanges {
+  getProxy(fields: FormElementDictionary): AggregatedStateChanges {
     const aggregatedState: {
       [key: string]: AnyState;
     } = {};

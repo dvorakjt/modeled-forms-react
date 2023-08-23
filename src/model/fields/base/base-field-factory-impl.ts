@@ -1,18 +1,18 @@
-import { DualField } from './dual-field.interface';
 import {
   BaseFieldFactory,
   BaseFieldFactoryKey,
   BaseFieldFactoryKeyType,
 } from './base-field-factory.interface';
-import { Field } from './field.interface';
 import { AsyncValidator } from '../../validators/async-validator.type';
 import {
   SingleInputValidatorSuiteFactoryKey,
   SingleInputValidatorSuiteFactory,
 } from '../../validators/single-input/single-input-validator-suite-factory.interface';
 import { SyncValidator } from '../../validators/sync-validator.type';
-import { DualFieldImpl } from './dual-field-impl';
-import { FieldImpl } from './field-impl';
+import { AbstractField } from './abstract-field';
+import { AbstractDualField } from './abstract-dual-field';
+import { DualField } from './dual-field';
+import { Field } from './field';
 import { autowire } from 'undecorated-di';
 
 class BaseFieldFactoryImpl implements BaseFieldFactory {
@@ -30,14 +30,14 @@ class BaseFieldFactoryImpl implements BaseFieldFactory {
     syncValidators: SyncValidator<string>[],
     asyncValidators: AsyncValidator<string>[],
     pendingAsyncValidatorMessage?: string,
-  ): Field {
+  ): AbstractField {
     const validatorSuite =
       this.#singleInputValidatorSuiteFactory.createSingleInputValidatorSuite(
         syncValidators,
         asyncValidators,
         pendingAsyncValidatorMessage,
       );
-    return new FieldImpl(validatorSuite, defaultValue, omitByDefault);
+    return new Field(validatorSuite, defaultValue, omitByDefault);
   }
 
   createDualField(
@@ -47,7 +47,7 @@ class BaseFieldFactoryImpl implements BaseFieldFactory {
     syncValidators: SyncValidator<string>[],
     asyncValidators: AsyncValidator<string>[],
     pendingAsyncValidatorMessage?: string,
-  ): DualField {
+  ): AbstractDualField {
     const primaryField = this.createField(
       primaryDefaultValue,
       false,
@@ -62,7 +62,7 @@ class BaseFieldFactoryImpl implements BaseFieldFactory {
       asyncValidators,
       pendingAsyncValidatorMessage,
     );
-    return new DualFieldImpl(primaryField, secondaryField, omitByDefault);
+    return new DualField(primaryField, secondaryField, omitByDefault);
   }
 }
 

@@ -1,8 +1,8 @@
-import { NestedForm } from '../../forms/nested-form.interface';
-import { NestedFormTemplate } from './raw/nested-form-template.interface';
+import { AbstractNestedForm } from '../../forms/abstract-nested-form';
+import { NestedFormTemplate } from './nested-form-template.interface';
 
 interface NestedFormTemplateParser {
-  parseTemplate(template: NestedFormTemplate): NestedForm;
+  parseTemplate(template: NestedFormTemplate): AbstractNestedForm;
 }
 const NestedFormTemplateParserKey = 'NestedFormTemplateParser';
 type NestedFormTemplateParserKeyType = typeof NestedFormTemplateParserKey;

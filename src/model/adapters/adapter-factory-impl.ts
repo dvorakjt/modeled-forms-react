@@ -10,7 +10,7 @@ import {
   AggregatorFactory,
   AggregatorFactoryKey,
 } from '../aggregators/aggregator-factory.interface';
-import { FormElementMap } from '../form-elements/form-element-map.type';
+import { FormElementDictionary } from '../form-elements/form-element-dictionary.type';
 import { AsyncAdapter } from './async-adapter';
 import { SyncAdapter } from './sync-adapter';
 
@@ -23,7 +23,7 @@ class AdapterFactoryImpl implements AdapterFactory {
 
   createSyncAdapterFromFnWithFields<V>(
     syncAdapterFn: SyncAdapterFn<V>,
-    fields: FormElementMap,
+    fields: FormElementDictionary,
   ): SyncAdapter<V> {
     const multiFieldAggregator =
       this.#aggregatorFactory.createMultiFieldAggregatorFromFields(fields);
@@ -31,7 +31,7 @@ class AdapterFactoryImpl implements AdapterFactory {
   }
   createAsyncAdapterFromFnWithFields<V>(
     asyncAdapterFn: AsyncAdapterFn<V>,
-    fields: FormElementMap,
+    fields: FormElementDictionary,
   ): AsyncAdapter<V> {
     const multiFieldAggregator =
       this.#aggregatorFactory.createMultiFieldAggregatorFromFields(fields);

@@ -27,7 +27,7 @@ class ReducerFactoryImpl implements ReducerFactory {
     );
   }
   createFinalizerFacingMultiInputValidatorValidityReducer(): MultiInputValidatorValidityReducer {
-    throw new FinalizerFacingMultiInputValidatorReducer(
+    return new FinalizerFacingMultiInputValidatorReducer(
       this.createValidityReducer(),
     );
   }

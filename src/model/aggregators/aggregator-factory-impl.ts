@@ -9,7 +9,7 @@ import {
   EmitterFactory,
   EmitterFactoryKey,
 } from '../emitters/emitter-factory.interface';
-import { FormElementMap } from '../form-elements/form-element-map.type';
+import { FormElementDictionary } from '../form-elements/form-element-dictionary.type';
 import {
   ProxyProducerFactory,
   ProxyProducerFactoryKey,
@@ -46,7 +46,7 @@ class AggregatorFactoryImpl implements AggregatorFactory {
   }
 
   createMultiFieldAggregatorFromFields(
-    fields: FormElementMap,
+    fields: FormElementDictionary,
   ): MultiFieldAggregator {
     return new MultiFieldAggregatorImpl(
       fields,

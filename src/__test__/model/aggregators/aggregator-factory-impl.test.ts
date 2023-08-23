@@ -1,7 +1,7 @@
 import { describe, test, expect } from 'vitest';
 import { AggregatorFactoryImpl } from '../../../model/aggregators/aggregator-factory-impl';
 import { getTestContainer } from '../test-container';
-import { FormElementMap } from '../../../model/form-elements/form-element-map.type';
+import { FormElementDictionary } from '../../../model/form-elements/form-element-dictionary.type';
 import { MockField } from '../../util/mocks/mock-field';
 import { MultiFieldAggregatorImpl } from '../../../model/aggregators/multi-field-aggregator-impl';
 import { MultiInputValidatorMessagesAggregatorImpl } from '../../../model/aggregators/multi-input-validator-messages-aggregator-impl';
@@ -20,7 +20,7 @@ describe('AggregatorFactoryImpl', () => {
   );
 
   test('It returns an instance of MultiFieldAggregator when createMultiFieldAggregatorFromFields() is called.', () => {
-    const fields: FormElementMap = {
+    const fields: FormElementDictionary = {
       fieldA: new MockField('a field'),
     };
     const multiFieldAggregator =
