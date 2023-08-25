@@ -29,6 +29,7 @@ class FinalizerFnFactoryImpl implements FinalizerFnFactory {
   createSyncFinalizerFn(
     baseAdapterFn: SyncBaseFinalizerFn,
   ): SyncAdapterFn<FinalizerState> {
+
     return (aggregatedStateChanges: AggregatedStateChanges) => {
       let value : any;
       let error : any;
@@ -40,12 +41,12 @@ class FinalizerFnFactoryImpl implements FinalizerFnFactory {
       } catch (e) {
         logErrorInDevMode(e);
         error = e;
-      }
-
+      } 
+      
       if (aggregatedStateChanges.hasOmittedFields) {
         return { finalizerValidity: FinalizerValidity.VALID_FINALIZED };
       }
-      else if (aggregatedStateChanges.overallValidity < Validity.VALID_FINALIZABLE) {
+      if (aggregatedStateChanges.overallValidity < Validity.VALID_FINALIZABLE) {
         return {
           finalizerValidity:
             this.#finalizerValidityTranslator.translateValidityToFinalizerValidity(
@@ -53,7 +54,8 @@ class FinalizerFnFactoryImpl implements FinalizerFnFactory {
             ),
         };
       }
-      else if(error) {
+
+      if(error) {
         return {
           finalizerValidity : FinalizerValidity.FINALIZER_ERROR
         }

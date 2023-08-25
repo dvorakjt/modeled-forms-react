@@ -93,6 +93,6 @@ export class SyncMultiInputValidator implements MultiInputValidator {
           text : config.globalMessages.multiFieldValidationError
         }
       }
-    }
+    } 
   }
 }

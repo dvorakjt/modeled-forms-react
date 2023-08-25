@@ -45,10 +45,11 @@ export class AsyncMultiInputValidator implements MultiInputValidator {
         if(!this.#firstRunCompleted) {
           try {
             observableResult = from(this.#validator(aggregateChange));
-            this.#firstRunCompleted = true;
           } catch (e) {
             logErrorInDevMode(e);
             error = e;
+          } finally {
+            this.#firstRunCompleted = true;
           }
         }
         //if there are omitted fields, this validator is effectively not checked
@@ -77,7 +78,7 @@ export class AsyncMultiInputValidator implements MultiInputValidator {
           this.calculatedValidityChanges.next(Validity.PENDING);
           this.overallValidityChanges.next(Validity.PENDING);
           this.messageChanges.next({
-            type: MessageType.PENDING,
+            type: MessageType.PENDING,//
             text: this.#pendingMessage,
           });
           try {

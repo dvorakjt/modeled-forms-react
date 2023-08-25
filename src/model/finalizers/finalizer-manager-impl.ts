@@ -72,7 +72,7 @@ export class FinalizerManagerImpl implements FinalizerManager {
     ) {
       messages.push({
         type: MessageType.PENDING,
-        text: config.globalMessages.finalizerError
+        text: config.globalMessages.finalizerPending
       });
     }
     return messages;
