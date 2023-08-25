@@ -3,6 +3,7 @@ import rc from 'rc';
 const config = rc('modeledformsreact', {
   autoTrim : true,
   emailRegex : /^[A-Z0-9]+(?:[_%+.-][A-Z0-9]+)*@[A-Z0-9]+(?:[.-][A-Z0-9]+)\.[A-Z]{2,}$/i,
+  symbolRegex : / !"#\$%&'\(\)\*\+,-.\/\\:;<=>\?@\[\]\^_`{\|}~/,
   globalMessages : {
     pendingAsyncValidatorSuite : 'Checking field...',
     singleFieldValidationError : 'An unexpected error occurred while validating the field.',
