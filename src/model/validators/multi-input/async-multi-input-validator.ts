@@ -53,19 +53,19 @@ export class AsyncMultiInputValidator implements MultiInputValidator {
           }
         }
         //if there are omitted fields, this validator is effectively not checked
-        if (aggregateChange.hasOmittedFields) {
+        if (aggregateChange.hasOmittedFields()) {
           this.calculatedValidityChanges.next(Validity.VALID_FINALIZABLE);
           this.overallValidityChanges.next(Validity.VALID_FINALIZABLE);
           this.messageChanges.next(null);
         } else if (
-          aggregateChange.overallValidity < Validity.VALID_FINALIZABLE
+          aggregateChange.overallValidity() < Validity.VALID_FINALIZABLE
         ) {
           //if there are no omitted fields, but the overall validity is less than valid,
           //calculatedValidity becomes effectively valid, meaning that for fields exposed to the end user, they will see
           //the validity of each individual field if that is less than Validity.VALID_FINALIZABLE
           this.calculatedValidityChanges.next(Validity.VALID_FINALIZABLE);
           //overallValidity, however, emits the overall validity, meaning that finalizers won't run until overallValidity === Validity.VALID_FINALIZABLE
-          this.overallValidityChanges.next(aggregateChange.overallValidity);
+          this.overallValidityChanges.next(aggregateChange.overallValidity());
           this.messageChanges.next(null);
         } else if(error) {
           this.calculatedValidityChanges.next(Validity.ERROR);

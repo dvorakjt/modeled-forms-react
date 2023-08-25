@@ -82,8 +82,8 @@ describe('MultiFieldAggregatorImpl', () => {
             omit: true,
           },
         });
-        expect(next.hasOmittedFields).toBe(true);
-        expect(next.overallValidity).toBe(Validity.ERROR);
+        expect(next.hasOmittedFields()).toBe(true);
+        expect(next.overallValidity()).toBe(Validity.ERROR);
       },
     );
   });

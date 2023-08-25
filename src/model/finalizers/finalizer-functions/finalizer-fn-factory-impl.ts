@@ -43,18 +43,18 @@ class FinalizerFnFactoryImpl implements FinalizerFnFactory {
         error = e;
       } 
       
-      if (aggregatedStateChanges.hasOmittedFields) {
+      if (aggregatedStateChanges.hasOmittedFields()) {
         return { finalizerValidity: FinalizerValidity.VALID_FINALIZED };
       }
-      if (aggregatedStateChanges.overallValidity < Validity.VALID_FINALIZABLE) {
+      const overallValidity = aggregatedStateChanges.overallValidity();
+      if (overallValidity < Validity.VALID_FINALIZABLE) {
         return {
           finalizerValidity:
             this.#finalizerValidityTranslator.translateValidityToFinalizerValidity(
-              aggregatedStateChanges.overallValidity,
+              overallValidity,
             ),
         };
       }
-
       if(error) {
         return {
           finalizerValidity : FinalizerValidity.FINALIZER_ERROR
@@ -90,15 +90,15 @@ class FinalizerFnFactoryImpl implements FinalizerFnFactory {
             finalizerValidity : FinalizerValidity.FINALIZER_ERROR
           });
           subscriber.complete();
-        } else if(aggregatedStateChanges.hasOmittedFields) {
+        } else if(aggregatedStateChanges.hasOmittedFields()) {
           subscriber.next({
             finalizerValidity : FinalizerValidity.VALID_FINALIZED
           });
           subscriber.complete();
-        } else if(aggregatedStateChanges.overallValidity < Validity.VALID_FINALIZABLE) {
+        } else if(aggregatedStateChanges.overallValidity() < Validity.VALID_FINALIZABLE) {
           subscriber.next({
             finalizerValidity: this.#finalizerValidityTranslator.translateValidityToFinalizerValidity(
-              aggregatedStateChanges.overallValidity,
+              aggregatedStateChanges.overallValidity(),
             ),
           });
         } else if(promise) {
