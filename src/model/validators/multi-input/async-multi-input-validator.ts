@@ -7,8 +7,8 @@ import { AsyncValidator } from '../async-validator.type';
 import { Validity } from '../../state/validity.enum';
 import { Message } from '../../state/messages/message.interface';
 import { MessageType } from '../../state/messages/message-type.enum';
-import { GlobalMessages } from '../../constants/global-messages.enum';
 import { logErrorInDevMode } from '../../util/log-error-in-dev-mode';
+import { config } from '../../../config';
 
 export class AsyncMultiInputValidator implements MultiInputValidator {
   //messages, calculatedValidity, and overallValidityChanges all go to different destinations
@@ -51,7 +51,6 @@ export class AsyncMultiInputValidator implements MultiInputValidator {
             error = e;
           }
         }
-
         //if there are omitted fields, this validator is effectively not checked
         if (aggregateChange.hasOmittedFields) {
           this.calculatedValidityChanges.next(Validity.VALID_FINALIZABLE);
@@ -72,7 +71,7 @@ export class AsyncMultiInputValidator implements MultiInputValidator {
             this.overallValidityChanges.next(Validity.ERROR);
             this.messageChanges.next({
               type: MessageType.ERROR,
-              text: GlobalMessages.MULTI_INPUT_VALIDATION_ERROR,
+              text : config.globalMessages.multiFieldValidationError
             });
         } else {
           this.calculatedValidityChanges.next(Validity.PENDING);
@@ -106,7 +105,7 @@ export class AsyncMultiInputValidator implements MultiInputValidator {
                 this.overallValidityChanges.next(Validity.ERROR);
                 this.messageChanges.next({
                   type: MessageType.ERROR,
-                  text: GlobalMessages.MULTI_INPUT_VALIDATION_ERROR,
+                  text: config.globalMessages.multiFieldValidationError
                 });
               },
             });
@@ -116,7 +115,7 @@ export class AsyncMultiInputValidator implements MultiInputValidator {
             this.overallValidityChanges.next(Validity.ERROR);
             this.messageChanges.next({
               type: MessageType.ERROR,
-              text: GlobalMessages.MULTI_INPUT_VALIDATION_ERROR,
+              text: config.globalMessages.multiFieldValidationError
             });
           }
         }

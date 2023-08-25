@@ -1,6 +1,6 @@
 import { MessageType } from '../../state/messages/message-type.enum';
 import { Validity } from '../../state/validity.enum';
-import { GlobalMessages } from '../../constants/global-messages.enum';
+import { config } from '../../../config';
 import { AbstractField } from '../base/abstract-field';
 import type { Adapter } from '../../adapters/adapter.interface';
 import type { FieldState } from '../../state/field-state.interface';
@@ -40,7 +40,7 @@ export class ValueControlledField extends AbstractField {
           messages: [
             {
               type: MessageType.ERROR,
-              text: GlobalMessages.FIELD_ADAPTER_ERROR,
+              text: config.globalMessages.adapterError
             },
           ],
         });

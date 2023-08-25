@@ -1,6 +1,5 @@
 import { autowire } from "undecorated-di";
 import { AggregatorFactory, AggregatorFactoryKey } from "../../aggregators/aggregator-factory.interface";
-import { GlobalMessages } from "../../constants/global-messages.enum";
 import { FormElementDictionary } from "../../form-elements/form-element-dictionary.type";
 import { FinalizerFacingMultiInputValidatedFormElement } from "../../form-elements/multi-input-validated/finalizer-facing-multi-input-validated-form-element";
 import { MultiInputValidatedFormElementFactory, MultiInputValidatedFormElementFactoryKey } from "../../form-elements/multi-input-validated/multi-input-validated-form-element-factory.interface";
@@ -12,6 +11,7 @@ import { MultiInputValidator } from "../../validators/multi-input/multi-input-va
 import { MultiFieldValidatorsTemplateParser, MultiFieldValidatorsTemplateParserKey, MultiFieldValidatorsTemplateParserKeyType } from "./multi-field-validators-template-parser.interface";
 import { MultiFieldValidatorsTemplate } from "./multi-field-validators-template.interface";
 import { MultiInputValidatorMessagesAggregator } from "../../aggregators/multi-input-validator-messages-aggregator.interface";
+import { config } from "../../../config";
 
 type MultiInputValidatedFormElementDictionary = 
   Record<
@@ -40,23 +40,23 @@ class MultiFieldValidatorsTemplateParserImpl implements MultiFieldValidatorsTemp
   parseTemplate(template: MultiFieldValidatorsTemplate, formElementDictionary : FormElementDictionary): 
   [FormElementDictionary, FormElementDictionary, MultiInputValidatorMessagesAggregator] {
     const userFacingMultiInputValidatedFormElementDictionary = {} as MultiInputValidatedFormElementDictionary;
-    const finalizerFacingMultiInputValidatedFormElementDictionaryy = {} as MultiInputValidatedFormElementDictionary;
+    const finalizerFacingMultiInputValidatedFormElementDictionary = {} as MultiInputValidatedFormElementDictionary;
     const validators : Array<MultiInputValidator> = [];
 
     template.sync?.forEach(validatorFn => {
       const multiInputValidator = this.#multiInputValidatorFactory.createSyncMultiInputValidator(validatorFn, formElementDictionary);
-      multiInputValidator.accessedFields.onValue(this.onAccessedFields(userFacingMultiInputValidatedFormElementDictionary, finalizerFacingMultiInputValidatedFormElementDictionaryy, formElementDictionary, multiInputValidator));
+      multiInputValidator.accessedFields.onValue(this.onAccessedFields(userFacingMultiInputValidatedFormElementDictionary, finalizerFacingMultiInputValidatedFormElementDictionary, formElementDictionary, multiInputValidator));
       validators.push(multiInputValidator);
     });
 
     template.async?.forEach(validatorTemplate => {
-      const multiInputValidator = this.#multiInputValidatorFactory.createAsyncMultiInputValidator(validatorTemplate.validatorFn, formElementDictionary, validatorTemplate.pendingValidatorMessage ?? GlobalMessages.PENDING_ASYNC_MULTI_INPUT_VALIDATOR);
-      multiInputValidator.accessedFields.onValue(this.onAccessedFields(userFacingMultiInputValidatedFormElementDictionary, finalizerFacingMultiInputValidatedFormElementDictionaryy, formElementDictionary, multiInputValidator));
+      const multiInputValidator = this.#multiInputValidatorFactory.createAsyncMultiInputValidator(validatorTemplate.validatorFn, formElementDictionary, validatorTemplate.pendingValidatorMessage ?? config.globalMessages.pendingAsyncMultiFieldValidator);
+      multiInputValidator.accessedFields.onValue(this.onAccessedFields(userFacingMultiInputValidatedFormElementDictionary, finalizerFacingMultiInputValidatedFormElementDictionary, formElementDictionary, multiInputValidator));
       validators.push(multiInputValidator);
     });
 
     const userFacingFormElementDictionary = userFacingMultiInputValidatedFormElementDictionary as FormElementDictionary;
-    const finalizerFacingFormElementDictionary = finalizerFacingMultiInputValidatedFormElementDictionaryy as FormElementDictionary;
+    const finalizerFacingFormElementDictionary = finalizerFacingMultiInputValidatedFormElementDictionary as FormElementDictionary;
 
     for(const [fieldName, field] of Object.entries(formElementDictionary)) {
       if(!(fieldName in userFacingFormElementDictionary)) {

@@ -6,7 +6,7 @@ import {
 } from './single-input-validator-suite-factory.interface';
 import { SingleInputValidatorSuite } from './single-input-validator-suite.interface';
 import { SyncValidator } from '../sync-validator.type';
-import { GlobalMessages } from '../../constants/global-messages.enum';
+import { config } from '../../../config';
 import { AsyncSingleInputValidatorSuite } from './async-single-input-validator-suite';
 import { HybridSingleInputValidatorSuite } from './hybrid-single-input-validator-suite';
 import { SyncSingleInputValidatorSuite } from './sync-single-input-validator-suite';
@@ -18,7 +18,7 @@ class SingleInputValidatorSuiteFactoryImpl
   createSingleInputValidatorSuite<T>(
     syncValidators: SyncValidator<T>[],
     asyncValidators: AsyncValidator<T>[],
-    pendingAsyncValidatorMessage: string = GlobalMessages.PENDING_ASYNC_VALIDATOR_SUITE_MESSAGE,
+    pendingAsyncValidatorMessage: string = config.globalMessages.pendingAsyncValidatorSuite,
   ): SingleInputValidatorSuite<T> {
     const syncValidatorSuite = new SyncSingleInputValidatorSuite(
       syncValidators,

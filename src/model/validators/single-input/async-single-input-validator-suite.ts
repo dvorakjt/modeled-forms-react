@@ -1,13 +1,13 @@
 import { Observable, Subscriber, Subscription, from } from 'rxjs';
 import { Validity } from '../../state/validity.enum';
 import { MessageType } from '../../state/messages/message-type.enum';
-import { GlobalMessages } from '../../constants/global-messages.enum';
 import type { AsyncValidator } from '../async-validator.type';
 import type { SingleInputValidatorSuite } from './single-input-validator-suite.interface';
 import type { ValidatorSuiteResult } from '../validator-suite-result.interface';
 import type { ValidatorSuiteResultsObject } from '../validator-suite-results-object.interface';
 import type { ValidatorResult } from '../validator-result.interface';
 import { logErrorInDevMode } from '../../util/log-error-in-dev-mode';
+import { config } from '../../../config';
 
 type ValidatorSubscriptionMap = {
   [key: number]: Subscription;
@@ -139,7 +139,7 @@ export class AsyncSingleInputValidatorSuite<T>
       observableResult.validity = Validity.ERROR;
       observableResult.messages.push({
         type: MessageType.ERROR,
-        text: GlobalMessages.SINGLE_INPUT_VALIDATION_ERROR,
+        text: config.globalMessages.singleFieldValidationError
       });
       outerSubscriber.next(observableResult);
       outerSubscriber.complete();

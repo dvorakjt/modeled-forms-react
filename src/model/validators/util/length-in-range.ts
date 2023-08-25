@@ -2,7 +2,8 @@ import { config } from '../../../config';
 import type { SyncValidator } from '../sync-validator.type';
 import type { ValidatorResult } from '../validator-result.interface';
 
-export function maxLength(
+export function lengthInRange(
+  minLength: number,
   maxLength: number,
   errorMessage: string,
   successMessage?: string,
@@ -11,7 +12,7 @@ export function maxLength(
     if (config.autoTrim) value = value.trim();
 
     const result: ValidatorResult = {
-      isValid: value.length <= maxLength,
+      isValid: value.length >= minLength && value.length <= maxLength
     };
     if (!result.isValid) {
       result.message = errorMessage;

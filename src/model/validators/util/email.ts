@@ -2,8 +2,7 @@ import { config } from '../../../config';
 import type { SyncValidator } from '../sync-validator.type';
 import type { ValidatorResult } from '../validator-result.interface';
 
-export function maxLength(
-  maxLength: number,
+export function email(
   errorMessage: string,
   successMessage?: string,
 ): SyncValidator<string> {
@@ -11,7 +10,7 @@ export function maxLength(
     if (config.autoTrim) value = value.trim();
 
     const result: ValidatorResult = {
-      isValid: value.length <= maxLength,
+      isValid: value.length > 0 && config.emailRegex.test(value)
     };
     if (!result.isValid) {
       result.message = errorMessage;

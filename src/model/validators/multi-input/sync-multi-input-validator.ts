@@ -7,7 +7,7 @@ import { SyncValidator } from '../sync-validator.type';
 import { Validity } from '../../state/validity.enum';
 import { Message } from '../../state/messages/message.interface';
 import { MessageType } from '../../state/messages/message-type.enum';
-import { GlobalMessages } from '../../constants/global-messages.enum';
+import { config } from '../../../config';
 import { logErrorInDevMode } from '../../util/log-error-in-dev-mode';
 
 export class SyncMultiInputValidator implements MultiInputValidator {
@@ -90,7 +90,7 @@ export class SyncMultiInputValidator implements MultiInputValidator {
         validity : Validity.ERROR,
         message : {
           type : MessageType.ERROR,
-          text : GlobalMessages.MULTI_INPUT_VALIDATION_ERROR
+          text : config.globalMessages.multiFieldValidationError
         }
       }
     }

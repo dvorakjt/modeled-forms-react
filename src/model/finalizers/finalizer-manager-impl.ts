@@ -8,7 +8,7 @@ import { copyObject } from '../util/copy-object';
 import { Message } from '../state/messages/message.interface';
 import { FinalizerValidity } from '../state/finalizer-validity.enum';
 import { MessageType } from '../state/messages/message-type.enum';
-import { GlobalMessages } from '../constants/global-messages.enum';
+import { config } from '../../config';
 import { FinalizerManager } from './finalizer-manager.interface';
 
 export class FinalizerManagerImpl implements FinalizerManager {
@@ -65,14 +65,14 @@ export class FinalizerManagerImpl implements FinalizerManager {
     if (reducedFinalizerValidity === FinalizerValidity.FINALIZER_ERROR) {
       messages.push({
         type: MessageType.ERROR,
-        text: GlobalMessages.FINALIZER_ERROR,
+        text: config.globalMessages.finalizerError
       });
     } else if (
       reducedFinalizerValidity === FinalizerValidity.VALID_FINALIZING
     ) {
       messages.push({
         type: MessageType.PENDING,
-        text: GlobalMessages.FINALIZER_PENDING,
+        text: config.globalMessages.finalizerError
       });
     }
     return messages;
