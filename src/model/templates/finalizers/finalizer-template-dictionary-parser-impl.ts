@@ -21,7 +21,7 @@ class FinalizerTemplateDictionaryParserImpl implements FinalizerTemplateDictiona
 
   parseTemplate(template: FinalizerTemplateDictionary, finalizerFacingFields: FormElementDictionary): FinalizerManager {
     const finalizers : FinalizerDictionary = {};
-    let originalFieldsToPreserve = new Set<string>(); //preserve original fields true wins
+    let originalFieldsToPreserve = new Set<string>();
 
     for(const [finalizerName, finalizerTemplate] of Object.entries(template)) {
       if(finalizerTemplate.syncFinalizerFn) {

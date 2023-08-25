@@ -6,7 +6,6 @@ import type { FinalizerValidityTranslator } from './finalizer-validity-translato
 import type { Finalizer } from './finalizer.interface';
 import type { FinalizerState } from '../state/finalizer-state.interface';
 import type { State } from '../state/state.interface';
-import { config } from '../../config';
 
 export class DefaultFinalizer implements Finalizer {
   stream: Subject<FinalizerState>;
@@ -36,17 +35,9 @@ export class DefaultFinalizer implements Finalizer {
           ),
       };
 
-    let { value } = fieldState;
-
-    if(config.autoTrim) {
-      if(typeof value === 'string') {
-        value = value.trim();
-      }
-    }
-
     return {
       finalizerValidity: FinalizerValidity.VALID_FINALIZED,
-      value
+      value : fieldState.value
     };
   }
 }
