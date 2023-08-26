@@ -12,6 +12,8 @@ import { MultiFieldValidatorsTemplateParser, MultiFieldValidatorsTemplateParserK
 import { MultiFieldValidatorsTemplate } from "./multi-field-validators-template.interface";
 import { MultiInputValidatorMessagesAggregator } from "../../aggregators/multi-input-validator-messages-aggregator.interface";
 import { config } from "../../../config";
+import { AbstractField } from "../../fields/base/abstract-field";
+import { AutoTransformedFieldFactory, AutoTransformedFieldFactoryKey } from "../../fields/auto-transformed/auto-transformed-field-factory.interface";
 
 type MultiInputValidatedFormElementDictionary = 
   Record<
@@ -26,15 +28,18 @@ class MultiFieldValidatorsTemplateParserImpl implements MultiFieldValidatorsTemp
   #multiInputValidatorFactory : MultiInputValidatorFactory;
   #multiInputValidatedFormElementFactory : MultiInputValidatedFormElementFactory;
   #aggregatorFactory : AggregatorFactory;
+  #autoTransformedFieldFactory : AutoTransformedFieldFactory;
 
   constructor(
     multiInputValidatorFactory : MultiInputValidatorFactory,
     multiInputValidatedFormElementFactory : MultiInputValidatedFormElementFactory,
-    aggregatorFactory : AggregatorFactory
+    aggregatorFactory : AggregatorFactory,
+    autoTransformedFieldFactory : AutoTransformedFieldFactory
   ) { 
     this.#multiInputValidatorFactory = multiInputValidatorFactory;
     this.#multiInputValidatedFormElementFactory = multiInputValidatedFormElementFactory;
     this.#aggregatorFactory = aggregatorFactory;
+    this.#autoTransformedFieldFactory = autoTransformedFieldFactory;
   }
 
   parseTemplate(template: MultiFieldValidatorsTemplate, formElementDictionary : FormElementDictionary): 
@@ -62,6 +67,13 @@ class MultiFieldValidatorsTemplateParserImpl implements MultiFieldValidatorsTemp
       if(!(fieldName in userFacingFormElementDictionary)) {
         userFacingFormElementDictionary[fieldName] = field;
         finalizerFacingFormElementDictionary[fieldName] = field;
+      }
+    }
+
+    //decorate finalizer facing fields with auto transformed fields
+    for(const [fieldName, field] of Object.entries(finalizerFacingFormElementDictionary)) {
+      if(userFacingFormElementDictionary[fieldName] instanceof AbstractField) {
+        finalizerFacingFormElementDictionary[fieldName] = this.#autoTransformedFieldFactory.createAutoTransformedField(field as AbstractField);
       }
     }
 
@@ -98,7 +110,8 @@ const MultiFieldValidatorsTemplateParserService = autowire<MultiFieldValidatorsT
   [
     MultiInputValidatorFactoryKey,
     MultiInputValidatedFormElementFactoryKey,
-    AggregatorFactoryKey
+    AggregatorFactoryKey,
+    AutoTransformedFieldFactoryKey
   ]
 )
 
