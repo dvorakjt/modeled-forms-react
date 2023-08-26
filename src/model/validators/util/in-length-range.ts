@@ -1,20 +1,20 @@
-import { config } from '../../../config';
+import { container } from '../../container';
 import type { SyncValidator } from '../sync-validator.type';
 import type { ValidatorResult } from '../validator-result.interface';
 
-export function dateInRange(
-  min : Date,
-  max: Date,
+const autoTransformer = container.services.AutoTransformer;
+
+export function inLengthRange(
+  minLength: number,
+  maxLength: number,
   errorMessage: string,
   successMessage?: string,
 ): SyncValidator<string> {
   return (value: string) => {
-    if (config.autoTrim) value = value.trim();
+    value = autoTransformer.transform(value);
 
-    const millis = new Date(value).getTime();
- 
     const result: ValidatorResult = {
-      isValid: !Number.isNaN(millis) && millis >= min.getTime() && millis <= max.getTime()
+      isValid: value.length >= minLength && value.length <= maxLength
     };
     if (!result.isValid) {
       result.message = errorMessage;

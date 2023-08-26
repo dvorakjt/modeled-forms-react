@@ -24,6 +24,8 @@ import { FormElementTemplateDictionaryParserService } from './templates/form-ele
 import { BaseFieldTemplateParserService } from './templates/fields/base/base-field-template-parser-impl';
 import { ControlledFieldTemplateParserService } from './templates/fields/controlled/controlled-field-template-parser-impl';
 import { FinalizerTemplateDictionaryParserService } from './templates/finalizers/finalizer-template-dictionary-parser-impl';
+import { AutoTransformerService } from './auto-transforms/auto-transformer-impl';
+import { AutoTransformedFieldFactoryService } from './fields/auto-transformed/auto-transformed-field-factory-impl';
 
 const container = ContainerBuilder.createContainerBuilder()
   .registerSingletonService(AdapterFactoryService)
@@ -51,8 +53,8 @@ const container = ContainerBuilder.createContainerBuilder()
   .registerSingletonService(FormElementTemplateDictionaryParserService)
   .registerSingletonService(NestedFormTemplateParserService)
   .registerSingletonService(RootFormTemplateParserService)
+  .registerSingletonService(AutoTransformerService)
+  .registerSingletonService(AutoTransformedFieldFactoryService)
   .build();
 
-const RootFormTemplateParser = container.services.RootFormTemplateParser;
-
-export { RootFormTemplateParser };
+export { container };

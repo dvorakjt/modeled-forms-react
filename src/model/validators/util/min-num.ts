@@ -1,6 +1,8 @@
-import { config } from '../../../config';
+import { container } from '../../container';
 import type { SyncValidator } from '../sync-validator.type';
 import type { ValidatorResult } from '../validator-result.interface';
+
+const autoTransformer = container.services.AutoTransformer;
 
 export function minNum(
   min: number,
@@ -8,7 +10,7 @@ export function minNum(
   successMessage?: string,
 ): SyncValidator<string> {
   return (value: string) => {
-    if (config.autoTrim) value = value.trim();
+    value = autoTransformer.transform(value);
 
     const numericValue = Number(value);
 

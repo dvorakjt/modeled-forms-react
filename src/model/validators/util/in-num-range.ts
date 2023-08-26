@@ -1,16 +1,17 @@
-import { config } from '../../../config';
+import { container } from '../../container';
 import type { SyncValidator } from '../sync-validator.type';
 import type { ValidatorResult } from '../validator-result.interface';
 
-export function numInRange(
+const autoTransformer = container.services.AutoTransformer;
+
+export function inNumRange(
   min: number,
   max : number,
   errorMessage: string,
   successMessage?: string,
 ): SyncValidator<string> {
   return (value: string) => {
-    if (config.autoTrim) value = value.trim();
-
+    value = autoTransformer.transform(value);
     const numericValue = Number(value);
 
     const result: ValidatorResult = {

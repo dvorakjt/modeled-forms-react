@@ -1,3 +1,5 @@
-import { RootFormTemplateParser } from "./root-form-template-parser";
+import { container } from "./container";
 
-export { RootFormTemplateParser };
+const RootFormTemplateParser = container.services.RootFormTemplateParser;
+
+export { RootFormTemplateParser }
