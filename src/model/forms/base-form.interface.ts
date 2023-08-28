@@ -5,5 +5,6 @@ import { FormElementDictionary } from "../form-elements/form-element-dictionary.
 
 export interface BaseForm extends StatefulFormElement<any>, ResettableFormElement {
   userFacingFields : FormElementDictionary;
-  firstNonValidFormElement : Subject<string | undefined>;
+  firstNonValidFormElement : string | undefined;
+  firstNonValidFormElementChanges : Subject<string | undefined>;
 }
