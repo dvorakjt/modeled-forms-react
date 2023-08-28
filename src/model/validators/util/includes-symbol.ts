@@ -13,7 +13,7 @@ export function includesSymbol(
     value = autoTransformer.transform(value);
 
     const result: ValidatorResult = {
-      isValid: config.symbolRegex.test(value)
+      isValid: config.symbolRegex.test(value),
     };
     if (!result.isValid) {
       result.message = errorMessage;

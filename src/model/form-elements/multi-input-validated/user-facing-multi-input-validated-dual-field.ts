@@ -9,12 +9,14 @@ import { FieldState } from '../../state/field-state.interface';
 import { copyObject } from '../../util/copy-object';
 import { MultiInputValidator } from '../../validators/multi-input/multi-input-validator.interface';
 
-export class UserFacingMultiInputValidatedDualField extends AbstractDualField implements MultiInputValidatedFormElement
+export class UserFacingMultiInputValidatedDualField
+  extends AbstractDualField
+  implements MultiInputValidatedFormElement
 {
   readonly #baseField: AbstractDualField;
   readonly #multiInputValidatorReducer: MultiInputValidatorValidityReducer;
   stateChanges: Subject<State<string>>;
-  
+
   get state(): FieldState {
     return {
       ...copyObject(this.#baseField.state),
@@ -26,9 +28,9 @@ export class UserFacingMultiInputValidatedDualField extends AbstractDualField im
     return this.#baseField.omit;
   }
 
-  set omit(omit : boolean) {
+  set omit(omit: boolean) {
     this.#baseField.omit = omit;
-  } 
+  }
 
   get primaryField() {
     return this.#baseField.primaryField;

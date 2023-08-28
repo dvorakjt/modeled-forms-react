@@ -4,9 +4,7 @@ import { SyncBaseFinalizerFn } from './sync-base-finalizer-fn.type';
 import { SyncFinalizerFn } from './sync-finalizer-fn.type';
 
 interface FinalizerFnFactory {
-  createSyncFinalizerFn(
-    baseAdapterFn: SyncBaseFinalizerFn,
-  ): SyncFinalizerFn;
+  createSyncFinalizerFn(baseAdapterFn: SyncBaseFinalizerFn): SyncFinalizerFn;
   createAsyncFinalizerFn(baseAdapterFn: AsyncBaseFinalizerFn): AsyncFinalizerFn;
 }
 const FinalizerFnFactoryKey = 'FinalizerFnFactory';

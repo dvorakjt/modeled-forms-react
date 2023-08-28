@@ -7,12 +7,13 @@ import { FormElementDictionary } from '../form-element-dictionary.type';
 import { MultiInputValidatedFormElement } from './multi-input-validated-field.interface';
 import { MultiInputValidatorValidityReducer } from '../../reducers/multi-input-validator-validity/multi-input-validator-validity-reducer.interface';
 
-export class UserFacingMultiInputValidatedNestedForm extends AbstractNestedForm
+export class UserFacingMultiInputValidatedNestedForm
+  extends AbstractNestedForm
   implements MultiInputValidatedFormElement
 {
   stateChanges: Subject<State<any>>;
-  #baseNestedForm : AbstractNestedForm;
-  #multiInputValidatorReducer : MultiInputValidatorValidityReducer;
+  #baseNestedForm: AbstractNestedForm;
+  #multiInputValidatorReducer: MultiInputValidatorValidityReducer;
 
   get userFacingFields(): FormElementDictionary {
     return this.#baseNestedForm.userFacingFields;
@@ -25,11 +26,11 @@ export class UserFacingMultiInputValidatedNestedForm extends AbstractNestedForm
     };
   }
 
-  set omit(omit : boolean) {
+  set omit(omit: boolean) {
     this.#baseNestedForm.omit = omit;
   }
 
-  get omit() : boolean {
+  get omit(): boolean {
     return this.#baseNestedForm.omit;
   }
 
@@ -37,7 +38,10 @@ export class UserFacingMultiInputValidatedNestedForm extends AbstractNestedForm
     return this.#baseNestedForm.firstNonValidFormElement;
   }
 
-  constructor(baseNestedForm : AbstractNestedForm, userFacingMultiInputValidityReducer: MultiInputValidatorValidityReducer) {
+  constructor(
+    baseNestedForm: AbstractNestedForm,
+    userFacingMultiInputValidityReducer: MultiInputValidatorValidityReducer,
+  ) {
     super();
     this.#baseNestedForm = baseNestedForm;
     this.#multiInputValidatorReducer = userFacingMultiInputValidityReducer;
@@ -49,7 +53,6 @@ export class UserFacingMultiInputValidatedNestedForm extends AbstractNestedForm
     });
     this.stateChanges = new BehaviorSubject(this.state);
   }
-
 
   reset(): void {
     throw new Error('Method not implemented.');

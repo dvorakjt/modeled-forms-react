@@ -10,7 +10,7 @@ import { FirstNonValidFormElementTracker } from '../trackers/first-nonvalid-form
 export class NestedForm extends AbstractNestedForm {
   readonly stateChanges: Subject<State<any>>;
   readonly userFacingFields: FormElementDictionary;
-  readonly #firstNonValidFormElementTracker : FirstNonValidFormElementTracker;
+  readonly #firstNonValidFormElementTracker: FirstNonValidFormElementTracker;
   readonly #finalizerManager: FinalizerManager;
   readonly #multiFieldValidatorMessagesAggregator: MultiInputValidatorMessagesAggregator;
   readonly #omitByDefault;
@@ -27,12 +27,13 @@ export class NestedForm extends AbstractNestedForm {
     });
   }
 
-  get firstNonValidFormElement() : string | undefined {
+  get firstNonValidFormElement(): string | undefined {
     return this.#firstNonValidFormElementTracker.firstNonValidFormElement;
   }
 
-  get firstNonValidFormElementChanges() : Subject<string | undefined> {
-    return this.#firstNonValidFormElementTracker.firstNonValidFormElementChanges;
+  get firstNonValidFormElementChanges(): Subject<string | undefined> {
+    return this.#firstNonValidFormElementTracker
+      .firstNonValidFormElementChanges;
   }
 
   set omit(omit: boolean) {
@@ -46,7 +47,7 @@ export class NestedForm extends AbstractNestedForm {
 
   constructor(
     userFacingFields: FormElementDictionary,
-    firstNonValidFormElementTracker : FirstNonValidFormElementTracker,
+    firstNonValidFormElementTracker: FirstNonValidFormElementTracker,
     finalizerManager: FinalizerManager,
     multiFieldValidatorMessagesAggregator: MultiInputValidatorMessagesAggregator,
     omitByDefault: boolean,

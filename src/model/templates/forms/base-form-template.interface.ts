@@ -4,6 +4,6 @@ import { MultiFieldValidatorsTemplate } from '../multi-field-validators/multi-fi
 
 export interface BaseFormTemplate {
   fields: FormElementTemplateDictionaryOrMap;
-  multiFieldValidators? : MultiFieldValidatorsTemplate;
-  finalizedFields? : FinalizerTemplateDictionary;
+  multiFieldValidators?: MultiFieldValidatorsTemplate;
+  finalizedFields?: FinalizerTemplateDictionary;
 }

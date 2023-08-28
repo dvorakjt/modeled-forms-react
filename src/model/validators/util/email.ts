@@ -13,7 +13,7 @@ export function email(
     value = autoTransformer.transform(value);
 
     const result: ValidatorResult = {
-      isValid: value.length > 0 && config.emailRegex.test(value)
+      isValid: value.length > 0 && config.emailRegex.test(value),
     };
     if (!result.isValid) {
       result.message = errorMessage;

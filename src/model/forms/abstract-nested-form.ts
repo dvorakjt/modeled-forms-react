@@ -4,12 +4,14 @@ import { State } from '../state/state.interface';
 import { BaseForm } from './base-form.interface';
 import { FormElementDictionary } from '../form-elements/form-element-dictionary.type';
 
-export abstract class AbstractNestedForm implements BaseForm, OmittableFormElement {
-  abstract userFacingFields : FormElementDictionary;
-  abstract omit : boolean;
+export abstract class AbstractNestedForm
+  implements BaseForm, OmittableFormElement
+{
+  abstract userFacingFields: FormElementDictionary;
+  abstract omit: boolean;
   abstract stateChanges: Subject<State<any>>;
   abstract firstNonValidFormElement: string | undefined;
   abstract firstNonValidFormElementChanges: Subject<string | undefined>;
   abstract state: State<any>;
-  abstract reset() : void;
+  abstract reset(): void;
 }

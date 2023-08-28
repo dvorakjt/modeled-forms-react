@@ -57,10 +57,13 @@ class BaseFieldTemplateParserImpl implements BaseFieldTemplateParser {
         'Field template was not a string or an object.',
       );
 
-    const isField = 'defaultValue' in template && typeof template.defaultValue === 'string';
+    const isField =
+      'defaultValue' in template && typeof template.defaultValue === 'string';
     const isDualField =
-      ('primaryDefaultValue' in template && typeof template.primaryDefaultValue === 'string') ||
-      ('secondaryDefaultValue' in template && typeof template.primaryDefaultValue === 'string');
+      ('primaryDefaultValue' in template &&
+        typeof template.primaryDefaultValue === 'string') ||
+      ('secondaryDefaultValue' in template &&
+        typeof template.primaryDefaultValue === 'string');
 
     if (isField && isDualField)
       throw new BaseFieldParsingError(

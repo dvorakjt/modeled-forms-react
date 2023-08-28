@@ -13,11 +13,11 @@ export class FirstNonValidFormElementTrackerImpl
   constructor(nonValidFormElementHeap: InsertionOrderHeap) {
     this.#nonValidFormElementHeap = nonValidFormElementHeap;
     this.firstNonValidFormElementChanges = new BehaviorSubject(
-      this.firstNonValidFormElement
+      this.firstNonValidFormElement,
     );
   }
 
-  get firstNonValidFormElement() : string | undefined {
+  get firstNonValidFormElement(): string | undefined {
     return this.#nonValidFormElementHeap.topValue;
   }
 
@@ -32,9 +32,7 @@ export class FirstNonValidFormElementTrackerImpl
       if (validity < Validity.VALID_FINALIZABLE) {
         this.#nonValidFormElementHeap.addValue(formElementKey);
       } else this.#nonValidFormElementHeap.removeValue(formElementKey);
-      this.firstNonValidFormElementChanges.next(
-        this.firstNonValidFormElement
-      );
+      this.firstNonValidFormElementChanges.next(this.firstNonValidFormElement);
     });
   }
 }

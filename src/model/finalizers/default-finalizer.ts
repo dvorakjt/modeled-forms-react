@@ -37,7 +37,7 @@ export class DefaultFinalizer implements Finalizer {
 
     return {
       finalizerValidity: FinalizerValidity.VALID_FINALIZED,
-      value : fieldState.value
+      value: fieldState.value,
     };
   }
 }

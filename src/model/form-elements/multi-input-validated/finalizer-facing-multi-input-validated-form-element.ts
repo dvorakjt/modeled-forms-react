@@ -7,24 +7,29 @@ import { MultiInputValidatedFormElement } from './multi-input-validated-field.in
 import { MultiInputValidator } from '../../validators/multi-input/multi-input-validator.interface';
 import { copyObject } from '../../util/copy-object';
 
-export class FinalizerFacingMultiInputValidatedFormElement implements StatefulFormElement<any>, OmittableFormElement, MultiInputValidatedFormElement {
+export class FinalizerFacingMultiInputValidatedFormElement
+  implements
+    StatefulFormElement<any>,
+    OmittableFormElement,
+    MultiInputValidatedFormElement
+{
   stateChanges: Subject<State<any>>;
-  #baseFormElement : StatefulFormElement<any> & OmittableFormElement;
-  #multiInputValidatorReducer : MultiInputValidatorValidityReducer;
-  
+  #baseFormElement: StatefulFormElement<any> & OmittableFormElement;
+  #multiInputValidatorReducer: MultiInputValidatorValidityReducer;
+
   get state(): State<any> {
     return {
       ...copyObject(this.#baseFormElement.state),
       validity: this.calculateValidity(),
     };
   }
-  
+
   get omit(): boolean {
     return this.#baseFormElement.omit;
   }
 
   constructor(
-    baseFormElement : StatefulFormElement<any> & OmittableFormElement,
+    baseFormElement: StatefulFormElement<any> & OmittableFormElement,
     finalizerFacingMultiInputValidityReducer: MultiInputValidatorValidityReducer,
   ) {
     this.#baseFormElement = baseFormElement;
@@ -41,7 +46,7 @@ export class FinalizerFacingMultiInputValidatedFormElement implements StatefulFo
   addValidator(validator: MultiInputValidator): void {
     this.#multiInputValidatorReducer.addValidator(validator);
   }
-  
+
   private calculateValidity() {
     return Math.min(
       this.#baseFormElement.state.validity,

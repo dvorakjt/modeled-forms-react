@@ -28,7 +28,8 @@ export class AggregatedStateChangesProxyProducerImpl
     return new Proxy(aggregatedState, {
       get(target, prop) {
         if (prop === 'overallValidity') return () => fieldStateReducer.validity;
-        else if (prop === 'hasOmittedFields') return () => fieldStateReducer.omit;
+        else if (prop === 'hasOmittedFields')
+          return () => fieldStateReducer.omit;
         else {
           const propName = prop.toString();
           if (!(prop in fields) || propName === 'constructor')

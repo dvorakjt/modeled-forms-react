@@ -12,7 +12,7 @@ export class OneTimeValueEmitterImpl<T> implements OneTimeValueEmitter<T> {
   setValue(value: T) {
     if (!this.#value) {
       this.#value = value;
-      for(const cb of this.#callbacks) {
+      for (const cb of this.#callbacks) {
         cb(this.#value);
       }
     }

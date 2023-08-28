@@ -34,7 +34,7 @@ export class SyncMultiInputValidator implements MultiInputValidator {
       (aggregateChange: AggregatedStateChanges) => {
         //first, run the validator so hasOmittedFields and overallValidity are accurate
         let result;
-        if(!this.#completedFirstRun) {
+        if (!this.#completedFirstRun) {
           result = this.runValidator(aggregateChange);
           this.#completedFirstRun = true;
         }
@@ -53,7 +53,7 @@ export class SyncMultiInputValidator implements MultiInputValidator {
           //overallValidity, however, emits the overall validity, meaning that finalizers won't run until overallValidity === Validity.VALID_FINALIZABLE
           this.overallValidityChanges.next(aggregateChange.overallValidity());
           this.messageChanges.next(null);
-        } else if(result) {
+        } else if (result) {
           this.calculatedValidityChanges.next(result.validity);
           this.overallValidityChanges.next(result.validity);
           this.messageChanges.next(result.message);
@@ -67,9 +67,12 @@ export class SyncMultiInputValidator implements MultiInputValidator {
     );
   }
 
-  private runValidator(aggregateChange : AggregatedStateChanges) : { validity : Validity, message : Message | null} {
+  private runValidator(aggregateChange: AggregatedStateChanges): {
+    validity: Validity;
+    message: Message | null;
+  } {
     try {
-      let message : Message | null;
+      let message: Message | null;
       const result = this.#validator(aggregateChange);
       const validity = result.isValid
         ? Validity.VALID_FINALIZABLE
@@ -82,17 +85,17 @@ export class SyncMultiInputValidator implements MultiInputValidator {
       } else message = null;
       return {
         validity,
-        message 
-      }
+        message,
+      };
     } catch (e) {
       logErrorInDevMode(e);
       return {
-        validity : Validity.ERROR,
-        message : {
-          type : MessageType.ERROR,
-          text : config.globalMessages.multiFieldValidationError
-        }
-      }
-    } 
+        validity: Validity.ERROR,
+        message: {
+          type: MessageType.ERROR,
+          text: config.globalMessages.multiFieldValidationError,
+        },
+      };
+    }
   }
 }

@@ -5,7 +5,7 @@ import type { ValidatorResult } from '../validator-result.interface';
 const autoTransformer = container.services.AutoTransformer;
 
 export function pattern(
-  pattern : RegExp,
+  pattern: RegExp,
   errorMessage: string,
   successMessage?: string,
 ): SyncValidator<string> {
@@ -13,7 +13,7 @@ export function pattern(
     value = autoTransformer.transform(value);
 
     const result: ValidatorResult = {
-      isValid: pattern.test(value)
+      isValid: pattern.test(value),
     };
     if (!result.isValid) {
       result.message = errorMessage;

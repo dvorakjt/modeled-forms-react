@@ -15,7 +15,7 @@ export function maxNum(
     const numericValue = Number(value);
 
     const result: ValidatorResult = {
-      isValid: !Number.isNaN(numericValue) && numericValue <= max
+      isValid: !Number.isNaN(numericValue) && numericValue <= max,
     };
     if (!result.isValid) {
       result.message = errorMessage;

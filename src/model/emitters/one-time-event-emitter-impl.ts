@@ -12,7 +12,7 @@ export class OneTimeEventEmitterImpl implements OneTimeEventEmitter {
   triggerEvent() {
     if (!this.#eventOccurred) {
       this.#eventOccurred = true;
-      for(const cb of this.#callbacks) {
+      for (const cb of this.#callbacks) {
         cb();
       }
     }

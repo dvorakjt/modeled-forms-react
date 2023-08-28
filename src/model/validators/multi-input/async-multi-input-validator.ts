@@ -42,7 +42,7 @@ export class AsyncMultiInputValidator implements MultiInputValidator {
         let observableResult;
         let error;
 
-        if(!this.#firstRunCompleted) {
+        if (!this.#firstRunCompleted) {
           try {
             observableResult = from(this.#validator(aggregateChange));
           } catch (e) {
@@ -67,22 +67,23 @@ export class AsyncMultiInputValidator implements MultiInputValidator {
           //overallValidity, however, emits the overall validity, meaning that finalizers won't run until overallValidity === Validity.VALID_FINALIZABLE
           this.overallValidityChanges.next(aggregateChange.overallValidity());
           this.messageChanges.next(null);
-        } else if(error) {
+        } else if (error) {
           this.calculatedValidityChanges.next(Validity.ERROR);
-            this.overallValidityChanges.next(Validity.ERROR);
-            this.messageChanges.next({
-              type: MessageType.ERROR,
-              text : config.globalMessages.multiFieldValidationError
-            });
+          this.overallValidityChanges.next(Validity.ERROR);
+          this.messageChanges.next({
+            type: MessageType.ERROR,
+            text: config.globalMessages.multiFieldValidationError,
+          });
         } else {
           this.calculatedValidityChanges.next(Validity.PENDING);
           this.overallValidityChanges.next(Validity.PENDING);
           this.messageChanges.next({
-            type: MessageType.PENDING,//
+            type: MessageType.PENDING, //
             text: this.#pendingMessage,
           });
           try {
-            if(!observableResult) observableResult = from(this.#validator(aggregateChange));
+            if (!observableResult)
+              observableResult = from(this.#validator(aggregateChange));
             this.#validatorSubscription = observableResult.subscribe({
               next: result => {
                 const validity = result.isValid
@@ -106,7 +107,7 @@ export class AsyncMultiInputValidator implements MultiInputValidator {
                 this.overallValidityChanges.next(Validity.ERROR);
                 this.messageChanges.next({
                   type: MessageType.ERROR,
-                  text: config.globalMessages.multiFieldValidationError
+                  text: config.globalMessages.multiFieldValidationError,
                 });
               },
             });
@@ -116,7 +117,7 @@ export class AsyncMultiInputValidator implements MultiInputValidator {
             this.overallValidityChanges.next(Validity.ERROR);
             this.messageChanges.next({
               type: MessageType.ERROR,
-              text: config.globalMessages.multiFieldValidationError
+              text: config.globalMessages.multiFieldValidationError,
             });
           }
         }

@@ -43,7 +43,7 @@ export class SyncSingleInputValidatorSuite<T>
       result.validity = Validity.ERROR;
       result.messages.push({
         type: MessageType.ERROR,
-        text: config.globalMessages.singleFieldValidationError
+        text: config.globalMessages.singleFieldValidationError,
       });
     }
     return result;

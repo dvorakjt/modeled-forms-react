@@ -14,7 +14,7 @@ export class RootForm extends AbstractRootForm {
   readonly stateChanges: Subject<State<any>>;
   readonly submissionStateChanges: Subject<SubmissionState>;
   readonly userFacingFields: FormElementDictionary;
-  readonly #firstNonValidFormElementTracker : FirstNonValidFormElementTracker;
+  readonly #firstNonValidFormElementTracker: FirstNonValidFormElementTracker;
   readonly #finalizerManager: FinalizerManager;
   readonly #multiFieldValidatorMessagesAggregator: MultiInputValidatorMessagesAggregator;
   readonly #submissionManager: SubmissionManager;
@@ -27,12 +27,13 @@ export class RootForm extends AbstractRootForm {
     });
   }
 
-  get firstNonValidFormElement() : string | undefined {
+  get firstNonValidFormElement(): string | undefined {
     return this.#firstNonValidFormElementTracker.firstNonValidFormElement;
   }
 
-  get firstNonValidFormElementChanges() : Subject<string | undefined> {
-    return this.#firstNonValidFormElementTracker.firstNonValidFormElementChanges;
+  get firstNonValidFormElementChanges(): Subject<string | undefined> {
+    return this.#firstNonValidFormElementTracker
+      .firstNonValidFormElementChanges;
   }
 
   get submissionState() {
@@ -41,10 +42,10 @@ export class RootForm extends AbstractRootForm {
         this.#submissionManager.submissionState.submissionAttempted,
     };
   }
-  
+
   constructor(
     userFacingFields: FormElementDictionary,
-    firstNonValidFormElementTracker : FirstNonValidFormElementTracker,
+    firstNonValidFormElementTracker: FirstNonValidFormElementTracker,
     finalizerManager: FinalizerManager,
     multiFieldValidatorMessagesAggregator: MultiInputValidatorMessagesAggregator,
     submissionManager: SubmissionManager,

@@ -139,7 +139,7 @@ export class AsyncSingleInputValidatorSuite<T>
       observableResult.validity = Validity.ERROR;
       observableResult.messages.push({
         type: MessageType.ERROR,
-        text: config.globalMessages.singleFieldValidationError
+        text: config.globalMessages.singleFieldValidationError,
       });
       outerSubscriber.next(observableResult);
       outerSubscriber.complete();

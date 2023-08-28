@@ -12,7 +12,7 @@ export function includesDigit(
     value = autoTransformer.transform(value);
 
     const result: ValidatorResult = {
-      isValid: /\d/.test(value)
+      isValid: /\d/.test(value),
     };
     if (!result.isValid) {
       result.message = errorMessage;

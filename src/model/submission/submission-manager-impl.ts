@@ -40,7 +40,7 @@ export class SubmissionManagerImpl implements SubmissionManager {
           ...this.#submissionState,
           message: {
             type: MessageType.INVALID,
-            text: config.globalMessages.submissionFailed
+            text: config.globalMessages.submissionFailed,
           },
         };
         reject(new Error(config.globalMessages.submissionFailed));

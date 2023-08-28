@@ -12,7 +12,7 @@ export class UserFacingMultiInputValidatedField extends AbstractField {
   readonly #baseField: AbstractField;
   readonly #multiInputValidatorReducer: MultiInputValidatorValidityReducer;
   stateChanges: Subject<State<string>>;
-  
+
   get state(): FieldState {
     return {
       ...copyObject(this.#baseField.state),
@@ -24,9 +24,9 @@ export class UserFacingMultiInputValidatedField extends AbstractField {
     return this.#baseField.omit;
   }
 
-  set omit(omit : boolean) {
+  set omit(omit: boolean) {
     this.#baseField.omit = omit;
-  } 
+  }
 
   constructor(
     baseField: AbstractField,

@@ -6,7 +6,7 @@ const autoTransformer = container.services.AutoTransformer;
 
 export function inNumRange(
   min: number,
-  max : number,
+  max: number,
   errorMessage: string,
   successMessage?: string,
 ): SyncValidator<string> {
@@ -15,7 +15,10 @@ export function inNumRange(
     const numericValue = Number(value);
 
     const result: ValidatorResult = {
-      isValid: !Number.isNaN(numericValue) && numericValue >= min && numericValue <= max
+      isValid:
+        !Number.isNaN(numericValue) &&
+        numericValue >= min &&
+        numericValue <= max,
     };
     if (!result.isValid) {
       result.message = errorMessage;

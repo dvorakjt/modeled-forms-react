@@ -12,7 +12,7 @@ export function includesUpper(
     value = autoTransformer.transform(value);
 
     const result: ValidatorResult = {
-      isValid: /[A-Z]/.test(value)
+      isValid: /[A-Z]/.test(value),
     };
     if (!result.isValid) {
       result.message = errorMessage;

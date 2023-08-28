@@ -40,7 +40,7 @@ export class ValueControlledField extends AbstractField {
           messages: [
             {
               type: MessageType.ERROR,
-              text: config.globalMessages.adapterError
+              text: config.globalMessages.adapterError,
             },
           ],
         });

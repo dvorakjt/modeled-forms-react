@@ -1,3 +1,6 @@
-import { FinalizerTemplateVariations } from "./finalizer-template-variations.type";
+import { FinalizerTemplateVariations } from './finalizer-template-variations.type';
 
-export type FinalizerTemplateDictionary = Record<string, FinalizerTemplateVariations>;
+export type FinalizerTemplateDictionary = Record<
+  string,
+  FinalizerTemplateVariations
+>;

@@ -51,9 +51,11 @@ class ControlledFieldTemplateParserImpl
     | StateControlledDualField
     | ValueControlledField
     | ValueControlledDualField {
-      if(!(baseField instanceof AbstractField)) {
-        throw new ControlledFieldTemplateParsingError('ControlledFieldTemplateParser expected instanceof AbstractField.');
-      }
+    if (!(baseField instanceof AbstractField)) {
+      throw new ControlledFieldTemplateParsingError(
+        'ControlledFieldTemplateParser expected instanceof AbstractField.',
+      );
+    }
 
     const controlFnType = this.getControlFnType(template);
 

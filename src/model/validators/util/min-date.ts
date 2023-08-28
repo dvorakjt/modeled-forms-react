@@ -13,9 +13,9 @@ export function minDate(
     value = autoTransformer.transform(value);
 
     const millis = new Date(value).getTime();
- 
+
     const result: ValidatorResult = {
-      isValid: !Number.isNaN(millis) && millis >= min.getTime()
+      isValid: !Number.isNaN(millis) && millis >= min.getTime(),
     };
     if (!result.isValid) {
       result.message = errorMessage;

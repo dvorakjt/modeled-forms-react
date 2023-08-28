@@ -2,11 +2,23 @@ import { AbstractField } from '../../fields/base/abstract-field';
 import { DualField } from '../../fields/base/dual-field';
 import { FormElementDictionary } from '../../form-elements/form-element-dictionary.type';
 import { FirstNonValidFormElementTracker } from '../../trackers/first-nonvalid-form-element-tracker.interface';
-import { TrackerFactory, TrackerFactoryKey } from '../../trackers/tracker-factory.interface';
-import { BaseFieldTemplateParser, BaseFieldTemplateParserKey } from '../fields/base/base-field-template-parser.interface';
-import { ControlledFieldTemplateParser, ControlledFieldTemplateParserKey } from '../fields/controlled/controlled-field-template-parser.interface';
+import {
+  TrackerFactory,
+  TrackerFactoryKey,
+} from '../../trackers/tracker-factory.interface';
+import {
+  BaseFieldTemplateParser,
+  BaseFieldTemplateParserKey,
+} from '../fields/base/base-field-template-parser.interface';
+import {
+  ControlledFieldTemplateParser,
+  ControlledFieldTemplateParserKey,
+} from '../fields/controlled/controlled-field-template-parser.interface';
 import { ControlledFieldTemplateVariations } from '../fields/controlled/controlled-field-template-variations.type';
-import { NestedFormTemplateParser, NestedFormTemplateParserKey } from '../forms/nested-form-template-parser.interface';
+import {
+  NestedFormTemplateParser,
+  NestedFormTemplateParserKey,
+} from '../forms/nested-form-template-parser.interface';
 import { FieldOrNestedFormTemplate } from './field-or-nested-form-template.type';
 import { FormElementTemplateDictionaryOrMap } from './form-element-template-dictionary-or-map.type';
 import {
@@ -89,15 +101,18 @@ class FormElementDictionaryParserImpl
   }
 }
 
-const FormElementTemplateDictionaryParserService = autowire<FormElementTemplateDictionaryParserKeyType, FormElementTemplateDictionaryParser, FormElementDictionaryParserImpl>(
-  FormElementDictionaryParserImpl,
-  FormElementTemplateDictionaryParserKey,
-  [
-    BaseFieldTemplateParserKey,
-    ControlledFieldTemplateParserKey,
-    NestedFormTemplateParserKey,
-    TrackerFactoryKey
-  ]
-)
+const FormElementTemplateDictionaryParserService = autowire<
+  FormElementTemplateDictionaryParserKeyType,
+  FormElementTemplateDictionaryParser,
+  FormElementDictionaryParserImpl
+>(FormElementDictionaryParserImpl, FormElementTemplateDictionaryParserKey, [
+  BaseFieldTemplateParserKey,
+  ControlledFieldTemplateParserKey,
+  NestedFormTemplateParserKey,
+  TrackerFactoryKey,
+]);
 
-export { FormElementDictionaryParserImpl, FormElementTemplateDictionaryParserService };
+export {
+  FormElementDictionaryParserImpl,
+  FormElementTemplateDictionaryParserService,
+};

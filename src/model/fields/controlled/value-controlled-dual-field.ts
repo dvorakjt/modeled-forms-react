@@ -65,7 +65,7 @@ export class ValueControlledDualField extends AbstractDualField {
           messages: [
             {
               type: MessageType.ERROR,
-              text: config.globalMessages.adapterError
+              text: config.globalMessages.adapterError,
             },
           ],
         };

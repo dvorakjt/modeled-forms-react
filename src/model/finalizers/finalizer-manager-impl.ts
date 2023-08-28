@@ -65,14 +65,14 @@ export class FinalizerManagerImpl implements FinalizerManager {
     if (reducedFinalizerValidity === FinalizerValidity.FINALIZER_ERROR) {
       messages.push({
         type: MessageType.ERROR,
-        text: config.globalMessages.finalizerError
+        text: config.globalMessages.finalizerError,
       });
     } else if (
       reducedFinalizerValidity === FinalizerValidity.VALID_FINALIZING
     ) {
       messages.push({
         type: MessageType.PENDING,
-        text: config.globalMessages.finalizerPending
+        text: config.globalMessages.finalizerPending,
       });
     }
     return messages;
