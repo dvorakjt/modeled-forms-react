@@ -7,14 +7,18 @@ import { Validity } from '../state/validity.enum';
 export class FirstNonValidFormElementTrackerImpl
   implements FirstNonValidFormElementTracker
 {
-  firstNonValidFormElement: Subject<string | undefined>;
+  firstNonValidFormElementChanges: Subject<string | undefined>;
   #nonValidFormElementHeap: InsertionOrderHeap;
 
   constructor(nonValidFormElementHeap: InsertionOrderHeap) {
     this.#nonValidFormElementHeap = nonValidFormElementHeap;
-    this.firstNonValidFormElement = new BehaviorSubject(
-      this.#nonValidFormElementHeap.topValue,
+    this.firstNonValidFormElementChanges = new BehaviorSubject(
+      this.firstNonValidFormElement
     );
+  }
+
+  get firstNonValidFormElement() : string | undefined {
+    return this.#nonValidFormElementHeap.topValue;
   }
 
   trackFormElementValidity(
@@ -28,8 +32,8 @@ export class FirstNonValidFormElementTrackerImpl
       if (validity < Validity.VALID_FINALIZABLE) {
         this.#nonValidFormElementHeap.addValue(formElementKey);
       } else this.#nonValidFormElementHeap.removeValue(formElementKey);
-      this.firstNonValidFormElement.next(
-        this.#nonValidFormElementHeap.topValue,
+      this.firstNonValidFormElementChanges.next(
+        this.firstNonValidFormElement
       );
     });
   }

@@ -8,7 +8,8 @@ export abstract class AbstractNestedForm implements BaseForm, OmittableFormEleme
   abstract userFacingFields : FormElementDictionary;
   abstract omit : boolean;
   abstract stateChanges: Subject<State<any>>;
-  abstract firstNonValidFormElement: Subject<string | undefined>;
+  abstract firstNonValidFormElement: string | undefined;
+  abstract firstNonValidFormElementChanges: Subject<string | undefined>;
   abstract state: State<any>;
   abstract reset() : void;
 }

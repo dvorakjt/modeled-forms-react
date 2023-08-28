@@ -7,7 +7,8 @@ import { FormElementDictionary } from '../form-elements/form-element-dictionary.
 export abstract class AbstractRootForm implements BaseForm {
   abstract userFacingFields : FormElementDictionary;
   abstract stateChanges: Subject<State<any>>;
-  abstract firstNonValidFormElement: Subject<string | undefined>;
+  abstract firstNonValidFormElementChanges: Subject<string | undefined>;
+  abstract firstNonValidFormElement: string | undefined;
   abstract state: State<any>;
   abstract reset() : void;
   abstract submissionState: SubmissionState;

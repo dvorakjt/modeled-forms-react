@@ -27,8 +27,12 @@ export class RootForm extends AbstractRootForm {
     });
   }
 
-  get firstNonValidFormElement() : Subject<string | undefined> {
+  get firstNonValidFormElement() : string | undefined {
     return this.#firstNonValidFormElementTracker.firstNonValidFormElement;
+  }
+
+  get firstNonValidFormElementChanges() : Subject<string | undefined> {
+    return this.#firstNonValidFormElementTracker.firstNonValidFormElementChanges;
   }
 
   get submissionState() {
