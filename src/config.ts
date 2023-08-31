@@ -3,8 +3,8 @@ import rc from 'rc';
 const config : any = rc('modeledformsreact', {
   autoTrim: true,
   emailRegex:
-    /^[A-Z0-9]+(?:[_%+.-][A-Z0-9]+)*@[A-Z0-9]+(?:[.-][A-Z0-9]+)\.[A-Z]{2,}$/i,
-  symbolRegex: / !"#\$%&'\(\)\*\+,-.\/\\:;<=>\?@\[\]\^_`{\|}~/,
+    /^[A-Z0-9]+(?:[_%+.-][A-Z0-9]+)*@[A-Z0-9]+(?:[.-][A-Z0-9]+)*\.[A-Z]{2,}$/i,
+  symbolRegex: /[ !"#$%&'()*+,-./\\:;<=>?@[\]^_`{|}~]/g,
   globalMessages: {
     pendingAsyncValidatorSuite: 'Checking field...',
     singleFieldValidationError:

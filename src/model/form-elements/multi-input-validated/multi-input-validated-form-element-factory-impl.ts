@@ -19,10 +19,10 @@ import { autowire } from 'undecorated-di';
 class MultiInputValidatedFormElementFactoryImpl
   implements MultiInputValidatedFormElementFactory
 {
-  #reducerFactory: ReducerFactory;
+  _reducerFactory: ReducerFactory;
 
   constructor(reducerFactory: ReducerFactory) {
-    this.#reducerFactory = reducerFactory;
+    this._reducerFactory = reducerFactory;
   }
 
   createUserAndFinalizerFacingMultiInputValidatedFormElement(
@@ -36,9 +36,9 @@ class MultiInputValidatedFormElementFactoryImpl
     FinalizerFacingMultiInputValidatedFormElement,
   ] {
     const userFacingReducer =
-      this.#reducerFactory.createUserMultiInputValidatorValidityReducer();
+      this._reducerFactory.createUserMultiInputValidatorValidityReducer();
     const finalizerFacingReducer =
-      this.#reducerFactory.createFinalizerFacingMultiInputValidatorValidityReducer();
+      this._reducerFactory.createFinalizerFacingMultiInputValidatorValidityReducer();
     const finalizerFacingFormElement =
       new FinalizerFacingMultiInputValidatedFormElement(
         baseField,

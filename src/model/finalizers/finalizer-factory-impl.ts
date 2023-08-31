@@ -21,15 +21,15 @@ import {
 import { SyncFinalizer } from './sync-finalizer';
 
 class FinalizerFactoryImpl implements FinalizerFactory {
-  #aggregatorFactory: AggregatorFactory;
-  #finalizerValidityTranslator: FinalizerValidityTranslator;
+  _aggregatorFactory: AggregatorFactory;
+  _finalizerValidityTranslator: FinalizerValidityTranslator;
 
   constructor(
     aggregatorFactory: AggregatorFactory,
     finalizerValidityTranslator: FinalizerValidityTranslator,
   ) {
-    this.#aggregatorFactory = aggregatorFactory;
-    this.#finalizerValidityTranslator = finalizerValidityTranslator;
+    this._aggregatorFactory = aggregatorFactory;
+    this._finalizerValidityTranslator = finalizerValidityTranslator;
   }
 
   createSyncFinalizer(
@@ -37,7 +37,7 @@ class FinalizerFactoryImpl implements FinalizerFactory {
     fields: FormElementDictionary,
   ): SyncFinalizer {
     const aggregator =
-      this.#aggregatorFactory.createMultiFieldAggregatorFromFields(fields);
+      this._aggregatorFactory.createMultiFieldAggregatorFromFields(fields);
     return new SyncFinalizer(finalizerFn, aggregator);
   }
   createAsyncFinalizer(
@@ -45,13 +45,13 @@ class FinalizerFactoryImpl implements FinalizerFactory {
     fields: FormElementDictionary,
   ): AsyncFinalizer {
     const aggregator =
-      this.#aggregatorFactory.createMultiFieldAggregatorFromFields(fields);
+      this._aggregatorFactory.createMultiFieldAggregatorFromFields(fields);
     return new AsyncFinalizer(finalizerFn, aggregator);
   }
   createDefaultFinalizer(
     baseField: StatefulFormElement<any>,
   ): DefaultFinalizer {
-    return new DefaultFinalizer(baseField, this.#finalizerValidityTranslator);
+    return new DefaultFinalizer(baseField, this._finalizerValidityTranslator);
   }
 }
 

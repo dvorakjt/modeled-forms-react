@@ -42,10 +42,10 @@ type MultiInputValidatedFormElementDictionary = Record<
 class MultiFieldValidatorsTemplateParserImpl
   implements MultiFieldValidatorsTemplateParser
 {
-  #multiInputValidatorFactory: MultiInputValidatorFactory;
-  #multiInputValidatedFormElementFactory: MultiInputValidatedFormElementFactory;
-  #aggregatorFactory: AggregatorFactory;
-  #autoTransformedFieldFactory: AutoTransformedFieldFactory;
+  _multiInputValidatorFactory: MultiInputValidatorFactory;
+  _multiInputValidatedFormElementFactory: MultiInputValidatedFormElementFactory;
+  _aggregatorFactory: AggregatorFactory;
+  _autoTransformedFieldFactory: AutoTransformedFieldFactory;
 
   constructor(
     multiInputValidatorFactory: MultiInputValidatorFactory,
@@ -53,11 +53,11 @@ class MultiFieldValidatorsTemplateParserImpl
     aggregatorFactory: AggregatorFactory,
     autoTransformedFieldFactory: AutoTransformedFieldFactory,
   ) {
-    this.#multiInputValidatorFactory = multiInputValidatorFactory;
-    this.#multiInputValidatedFormElementFactory =
+    this._multiInputValidatorFactory = multiInputValidatorFactory;
+    this._multiInputValidatedFormElementFactory =
       multiInputValidatedFormElementFactory;
-    this.#aggregatorFactory = aggregatorFactory;
-    this.#autoTransformedFieldFactory = autoTransformedFieldFactory;
+    this._aggregatorFactory = aggregatorFactory;
+    this._autoTransformedFieldFactory = autoTransformedFieldFactory;
   }
 
   parseTemplate(
@@ -76,12 +76,12 @@ class MultiFieldValidatorsTemplateParserImpl
 
     template.sync?.forEach(validatorFn => {
       const multiInputValidator =
-        this.#multiInputValidatorFactory.createSyncMultiInputValidator(
+        this._multiInputValidatorFactory.createSyncMultiInputValidator(
           validatorFn,
           formElementDictionary,
         );
       multiInputValidator.accessedFields.onValue(
-        this.onAccessedFields(
+        this._onAccessedFields(
           userFacingMultiInputValidatedFormElementDictionary,
           finalizerFacingMultiInputValidatedFormElementDictionary,
           formElementDictionary,
@@ -93,14 +93,14 @@ class MultiFieldValidatorsTemplateParserImpl
 
     template.async?.forEach(validatorTemplate => {
       const multiInputValidator =
-        this.#multiInputValidatorFactory.createAsyncMultiInputValidator(
+        this._multiInputValidatorFactory.createAsyncMultiInputValidator(
           validatorTemplate.validatorFn,
           formElementDictionary,
           validatorTemplate.pendingValidatorMessage ??
             config.globalMessages.pendingAsyncMultiFieldValidator,
         );
       multiInputValidator.accessedFields.onValue(
-        this.onAccessedFields(
+        this._onAccessedFields(
           userFacingMultiInputValidatedFormElementDictionary,
           finalizerFacingMultiInputValidatedFormElementDictionary,
           formElementDictionary,
@@ -128,14 +128,14 @@ class MultiFieldValidatorsTemplateParserImpl
     )) {
       if (userFacingFormElementDictionary[fieldName] instanceof AbstractField) {
         finalizerFacingFormElementDictionary[fieldName] =
-          this.#autoTransformedFieldFactory.createAutoTransformedField(
+          this._autoTransformedFieldFactory.createAutoTransformedField(
             field as AbstractField,
           );
       }
     }
 
     const multiInputValidatorMessagesAggregator =
-      this.#aggregatorFactory.createMultiInputValidatorMessagesAggregatorFromValidators(
+      this._aggregatorFactory.createMultiInputValidatorMessagesAggregatorFromValidators(
         validators,
       );
 
@@ -146,7 +146,7 @@ class MultiFieldValidatorsTemplateParserImpl
     ];
   }
 
-  private onAccessedFields(
+  _onAccessedFields(
     userFacingFormElementDictionary: MultiInputValidatedFormElementDictionary,
     finalizerFacingFormElementDictionary: MultiInputValidatedFormElementDictionary,
     formElementDictionary: FormElementDictionary,
@@ -157,7 +157,7 @@ class MultiFieldValidatorsTemplateParserImpl
         if (!(fieldName in userFacingFormElementDictionary)) {
           const baseField = formElementDictionary[fieldName];
           const [userFacingField, finalizerFacingField] =
-            this.#multiInputValidatedFormElementFactory.createUserAndFinalizerFacingMultiInputValidatedFormElement(
+            this._multiInputValidatedFormElementFactory.createUserAndFinalizerFacingMultiInputValidatedFormElement(
               baseField,
             );
           userFacingFormElementDictionary[fieldName] = userFacingField;

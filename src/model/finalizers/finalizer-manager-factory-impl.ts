@@ -17,26 +17,26 @@ import {
 } from './finalizer-validity-translator.interface';
 
 class FinalizerManagerFactoryImpl implements FinalizerManagerFactory {
-  #reducerFactory: ReducerFactory;
-  #finalizerValidityTranslator: FinalizerValidityTranslator;
+  _reducerFactory: ReducerFactory;
+  _finalizerValidityTranslator: FinalizerValidityTranslator;
 
   constructor(
     reducerFactory: ReducerFactory,
     finalizerValidityTranslator: FinalizerValidityTranslator,
   ) {
-    this.#reducerFactory = reducerFactory;
-    this.#finalizerValidityTranslator = finalizerValidityTranslator;
+    this._reducerFactory = reducerFactory;
+    this._finalizerValidityTranslator = finalizerValidityTranslator;
   }
 
   createFinalizerManager(
     finalizerDictionary: FinalizerDictionary,
   ): FinalizerManager {
     const finalizerValidityReducer =
-      this.#reducerFactory.createFinalizerValidityReducer();
+      this._reducerFactory.createFinalizerValidityReducer();
     return new FinalizerManagerImpl(
       finalizerDictionary,
       finalizerValidityReducer,
-      this.#finalizerValidityTranslator,
+      this._finalizerValidityTranslator,
     );
   }
 }

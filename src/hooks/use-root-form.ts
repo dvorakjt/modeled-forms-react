@@ -10,7 +10,7 @@ export function useRootForm(template: RootFormTemplate) {
   const form = useMemo(() => rootFormTemplateParser.parseTemplate(template), [template]) ;
   const formRef = useRef(form);
   const useSubmissionAttempted = () => _useSubmissionAttempted(formRef.current);
-  const { submit } = formRef.current; 
+  const submit = () => formRef.current.submit();
 
 
   return {

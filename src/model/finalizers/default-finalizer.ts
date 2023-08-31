@@ -9,28 +9,28 @@ import type { State } from '../state/state.interface';
 
 export class DefaultFinalizer implements Finalizer {
   stream: Subject<FinalizerState>;
-  #field: StatefulFormElement<any>;
-  #finalizerValidityTranslator: FinalizerValidityTranslator;
+  _field: StatefulFormElement<any>;
+  _finalizerValidityTranslator: FinalizerValidityTranslator;
 
   constructor(
     field: StatefulFormElement<any>,
     finalizerValidityTranslator: FinalizerValidityTranslator,
   ) {
-    this.#field = field;
-    this.#finalizerValidityTranslator = finalizerValidityTranslator;
-    this.#field.stateChanges.subscribe(stateChange => {
-      this.stream?.next(this.getFinalizerState(stateChange));
+    this._field = field;
+    this._finalizerValidityTranslator = finalizerValidityTranslator;
+    this._field.stateChanges.subscribe(stateChange => {
+      this.stream?.next(this._getFinalizerState(stateChange));
     });
     this.stream = new BehaviorSubject(
-      this.getFinalizerState(this.#field.state),
+      this._getFinalizerState(this._field.state),
     );
   }
 
-  private getFinalizerState(fieldState: State<any>) {
+  _getFinalizerState(fieldState: State<any>) {
     if (fieldState.validity < Validity.VALID_FINALIZABLE)
       return {
         finalizerValidity:
-          this.#finalizerValidityTranslator.translateValidityToFinalizerValidity(
+          this._finalizerValidityTranslator.translateValidityToFinalizerValidity(
             fieldState.validity,
           ),
       };

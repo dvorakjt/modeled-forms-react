@@ -8,43 +8,43 @@ import { config } from '../../../config';
 import { FieldState } from '../../state/field-state.interface';
 
 export class ValueControlledDualField extends AbstractDualField {
-  readonly #field: AbstractDualField;
-  readonly #adapter: Adapter<DualFieldSetValueArg>;
+  readonly _field: AbstractDualField;
+  readonly _adapter: Adapter<DualFieldSetValueArg>;
 
   get stateChanges() {
-    return this.#field.stateChanges;
+    return this._field.stateChanges;
   }
 
   get state() {
-    return this.#field.state;
+    return this._field.state;
   }
 
   set omit(omit: boolean) {
-    this.#field.omit = omit;
+    this._field.omit = omit;
   }
 
   get omit() {
-    return this.#field.omit;
+    return this._field.omit;
   }
 
   get primaryField() {
-    return this.dualField.primaryField;
+    return this._dualField.primaryField;
   }
 
   get secondaryField() {
-    return this.dualField.secondaryField;
+    return this._dualField.secondaryField;
   }
 
   set useSecondaryField(useSecondaryField: boolean) {
-    this.dualField.useSecondaryField = useSecondaryField;
+    this._dualField.useSecondaryField = useSecondaryField;
   }
 
   get useSecondaryField() {
-    return this.dualField.useSecondaryField;
+    return this._dualField.useSecondaryField;
   }
 
-  private get dualField() {
-    return this.#field as AbstractDualField;
+  get _dualField() {
+    return this._field as AbstractDualField;
   }
 
   constructor(
@@ -52,9 +52,9 @@ export class ValueControlledDualField extends AbstractDualField {
     adapter: Adapter<DualFieldSetValueArg>,
   ) {
     super();
-    this.#field = field;
-    this.#adapter = adapter;
-    this.#adapter.stream.subscribe({
+    this._field = field;
+    this._adapter = adapter;
+    this._adapter.stream.subscribe({
       next: (next: DualFieldSetValueArg) => {
         if (next) this.setValue(next);
       },
@@ -69,7 +69,7 @@ export class ValueControlledDualField extends AbstractDualField {
             },
           ],
         };
-        const setStateArg: DualFieldSetStateArg = this.dualField
+        const setStateArg: DualFieldSetStateArg = this._dualField
           .useSecondaryField
           ? {
               secondaryFieldState: errorState,
@@ -83,14 +83,14 @@ export class ValueControlledDualField extends AbstractDualField {
   }
 
   setValue(value: DualFieldSetValueArg) {
-    this.dualField.setValue(value);
+    this._dualField.setValue(value);
   }
 
   setState(state: DualFieldSetStateArg): void {
-    this.dualField.setState(state);
+    this._dualField.setState(state);
   }
 
   reset() {
-    this.dualField.reset();
+    this._dualField.reset();
   }
 }

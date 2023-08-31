@@ -18,10 +18,10 @@ import {
 import { FormElementDictionary } from '../../form-elements/form-element-dictionary.type';
 
 class MultiInputValidatorFactoryImpl implements MultiInputValidatorFactory {
-  #aggregatorFactory: AggregatorFactory;
+  _aggregatorFactory: AggregatorFactory;
 
   constructor(aggregatorFactory: AggregatorFactory) {
-    this.#aggregatorFactory = aggregatorFactory;
+    this._aggregatorFactory = aggregatorFactory;
   }
 
   createSyncMultiInputValidator(
@@ -29,7 +29,7 @@ class MultiInputValidatorFactoryImpl implements MultiInputValidatorFactory {
     fields: FormElementDictionary,
   ): MultiInputValidator {
     const multiFieldAggregator =
-      this.#aggregatorFactory.createMultiFieldAggregatorFromFields(fields);
+      this._aggregatorFactory.createMultiFieldAggregatorFromFields(fields);
     return new SyncMultiInputValidator(multiFieldAggregator, validator);
   }
   createAsyncMultiInputValidator(
@@ -39,7 +39,7 @@ class MultiInputValidatorFactoryImpl implements MultiInputValidatorFactory {
       .pendingAsyncMultiFieldValidator,
   ): MultiInputValidator {
     const multiFieldAggregator =
-      this.#aggregatorFactory.createMultiFieldAggregatorFromFields(fields);
+      this._aggregatorFactory.createMultiFieldAggregatorFromFields(fields);
     return new AsyncMultiInputValidator(
       multiFieldAggregator,
       validator,

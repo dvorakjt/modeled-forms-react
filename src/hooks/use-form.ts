@@ -11,7 +11,7 @@ import { AbstractDualField } from '../model/fields/base/abstract-dual-field';
 export function useForm(form: AbstractRootForm | AbstractNestedForm) {
   const useFormState = () => _useFormState(form);
   const useFirstNonValidFormElement = () => _useFirstNonValidFormElement(form);
-  const { reset } = form;
+  const reset = () => form.reset();
 
   const useField = (fieldName: string) => {
     if (!(fieldName in form.userFacingFields)) {

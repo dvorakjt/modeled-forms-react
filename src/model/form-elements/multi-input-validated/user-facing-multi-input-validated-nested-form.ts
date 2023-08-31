@@ -12,30 +12,34 @@ export class UserFacingMultiInputValidatedNestedForm
   implements MultiInputValidatedFormElement
 {
   stateChanges: Subject<State<any>>;
-  #baseNestedForm: AbstractNestedForm;
-  #multiInputValidatorReducer: MultiInputValidatorValidityReducer;
+  _baseNestedForm: AbstractNestedForm;
+  _multiInputValidatorReducer: MultiInputValidatorValidityReducer;
 
   get userFacingFields(): FormElementDictionary {
-    return this.#baseNestedForm.userFacingFields;
+    return this._baseNestedForm.userFacingFields;
   }
 
   get state(): State<any> {
     return {
-      ...copyObject(this.#baseNestedForm.state),
-      validity: this.calculateValidity(),
+      ...copyObject(this._baseNestedForm.state),
+      validity: this._calculateValidity(),
     };
   }
 
   set omit(omit: boolean) {
-    this.#baseNestedForm.omit = omit;
+    this._baseNestedForm.omit = omit;
   }
 
   get omit(): boolean {
-    return this.#baseNestedForm.omit;
+    return this._baseNestedForm.omit;
   }
 
-  get firstNonValidFormElement(): Subject<string | undefined> {
-    return this.#baseNestedForm.firstNonValidFormElement;
+  get firstNonValidFormElement(): string | undefined {
+    return this._baseNestedForm.firstNonValidFormElement;
+  }
+
+  get firstNonValidFormElementChanges() : Subject<string | undefined> {
+    return this._baseNestedForm.firstNonValidFormElementChanges;
   }
 
   constructor(
@@ -43,12 +47,12 @@ export class UserFacingMultiInputValidatedNestedForm
     userFacingMultiInputValidityReducer: MultiInputValidatorValidityReducer,
   ) {
     super();
-    this.#baseNestedForm = baseNestedForm;
-    this.#multiInputValidatorReducer = userFacingMultiInputValidityReducer;
-    this.#baseNestedForm.stateChanges.subscribe(() => {
+    this._baseNestedForm = baseNestedForm;
+    this._multiInputValidatorReducer = userFacingMultiInputValidityReducer;
+    this._baseNestedForm.stateChanges.subscribe(() => {
       if (this.stateChanges) this.stateChanges.next(this.state);
     });
-    this.#multiInputValidatorReducer.validityChanges.subscribe(() => {
+    this._multiInputValidatorReducer.validityChanges.subscribe(() => {
       if (this.stateChanges) this.stateChanges.next(this.state);
     });
     this.stateChanges = new BehaviorSubject(this.state);
@@ -59,13 +63,13 @@ export class UserFacingMultiInputValidatedNestedForm
   }
 
   addValidator(validator: MultiInputValidator): void {
-    this.#multiInputValidatorReducer.addValidator(validator);
+    this._multiInputValidatorReducer.addValidator(validator);
   }
 
-  private calculateValidity() {
+  _calculateValidity() {
     return Math.min(
-      this.#baseNestedForm.state.validity,
-      this.#multiInputValidatorReducer.validity,
+      this._baseNestedForm.state.validity,
+      this._multiInputValidatorReducer.validity,
     );
   }
 }

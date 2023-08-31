@@ -31,10 +31,10 @@ import { autowire } from 'undecorated-di';
 class FormElementDictionaryParserImpl
   implements FormElementTemplateDictionaryParser
 {
-  #baseFieldTemplateParser: BaseFieldTemplateParser;
-  #controlledFieldTemplateParser: ControlledFieldTemplateParser;
-  #nestedFormTemplateParser: NestedFormTemplateParser;
-  #trackerFactory: TrackerFactory;
+  _baseFieldTemplateParser: BaseFieldTemplateParser;
+  _controlledFieldTemplateParser: ControlledFieldTemplateParser;
+  _nestedFormTemplateParser: NestedFormTemplateParser;
+  _trackerFactory: TrackerFactory;
 
   constructor(
     baseFieldTemplateParser: BaseFieldTemplateParser,
@@ -42,10 +42,10 @@ class FormElementDictionaryParserImpl
     nestedFormTemplateParser: NestedFormTemplateParser,
     trackerFactory: TrackerFactory,
   ) {
-    this.#baseFieldTemplateParser = baseFieldTemplateParser;
-    this.#controlledFieldTemplateParser = controlledFieldTemplateParser;
-    this.#nestedFormTemplateParser = nestedFormTemplateParser;
-    this.#trackerFactory = trackerFactory;
+    this._baseFieldTemplateParser = baseFieldTemplateParser;
+    this._controlledFieldTemplateParser = controlledFieldTemplateParser;
+    this._nestedFormTemplateParser = nestedFormTemplateParser;
+    this._trackerFactory = trackerFactory;
   }
 
   parseTemplate(
@@ -53,13 +53,13 @@ class FormElementDictionaryParserImpl
   ): [FormElementDictionary, FirstNonValidFormElementTracker] {
     const formElementDictionary = {} as FormElementDictionary;
     const firstNonValidFormElementTracker =
-      this.#trackerFactory.createFirstNonValidFormElementTracker();
+      this._trackerFactory.createFirstNonValidFormElementTracker();
     const controlledFields = new Set<string>();
 
     for (const [fieldName, formElementTemplate] of Object.entries(template)) {
-      const formElement = this.isNestedForm(formElementTemplate)
-        ? this.#nestedFormTemplateParser.parseTemplate(formElementTemplate)
-        : this.#baseFieldTemplateParser.parseTemplate(formElementTemplate);
+      const formElement = this._isNestedForm(formElementTemplate)
+        ? this._nestedFormTemplateParser.parseTemplate(formElementTemplate)
+        : this._baseFieldTemplateParser.parseTemplate(formElementTemplate);
       formElementDictionary[fieldName] = formElement;
 
       firstNonValidFormElementTracker.trackFormElementValidity(
@@ -67,7 +67,7 @@ class FormElementDictionaryParserImpl
         formElement,
       );
 
-      if (this.isControlledField(formElementTemplate))
+      if (this._isControlledField(formElementTemplate))
         controlledFields.add(fieldName);
     }
 
@@ -76,7 +76,7 @@ class FormElementDictionaryParserImpl
         template instanceof Map ? template.get(fieldName) : template[fieldName];
 
       formElementDictionary[fieldName] =
-        this.#controlledFieldTemplateParser.parseTemplateAndDecorateField(
+        this._controlledFieldTemplateParser.parseTemplateAndDecorateField(
           formElementDictionary[fieldName] as AbstractField | DualField,
           formElementTemplate as ControlledFieldTemplateVariations,
           formElementDictionary,
@@ -86,11 +86,11 @@ class FormElementDictionaryParserImpl
     return [formElementDictionary, firstNonValidFormElementTracker];
   }
 
-  private isNestedForm(template: FieldOrNestedFormTemplate) {
+  _isNestedForm(template: FieldOrNestedFormTemplate) {
     return typeof template === 'object' && 'fields' in template;
   }
 
-  private isControlledField(template: FieldOrNestedFormTemplate) {
+  _isControlledField(template: FieldOrNestedFormTemplate) {
     return (
       typeof template === 'object' &&
       ('asyncStateControlFn' in template ||

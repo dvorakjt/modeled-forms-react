@@ -3,25 +3,25 @@ import type { FieldState } from '../../state/field-state.interface';
 import { ValidityReducer } from '../validity/validity-reducer.interface';
 
 export class FieldStateReducerImpl implements FieldStateReducer {
-  #validityReducer: ValidityReducer;
-  #omittedFields = new Set<string>();
+  _validityReducer: ValidityReducer;
+  _omittedFields = new Set<string>();
 
   constructor(validityReducer: ValidityReducer) {
-    this.#validityReducer = validityReducer;
+    this._validityReducer = validityReducer;
   }
 
   get validity() {
-    return this.#validityReducer.validity;
+    return this._validityReducer.validity;
   }
 
   get omit() {
-    return this.#omittedFields.size > 0;
+    return this._omittedFields.size > 0;
   }
 
   updateTallies(fieldName: string, state: FieldState) {
     const { validity, omit } = state;
-    this.#validityReducer.updateTallies(fieldName, validity);
-    if (omit) this.#omittedFields.add(fieldName);
-    else this.#omittedFields.delete(fieldName);
+    this._validityReducer.updateTallies(fieldName, validity);
+    if (omit) this._omittedFields.add(fieldName);
+    else this._omittedFields.delete(fieldName);
   }
 }

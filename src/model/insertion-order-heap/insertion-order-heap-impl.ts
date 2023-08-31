@@ -11,30 +11,30 @@ interface ElementDictionaryValue {
 }
 
 export class InsertionOrderHeapImpl implements InsertionOrderHeap {
-  #heap: Array<HeapElement> = [];
-  #elementDictionary: {
+  _heap: Array<HeapElement> = [];
+  _elementDictionary: {
     [key: string]: ElementDictionaryValue;
   } = {};
-  #currentPriorityId = 0;
+  _currentPriorityId = 0;
 
   get size() {
-    return this.#heap.length;
+    return this._heap.length;
   }
 
   get topValue(): string | undefined {
-    return this.#heap[0]?.value;
+    return this._heap[0]?.value;
   }
 
   addValue(value: string) {
     const elementDictionaryKey = value;
-    if (!(elementDictionaryKey in this.#elementDictionary)) {
-      this.#elementDictionary[elementDictionaryKey] = {
-        priorityId: this.#currentPriorityId++,
+    if (!(elementDictionaryKey in this._elementDictionary)) {
+      this._elementDictionary[elementDictionaryKey] = {
+        priorityId: this._currentPriorityId++,
         currentHeapIndex: -1,
       };
     }
 
-    const dictionaryValue = this.#elementDictionary[elementDictionaryKey];
+    const dictionaryValue = this._elementDictionary[elementDictionaryKey];
 
     //if element is already in the heap, there is no need to add it, so return
     if (dictionaryValue.currentHeapIndex >= 0) return;
@@ -43,107 +43,107 @@ export class InsertionOrderHeapImpl implements InsertionOrderHeap {
       priorityId: dictionaryValue.priorityId,
       value: value,
     };
-    this.addHeapElement(heapElement);
+    this._addHeapElement(heapElement);
   }
 
   removeValue(value: string) {
-    const heapIndex = this.#elementDictionary[value].currentHeapIndex;
-    this.removeHeapElementAtIndex(heapIndex);
+    const heapIndex = this._elementDictionary[value].currentHeapIndex;
+    this._removeHeapElementAtIndex(heapIndex);
   }
 
-  private addHeapElement(heapElement: HeapElement) {
-    this.#heap.push(heapElement);
+  _addHeapElement(heapElement: HeapElement) {
+    this._heap.push(heapElement);
     const heapIndex = this.size - 1;
-    this.#elementDictionary[heapElement.value].currentHeapIndex = heapIndex;
-    this.heapifyUp(heapIndex);
+    this._elementDictionary[heapElement.value].currentHeapIndex = heapIndex;
+    this._heapifyUp(heapIndex);
   }
 
-  private removeHeapElementAtIndex(heapIndex: number) {
+  _removeHeapElementAtIndex(heapIndex: number) {
     //if heap is empty, or the element does not exist in the heap, return
     if (this.size === 0 || heapIndex === -1) return;
 
     if (heapIndex === this.size - 1) {
-      const removedElement = this.#heap[heapIndex];
-      this.#heap.pop();
-      this.#elementDictionary[removedElement.value].currentHeapIndex = -1;
+      const removedElement = this._heap[heapIndex];
+      this._heap.pop();
+      this._elementDictionary[removedElement.value].currentHeapIndex = -1;
     } else {
-      const removedElement = this.#heap[heapIndex];
-      const elevatedElement = (this.#heap[heapIndex] =
-        this.#heap[this.size - 1]);
-      this.#elementDictionary[removedElement.value].currentHeapIndex = -1;
-      this.#elementDictionary[elevatedElement.value].currentHeapIndex =
+      const removedElement = this._heap[heapIndex];
+      const elevatedElement = (this._heap[heapIndex] =
+        this._heap[this.size - 1]);
+      this._elementDictionary[removedElement.value].currentHeapIndex = -1;
+      this._elementDictionary[elevatedElement.value].currentHeapIndex =
         heapIndex;
-      this.heapifyDown(heapIndex);
+      this._heapifyDown(heapIndex);
     }
   }
 
-  private heapifyDown(heapIndex: number) {
-    const leftChild = this.leftChild(heapIndex);
-    const rightChild = this.rightChild(heapIndex);
+  _heapifyDown(heapIndex: number) {
+    const _leftChild = this._leftChild(heapIndex);
+    const _rightChild = this._rightChild(heapIndex);
     let smallest = heapIndex;
 
     if (
-      leftChild < this.size &&
-      this.compareHeapElements(this.#heap[leftChild], this.#heap[smallest]) < 0
+      _leftChild < this.size &&
+      this._compareHeapElements(this._heap[_leftChild], this._heap[smallest]) < 0
     ) {
-      smallest = leftChild;
+      smallest = _leftChild;
     }
     if (
-      rightChild < this.size &&
-      this.compareHeapElements(this.#heap[rightChild], this.#heap[smallest]) < 0
+      _rightChild < this.size &&
+      this._compareHeapElements(this._heap[_rightChild], this._heap[smallest]) < 0
     ) {
-      smallest = rightChild;
+      smallest = _rightChild;
     }
     if (smallest != heapIndex) {
-      const element = this.#heap[heapIndex];
-      const smallestElement = this.#heap[smallest];
+      const element = this._heap[heapIndex];
+      const smallestElement = this._heap[smallest];
 
-      this.#elementDictionary[element.value].currentHeapIndex = smallest;
-      this.#elementDictionary[smallestElement.value].currentHeapIndex =
+      this._elementDictionary[element.value].currentHeapIndex = smallest;
+      this._elementDictionary[smallestElement.value].currentHeapIndex =
         heapIndex;
 
-      this.#heap[heapIndex] = smallestElement;
-      this.#heap[smallest] = element;
+      this._heap[heapIndex] = smallestElement;
+      this._heap[smallest] = element;
 
-      this.heapifyDown(smallest);
+      this._heapifyDown(smallest);
     }
   }
 
-  private heapifyUp(heapIndex: number) {
+  _heapifyUp(heapIndex: number) {
     while (
       heapIndex != 0 &&
-      this.compareHeapElements(
-        this.#heap[this.parent(heapIndex)],
-        this.#heap[heapIndex],
+      this._compareHeapElements(
+        this._heap[this._parent(heapIndex)],
+        this._heap[heapIndex],
       ) > 0
     ) {
-      const temp = this.#heap[this.parent(heapIndex)];
-      this.#heap[this.parent(heapIndex)] = this.#heap[heapIndex];
-      this.#heap[heapIndex] = temp;
+      const temp = this._heap[this._parent(heapIndex)];
+      this._heap[this._parent(heapIndex)] = this._heap[heapIndex];
+      this._heap[heapIndex] = temp;
 
-      this.#elementDictionary[
-        this.#heap[this.parent(heapIndex)].value
-      ].currentHeapIndex = this.parent(heapIndex);
-      this.#elementDictionary[this.#heap[heapIndex].value].currentHeapIndex =
+      this._elementDictionary[
+        this._heap[this._parent(heapIndex)].value
+      ].currentHeapIndex = this._parent(heapIndex);
+      this._elementDictionary[this._heap[heapIndex].value].currentHeapIndex =
         heapIndex;
 
-      heapIndex = this.parent(heapIndex);
+      heapIndex = this._parent(heapIndex);
     }
   }
 
-  private parent(heapIndex: number) {
+  _parent(heapIndex: number) {
     return Math.floor((heapIndex - 1) / 2);
   }
 
-  private leftChild(heapIndex: number) {
+  _leftChild(heapIndex: number) {
     return heapIndex * 2 + 1;
   }
 
-  private rightChild(heapIndex: number) {
+  _rightChild(heapIndex: number) {
     return heapIndex * 2 + 2;
   }
 
-  private compareHeapElements(a: HeapElement, b: HeapElement) {
+  _compareHeapElements(a: HeapElement, b: HeapElement) {
     return a.priorityId - b.priorityId;
   }
 }

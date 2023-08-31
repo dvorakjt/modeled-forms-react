@@ -43,52 +43,6 @@ var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__ge
   mod
 ));
 var __toCommonJS = (mod) => __copyProps(__defProp({}, "__esModule", { value: true }), mod);
-var __accessCheck = (obj, member, msg) => {
-  if (!member.has(obj))
-    throw TypeError("Cannot " + msg);
-};
-var __privateGet = (obj, member, getter) => {
-  __accessCheck(obj, member, "read from private field");
-  return getter ? getter.call(obj) : member.get(obj);
-};
-var __privateAdd = (obj, member, value) => {
-  if (member.has(obj))
-    throw TypeError("Cannot add the same private member more than once");
-  member instanceof WeakSet ? member.add(obj) : member.set(obj, value);
-};
-var __privateSet = (obj, member, value, setter) => {
-  __accessCheck(obj, member, "write to private field");
-  setter ? setter.call(obj, value) : member.set(obj, value);
-  return value;
-};
-var __privateWrapper = (obj, member, setter, getter) => ({
-  set _(value) {
-    __privateSet(obj, member, value, setter);
-  },
-  get _() {
-    return __privateGet(obj, member, getter);
-  }
-});
-var __async = (__this, __arguments, generator) => {
-  return new Promise((resolve, reject) => {
-    var fulfilled = (value) => {
-      try {
-        step(generator.next(value));
-      } catch (e) {
-        reject(e);
-      }
-    };
-    var rejected = (value) => {
-      try {
-        step(generator.throw(value));
-      } catch (e) {
-        reject(e);
-      }
-    };
-    var step = (x) => x.done ? resolve(x.value) : Promise.resolve(x.value).then(fulfilled, rejected);
-    step((generator = generator.apply(__this, __arguments)).next());
-  });
-};
 
 // src/index.ts
 var src_exports = {};
@@ -149,8 +103,8 @@ var MessageType = /* @__PURE__ */ ((MessageType2) => {
 var import_rc = __toESM(require("rc"), 1);
 var config = (0, import_rc.default)("modeledformsreact", {
   autoTrim: true,
-  emailRegex: /^[A-Z0-9]+(?:[_%+.-][A-Z0-9]+)*@[A-Z0-9]+(?:[.-][A-Z0-9]+)\.[A-Z]{2,}$/i,
-  symbolRegex: / !"#\$%&'\(\)\*\+,-.\/\\:;<=>\?@\[\]\^_`{\|}~/,
+  emailRegex: /^[A-Z0-9]+(?:[_%+.-][A-Z0-9]+)*@[A-Z0-9]+(?:[.-][A-Z0-9]+)*\.[A-Z]{2,}$/i,
+  symbolRegex: /[ !"#$%&'()*+,-./\\:;<=>?@[\]^_`{|}~]/g,
   globalMessages: {
     pendingAsyncValidatorSuite: "Checking field...",
     singleFieldValidationError: "An unexpected error occurred while validating the field.",
@@ -184,25 +138,22 @@ function logErrorInDevMode(e) {
 }
 
 // src/model/adapters/async-adapter.ts
-var _aggregator, _adapterFnSubscription;
 var AsyncAdapter = class {
   constructor(adapterFn, aggregator) {
-    __privateAdd(this, _aggregator, void 0);
-    __privateAdd(this, _adapterFnSubscription, void 0);
-    __privateSet(this, _aggregator, aggregator);
-    this.stream = new import_rxjs.ReplaySubject(1), __privateGet(this, _aggregator).aggregateChanges.subscribe(
+    this._aggregator = aggregator;
+    this.stream = new import_rxjs.ReplaySubject(1), this._aggregator.aggregateChanges.subscribe(
       (aggregateChange) => {
         var _a;
-        (_a = __privateGet(this, _adapterFnSubscription)) == null ? void 0 : _a.unsubscribe();
+        (_a = this._adapterFnSubscription) == null ? void 0 : _a.unsubscribe();
         try {
           const promiseOrObservable = adapterFn(aggregateChange);
-          __privateSet(this, _adapterFnSubscription, (0, import_rxjs.from)(promiseOrObservable).subscribe({
+          this._adapterFnSubscription = (0, import_rxjs.from)(promiseOrObservable).subscribe({
             next: (next) => this.stream.next(next),
             error: (e) => {
               logErrorInDevMode(e);
               this.stream.error(e);
             }
-          }));
+          });
         } catch (e) {
           logErrorInDevMode(e);
           this.stream.error(e);
@@ -211,18 +162,14 @@ var AsyncAdapter = class {
     );
   }
 };
-_aggregator = new WeakMap();
-_adapterFnSubscription = new WeakMap();
 
 // src/model/adapters/sync-adapter.ts
 var import_rxjs2 = require("rxjs");
-var _aggregator2;
 var SyncAdapter = class {
   constructor(adapterFn, aggregator) {
-    __privateAdd(this, _aggregator2, void 0);
-    __privateSet(this, _aggregator2, aggregator);
+    this._aggregator = aggregator;
     this.stream = new import_rxjs2.ReplaySubject(1);
-    __privateGet(this, _aggregator2).aggregateChanges.subscribe(
+    this._aggregator.aggregateChanges.subscribe(
       (aggregateChange) => {
         try {
           const nextValue = adapterFn(aggregateChange);
@@ -235,25 +182,21 @@ var SyncAdapter = class {
     );
   }
 };
-_aggregator2 = new WeakMap();
 
 // src/model/adapters/adapter-factory-impl.ts
-var _aggregatorFactory;
 var AdapterFactoryImpl = class {
   constructor(aggregatorFactory) {
-    __privateAdd(this, _aggregatorFactory, void 0);
-    __privateSet(this, _aggregatorFactory, aggregatorFactory);
+    this._aggregatorFactory = aggregatorFactory;
   }
   createSyncAdapterFromFnWithFields(syncAdapterFn, fields) {
-    const multiFieldAggregator = __privateGet(this, _aggregatorFactory).createMultiFieldAggregatorFromFields(fields);
+    const multiFieldAggregator = this._aggregatorFactory.createMultiFieldAggregatorFromFields(fields);
     return new SyncAdapter(syncAdapterFn, multiFieldAggregator);
   }
   createAsyncAdapterFromFnWithFields(asyncAdapterFn, fields) {
-    const multiFieldAggregator = __privateGet(this, _aggregatorFactory).createMultiFieldAggregatorFromFields(fields);
+    const multiFieldAggregator = this._aggregatorFactory.createMultiFieldAggregatorFromFields(fields);
     return new AsyncAdapter(asyncAdapterFn, multiFieldAggregator);
   }
 };
-_aggregatorFactory = new WeakMap();
 var AdapterFactoryService = (0, import_undecorated_di.autowire)(AdapterFactoryImpl, AdapterFactoryKey, [AggregatorFactoryKey]);
 
 // src/model/emitters/emitter-factory.interface.ts
@@ -269,54 +212,45 @@ var ReducerFactoryKey = "ReducerFactory";
 var SubjectFactoryKey = "SubjectFactory";
 
 // src/model/aggregators/multi-field-aggregator-impl.ts
-var _fields, _fieldStateReducer, _aggregatedFieldState, _aggregatedStateChangesProxyProducer, _accessedFieldsSubscriptionProcessCompleted;
 var MultiFieldAggregatorImpl = class {
   constructor(fields, aggregatedStateChangesProxyProducer, fieldStateReducer, accessedFields, subjectFactory) {
-    __privateAdd(this, _fields, void 0);
-    __privateAdd(this, _fieldStateReducer, void 0);
-    __privateAdd(this, _aggregatedFieldState, {});
-    __privateAdd(this, _aggregatedStateChangesProxyProducer, void 0);
-    __privateAdd(this, _accessedFieldsSubscriptionProcessCompleted, false);
-    this.subscribeToAccessedFields = () => {
-      if (!__privateGet(this, _accessedFieldsSubscriptionProcessCompleted) && __privateGet(this, _aggregatedStateChangesProxyProducer)) {
-        const accessedFieldNames = __privateGet(this, _aggregatedStateChangesProxyProducer).accessedFieldNames;
+    this._aggregatedFieldState = {};
+    this._accessedFieldsSubscriptionProcessCompleted = false;
+    this._subscribeToAccessedFields = () => {
+      if (!this._accessedFieldsSubscriptionProcessCompleted && this._aggregatedStateChangesProxyProducer) {
+        const accessedFieldNames = this._aggregatedStateChangesProxyProducer.accessedFieldNames;
         for (const fieldName of accessedFieldNames) {
-          __privateGet(this, _fields)[fieldName].stateChanges.subscribe(
+          this._fields[fieldName].stateChanges.subscribe(
             (stateChange) => {
-              __privateGet(this, _aggregatedFieldState)[fieldName] = stateChange;
-              __privateGet(this, _fieldStateReducer).updateTallies(fieldName, stateChange);
-              if (__privateGet(this, _accessedFieldsSubscriptionProcessCompleted)) {
+              this._aggregatedFieldState[fieldName] = stateChange;
+              this._fieldStateReducer.updateTallies(fieldName, stateChange);
+              if (this._accessedFieldsSubscriptionProcessCompleted) {
                 this.aggregateChanges.next(this.aggregatedStateChanges);
               }
             }
           );
         }
         this.accessedFields.setValue(accessedFieldNames);
-        __privateSet(this, _aggregatedStateChangesProxyProducer, null);
-        __privateSet(this, _accessedFieldsSubscriptionProcessCompleted, true);
+        this._aggregatedStateChangesProxyProducer = null;
+        this._accessedFieldsSubscriptionProcessCompleted = true;
       }
     };
-    __privateSet(this, _fields, fields);
-    __privateSet(this, _aggregatedStateChangesProxyProducer, aggregatedStateChangesProxyProducer);
-    __privateSet(this, _fieldStateReducer, fieldStateReducer);
+    this._fields = fields;
+    this._aggregatedStateChangesProxyProducer = aggregatedStateChangesProxyProducer;
+    this._fieldStateReducer = fieldStateReducer;
     this.aggregateChanges = subjectFactory.createOnInitialSubscriptionHandlingBehaviorSubject(
-      __privateGet(this, _aggregatedStateChangesProxyProducer).getProxy(__privateGet(this, _fields))
+      this._aggregatedStateChangesProxyProducer.getProxy(this._fields)
     );
     this.accessedFields = accessedFields;
-    this.aggregateChanges.onInitialSubscription(this.subscribeToAccessedFields);
+    this.aggregateChanges.onInitialSubscription(this._subscribeToAccessedFields);
   }
   get aggregatedStateChanges() {
-    return __spreadProps(__spreadValues({}, __privateGet(this, _aggregatedFieldState)), {
-      overallValidity: () => __privateGet(this, _fieldStateReducer).validity,
-      hasOmittedFields: () => __privateGet(this, _fieldStateReducer).omit
+    return __spreadProps(__spreadValues({}, this._aggregatedFieldState), {
+      overallValidity: () => this._fieldStateReducer.validity,
+      hasOmittedFields: () => this._fieldStateReducer.omit
     });
   }
 };
-_fields = new WeakMap();
-_fieldStateReducer = new WeakMap();
-_aggregatedFieldState = new WeakMap();
-_aggregatedStateChangesProxyProducer = new WeakMap();
-_accessedFieldsSubscriptionProcessCompleted = new WeakMap();
 
 // src/model/aggregators/multi-input-validator-messages-aggregator-impl.ts
 var import_rxjs3 = require("rxjs");
@@ -327,17 +261,16 @@ function copyObject(object) {
 }
 
 // src/model/aggregators/multi-input-validator-messages-aggregator-impl.ts
-var _messages;
 var MultiInputValidatorMessagesAggregatorImpl = class {
   constructor(validators) {
-    __privateAdd(this, _messages, {});
+    this._messages = {};
     for (let i = 0; i < validators.length; i++) {
       const validator = validators[i];
       validator.messageChanges.subscribe((next) => {
         if (next)
-          __privateGet(this, _messages)[i] = next;
+          this._messages[i] = next;
         else
-          delete __privateGet(this, _messages)[i];
+          delete this._messages[i];
         if (this.messagesChanges)
           this.messagesChanges.next(this.messages);
       });
@@ -345,46 +278,36 @@ var MultiInputValidatorMessagesAggregatorImpl = class {
     this.messagesChanges = new import_rxjs3.BehaviorSubject(this.messages);
   }
   get messages() {
-    return [...this.generateMessages()];
+    return [...this._generateMessages()];
   }
-  *generateMessages() {
-    for (const key in __privateGet(this, _messages))
-      yield copyObject(__privateGet(this, _messages)[key]);
+  *_generateMessages() {
+    for (const key in this._messages)
+      yield copyObject(this._messages[key]);
   }
 };
-_messages = new WeakMap();
 
 // src/model/aggregators/aggregator-factory-impl.ts
 var import_undecorated_di2 = require("undecorated-di");
-var _proxyProducerFactory, _reducerFactory, _emitterFactory, _subjectFactory;
 var AggregatorFactoryImpl = class {
   constructor(proxyProducerFactory, reducerFactory, emitterFactory, subjectFactory) {
-    __privateAdd(this, _proxyProducerFactory, void 0);
-    __privateAdd(this, _reducerFactory, void 0);
-    __privateAdd(this, _emitterFactory, void 0);
-    __privateAdd(this, _subjectFactory, void 0);
-    __privateSet(this, _proxyProducerFactory, proxyProducerFactory);
-    __privateSet(this, _reducerFactory, reducerFactory);
-    __privateSet(this, _emitterFactory, emitterFactory);
-    __privateSet(this, _subjectFactory, subjectFactory);
+    this._proxyProducerFactory = proxyProducerFactory;
+    this._reducerFactory = reducerFactory;
+    this._emitterFactory = emitterFactory;
+    this._subjectFactory = subjectFactory;
   }
   createMultiFieldAggregatorFromFields(fields) {
     return new MultiFieldAggregatorImpl(
       fields,
-      __privateGet(this, _proxyProducerFactory).createAggregatedStateChangesProxyProducer(),
-      __privateGet(this, _reducerFactory).createFieldStateReducer(),
-      __privateGet(this, _emitterFactory).createOneTimeValueEmitter(),
-      __privateGet(this, _subjectFactory)
+      this._proxyProducerFactory.createAggregatedStateChangesProxyProducer(),
+      this._reducerFactory.createFieldStateReducer(),
+      this._emitterFactory.createOneTimeValueEmitter(),
+      this._subjectFactory
     );
   }
   createMultiInputValidatorMessagesAggregatorFromValidators(validators) {
     return new MultiInputValidatorMessagesAggregatorImpl(validators);
   }
 };
-_proxyProducerFactory = new WeakMap();
-_reducerFactory = new WeakMap();
-_emitterFactory = new WeakMap();
-_subjectFactory = new WeakMap();
 var AggregatorFactoryService = (0, import_undecorated_di2.autowire)(AggregatorFactoryImpl, AggregatorFactoryKey, [
   ProxyProducerFactoryKey,
   ReducerFactoryKey,
@@ -393,54 +316,47 @@ var AggregatorFactoryService = (0, import_undecorated_di2.autowire)(AggregatorFa
 ]);
 
 // src/model/emitters/one-time-event-emitter-impl.ts
-var _eventOccurred, _callbacks;
 var OneTimeEventEmitterImpl = class {
   constructor() {
-    __privateAdd(this, _eventOccurred, false);
-    __privateAdd(this, _callbacks, []);
+    this._eventOccurred = false;
+    this._callbacks = [];
   }
   onEvent(cb) {
-    if (__privateGet(this, _eventOccurred))
+    if (this._eventOccurred)
       cb();
     else
-      __privateGet(this, _callbacks).push(cb);
+      this._callbacks.push(cb);
   }
   triggerEvent() {
-    if (!__privateGet(this, _eventOccurred)) {
-      __privateSet(this, _eventOccurred, true);
-      for (const cb of __privateGet(this, _callbacks)) {
+    if (!this._eventOccurred) {
+      this._eventOccurred = true;
+      for (const cb of this._callbacks) {
         cb();
       }
     }
   }
 };
-_eventOccurred = new WeakMap();
-_callbacks = new WeakMap();
 
 // src/model/emitters/one-time-value-emitter-impl.ts
-var _value, _callbacks2;
 var OneTimeValueEmitterImpl = class {
   constructor() {
-    __privateAdd(this, _value, void 0);
-    __privateAdd(this, _callbacks2, []);
+    this._callbacks = [];
   }
   onValue(cb) {
-    if (__privateGet(this, _value))
-      cb(__privateGet(this, _value));
+    if (this._value)
+      cb(this._value);
     else
-      __privateGet(this, _callbacks2).push(cb);
+      this._callbacks.push(cb);
   }
   setValue(value) {
-    if (!__privateGet(this, _value)) {
-      __privateSet(this, _value, value);
-      for (const cb of __privateGet(this, _callbacks2)) {
-        cb(__privateGet(this, _value));
+    if (!this._value) {
+      this._value = value;
+      for (const cb of this._callbacks) {
+        cb(this._value);
       }
     }
   }
 };
-_value = new WeakMap();
-_callbacks2 = new WeakMap();
 
 // src/model/emitters/emitter-factory-impl.ts
 var import_undecorated_di3 = require("undecorated-di");
@@ -472,51 +388,54 @@ var AbstractDualField = class extends AbstractField {
 };
 
 // src/model/fields/base/dual-field.ts
-var _useSecondaryField, _omit, _omitByDefault;
 var DualField = class extends AbstractDualField {
   constructor(primaryField, secondaryField, omitByDefault) {
     super();
-    __privateAdd(this, _useSecondaryField, false);
-    __privateAdd(this, _omit, void 0);
-    __privateAdd(this, _omitByDefault, void 0);
+    this._useSecondaryField = false;
+    this.reset = () => {
+      this._omit = this._omitByDefault;
+      this.primaryField.reset();
+      this.secondaryField.reset();
+      this.useSecondaryField = false;
+    };
     this.primaryField = primaryField;
     this.secondaryField = secondaryField;
-    __privateSet(this, _omitByDefault, omitByDefault);
-    __privateSet(this, _omit, __privateGet(this, _omitByDefault));
+    this._omitByDefault = omitByDefault;
+    this._omit = this._omitByDefault;
     this.primaryField.stateChanges.subscribe(() => {
       var _a;
-      if (!__privateGet(this, _useSecondaryField))
+      if (!this._useSecondaryField)
         (_a = this.stateChanges) == null ? void 0 : _a.next(this.state);
     });
     this.secondaryField.stateChanges.subscribe(() => {
       var _a;
-      if (__privateGet(this, _useSecondaryField))
+      if (this._useSecondaryField)
         (_a = this.stateChanges) == null ? void 0 : _a.next(this.state);
     });
     this.stateChanges = new import_rxjs4.BehaviorSubject(this.state);
   }
   get state() {
-    const state = !__privateGet(this, _useSecondaryField) ? this.primaryField.state : this.secondaryField.state;
-    state.useSecondaryField = __privateGet(this, _useSecondaryField);
-    state.omit = __privateGet(this, _omit);
+    const state = !this._useSecondaryField ? this.primaryField.state : this.secondaryField.state;
+    state.useSecondaryField = this._useSecondaryField;
+    state.omit = this._omit;
     return state;
   }
   set useSecondaryField(useSecondaryField) {
     const changeDetected = this.useSecondaryField !== useSecondaryField;
-    __privateSet(this, _useSecondaryField, useSecondaryField);
+    this._useSecondaryField = useSecondaryField;
     if (this.stateChanges && changeDetected)
       this.stateChanges.next(this.state);
   }
   get useSecondaryField() {
-    return __privateGet(this, _useSecondaryField);
+    return this._useSecondaryField;
   }
   set omit(omit) {
     var _a;
-    __privateSet(this, _omit, omit);
+    this._omit = omit;
     (_a = this.stateChanges) == null ? void 0 : _a.next(this.state);
   }
   get omit() {
-    return __privateGet(this, _omit);
+    return this._omit;
   }
   setValue(valueObj) {
     if (valueObj.primaryFieldValue)
@@ -536,41 +455,26 @@ var DualField = class extends AbstractDualField {
     if (stateObj.useSecondaryField !== void 0)
       this.useSecondaryField = stateObj.useSecondaryField;
   }
-  reset() {
-    __privateSet(this, _omit, __privateGet(this, _omitByDefault));
-    this.primaryField.reset();
-    this.secondaryField.reset();
-    this.useSecondaryField = false;
-  }
 };
-_useSecondaryField = new WeakMap();
-_omit = new WeakMap();
-_omitByDefault = new WeakMap();
 
 // src/model/fields/base/field.ts
 var import_rxjs5 = require("rxjs");
-var _validatorSuite, _defaultValue, _omitByDefault2, _state, _validatorSuiteSubscription;
 var Field = class extends AbstractField {
   constructor(validatorSuite, defaultValue, omitByDefault) {
     super();
-    __privateAdd(this, _validatorSuite, void 0);
-    __privateAdd(this, _defaultValue, void 0);
-    __privateAdd(this, _omitByDefault2, void 0);
-    __privateAdd(this, _state, void 0);
-    __privateAdd(this, _validatorSuiteSubscription, void 0);
-    __privateSet(this, _validatorSuite, validatorSuite);
-    __privateSet(this, _defaultValue, defaultValue);
-    __privateSet(this, _omitByDefault2, omitByDefault);
-    const initialState = __privateGet(this, _validatorSuite).evaluate(__privateGet(this, _defaultValue));
-    __privateSet(this, _state, __spreadProps(__spreadValues({}, initialState.syncResult), {
-      omit: __privateGet(this, _omitByDefault2)
-    }));
+    this._validatorSuite = validatorSuite;
+    this._defaultValue = defaultValue;
+    this._omitByDefault = omitByDefault;
+    const initialState = this._validatorSuite.evaluate(this._defaultValue);
+    this._state = __spreadProps(__spreadValues({}, initialState.syncResult), {
+      omit: this._omitByDefault
+    });
     this.stateChanges = new import_rxjs5.BehaviorSubject(this.state);
     if (initialState.observable)
-      this.handleValidityObservable(initialState.observable);
+      this._handleValidityObservable(initialState.observable);
   }
   get state() {
-    return copyObject(__privateGet(this, _state));
+    return copyObject(this._state);
   }
   set omit(omit) {
     this.setState(__spreadProps(__spreadValues({}, this.state), {
@@ -581,27 +485,27 @@ var Field = class extends AbstractField {
     return this.state.omit;
   }
   setValue(value) {
-    if (__privateGet(this, _validatorSuiteSubscription))
-      __privateGet(this, _validatorSuiteSubscription).unsubscribe();
-    const validityResult = __privateGet(this, _validatorSuite).evaluate(value);
+    if (this._validatorSuiteSubscription)
+      this._validatorSuiteSubscription.unsubscribe();
+    const validityResult = this._validatorSuite.evaluate(value);
     this.setState(__spreadProps(__spreadValues({}, validityResult.syncResult), {
       omit: this.state.omit
     }));
     if (validityResult.observable)
-      this.handleValidityObservable(validityResult.observable);
+      this._handleValidityObservable(validityResult.observable);
   }
   setState(state) {
-    __privateSet(this, _state, copyObject(state));
+    this._state = copyObject(state);
     this.stateChanges.next(this.state);
   }
   reset() {
-    __privateGet(this, _state).omit = __privateGet(this, _omitByDefault2);
-    this.setValue(__privateGet(this, _defaultValue));
+    this._state.omit = this._omitByDefault;
+    this.setValue(this._defaultValue);
   }
-  handleValidityObservable(observable) {
+  _handleValidityObservable(observable) {
     var _a;
-    (_a = __privateGet(this, _validatorSuiteSubscription)) == null ? void 0 : _a.unsubscribe();
-    __privateSet(this, _validatorSuiteSubscription, observable.subscribe((result) => {
+    (_a = this._validatorSuiteSubscription) == null ? void 0 : _a.unsubscribe();
+    this._validatorSuiteSubscription = observable.subscribe((result) => {
       this.setState(__spreadProps(__spreadValues({}, result), {
         messages: [
           ...this.state.messages.filter(
@@ -611,25 +515,18 @@ var Field = class extends AbstractField {
         ],
         omit: this.state.omit
       }));
-    }));
+    });
   }
 };
-_validatorSuite = new WeakMap();
-_defaultValue = new WeakMap();
-_omitByDefault2 = new WeakMap();
-_state = new WeakMap();
-_validatorSuiteSubscription = new WeakMap();
 
 // src/model/fields/base/base-field-factory-impl.ts
 var import_undecorated_di4 = require("undecorated-di");
-var _singleInputValidatorSuiteFactory;
 var BaseFieldFactoryImpl = class {
   constructor(singleInputValidatorSuiteFactory) {
-    __privateAdd(this, _singleInputValidatorSuiteFactory, void 0);
-    __privateSet(this, _singleInputValidatorSuiteFactory, singleInputValidatorSuiteFactory);
+    this._singleInputValidatorSuiteFactory = singleInputValidatorSuiteFactory;
   }
   createField(defaultValue, omitByDefault, syncValidators, asyncValidators, pendingAsyncValidatorMessage) {
-    const validatorSuite = __privateGet(this, _singleInputValidatorSuiteFactory).createSingleInputValidatorSuite(
+    const validatorSuite = this._singleInputValidatorSuiteFactory.createSingleInputValidatorSuite(
       syncValidators,
       asyncValidators,
       pendingAsyncValidatorMessage
@@ -654,7 +551,6 @@ var BaseFieldFactoryImpl = class {
     return new DualField(primaryField, secondaryField, omitByDefault);
   }
 };
-_singleInputValidatorSuiteFactory = new WeakMap();
 var BaseFieldFactoryService = (0, import_undecorated_di4.autowire)(BaseFieldFactoryImpl, BaseFieldFactoryKey, [
   SingleInputValidatorSuiteFactoryKey
 ]);
@@ -663,15 +559,12 @@ var BaseFieldFactoryService = (0, import_undecorated_di4.autowire)(BaseFieldFact
 var import_undecorated_di5 = require("undecorated-di");
 
 // src/model/fields/controlled/state-controlled-dual-field.ts
-var _field, _adapter;
 var StateControlledDualField = class extends AbstractDualField {
   constructor(field, adapter) {
     super();
-    __privateAdd(this, _field, void 0);
-    __privateAdd(this, _adapter, void 0);
-    __privateSet(this, _field, field);
-    __privateSet(this, _adapter, adapter);
-    __privateGet(this, _adapter).stream.subscribe({
+    this._field = field;
+    this._adapter = adapter;
+    this._adapter.stream.subscribe({
       next: (next) => this.setState(next),
       error: () => {
         const errorState = {
@@ -684,7 +577,7 @@ var StateControlledDualField = class extends AbstractDualField {
             }
           ]
         };
-        const setStateArg = this.dualField.useSecondaryField ? {
+        const setStateArg = this._dualField.useSecondaryField ? {
           secondaryFieldState: errorState
         } : {
           primaryFieldState: errorState
@@ -694,55 +587,50 @@ var StateControlledDualField = class extends AbstractDualField {
     });
   }
   get stateChanges() {
-    return __privateGet(this, _field).stateChanges;
+    return this._field.stateChanges;
   }
   get state() {
-    return __privateGet(this, _field).state;
+    return this._field.state;
   }
   set omit(omit) {
-    __privateGet(this, _field).omit = omit;
+    this._field.omit = omit;
   }
   get omit() {
-    return __privateGet(this, _field).omit;
+    return this._field.omit;
   }
   get primaryField() {
-    return this.dualField.primaryField;
+    return this._dualField.primaryField;
   }
   get secondaryField() {
-    return this.dualField.secondaryField;
+    return this._dualField.secondaryField;
   }
   set useSecondaryField(useSecondaryField) {
-    this.dualField.useSecondaryField = useSecondaryField;
+    this._dualField.useSecondaryField = useSecondaryField;
   }
   get useSecondaryField() {
-    return this.dualField.useSecondaryField;
+    return this._dualField.useSecondaryField;
   }
-  get dualField() {
-    return __privateGet(this, _field);
+  get _dualField() {
+    return this._field;
   }
   setValue(value) {
-    this.dualField.setValue(value);
+    this._dualField.setValue(value);
   }
   setState(state) {
-    this.dualField.setState(state);
+    this._dualField.setState(state);
   }
   reset() {
-    this.dualField.reset();
+    this._dualField.reset();
   }
 };
-_field = new WeakMap();
-_adapter = new WeakMap();
 
 // src/model/fields/controlled/state-controlled-field.ts
-var _field2, _adapter2;
 var StateControlledField = class extends AbstractField {
   constructor(field, adapter) {
     super();
-    __privateAdd(this, _field2, void 0);
-    __privateAdd(this, _adapter2, void 0);
-    __privateSet(this, _field2, field);
-    __privateSet(this, _adapter2, adapter);
-    __privateGet(this, _adapter2).stream.subscribe({
+    this._field = field;
+    this._adapter = adapter;
+    this._adapter.stream.subscribe({
       next: (next) => this.setState(next),
       error: () => {
         this.setState({
@@ -759,40 +647,35 @@ var StateControlledField = class extends AbstractField {
     });
   }
   get stateChanges() {
-    return __privateGet(this, _field2).stateChanges;
+    return this._field.stateChanges;
   }
   get state() {
-    return __privateGet(this, _field2).state;
+    return this._field.state;
   }
   set omit(omit) {
-    __privateGet(this, _field2).omit = omit;
+    this._field.omit = omit;
   }
   get omit() {
-    return __privateGet(this, _field2).omit;
+    return this._field.omit;
   }
   setValue(value) {
-    __privateGet(this, _field2).setValue(value);
+    this._field.setValue(value);
   }
   setState(state) {
-    __privateGet(this, _field2).setState(state);
+    this._field.setState(state);
   }
   reset() {
-    __privateGet(this, _field2).reset();
+    this._field.reset();
   }
 };
-_field2 = new WeakMap();
-_adapter2 = new WeakMap();
 
 // src/model/fields/controlled/value-controlled-dual-field.ts
-var _field3, _adapter3;
 var ValueControlledDualField = class extends AbstractDualField {
   constructor(field, adapter) {
     super();
-    __privateAdd(this, _field3, void 0);
-    __privateAdd(this, _adapter3, void 0);
-    __privateSet(this, _field3, field);
-    __privateSet(this, _adapter3, adapter);
-    __privateGet(this, _adapter3).stream.subscribe({
+    this._field = field;
+    this._adapter = adapter;
+    this._adapter.stream.subscribe({
       next: (next) => {
         if (next)
           this.setValue(next);
@@ -808,7 +691,7 @@ var ValueControlledDualField = class extends AbstractDualField {
             }
           ]
         };
-        const setStateArg = this.dualField.useSecondaryField ? {
+        const setStateArg = this._dualField.useSecondaryField ? {
           secondaryFieldState: errorState
         } : {
           primaryFieldState: errorState
@@ -818,55 +701,50 @@ var ValueControlledDualField = class extends AbstractDualField {
     });
   }
   get stateChanges() {
-    return __privateGet(this, _field3).stateChanges;
+    return this._field.stateChanges;
   }
   get state() {
-    return __privateGet(this, _field3).state;
+    return this._field.state;
   }
   set omit(omit) {
-    __privateGet(this, _field3).omit = omit;
+    this._field.omit = omit;
   }
   get omit() {
-    return __privateGet(this, _field3).omit;
+    return this._field.omit;
   }
   get primaryField() {
-    return this.dualField.primaryField;
+    return this._dualField.primaryField;
   }
   get secondaryField() {
-    return this.dualField.secondaryField;
+    return this._dualField.secondaryField;
   }
   set useSecondaryField(useSecondaryField) {
-    this.dualField.useSecondaryField = useSecondaryField;
+    this._dualField.useSecondaryField = useSecondaryField;
   }
   get useSecondaryField() {
-    return this.dualField.useSecondaryField;
+    return this._dualField.useSecondaryField;
   }
-  get dualField() {
-    return __privateGet(this, _field3);
+  get _dualField() {
+    return this._field;
   }
   setValue(value) {
-    this.dualField.setValue(value);
+    this._dualField.setValue(value);
   }
   setState(state) {
-    this.dualField.setState(state);
+    this._dualField.setState(state);
   }
   reset() {
-    this.dualField.reset();
+    this._dualField.reset();
   }
 };
-_field3 = new WeakMap();
-_adapter3 = new WeakMap();
 
 // src/model/fields/controlled/value-controlled-field.ts
-var _field4, _adapter4;
 var ValueControlledField = class extends AbstractField {
   constructor(field, adapter) {
     super();
-    __privateAdd(this, _field4, void 0);
-    __privateAdd(this, _adapter4, void 0);
-    __privateSet(this, _field4, field);
-    __privateSet(this, _adapter4, adapter);
-    __privateGet(this, _adapter4).stream.subscribe({
+    this._field = field;
+    this._adapter = adapter;
+    this._adapter.stream.subscribe({
       next: (next) => {
         if (next)
           this.setValue(next);
@@ -886,42 +764,38 @@ var ValueControlledField = class extends AbstractField {
     });
   }
   get stateChanges() {
-    return __privateGet(this, _field4).stateChanges;
+    return this._field.stateChanges;
   }
   get state() {
-    return __privateGet(this, _field4).state;
+    return this._field.state;
   }
   set omit(omit) {
-    __privateGet(this, _field4).omit = omit;
+    this._field.omit = omit;
   }
   get omit() {
-    return __privateGet(this, _field4).omit;
+    return this._field.omit;
   }
   setValue(value) {
-    __privateGet(this, _field4).setValue(value);
+    this._field.setValue(value);
   }
   setState(state) {
-    __privateGet(this, _field4).setState(state);
+    this._field.setState(state);
   }
   reset() {
-    __privateGet(this, _field4).reset();
+    this._field.reset();
   }
 };
-_field4 = new WeakMap();
-_adapter4 = new WeakMap();
 
 // src/model/fields/controlled/controlled-field-factory.interface.ts
 var ControlledFieldFactoryKey = "ControlledFieldFactory";
 
 // src/model/fields/controlled/controlled-field-factory-impl.ts
-var _adapterFactory;
 var ControlledFieldFactoryImpl = class {
   constructor(adapterFactory) {
-    __privateAdd(this, _adapterFactory, void 0);
-    __privateSet(this, _adapterFactory, adapterFactory);
+    this._adapterFactory = adapterFactory;
   }
   createStateControlledFieldWithSyncAdapter(baseField, stateControlFn, fields) {
-    const adapter = __privateGet(this, _adapterFactory).createSyncAdapterFromFnWithFields(stateControlFn, fields);
+    const adapter = this._adapterFactory.createSyncAdapterFromFnWithFields(stateControlFn, fields);
     return baseField instanceof AbstractDualField ? new StateControlledDualField(
       baseField,
       adapter
@@ -931,7 +805,7 @@ var ControlledFieldFactoryImpl = class {
     );
   }
   createStateControlledFieldWithAsyncAdapter(baseField, stateControlFn, fields) {
-    const adapter = __privateGet(this, _adapterFactory).createAsyncAdapterFromFnWithFields(stateControlFn, fields);
+    const adapter = this._adapterFactory.createAsyncAdapterFromFnWithFields(stateControlFn, fields);
     return baseField instanceof AbstractDualField ? new StateControlledDualField(
       baseField,
       adapter
@@ -941,7 +815,7 @@ var ControlledFieldFactoryImpl = class {
     );
   }
   createValueControlledFieldWithSyncAdapter(baseField, valueControlFn, fields) {
-    const adapter = __privateGet(this, _adapterFactory).createSyncAdapterFromFnWithFields(valueControlFn, fields);
+    const adapter = this._adapterFactory.createSyncAdapterFromFnWithFields(valueControlFn, fields);
     return baseField instanceof AbstractDualField ? new ValueControlledDualField(
       baseField,
       adapter
@@ -951,7 +825,7 @@ var ControlledFieldFactoryImpl = class {
     );
   }
   createValueControlledFieldWithAsyncAdapter(baseField, valueControlFn, fields) {
-    const adapter = __privateGet(this, _adapterFactory).createAsyncAdapterFromFnWithFields(valueControlFn, fields);
+    const adapter = this._adapterFactory.createAsyncAdapterFromFnWithFields(valueControlFn, fields);
     return baseField instanceof AbstractDualField ? new ValueControlledDualField(
       baseField,
       adapter
@@ -961,7 +835,6 @@ var ControlledFieldFactoryImpl = class {
     );
   }
 };
-_adapterFactory = new WeakMap();
 var ControlledFieldFactoryService = (0, import_undecorated_di5.autowire)(ControlledFieldFactoryImpl, ControlledFieldFactoryKey, [AdapterFactoryKey]);
 
 // src/model/finalizers/finalizer-functions/finalizer-fn-factory-impl.ts
@@ -975,11 +848,9 @@ var FinalizerValidityTranslatorKey = "FinalizerValidityTranslator";
 
 // src/model/finalizers/finalizer-functions/finalizer-fn-factory-impl.ts
 var import_undecorated_di6 = require("undecorated-di");
-var _finalizerValidityTranslator;
 var FinalizerFnFactoryImpl = class {
   constructor(finalizerValidityTranslator) {
-    __privateAdd(this, _finalizerValidityTranslator, void 0);
-    __privateSet(this, _finalizerValidityTranslator, finalizerValidityTranslator);
+    this._finalizerValidityTranslator = finalizerValidityTranslator;
   }
   createSyncFinalizerFn(baseAdapterFn) {
     return (aggregatedStateChanges) => {
@@ -997,7 +868,7 @@ var FinalizerFnFactoryImpl = class {
       const overallValidity = aggregatedStateChanges.overallValidity();
       if (overallValidity < 4 /* VALID_FINALIZABLE */) {
         return {
-          finalizerValidity: __privateGet(this, _finalizerValidityTranslator).translateValidityToFinalizerValidity(
+          finalizerValidity: this._finalizerValidityTranslator.translateValidityToFinalizerValidity(
             overallValidity
           )
         };
@@ -1037,7 +908,7 @@ var FinalizerFnFactoryImpl = class {
           subscriber.complete();
         } else if (aggregatedStateChanges.overallValidity() < 4 /* VALID_FINALIZABLE */) {
           subscriber.next({
-            finalizerValidity: __privateGet(this, _finalizerValidityTranslator).translateValidityToFinalizerValidity(
+            finalizerValidity: this._finalizerValidityTranslator.translateValidityToFinalizerValidity(
               aggregatedStateChanges.overallValidity()
             )
           });
@@ -1065,7 +936,6 @@ var FinalizerFnFactoryImpl = class {
     };
   }
 };
-_finalizerValidityTranslator = new WeakMap();
 var FinalizerFnFactoryService = (0, import_undecorated_di6.autowire)(FinalizerFnFactoryImpl, FinalizerFnFactoryKey, [
   FinalizerValidityTranslatorKey
 ]);
@@ -1150,235 +1020,208 @@ var AggregatedStateChangesProxyProducerImpl = class {
 
 // src/model/proxies/proxy-producer-factory-impl.ts
 var import_undecorated_di8 = require("undecorated-di");
-var _reducerFactory2;
 var ProxyProducerFactoryImpl = class {
   constructor(reducerFactory) {
-    __privateAdd(this, _reducerFactory2, void 0);
-    __privateSet(this, _reducerFactory2, reducerFactory);
+    this._reducerFactory = reducerFactory;
   }
   createAggregatedStateChangesProxyProducer() {
     return new AggregatedStateChangesProxyProducerImpl(
-      __privateGet(this, _reducerFactory2).createFieldStateReducer()
+      this._reducerFactory.createFieldStateReducer()
     );
   }
 };
-_reducerFactory2 = new WeakMap();
 var ProxyProducerFactoryService = (0, import_undecorated_di8.autowire)(ProxyProducerFactoryImpl, ProxyProducerFactoryKey, [ReducerFactoryKey]);
 
 // src/model/reducers/field-state/field-state-reducer-impl.ts
-var _validityReducer, _omittedFields;
 var FieldStateReducerImpl = class {
   constructor(validityReducer) {
-    __privateAdd(this, _validityReducer, void 0);
-    __privateAdd(this, _omittedFields, /* @__PURE__ */ new Set());
-    __privateSet(this, _validityReducer, validityReducer);
+    this._omittedFields = /* @__PURE__ */ new Set();
+    this._validityReducer = validityReducer;
   }
   get validity() {
-    return __privateGet(this, _validityReducer).validity;
+    return this._validityReducer.validity;
   }
   get omit() {
-    return __privateGet(this, _omittedFields).size > 0;
+    return this._omittedFields.size > 0;
   }
   updateTallies(fieldName, state) {
     const { validity, omit } = state;
-    __privateGet(this, _validityReducer).updateTallies(fieldName, validity);
+    this._validityReducer.updateTallies(fieldName, validity);
     if (omit)
-      __privateGet(this, _omittedFields).add(fieldName);
+      this._omittedFields.add(fieldName);
     else
-      __privateGet(this, _omittedFields).delete(fieldName);
+      this._omittedFields.delete(fieldName);
   }
 };
-_validityReducer = new WeakMap();
-_omittedFields = new WeakMap();
 
 // src/model/reducers/multi-input-validator-validity/finalizer-facing-multi-input-validator-reducer.ts
 var import_rxjs7 = require("rxjs");
-var _validityReducer2, _multiInputValidators;
 var FinalizerFacingMultiInputValidatorReducer = class {
   constructor(validityReducer) {
-    __privateAdd(this, _validityReducer2, void 0);
-    __privateAdd(this, _multiInputValidators, []);
-    __privateSet(this, _validityReducer2, validityReducer);
+    this._multiInputValidators = [];
+    this._validityReducer = validityReducer;
     this.validityChanges = new import_rxjs7.BehaviorSubject(
-      __privateGet(this, _validityReducer2).validity
+      this._validityReducer.validity
     );
   }
   get validity() {
-    return __privateGet(this, _validityReducer2).validity;
+    return this._validityReducer.validity;
   }
   addValidator(multiFieldValidator) {
-    const validatorId = String(__privateGet(this, _multiInputValidators).length);
-    __privateGet(this, _multiInputValidators).push(multiFieldValidator);
+    const validatorId = String(this._multiInputValidators.length);
+    this._multiInputValidators.push(multiFieldValidator);
     multiFieldValidator.overallValidityChanges.subscribe(
       (validityChange) => {
-        __privateGet(this, _validityReducer2).updateTallies(validatorId, validityChange);
-        this.validityChanges.next(__privateGet(this, _validityReducer2).validity);
+        this._validityReducer.updateTallies(validatorId, validityChange);
+        this.validityChanges.next(this._validityReducer.validity);
       }
     );
   }
 };
-_validityReducer2 = new WeakMap();
-_multiInputValidators = new WeakMap();
 
 // src/model/reducers/finalizer-validity/finalizer-validity-reducer-impl.ts
-var _errantFinalizers, _fieldErrorFinalizers, _fieldInvalidFinalizers, _fieldPendingFinalizers, _fieldValidUnfinalizableFinalizers, _finalizingFinalizers;
 var FinalizerValidityReducerImpl = class {
   constructor() {
-    __privateAdd(this, _errantFinalizers, /* @__PURE__ */ new Set());
-    __privateAdd(this, _fieldErrorFinalizers, /* @__PURE__ */ new Set());
-    __privateAdd(this, _fieldInvalidFinalizers, /* @__PURE__ */ new Set());
-    __privateAdd(this, _fieldPendingFinalizers, /* @__PURE__ */ new Set());
-    __privateAdd(this, _fieldValidUnfinalizableFinalizers, /* @__PURE__ */ new Set());
-    __privateAdd(this, _finalizingFinalizers, /* @__PURE__ */ new Set());
+    this._errantFinalizers = /* @__PURE__ */ new Set();
+    this._fieldErrorFinalizers = /* @__PURE__ */ new Set();
+    this._fieldInvalidFinalizers = /* @__PURE__ */ new Set();
+    this._fieldPendingFinalizers = /* @__PURE__ */ new Set();
+    this._fieldValidUnfinalizableFinalizers = /* @__PURE__ */ new Set();
+    this._finalizingFinalizers = /* @__PURE__ */ new Set();
   }
   get finalizerValidity() {
-    if (__privateGet(this, _errantFinalizers).size > 0)
+    if (this._errantFinalizers.size > 0)
       return -1 /* FINALIZER_ERROR */;
-    else if (__privateGet(this, _fieldErrorFinalizers).size > 0)
+    else if (this._fieldErrorFinalizers.size > 0)
       return 0 /* FIELD_ERROR */;
-    else if (__privateGet(this, _fieldInvalidFinalizers).size > 0)
+    else if (this._fieldInvalidFinalizers.size > 0)
       return 1 /* FIELD_INVALID */;
-    else if (__privateGet(this, _fieldPendingFinalizers).size > 0)
+    else if (this._fieldPendingFinalizers.size > 0)
       return 2 /* FIELD_PENDING */;
-    else if (__privateGet(this, _fieldValidUnfinalizableFinalizers).size > 0)
+    else if (this._fieldValidUnfinalizableFinalizers.size > 0)
       return 3 /* FIELD_VALID_UNFINALIZABLE */;
-    else if (__privateGet(this, _finalizingFinalizers).size > 0)
+    else if (this._finalizingFinalizers.size > 0)
       return 4 /* VALID_FINALIZING */;
     return 5 /* VALID_FINALIZED */;
   }
   updateTallies(finalizerName, finalizerValidity) {
-    this.updateTally(
+    this._updateTally(
       finalizerName,
       finalizerValidity,
       -1 /* FINALIZER_ERROR */,
-      __privateGet(this, _errantFinalizers)
+      this._errantFinalizers
     );
-    this.updateTally(
+    this._updateTally(
       finalizerName,
       finalizerValidity,
       0 /* FIELD_ERROR */,
-      __privateGet(this, _fieldErrorFinalizers)
+      this._fieldErrorFinalizers
     );
-    this.updateTally(
+    this._updateTally(
       finalizerName,
       finalizerValidity,
       1 /* FIELD_INVALID */,
-      __privateGet(this, _fieldInvalidFinalizers)
+      this._fieldInvalidFinalizers
     );
-    this.updateTally(
+    this._updateTally(
       finalizerName,
       finalizerValidity,
       2 /* FIELD_PENDING */,
-      __privateGet(this, _fieldPendingFinalizers)
+      this._fieldPendingFinalizers
     );
-    this.updateTally(
+    this._updateTally(
       finalizerName,
       finalizerValidity,
       3 /* FIELD_VALID_UNFINALIZABLE */,
-      __privateGet(this, _fieldValidUnfinalizableFinalizers)
+      this._fieldValidUnfinalizableFinalizers
     );
-    this.updateTally(
+    this._updateTally(
       finalizerName,
       finalizerValidity,
       4 /* VALID_FINALIZING */,
-      __privateGet(this, _finalizingFinalizers)
+      this._finalizingFinalizers
     );
   }
-  updateTally(finalizerName, actualValidity, expectedValidity, set) {
+  _updateTally(finalizerName, actualValidity, expectedValidity, set) {
     if (actualValidity === expectedValidity)
       set.add(finalizerName);
     else
       set.delete(finalizerName);
   }
 };
-_errantFinalizers = new WeakMap();
-_fieldErrorFinalizers = new WeakMap();
-_fieldInvalidFinalizers = new WeakMap();
-_fieldPendingFinalizers = new WeakMap();
-_fieldValidUnfinalizableFinalizers = new WeakMap();
-_finalizingFinalizers = new WeakMap();
 
 // src/model/reducers/multi-input-validator-validity/user-facing-multi-input-validator-reducer.ts
 var import_rxjs8 = require("rxjs");
-var _validityReducer3, _multiInputValidators2;
 var UserFacingMultiInputValidatorReducer = class {
   constructor(validityReducer) {
-    __privateAdd(this, _validityReducer3, void 0);
-    __privateAdd(this, _multiInputValidators2, []);
-    __privateSet(this, _validityReducer3, validityReducer);
+    this._multiInputValidators = [];
+    this._validityReducer = validityReducer;
     this.validityChanges = new import_rxjs8.BehaviorSubject(
-      __privateGet(this, _validityReducer3).validity
+      this._validityReducer.validity
     );
   }
   get validity() {
-    return __privateGet(this, _validityReducer3).validity;
+    return this._validityReducer.validity;
   }
   addValidator(multiFieldValidator) {
-    const validatorId = String(__privateGet(this, _multiInputValidators2).length);
-    __privateGet(this, _multiInputValidators2).push(multiFieldValidator);
+    const validatorId = String(this._multiInputValidators.length);
+    this._multiInputValidators.push(multiFieldValidator);
     multiFieldValidator.calculatedValidityChanges.subscribe(
       (validityChange) => {
-        __privateGet(this, _validityReducer3).updateTallies(validatorId, validityChange);
-        this.validityChanges.next(__privateGet(this, _validityReducer3).validity);
+        this._validityReducer.updateTallies(validatorId, validityChange);
+        this.validityChanges.next(this._validityReducer.validity);
       }
     );
   }
 };
-_validityReducer3 = new WeakMap();
-_multiInputValidators2 = new WeakMap();
 
 // src/model/reducers/validity/validity-reducer-impl.ts
-var _errantFields, _invalidFields, _pendingFields, _validUnfinalizableFields;
 var ValidityReducerImpl = class {
   constructor() {
-    __privateAdd(this, _errantFields, /* @__PURE__ */ new Set());
-    __privateAdd(this, _invalidFields, /* @__PURE__ */ new Set());
-    __privateAdd(this, _pendingFields, /* @__PURE__ */ new Set());
-    __privateAdd(this, _validUnfinalizableFields, /* @__PURE__ */ new Set());
+    this._errantFields = /* @__PURE__ */ new Set();
+    this._invalidFields = /* @__PURE__ */ new Set();
+    this._pendingFields = /* @__PURE__ */ new Set();
+    this._validUnfinalizableFields = /* @__PURE__ */ new Set();
   }
   get validity() {
-    if (__privateGet(this, _errantFields).size > 0)
+    if (this._errantFields.size > 0)
       return 0 /* ERROR */;
-    if (__privateGet(this, _invalidFields).size > 0)
+    if (this._invalidFields.size > 0)
       return 1 /* INVALID */;
-    if (__privateGet(this, _pendingFields).size > 0)
+    if (this._pendingFields.size > 0)
       return 2 /* PENDING */;
-    if (__privateGet(this, _validUnfinalizableFields).size > 0)
+    if (this._validUnfinalizableFields.size > 0)
       return 3 /* VALID_UNFINALIZABLE */;
     return 4 /* VALID_FINALIZABLE */;
   }
   updateTallies(elementId, validity) {
-    this.updateTally(elementId, validity, 0 /* ERROR */, __privateGet(this, _errantFields));
-    this.updateTally(
+    this._updateTally(elementId, validity, 0 /* ERROR */, this._errantFields);
+    this._updateTally(
       elementId,
       validity,
       1 /* INVALID */,
-      __privateGet(this, _invalidFields)
+      this._invalidFields
     );
-    this.updateTally(
+    this._updateTally(
       elementId,
       validity,
       2 /* PENDING */,
-      __privateGet(this, _pendingFields)
+      this._pendingFields
     );
-    this.updateTally(
+    this._updateTally(
       elementId,
       validity,
       3 /* VALID_UNFINALIZABLE */,
-      __privateGet(this, _validUnfinalizableFields)
+      this._validUnfinalizableFields
     );
   }
-  updateTally(elementId, actualValidity, expectedValidity, set) {
+  _updateTally(elementId, actualValidity, expectedValidity, set) {
     if (actualValidity === expectedValidity)
       set.add(elementId);
     else
       set.delete(elementId);
   }
 };
-_errantFields = new WeakMap();
-_invalidFields = new WeakMap();
-_pendingFields = new WeakMap();
-_validUnfinalizableFields = new WeakMap();
 
 // src/model/reducers/reducer-factory-impl.ts
 var import_undecorated_di9 = require("undecorated-di");
@@ -1407,12 +1250,10 @@ var ReducerFactoryService = (0, import_undecorated_di9.autowire)(ReducerFactoryI
 
 // src/model/subjects/on-initial-subscription-handling-behavior-subject-impl.ts
 var import_rxjs9 = require("rxjs");
-var _onInitialSubscriptionEventEmitter;
 var OnInitialSubscriptionHandlingBehaviorSubjectImpl = class extends import_rxjs9.BehaviorSubject {
   constructor(initialValue, onInitialSubscriptionEventEmitter) {
     super(initialValue);
-    __privateAdd(this, _onInitialSubscriptionEventEmitter, void 0);
-    __privateSet(this, _onInitialSubscriptionEventEmitter, onInitialSubscriptionEventEmitter);
+    this._onInitialSubscriptionEventEmitter = onInitialSubscriptionEventEmitter;
   }
   subscribe(observerOrNext, error, complete) {
     let subscription;
@@ -1423,46 +1264,39 @@ var OnInitialSubscriptionHandlingBehaviorSubjectImpl = class extends import_rxjs
         subscription = super.subscribe(observerOrNext);
     } else
       subscription = super.subscribe();
-    __privateGet(this, _onInitialSubscriptionEventEmitter).triggerEvent();
+    this._onInitialSubscriptionEventEmitter.triggerEvent();
     return subscription;
   }
   onInitialSubscription(cb) {
-    __privateGet(this, _onInitialSubscriptionEventEmitter).onEvent(cb);
+    this._onInitialSubscriptionEventEmitter.onEvent(cb);
   }
 };
-_onInitialSubscriptionEventEmitter = new WeakMap();
 
 // src/model/subjects/subject-factory-impl.ts
 var import_undecorated_di10 = require("undecorated-di");
-var _emitterFactory2;
 var SubjectFactoryImpl = class {
   constructor(emitterFactory) {
-    __privateAdd(this, _emitterFactory2, void 0);
-    __privateSet(this, _emitterFactory2, emitterFactory);
+    this._emitterFactory = emitterFactory;
   }
   createOnInitialSubscriptionHandlingBehaviorSubject(initialValue) {
     return new OnInitialSubscriptionHandlingBehaviorSubjectImpl(
       initialValue,
-      __privateGet(this, _emitterFactory2).createOneTimeEventEmitter()
+      this._emitterFactory.createOneTimeEventEmitter()
     );
   }
 };
-_emitterFactory2 = new WeakMap();
 var SubjectFactoryService = (0, import_undecorated_di10.autowire)(SubjectFactoryImpl, SubjectFactoryKey, [EmitterFactoryKey]);
 
 // src/model/validators/single-input/async-single-input-validator-suite.ts
 var import_rxjs10 = require("rxjs");
-var _validators, _pendingValidatorMessage, _validatorSubscriptions;
 var AsyncSingleInputValidatorSuite = class {
   constructor(validators, pendingValidatorMessage) {
-    __privateAdd(this, _validators, void 0);
-    __privateAdd(this, _pendingValidatorMessage, void 0);
-    __privateAdd(this, _validatorSubscriptions, {});
-    __privateSet(this, _validators, validators);
-    __privateSet(this, _pendingValidatorMessage, pendingValidatorMessage);
+    this._validatorSubscriptions = {};
+    this._validators = validators;
+    this._pendingValidatorMessage = pendingValidatorMessage;
   }
   evaluate(value) {
-    this.unsubscribeAll();
+    this._unsubscribeAll();
     const result = {
       syncResult: {
         value,
@@ -1470,7 +1304,7 @@ var AsyncSingleInputValidatorSuite = class {
         messages: [
           {
             type: "PENDING" /* PENDING */,
-            text: __privateGet(this, _pendingValidatorMessage)
+            text: this._pendingValidatorMessage
           }
         ]
       }
@@ -1481,20 +1315,20 @@ var AsyncSingleInputValidatorSuite = class {
         validity: 4 /* VALID_FINALIZABLE */,
         messages: []
       };
-      for (let validatorId = 0; validatorId < __privateGet(this, _validators).length; validatorId++) {
-        const validator = __privateGet(this, _validators)[validatorId];
+      for (let validatorId = 0; validatorId < this._validators.length; validatorId++) {
+        const validator = this._validators[validatorId];
         try {
           const promise = validator(value);
           const subscription = (0, import_rxjs10.from)(promise).subscribe(
-            this.createValidatorObserver(
+            this._createValidatorObserver(
               observableResult,
               subscriber,
               validatorId
             )
           );
-          __privateGet(this, _validatorSubscriptions)[validatorId] = subscription;
+          this._validatorSubscriptions[validatorId] = subscription;
         } catch (e) {
-          this.createValidatorObserverErrorMethod(
+          this._createValidatorObserverErrorMethod(
             observableResult,
             subscriber
           )(e);
@@ -1503,24 +1337,24 @@ var AsyncSingleInputValidatorSuite = class {
     });
     return result;
   }
-  createValidatorObserver(observableResult, outerSubscriber, validatorId) {
+  _createValidatorObserver(observableResult, outerSubscriber, validatorId) {
     return {
-      next: this.createValidatorObserverNextMethod(
+      next: this._createValidatorObserverNextMethod(
         observableResult,
         outerSubscriber,
         validatorId
       ),
-      error: this.createValidatorObserverErrorMethod(
+      error: this._createValidatorObserverErrorMethod(
         observableResult,
         outerSubscriber
       )
     };
   }
-  createValidatorObserverNextMethod(observableResult, outerSubscriber, validatorId) {
+  _createValidatorObserverNextMethod(observableResult, outerSubscriber, validatorId) {
     const nextMethod = (next) => {
       const { isValid, message: messageTxt } = next;
       if (!isValid) {
-        this.unsubscribeAll();
+        this._unsubscribeAll();
         observableResult.validity = 1 /* INVALID */;
         if (messageTxt) {
           observableResult.messages.push({
@@ -1537,8 +1371,8 @@ var AsyncSingleInputValidatorSuite = class {
             text: messageTxt
           });
         }
-        this.unsubscribeById(validatorId);
-        if (this.allValidatorsCompleted()) {
+        this._unsubscribeById(validatorId);
+        if (this._allValidatorsCompleted()) {
           outerSubscriber.next(observableResult);
           outerSubscriber.complete();
         }
@@ -1546,9 +1380,9 @@ var AsyncSingleInputValidatorSuite = class {
     };
     return nextMethod;
   }
-  createValidatorObserverErrorMethod(observableResult, outerSubscriber) {
+  _createValidatorObserverErrorMethod(observableResult, outerSubscriber) {
     const errorMethod = (e) => {
-      this.unsubscribeAll();
+      this._unsubscribeAll();
       logErrorInDevMode(e);
       observableResult.validity = 0 /* ERROR */;
       observableResult.messages.push({
@@ -1560,38 +1394,32 @@ var AsyncSingleInputValidatorSuite = class {
     };
     return errorMethod;
   }
-  unsubscribeAll() {
-    for (const key in __privateGet(this, _validatorSubscriptions)) {
-      __privateGet(this, _validatorSubscriptions)[key].unsubscribe();
+  _unsubscribeAll() {
+    for (const key in this._validatorSubscriptions) {
+      this._validatorSubscriptions[key].unsubscribe();
     }
-    __privateSet(this, _validatorSubscriptions, {});
+    this._validatorSubscriptions = {};
   }
-  unsubscribeById(validatorId) {
-    __privateGet(this, _validatorSubscriptions)[validatorId].unsubscribe();
-    delete __privateGet(this, _validatorSubscriptions)[validatorId];
+  _unsubscribeById(validatorId) {
+    this._validatorSubscriptions[validatorId].unsubscribe();
+    delete this._validatorSubscriptions[validatorId];
   }
-  allValidatorsCompleted() {
-    return Object.keys(__privateGet(this, _validatorSubscriptions)).length === 0;
+  _allValidatorsCompleted() {
+    return Object.keys(this._validatorSubscriptions).length === 0;
   }
 };
-_validators = new WeakMap();
-_pendingValidatorMessage = new WeakMap();
-_validatorSubscriptions = new WeakMap();
 
 // src/model/validators/single-input/hybrid-single-input-validator-suite.ts
-var _syncValidatorSuite, _asyncValidatorSuite;
 var HybridSingleInputValidatorSuite = class {
   constructor(syncValidatorSuite, asyncValidatorSuite) {
-    __privateAdd(this, _syncValidatorSuite, void 0);
-    __privateAdd(this, _asyncValidatorSuite, void 0);
-    __privateSet(this, _syncValidatorSuite, syncValidatorSuite);
-    __privateSet(this, _asyncValidatorSuite, asyncValidatorSuite);
+    this._syncValidatorSuite = syncValidatorSuite;
+    this._asyncValidatorSuite = asyncValidatorSuite;
   }
   evaluate(value) {
-    const result = __privateGet(this, _syncValidatorSuite).evaluate(value);
+    const result = this._syncValidatorSuite.evaluate(value);
     if (result.syncResult.validity <= 1 /* INVALID */)
       return result;
-    const asyncResult = __privateGet(this, _asyncValidatorSuite).evaluate(value);
+    const asyncResult = this._asyncValidatorSuite.evaluate(value);
     return {
       syncResult: {
         value: asyncResult.syncResult.value,
@@ -1605,29 +1433,25 @@ var HybridSingleInputValidatorSuite = class {
     };
   }
 };
-_syncValidatorSuite = new WeakMap();
-_asyncValidatorSuite = new WeakMap();
 
 // src/model/validators/single-input/sync-single-input-validator-suite.ts
-var _validators2;
 var SyncSingleInputValidatorSuite = class {
   constructor(validators) {
-    __privateAdd(this, _validators2, void 0);
-    __privateSet(this, _validators2, validators);
+    this._validators = validators;
   }
   evaluate(value) {
     return {
-      syncResult: this.evaluateSync(value)
+      syncResult: this._evaluateSync(value)
     };
   }
-  evaluateSync(value) {
+  _evaluateSync(value) {
     const result = {
       value,
       validity: 4 /* VALID_FINALIZABLE */,
       messages: []
     };
     try {
-      for (const validator of __privateGet(this, _validators2)) {
+      for (const validator of this._validators) {
         const { isValid, message: messageTxt } = validator(value);
         if (!isValid)
           result.validity = 1 /* INVALID */;
@@ -1649,7 +1473,6 @@ var SyncSingleInputValidatorSuite = class {
     return result;
   }
 };
-_validators2 = new WeakMap();
 
 // src/model/validators/single-input/single-input-validator-suite-factory-impl.ts
 var import_undecorated_di11 = require("undecorated-di");
@@ -1683,111 +1506,107 @@ var InsertionOrderHeapFactoryKey = "InsertionOrderHeapFactory";
 var import_undecorated_di12 = require("undecorated-di");
 
 // src/model/insertion-order-heap/insertion-order-heap-impl.ts
-var _heap, _elementDictionary, _currentPriorityId;
 var InsertionOrderHeapImpl = class {
   constructor() {
-    __privateAdd(this, _heap, []);
-    __privateAdd(this, _elementDictionary, {});
-    __privateAdd(this, _currentPriorityId, 0);
+    this._heap = [];
+    this._elementDictionary = {};
+    this._currentPriorityId = 0;
   }
   get size() {
-    return __privateGet(this, _heap).length;
+    return this._heap.length;
   }
   get topValue() {
     var _a;
-    return (_a = __privateGet(this, _heap)[0]) == null ? void 0 : _a.value;
+    return (_a = this._heap[0]) == null ? void 0 : _a.value;
   }
   addValue(value) {
     const elementDictionaryKey = value;
-    if (!(elementDictionaryKey in __privateGet(this, _elementDictionary))) {
-      __privateGet(this, _elementDictionary)[elementDictionaryKey] = {
-        priorityId: __privateWrapper(this, _currentPriorityId)._++,
+    if (!(elementDictionaryKey in this._elementDictionary)) {
+      this._elementDictionary[elementDictionaryKey] = {
+        priorityId: this._currentPriorityId++,
         currentHeapIndex: -1
       };
     }
-    const dictionaryValue = __privateGet(this, _elementDictionary)[elementDictionaryKey];
+    const dictionaryValue = this._elementDictionary[elementDictionaryKey];
     if (dictionaryValue.currentHeapIndex >= 0)
       return;
     const heapElement = {
       priorityId: dictionaryValue.priorityId,
       value
     };
-    this.addHeapElement(heapElement);
+    this._addHeapElement(heapElement);
   }
   removeValue(value) {
-    const heapIndex = __privateGet(this, _elementDictionary)[value].currentHeapIndex;
-    this.removeHeapElementAtIndex(heapIndex);
+    const heapIndex = this._elementDictionary[value].currentHeapIndex;
+    this._removeHeapElementAtIndex(heapIndex);
   }
-  addHeapElement(heapElement) {
-    __privateGet(this, _heap).push(heapElement);
+  _addHeapElement(heapElement) {
+    this._heap.push(heapElement);
     const heapIndex = this.size - 1;
-    __privateGet(this, _elementDictionary)[heapElement.value].currentHeapIndex = heapIndex;
-    this.heapifyUp(heapIndex);
+    this._elementDictionary[heapElement.value].currentHeapIndex = heapIndex;
+    this._heapifyUp(heapIndex);
   }
-  removeHeapElementAtIndex(heapIndex) {
+  _removeHeapElementAtIndex(heapIndex) {
     if (this.size === 0 || heapIndex === -1)
       return;
     if (heapIndex === this.size - 1) {
-      const removedElement = __privateGet(this, _heap)[heapIndex];
-      __privateGet(this, _heap).pop();
-      __privateGet(this, _elementDictionary)[removedElement.value].currentHeapIndex = -1;
+      const removedElement = this._heap[heapIndex];
+      this._heap.pop();
+      this._elementDictionary[removedElement.value].currentHeapIndex = -1;
     } else {
-      const removedElement = __privateGet(this, _heap)[heapIndex];
-      const elevatedElement = __privateGet(this, _heap)[heapIndex] = __privateGet(this, _heap)[this.size - 1];
-      __privateGet(this, _elementDictionary)[removedElement.value].currentHeapIndex = -1;
-      __privateGet(this, _elementDictionary)[elevatedElement.value].currentHeapIndex = heapIndex;
-      this.heapifyDown(heapIndex);
+      const removedElement = this._heap[heapIndex];
+      const elevatedElement = this._heap[heapIndex] = this._heap[this.size - 1];
+      this._elementDictionary[removedElement.value].currentHeapIndex = -1;
+      this._elementDictionary[elevatedElement.value].currentHeapIndex = heapIndex;
+      this._heapifyDown(heapIndex);
     }
   }
-  heapifyDown(heapIndex) {
-    const leftChild = this.leftChild(heapIndex);
-    const rightChild = this.rightChild(heapIndex);
+  _heapifyDown(heapIndex) {
+    const _leftChild = this._leftChild(heapIndex);
+    const _rightChild = this._rightChild(heapIndex);
     let smallest = heapIndex;
-    if (leftChild < this.size && this.compareHeapElements(__privateGet(this, _heap)[leftChild], __privateGet(this, _heap)[smallest]) < 0) {
-      smallest = leftChild;
+    if (_leftChild < this.size && this._compareHeapElements(this._heap[_leftChild], this._heap[smallest]) < 0) {
+      smallest = _leftChild;
     }
-    if (rightChild < this.size && this.compareHeapElements(__privateGet(this, _heap)[rightChild], __privateGet(this, _heap)[smallest]) < 0) {
-      smallest = rightChild;
+    if (_rightChild < this.size && this._compareHeapElements(this._heap[_rightChild], this._heap[smallest]) < 0) {
+      smallest = _rightChild;
     }
     if (smallest != heapIndex) {
-      const element = __privateGet(this, _heap)[heapIndex];
-      const smallestElement = __privateGet(this, _heap)[smallest];
-      __privateGet(this, _elementDictionary)[element.value].currentHeapIndex = smallest;
-      __privateGet(this, _elementDictionary)[smallestElement.value].currentHeapIndex = heapIndex;
-      __privateGet(this, _heap)[heapIndex] = smallestElement;
-      __privateGet(this, _heap)[smallest] = element;
-      this.heapifyDown(smallest);
+      const element = this._heap[heapIndex];
+      const smallestElement = this._heap[smallest];
+      this._elementDictionary[element.value].currentHeapIndex = smallest;
+      this._elementDictionary[smallestElement.value].currentHeapIndex = heapIndex;
+      this._heap[heapIndex] = smallestElement;
+      this._heap[smallest] = element;
+      this._heapifyDown(smallest);
     }
   }
-  heapifyUp(heapIndex) {
-    while (heapIndex != 0 && this.compareHeapElements(
-      __privateGet(this, _heap)[this.parent(heapIndex)],
-      __privateGet(this, _heap)[heapIndex]
+  _heapifyUp(heapIndex) {
+    while (heapIndex != 0 && this._compareHeapElements(
+      this._heap[this._parent(heapIndex)],
+      this._heap[heapIndex]
     ) > 0) {
-      const temp = __privateGet(this, _heap)[this.parent(heapIndex)];
-      __privateGet(this, _heap)[this.parent(heapIndex)] = __privateGet(this, _heap)[heapIndex];
-      __privateGet(this, _heap)[heapIndex] = temp;
-      __privateGet(this, _elementDictionary)[__privateGet(this, _heap)[this.parent(heapIndex)].value].currentHeapIndex = this.parent(heapIndex);
-      __privateGet(this, _elementDictionary)[__privateGet(this, _heap)[heapIndex].value].currentHeapIndex = heapIndex;
-      heapIndex = this.parent(heapIndex);
+      const temp = this._heap[this._parent(heapIndex)];
+      this._heap[this._parent(heapIndex)] = this._heap[heapIndex];
+      this._heap[heapIndex] = temp;
+      this._elementDictionary[this._heap[this._parent(heapIndex)].value].currentHeapIndex = this._parent(heapIndex);
+      this._elementDictionary[this._heap[heapIndex].value].currentHeapIndex = heapIndex;
+      heapIndex = this._parent(heapIndex);
     }
   }
-  parent(heapIndex) {
+  _parent(heapIndex) {
     return Math.floor((heapIndex - 1) / 2);
   }
-  leftChild(heapIndex) {
+  _leftChild(heapIndex) {
     return heapIndex * 2 + 1;
   }
-  rightChild(heapIndex) {
+  _rightChild(heapIndex) {
     return heapIndex * 2 + 2;
   }
-  compareHeapElements(a, b) {
+  _compareHeapElements(a, b) {
     return a.priorityId - b.priorityId;
   }
 };
-_heap = new WeakMap();
-_elementDictionary = new WeakMap();
-_currentPriorityId = new WeakMap();
 
 // src/model/insertion-order-heap/insertion-order-heap-factory-impl.ts
 var InsertionOrderHeapFactoryImpl = class {
@@ -1802,46 +1621,40 @@ var TrackerFactoryKey = "TrackerFactory";
 
 // src/model/trackers/first-nonvalid-form-element-tracker-impl.ts
 var import_rxjs11 = require("rxjs");
-var _nonValidFormElementHeap;
 var FirstNonValidFormElementTrackerImpl = class {
   constructor(nonValidFormElementHeap) {
-    __privateAdd(this, _nonValidFormElementHeap, void 0);
-    __privateSet(this, _nonValidFormElementHeap, nonValidFormElementHeap);
+    this._nonValidFormElementHeap = nonValidFormElementHeap;
     this.firstNonValidFormElementChanges = new import_rxjs11.BehaviorSubject(
       this.firstNonValidFormElement
     );
   }
   get firstNonValidFormElement() {
-    return __privateGet(this, _nonValidFormElementHeap).topValue;
+    return this._nonValidFormElementHeap.topValue;
   }
   trackFormElementValidity(formElementKey, formElement) {
-    __privateGet(this, _nonValidFormElementHeap).addValue(formElementKey);
+    this._nonValidFormElementHeap.addValue(formElementKey);
     formElement.stateChanges.subscribe(({ validity }) => {
       if (validity < 4 /* VALID_FINALIZABLE */) {
-        __privateGet(this, _nonValidFormElementHeap).addValue(formElementKey);
+        this._nonValidFormElementHeap.addValue(formElementKey);
       } else
-        __privateGet(this, _nonValidFormElementHeap).removeValue(formElementKey);
+        this._nonValidFormElementHeap.removeValue(formElementKey);
       this.firstNonValidFormElementChanges.next(this.firstNonValidFormElement);
     });
   }
 };
-_nonValidFormElementHeap = new WeakMap();
 
 // src/model/trackers/tracker-factory-impl.ts
 var import_undecorated_di13 = require("undecorated-di");
-var _insertionOrderHeapFactory;
 var TrackerFactoryImpl = class {
   constructor(insertionOrderHeapFactory) {
-    __privateAdd(this, _insertionOrderHeapFactory, void 0);
-    __privateSet(this, _insertionOrderHeapFactory, insertionOrderHeapFactory);
+    this._insertionOrderHeapFactory = insertionOrderHeapFactory;
   }
   createFirstNonValidFormElementTracker() {
     return new FirstNonValidFormElementTrackerImpl(
-      __privateGet(this, _insertionOrderHeapFactory).createInsertionOrderHeap()
+      this._insertionOrderHeapFactory.createInsertionOrderHeap()
     );
   }
 };
-_insertionOrderHeapFactory = new WeakMap();
 var TrackerFactoryService = (0, import_undecorated_di13.autowire)(TrackerFactoryImpl, TrackerFactoryKey, [InsertionOrderHeapFactoryKey]);
 
 // src/model/validators/multi-input/multi-input-validator-factory-impl.ts
@@ -1849,34 +1662,29 @@ var import_undecorated_di14 = require("undecorated-di");
 
 // src/model/validators/multi-input/async-multi-input-validator.ts
 var import_rxjs12 = require("rxjs");
-var _pendingMessage, _multiFieldAggregator, _validator, _validatorSubscription, _firstRunCompleted;
 var AsyncMultiInputValidator = class {
   constructor(multiFieldAggregator, validator, pendingMessage) {
-    __privateAdd(this, _pendingMessage, void 0);
-    __privateAdd(this, _multiFieldAggregator, void 0);
-    __privateAdd(this, _validator, void 0);
-    __privateAdd(this, _validatorSubscription, void 0);
-    __privateAdd(this, _firstRunCompleted, false);
-    __privateSet(this, _validator, validator);
-    __privateSet(this, _multiFieldAggregator, multiFieldAggregator);
-    __privateSet(this, _pendingMessage, pendingMessage);
+    this._firstRunCompleted = false;
+    this._validator = validator;
+    this._multiFieldAggregator = multiFieldAggregator;
+    this._pendingMessage = pendingMessage;
     this.accessedFields = multiFieldAggregator.accessedFields;
     this.calculatedValidityChanges = new import_rxjs12.ReplaySubject(1);
     this.overallValidityChanges = new import_rxjs12.ReplaySubject(1);
     this.messageChanges = new import_rxjs12.ReplaySubject(1);
-    __privateGet(this, _multiFieldAggregator).aggregateChanges.subscribe(
+    this._multiFieldAggregator.aggregateChanges.subscribe(
       (aggregateChange) => {
-        __privateGet(this, _validatorSubscription) && __privateGet(this, _validatorSubscription).unsubscribe();
+        this._validatorSubscription && this._validatorSubscription.unsubscribe();
         let observableResult;
         let error;
-        if (!__privateGet(this, _firstRunCompleted)) {
+        if (!this._firstRunCompleted) {
           try {
-            observableResult = (0, import_rxjs12.from)(__privateGet(this, _validator).call(this, aggregateChange));
+            observableResult = (0, import_rxjs12.from)(this._validator(aggregateChange));
           } catch (e) {
             logErrorInDevMode(e);
             error = e;
           } finally {
-            __privateSet(this, _firstRunCompleted, true);
+            this._firstRunCompleted = true;
           }
         }
         if (aggregateChange.hasOmittedFields()) {
@@ -1900,12 +1708,12 @@ var AsyncMultiInputValidator = class {
           this.messageChanges.next({
             type: "PENDING" /* PENDING */,
             //
-            text: __privateGet(this, _pendingMessage)
+            text: this._pendingMessage
           });
           try {
             if (!observableResult)
-              observableResult = (0, import_rxjs12.from)(__privateGet(this, _validator).call(this, aggregateChange));
-            __privateSet(this, _validatorSubscription, observableResult.subscribe({
+              observableResult = (0, import_rxjs12.from)(this._validator(aggregateChange));
+            this._validatorSubscription = observableResult.subscribe({
               next: (result) => {
                 const validity = result.isValid ? 4 /* VALID_FINALIZABLE */ : 1 /* INVALID */;
                 this.calculatedValidityChanges.next(validity);
@@ -1928,7 +1736,7 @@ var AsyncMultiInputValidator = class {
                   text: config.globalMessages.multiFieldValidationError
                 });
               }
-            }));
+            });
           } catch (e) {
             logErrorInDevMode(e);
             this.calculatedValidityChanges.next(0 /* ERROR */);
@@ -1943,35 +1751,27 @@ var AsyncMultiInputValidator = class {
     );
   }
 };
-_pendingMessage = new WeakMap();
-_multiFieldAggregator = new WeakMap();
-_validator = new WeakMap();
-_validatorSubscription = new WeakMap();
-_firstRunCompleted = new WeakMap();
 
 // src/model/validators/multi-input/multi-input-validator-factory.interface.ts
 var MultiInputValidatorFactoryKey = "MultiInputValidatorFactory";
 
 // src/model/validators/multi-input/sync-multi-input-validator.ts
 var import_rxjs13 = require("rxjs");
-var _multiFieldAggregator2, _validator2, _completedFirstRun;
 var SyncMultiInputValidator = class {
   constructor(multiFieldAggregator, validator) {
-    __privateAdd(this, _multiFieldAggregator2, void 0);
-    __privateAdd(this, _validator2, void 0);
-    __privateAdd(this, _completedFirstRun, false);
-    __privateSet(this, _validator2, validator);
-    __privateSet(this, _multiFieldAggregator2, multiFieldAggregator);
+    this._completedFirstRun = false;
+    this._validator = validator;
+    this._multiFieldAggregator = multiFieldAggregator;
     this.accessedFields = multiFieldAggregator.accessedFields;
     this.calculatedValidityChanges = new import_rxjs13.ReplaySubject(1);
     this.overallValidityChanges = new import_rxjs13.ReplaySubject(1);
     this.messageChanges = new import_rxjs13.ReplaySubject(1);
-    __privateGet(this, _multiFieldAggregator2).aggregateChanges.subscribe(
+    this._multiFieldAggregator.aggregateChanges.subscribe(
       (aggregateChange) => {
         let result;
-        if (!__privateGet(this, _completedFirstRun)) {
-          result = this.runValidator(aggregateChange);
-          __privateSet(this, _completedFirstRun, true);
+        if (!this._completedFirstRun) {
+          result = this._runValidator(aggregateChange);
+          this._completedFirstRun = true;
         }
         if (aggregateChange.hasOmittedFields()) {
           this.calculatedValidityChanges.next(4 /* VALID_FINALIZABLE */);
@@ -1986,7 +1786,7 @@ var SyncMultiInputValidator = class {
           this.overallValidityChanges.next(result.validity);
           this.messageChanges.next(result.message);
         } else {
-          result = this.runValidator(aggregateChange);
+          result = this._runValidator(aggregateChange);
           this.calculatedValidityChanges.next(result.validity);
           this.overallValidityChanges.next(result.validity);
           this.messageChanges.next(result.message);
@@ -1994,10 +1794,10 @@ var SyncMultiInputValidator = class {
       }
     );
   }
-  runValidator(aggregateChange) {
+  _runValidator(aggregateChange) {
     try {
       let message;
-      const result = __privateGet(this, _validator2).call(this, aggregateChange);
+      const result = this._validator(aggregateChange);
       const validity = result.isValid ? 4 /* VALID_FINALIZABLE */ : 1 /* INVALID */;
       if (result.message) {
         message = {
@@ -2022,23 +1822,18 @@ var SyncMultiInputValidator = class {
     }
   }
 };
-_multiFieldAggregator2 = new WeakMap();
-_validator2 = new WeakMap();
-_completedFirstRun = new WeakMap();
 
 // src/model/validators/multi-input/multi-input-validator-factory-impl.ts
-var _aggregatorFactory2;
 var MultiInputValidatorFactoryImpl = class {
   constructor(aggregatorFactory) {
-    __privateAdd(this, _aggregatorFactory2, void 0);
-    __privateSet(this, _aggregatorFactory2, aggregatorFactory);
+    this._aggregatorFactory = aggregatorFactory;
   }
   createSyncMultiInputValidator(validator, fields) {
-    const multiFieldAggregator = __privateGet(this, _aggregatorFactory2).createMultiFieldAggregatorFromFields(fields);
+    const multiFieldAggregator = this._aggregatorFactory.createMultiFieldAggregatorFromFields(fields);
     return new SyncMultiInputValidator(multiFieldAggregator, validator);
   }
   createAsyncMultiInputValidator(validator, fields, pendingMessage = config.globalMessages.pendingAsyncMultiFieldValidator) {
-    const multiFieldAggregator = __privateGet(this, _aggregatorFactory2).createMultiFieldAggregatorFromFields(fields);
+    const multiFieldAggregator = this._aggregatorFactory.createMultiFieldAggregatorFromFields(fields);
     return new AsyncMultiInputValidator(
       multiFieldAggregator,
       validator,
@@ -2046,163 +1841,147 @@ var MultiInputValidatorFactoryImpl = class {
     );
   }
 };
-_aggregatorFactory2 = new WeakMap();
 var MultiInputValidatorFactoryService = (0, import_undecorated_di14.autowire)(MultiInputValidatorFactoryImpl, MultiInputValidatorFactoryKey, [
   AggregatorFactoryKey
 ]);
 
 // src/model/form-elements/multi-input-validated/finalizer-facing-multi-input-validated-form-element.ts
 var import_rxjs14 = require("rxjs");
-var _baseFormElement, _multiInputValidatorReducer;
 var FinalizerFacingMultiInputValidatedFormElement = class {
+  get state() {
+    return __spreadProps(__spreadValues({}, copyObject(this._baseFormElement.state)), {
+      validity: this._calculateValidity()
+    });
+  }
+  get omit() {
+    return this._baseFormElement.omit;
+  }
   constructor(baseFormElement, finalizerFacingMultiInputValidityReducer) {
-    __privateAdd(this, _baseFormElement, void 0);
-    __privateAdd(this, _multiInputValidatorReducer, void 0);
-    __privateSet(this, _baseFormElement, baseFormElement);
-    __privateSet(this, _multiInputValidatorReducer, finalizerFacingMultiInputValidityReducer);
-    __privateGet(this, _multiInputValidatorReducer).validityChanges.subscribe(() => {
+    this._baseFormElement = baseFormElement;
+    this._multiInputValidatorReducer = finalizerFacingMultiInputValidityReducer;
+    this._multiInputValidatorReducer.validityChanges.subscribe(() => {
       if (this.stateChanges)
         this.stateChanges.next(this.state);
     });
     this.stateChanges = new import_rxjs14.BehaviorSubject(this.state);
   }
-  get state() {
-    return __spreadProps(__spreadValues({}, copyObject(__privateGet(this, _baseFormElement).state)), {
-      validity: this.calculateValidity()
-    });
-  }
-  get omit() {
-    return __privateGet(this, _baseFormElement).omit;
-  }
   addValidator(validator) {
-    __privateGet(this, _multiInputValidatorReducer).addValidator(validator);
+    this._multiInputValidatorReducer.addValidator(validator);
   }
-  calculateValidity() {
+  _calculateValidity() {
     return Math.min(
-      __privateGet(this, _baseFormElement).state.validity,
-      __privateGet(this, _multiInputValidatorReducer).validity
+      this._baseFormElement.state.validity,
+      this._multiInputValidatorReducer.validity
     );
   }
 };
-_baseFormElement = new WeakMap();
-_multiInputValidatorReducer = new WeakMap();
 
 // src/model/form-elements/multi-input-validated/multi-input-validated-form-element-factory.interface.ts
 var MultiInputValidatedFormElementFactoryKey = "MultiInputValidatedFormElementFactory";
 
 // src/model/form-elements/multi-input-validated/user-facing-multi-input-validated-dual-field.ts
 var import_rxjs15 = require("rxjs");
-var _baseField, _multiInputValidatorReducer2;
 var UserFacingMultiInputValidatedDualField = class extends AbstractDualField {
   constructor(baseField, multiInputValidityReducer) {
     super();
-    __privateAdd(this, _baseField, void 0);
-    __privateAdd(this, _multiInputValidatorReducer2, void 0);
-    __privateSet(this, _baseField, baseField);
-    __privateSet(this, _multiInputValidatorReducer2, multiInputValidityReducer);
-    __privateGet(this, _baseField).stateChanges.subscribe(() => {
+    this._baseField = baseField;
+    this._multiInputValidatorReducer = multiInputValidityReducer;
+    this._baseField.stateChanges.subscribe(() => {
       if (this.stateChanges)
         this.stateChanges.next(this.state);
     });
-    __privateGet(this, _multiInputValidatorReducer2).validityChanges.subscribe(() => {
+    this._multiInputValidatorReducer.validityChanges.subscribe(() => {
       if (this.stateChanges)
         this.stateChanges.next(this.state);
     });
     this.stateChanges = new import_rxjs15.BehaviorSubject(this.state);
   }
   get state() {
-    return __spreadProps(__spreadValues({}, copyObject(__privateGet(this, _baseField).state)), {
-      validity: this.calculateValidity()
+    return __spreadProps(__spreadValues({}, copyObject(this._baseField.state)), {
+      validity: this._calculateValidity()
     });
   }
   get omit() {
-    return __privateGet(this, _baseField).omit;
+    return this._baseField.omit;
   }
   set omit(omit) {
-    __privateGet(this, _baseField).omit = omit;
+    this._baseField.omit = omit;
   }
   get primaryField() {
-    return __privateGet(this, _baseField).primaryField;
+    return this._baseField.primaryField;
   }
   get secondaryField() {
-    return __privateGet(this, _baseField).secondaryField;
+    return this._baseField.secondaryField;
   }
   set useSecondaryField(useSecondaryField) {
-    __privateGet(this, _baseField).useSecondaryField = useSecondaryField;
+    this._baseField.useSecondaryField = useSecondaryField;
   }
   get useSecondaryField() {
-    return __privateGet(this, _baseField).useSecondaryField;
+    return this._baseField.useSecondaryField;
   }
   setValue(value) {
-    __privateGet(this, _baseField).setValue(value);
+    this._baseField.setValue(value);
   }
   setState(state) {
-    __privateGet(this, _baseField).setState(state);
+    this._baseField.setState(state);
   }
   reset() {
-    __privateGet(this, _baseField).reset();
+    this._baseField.reset();
   }
   addValidator(validator) {
-    __privateGet(this, _multiInputValidatorReducer2).addValidator(validator);
+    this._multiInputValidatorReducer.addValidator(validator);
   }
-  calculateValidity() {
+  _calculateValidity() {
     return Math.min(
-      __privateGet(this, _baseField).state.validity,
-      __privateGet(this, _multiInputValidatorReducer2).validity
+      this._baseField.state.validity,
+      this._multiInputValidatorReducer.validity
     );
   }
 };
-_baseField = new WeakMap();
-_multiInputValidatorReducer2 = new WeakMap();
 
 // src/model/form-elements/multi-input-validated/user-facing-multi-input-validated-field.ts
 var import_rxjs16 = require("rxjs");
-var _baseField2, _multiInputValidatorReducer3;
 var UserFacingMultiInputValidatedField = class extends AbstractField {
   constructor(baseField, userFacingMultiInputValidityReducer) {
     super();
-    __privateAdd(this, _baseField2, void 0);
-    __privateAdd(this, _multiInputValidatorReducer3, void 0);
-    __privateSet(this, _baseField2, baseField);
-    __privateSet(this, _multiInputValidatorReducer3, userFacingMultiInputValidityReducer);
-    __privateGet(this, _multiInputValidatorReducer3).validityChanges.subscribe(() => {
+    this._baseField = baseField;
+    this._multiInputValidatorReducer = userFacingMultiInputValidityReducer;
+    this._multiInputValidatorReducer.validityChanges.subscribe(() => {
       if (this.stateChanges)
         this.stateChanges.next(this.state);
     });
     this.stateChanges = new import_rxjs16.BehaviorSubject(this.state);
   }
   get state() {
-    return __spreadProps(__spreadValues({}, copyObject(__privateGet(this, _baseField2).state)), {
-      validity: this.calculateValidity()
+    return __spreadProps(__spreadValues({}, copyObject(this._baseField.state)), {
+      validity: this._calculateValidity()
     });
   }
   get omit() {
-    return __privateGet(this, _baseField2).omit;
+    return this._baseField.omit;
   }
   set omit(omit) {
-    __privateGet(this, _baseField2).omit = omit;
+    this._baseField.omit = omit;
   }
   setState(state) {
-    __privateGet(this, _baseField2).setState(state);
+    this._baseField.setState(state);
   }
   setValue(value) {
-    __privateGet(this, _baseField2).setValue(value);
+    this._baseField.setValue(value);
   }
   reset() {
-    __privateGet(this, _baseField2).reset();
+    this._baseField.reset();
   }
   addValidator(validator) {
-    __privateGet(this, _multiInputValidatorReducer3).addValidator(validator);
+    this._multiInputValidatorReducer.addValidator(validator);
   }
-  calculateValidity() {
+  _calculateValidity() {
     return Math.min(
-      __privateGet(this, _baseField2).state.validity,
-      __privateGet(this, _multiInputValidatorReducer3).validity
+      this._baseField.state.validity,
+      this._multiInputValidatorReducer.validity
     );
   }
 };
-_baseField2 = new WeakMap();
-_multiInputValidatorReducer3 = new WeakMap();
 
 // src/model/form-elements/multi-input-validated/user-facing-multi-input-validated-nested-form.ts
 var import_rxjs17 = require("rxjs");
@@ -2212,68 +1991,64 @@ var AbstractNestedForm = class {
 };
 
 // src/model/form-elements/multi-input-validated/user-facing-multi-input-validated-nested-form.ts
-var _baseNestedForm, _multiInputValidatorReducer4;
 var UserFacingMultiInputValidatedNestedForm = class extends AbstractNestedForm {
   constructor(baseNestedForm, userFacingMultiInputValidityReducer) {
     super();
-    __privateAdd(this, _baseNestedForm, void 0);
-    __privateAdd(this, _multiInputValidatorReducer4, void 0);
-    __privateSet(this, _baseNestedForm, baseNestedForm);
-    __privateSet(this, _multiInputValidatorReducer4, userFacingMultiInputValidityReducer);
-    __privateGet(this, _baseNestedForm).stateChanges.subscribe(() => {
+    this._baseNestedForm = baseNestedForm;
+    this._multiInputValidatorReducer = userFacingMultiInputValidityReducer;
+    this._baseNestedForm.stateChanges.subscribe(() => {
       if (this.stateChanges)
         this.stateChanges.next(this.state);
     });
-    __privateGet(this, _multiInputValidatorReducer4).validityChanges.subscribe(() => {
+    this._multiInputValidatorReducer.validityChanges.subscribe(() => {
       if (this.stateChanges)
         this.stateChanges.next(this.state);
     });
     this.stateChanges = new import_rxjs17.BehaviorSubject(this.state);
   }
   get userFacingFields() {
-    return __privateGet(this, _baseNestedForm).userFacingFields;
+    return this._baseNestedForm.userFacingFields;
   }
   get state() {
-    return __spreadProps(__spreadValues({}, copyObject(__privateGet(this, _baseNestedForm).state)), {
-      validity: this.calculateValidity()
+    return __spreadProps(__spreadValues({}, copyObject(this._baseNestedForm.state)), {
+      validity: this._calculateValidity()
     });
   }
   set omit(omit) {
-    __privateGet(this, _baseNestedForm).omit = omit;
+    this._baseNestedForm.omit = omit;
   }
   get omit() {
-    return __privateGet(this, _baseNestedForm).omit;
+    return this._baseNestedForm.omit;
   }
   get firstNonValidFormElement() {
-    return __privateGet(this, _baseNestedForm).firstNonValidFormElement;
+    return this._baseNestedForm.firstNonValidFormElement;
+  }
+  get firstNonValidFormElementChanges() {
+    return this._baseNestedForm.firstNonValidFormElementChanges;
   }
   reset() {
     throw new Error("Method not implemented.");
   }
   addValidator(validator) {
-    __privateGet(this, _multiInputValidatorReducer4).addValidator(validator);
+    this._multiInputValidatorReducer.addValidator(validator);
   }
-  calculateValidity() {
+  _calculateValidity() {
     return Math.min(
-      __privateGet(this, _baseNestedForm).state.validity,
-      __privateGet(this, _multiInputValidatorReducer4).validity
+      this._baseNestedForm.state.validity,
+      this._multiInputValidatorReducer.validity
     );
   }
 };
-_baseNestedForm = new WeakMap();
-_multiInputValidatorReducer4 = new WeakMap();
 
 // src/model/form-elements/multi-input-validated/multi-input-validated-form-element-factory-impl.ts
 var import_undecorated_di15 = require("undecorated-di");
-var _reducerFactory3;
 var MultiInputValidatedFormElementFactoryImpl = class {
   constructor(reducerFactory) {
-    __privateAdd(this, _reducerFactory3, void 0);
-    __privateSet(this, _reducerFactory3, reducerFactory);
+    this._reducerFactory = reducerFactory;
   }
   createUserAndFinalizerFacingMultiInputValidatedFormElement(baseField) {
-    const userFacingReducer = __privateGet(this, _reducerFactory3).createUserMultiInputValidatorValidityReducer();
-    const finalizerFacingReducer = __privateGet(this, _reducerFactory3).createFinalizerFacingMultiInputValidatorValidityReducer();
+    const userFacingReducer = this._reducerFactory.createUserMultiInputValidatorValidityReducer();
+    const finalizerFacingReducer = this._reducerFactory.createFinalizerFacingMultiInputValidatorValidityReducer();
     const finalizerFacingFormElement = new FinalizerFacingMultiInputValidatedFormElement(
       baseField,
       finalizerFacingReducer
@@ -2299,7 +2074,6 @@ var MultiInputValidatedFormElementFactoryImpl = class {
     }
   }
 };
-_reducerFactory3 = new WeakMap();
 var MultiInputValidatedFormElementFactoryService = (0, import_undecorated_di15.autowire)(
   MultiInputValidatedFormElementFactoryImpl,
   MultiInputValidatedFormElementFactoryKey,
@@ -2316,17 +2090,12 @@ var MultiFieldValidatorsTemplateParserKey = "MultiFieldValidatorsTemplateParser"
 var AutoTransformedFieldFactoryKey = "AutoTransformedFieldFactory";
 
 // src/model/templates/multi-field-validators/multi-field-validators-template-parser-impl.ts
-var _multiInputValidatorFactory, _multiInputValidatedFormElementFactory, _aggregatorFactory3, _autoTransformedFieldFactory;
 var MultiFieldValidatorsTemplateParserImpl = class {
   constructor(multiInputValidatorFactory, multiInputValidatedFormElementFactory, aggregatorFactory, autoTransformedFieldFactory) {
-    __privateAdd(this, _multiInputValidatorFactory, void 0);
-    __privateAdd(this, _multiInputValidatedFormElementFactory, void 0);
-    __privateAdd(this, _aggregatorFactory3, void 0);
-    __privateAdd(this, _autoTransformedFieldFactory, void 0);
-    __privateSet(this, _multiInputValidatorFactory, multiInputValidatorFactory);
-    __privateSet(this, _multiInputValidatedFormElementFactory, multiInputValidatedFormElementFactory);
-    __privateSet(this, _aggregatorFactory3, aggregatorFactory);
-    __privateSet(this, _autoTransformedFieldFactory, autoTransformedFieldFactory);
+    this._multiInputValidatorFactory = multiInputValidatorFactory;
+    this._multiInputValidatedFormElementFactory = multiInputValidatedFormElementFactory;
+    this._aggregatorFactory = aggregatorFactory;
+    this._autoTransformedFieldFactory = autoTransformedFieldFactory;
   }
   parseTemplate(template, formElementDictionary) {
     var _a, _b;
@@ -2334,12 +2103,12 @@ var MultiFieldValidatorsTemplateParserImpl = class {
     const finalizerFacingMultiInputValidatedFormElementDictionary = {};
     const validators = [];
     (_a = template.sync) == null ? void 0 : _a.forEach((validatorFn) => {
-      const multiInputValidator = __privateGet(this, _multiInputValidatorFactory).createSyncMultiInputValidator(
+      const multiInputValidator = this._multiInputValidatorFactory.createSyncMultiInputValidator(
         validatorFn,
         formElementDictionary
       );
       multiInputValidator.accessedFields.onValue(
-        this.onAccessedFields(
+        this._onAccessedFields(
           userFacingMultiInputValidatedFormElementDictionary,
           finalizerFacingMultiInputValidatedFormElementDictionary,
           formElementDictionary,
@@ -2350,13 +2119,13 @@ var MultiFieldValidatorsTemplateParserImpl = class {
     });
     (_b = template.async) == null ? void 0 : _b.forEach((validatorTemplate) => {
       var _a2;
-      const multiInputValidator = __privateGet(this, _multiInputValidatorFactory).createAsyncMultiInputValidator(
+      const multiInputValidator = this._multiInputValidatorFactory.createAsyncMultiInputValidator(
         validatorTemplate.validatorFn,
         formElementDictionary,
         (_a2 = validatorTemplate.pendingValidatorMessage) != null ? _a2 : config.globalMessages.pendingAsyncMultiFieldValidator
       );
       multiInputValidator.accessedFields.onValue(
-        this.onAccessedFields(
+        this._onAccessedFields(
           userFacingMultiInputValidatedFormElementDictionary,
           finalizerFacingMultiInputValidatedFormElementDictionary,
           formElementDictionary,
@@ -2377,12 +2146,12 @@ var MultiFieldValidatorsTemplateParserImpl = class {
       finalizerFacingFormElementDictionary
     )) {
       if (userFacingFormElementDictionary[fieldName] instanceof AbstractField) {
-        finalizerFacingFormElementDictionary[fieldName] = __privateGet(this, _autoTransformedFieldFactory).createAutoTransformedField(
+        finalizerFacingFormElementDictionary[fieldName] = this._autoTransformedFieldFactory.createAutoTransformedField(
           field
         );
       }
     }
-    const multiInputValidatorMessagesAggregator = __privateGet(this, _aggregatorFactory3).createMultiInputValidatorMessagesAggregatorFromValidators(
+    const multiInputValidatorMessagesAggregator = this._aggregatorFactory.createMultiInputValidatorMessagesAggregatorFromValidators(
       validators
     );
     return [
@@ -2391,12 +2160,12 @@ var MultiFieldValidatorsTemplateParserImpl = class {
       multiInputValidatorMessagesAggregator
     ];
   }
-  onAccessedFields(userFacingFormElementDictionary, finalizerFacingFormElementDictionary, formElementDictionary, validator) {
+  _onAccessedFields(userFacingFormElementDictionary, finalizerFacingFormElementDictionary, formElementDictionary, validator) {
     return (accessedFields) => {
       accessedFields.forEach((fieldName) => {
         if (!(fieldName in userFacingFormElementDictionary)) {
           const baseField = formElementDictionary[fieldName];
-          const [userFacingField, finalizerFacingField] = __privateGet(this, _multiInputValidatedFormElementFactory).createUserAndFinalizerFacingMultiInputValidatedFormElement(
+          const [userFacingField, finalizerFacingField] = this._multiInputValidatedFormElementFactory.createUserAndFinalizerFacingMultiInputValidatedFormElement(
             baseField
           );
           userFacingFormElementDictionary[fieldName] = userFacingField;
@@ -2408,10 +2177,6 @@ var MultiFieldValidatorsTemplateParserImpl = class {
     };
   }
 };
-_multiInputValidatorFactory = new WeakMap();
-_multiInputValidatedFormElementFactory = new WeakMap();
-_aggregatorFactory3 = new WeakMap();
-_autoTransformedFieldFactory = new WeakMap();
 var MultiFieldValidatorsTemplateParserService = (0, import_undecorated_di16.autowire)(
   MultiFieldValidatorsTemplateParserImpl,
   MultiFieldValidatorsTemplateParserKey,
@@ -2431,26 +2196,22 @@ var FinalizerManagerFactoryKey = "FinalizerManager";
 
 // src/model/finalizers/finalizer-manager-impl.ts
 var import_rxjs18 = require("rxjs");
-var _value2, _finalizerMap, _finalizerValidityReducer, _finalizerValidityTranslator2;
 var FinalizerManagerImpl = class {
   constructor(finalizerMap, finalizerValidityReducer, finalizerValidityTranslator) {
-    __privateAdd(this, _value2, {});
-    __privateAdd(this, _finalizerMap, void 0);
-    __privateAdd(this, _finalizerValidityReducer, void 0);
-    __privateAdd(this, _finalizerValidityTranslator2, void 0);
-    __privateSet(this, _finalizerMap, finalizerMap);
-    __privateSet(this, _finalizerValidityReducer, finalizerValidityReducer);
-    __privateSet(this, _finalizerValidityTranslator2, finalizerValidityTranslator);
-    for (const finalizerName in __privateGet(this, _finalizerMap)) {
-      const finalizer = __privateGet(this, _finalizerMap)[finalizerName];
+    this._value = {};
+    this._finalizerMap = finalizerMap;
+    this._finalizerValidityReducer = finalizerValidityReducer;
+    this._finalizerValidityTranslator = finalizerValidityTranslator;
+    for (const finalizerName in this._finalizerMap) {
+      const finalizer = this._finalizerMap[finalizerName];
       finalizer.stream.subscribe((finalizerStateChange) => {
-        __privateGet(this, _finalizerValidityReducer).updateTallies(
+        this._finalizerValidityReducer.updateTallies(
           finalizerName,
           finalizerStateChange.finalizerValidity
         );
-        delete __privateGet(this, _value2)[finalizerName];
+        delete this._value[finalizerName];
         if (finalizerStateChange.value)
-          __privateGet(this, _value2)[finalizerName] = finalizerStateChange.value;
+          this._value[finalizerName] = finalizerStateChange.value;
         if (this.stateChanges)
           this.stateChanges.next(this.state);
       });
@@ -2459,20 +2220,20 @@ var FinalizerManagerImpl = class {
   }
   get state() {
     return {
-      value: copyObject(__privateGet(this, _value2)),
-      validity: this.getValidity(),
-      messages: this.getMessages()
+      value: copyObject(this._value),
+      validity: this._getValidity(),
+      messages: this._getMessages()
     };
   }
-  getValidity() {
-    const reducedFinalizerValidity = __privateGet(this, _finalizerValidityReducer).finalizerValidity;
-    return __privateGet(this, _finalizerValidityTranslator2).translateFinalizerValidityToValidity(
+  _getValidity() {
+    const reducedFinalizerValidity = this._finalizerValidityReducer.finalizerValidity;
+    return this._finalizerValidityTranslator.translateFinalizerValidityToValidity(
       reducedFinalizerValidity
     );
   }
-  getMessages() {
+  _getMessages() {
     const messages = [];
-    const reducedFinalizerValidity = __privateGet(this, _finalizerValidityReducer).finalizerValidity;
+    const reducedFinalizerValidity = this._finalizerValidityReducer.finalizerValidity;
     if (reducedFinalizerValidity === -1 /* FINALIZER_ERROR */) {
       messages.push({
         type: "ERROR" /* ERROR */,
@@ -2487,31 +2248,22 @@ var FinalizerManagerImpl = class {
     return messages;
   }
 };
-_value2 = new WeakMap();
-_finalizerMap = new WeakMap();
-_finalizerValidityReducer = new WeakMap();
-_finalizerValidityTranslator2 = new WeakMap();
 
 // src/model/finalizers/finalizer-manager-factory-impl.ts
-var _reducerFactory4, _finalizerValidityTranslator3;
 var FinalizerManagerFactoryImpl = class {
   constructor(reducerFactory, finalizerValidityTranslator) {
-    __privateAdd(this, _reducerFactory4, void 0);
-    __privateAdd(this, _finalizerValidityTranslator3, void 0);
-    __privateSet(this, _reducerFactory4, reducerFactory);
-    __privateSet(this, _finalizerValidityTranslator3, finalizerValidityTranslator);
+    this._reducerFactory = reducerFactory;
+    this._finalizerValidityTranslator = finalizerValidityTranslator;
   }
   createFinalizerManager(finalizerDictionary) {
-    const finalizerValidityReducer = __privateGet(this, _reducerFactory4).createFinalizerValidityReducer();
+    const finalizerValidityReducer = this._reducerFactory.createFinalizerValidityReducer();
     return new FinalizerManagerImpl(
       finalizerDictionary,
       finalizerValidityReducer,
-      __privateGet(this, _finalizerValidityTranslator3)
+      this._finalizerValidityTranslator
     );
   }
 };
-_reducerFactory4 = new WeakMap();
-_finalizerValidityTranslator3 = new WeakMap();
 var FinalizerManagerFactoryService = (0, import_undecorated_di17.autowire)(FinalizerManagerFactoryImpl, FinalizerManagerFactoryKey, [
   ReducerFactoryKey,
   FinalizerValidityTranslatorKey
@@ -2530,25 +2282,22 @@ var AsyncFinalizer = class extends AsyncAdapter {
 
 // src/model/finalizers/default-finalizer.ts
 var import_rxjs19 = require("rxjs");
-var _field5, _finalizerValidityTranslator4;
 var DefaultFinalizer = class {
   constructor(field, finalizerValidityTranslator) {
-    __privateAdd(this, _field5, void 0);
-    __privateAdd(this, _finalizerValidityTranslator4, void 0);
-    __privateSet(this, _field5, field);
-    __privateSet(this, _finalizerValidityTranslator4, finalizerValidityTranslator);
-    __privateGet(this, _field5).stateChanges.subscribe((stateChange) => {
+    this._field = field;
+    this._finalizerValidityTranslator = finalizerValidityTranslator;
+    this._field.stateChanges.subscribe((stateChange) => {
       var _a;
-      (_a = this.stream) == null ? void 0 : _a.next(this.getFinalizerState(stateChange));
+      (_a = this.stream) == null ? void 0 : _a.next(this._getFinalizerState(stateChange));
     });
     this.stream = new import_rxjs19.BehaviorSubject(
-      this.getFinalizerState(__privateGet(this, _field5).state)
+      this._getFinalizerState(this._field.state)
     );
   }
-  getFinalizerState(fieldState) {
+  _getFinalizerState(fieldState) {
     if (fieldState.validity < 4 /* VALID_FINALIZABLE */)
       return {
-        finalizerValidity: __privateGet(this, _finalizerValidityTranslator4).translateValidityToFinalizerValidity(
+        finalizerValidity: this._finalizerValidityTranslator.translateValidityToFinalizerValidity(
           fieldState.validity
         )
       };
@@ -2558,8 +2307,6 @@ var DefaultFinalizer = class {
     };
   }
 };
-_field5 = new WeakMap();
-_finalizerValidityTranslator4 = new WeakMap();
 
 // src/model/finalizers/finalizer-factory.interface.ts
 var FinalizerFactoryKey = "FinalizerFactory";
@@ -2573,28 +2320,23 @@ var SyncFinalizer = class extends SyncAdapter {
 };
 
 // src/model/finalizers/finalizer-factory-impl.ts
-var _aggregatorFactory4, _finalizerValidityTranslator5;
 var FinalizerFactoryImpl = class {
   constructor(aggregatorFactory, finalizerValidityTranslator) {
-    __privateAdd(this, _aggregatorFactory4, void 0);
-    __privateAdd(this, _finalizerValidityTranslator5, void 0);
-    __privateSet(this, _aggregatorFactory4, aggregatorFactory);
-    __privateSet(this, _finalizerValidityTranslator5, finalizerValidityTranslator);
+    this._aggregatorFactory = aggregatorFactory;
+    this._finalizerValidityTranslator = finalizerValidityTranslator;
   }
   createSyncFinalizer(finalizerFn, fields) {
-    const aggregator = __privateGet(this, _aggregatorFactory4).createMultiFieldAggregatorFromFields(fields);
+    const aggregator = this._aggregatorFactory.createMultiFieldAggregatorFromFields(fields);
     return new SyncFinalizer(finalizerFn, aggregator);
   }
   createAsyncFinalizer(finalizerFn, fields) {
-    const aggregator = __privateGet(this, _aggregatorFactory4).createMultiFieldAggregatorFromFields(fields);
+    const aggregator = this._aggregatorFactory.createMultiFieldAggregatorFromFields(fields);
     return new AsyncFinalizer(finalizerFn, aggregator);
   }
   createDefaultFinalizer(baseField) {
-    return new DefaultFinalizer(baseField, __privateGet(this, _finalizerValidityTranslator5));
+    return new DefaultFinalizer(baseField, this._finalizerValidityTranslator);
   }
 };
-_aggregatorFactory4 = new WeakMap();
-_finalizerValidityTranslator5 = new WeakMap();
 var FinalizerFactoryService = (0, import_undecorated_di18.autowire)(FinalizerFactoryImpl, FinalizerFactoryKey, [
   AggregatorFactoryKey,
   FinalizerValidityTranslatorKey
@@ -2608,22 +2350,20 @@ var SubmissionManagerFactoryKey = "SubmissionManagerFactory";
 
 // src/model/submission/submission-manager-impl.ts
 var import_rxjs20 = require("rxjs");
-var _submitFn, _submissionState;
 var SubmissionManagerImpl = class {
   constructor(submitFn) {
-    __privateAdd(this, _submitFn, void 0);
-    __privateAdd(this, _submissionState, {
+    this._submissionState = {
       submissionAttempted: false
-    });
+    };
     this.submissionStateChanges = new import_rxjs20.BehaviorSubject(this.submissionState);
-    __privateSet(this, _submitFn, submitFn);
+    this._submitFn = submitFn;
   }
   set submissionState(submissionState) {
-    __privateSet(this, _submissionState, submissionState);
+    this._submissionState = submissionState;
     this.submissionStateChanges.next(this.submissionState);
   }
   get submissionState() {
-    return copyObject(__privateGet(this, _submissionState));
+    return copyObject(this._submissionState);
   }
   submit(state) {
     this.submissionState = {
@@ -2631,7 +2371,7 @@ var SubmissionManagerImpl = class {
     };
     return new Promise((resolve, reject) => {
       if (state.validity < 4 /* VALID_FINALIZABLE */) {
-        this.submissionState = __spreadProps(__spreadValues({}, __privateGet(this, _submissionState)), {
+        this.submissionState = __spreadProps(__spreadValues({}, this._submissionState), {
           message: {
             type: "INVALID" /* INVALID */,
             text: config.globalMessages.submissionFailed
@@ -2639,11 +2379,11 @@ var SubmissionManagerImpl = class {
         });
         reject(new Error(config.globalMessages.submissionFailed));
       } else {
-        __privateGet(this, _submitFn).call(this, state).then((res) => {
+        this._submitFn(state).then((res) => {
           resolve(res);
         }).catch((e) => {
           if (e.message)
-            this.submissionState = __spreadProps(__spreadValues({}, __privateGet(this, _submissionState)), {
+            this.submissionState = __spreadProps(__spreadValues({}, this._submissionState), {
               message: {
                 type: "ERROR" /* ERROR */,
                 text: e.message
@@ -2665,8 +2405,6 @@ var SubmissionManagerImpl = class {
     };
   }
 };
-_submitFn = new WeakMap();
-_submissionState = new WeakMap();
 
 // src/model/submission/submission-manager-factory-impl.ts
 var SubmissionManagerFactoryImpl = class {
@@ -2681,28 +2419,22 @@ var import_undecorated_di20 = require("undecorated-di");
 
 // src/model/forms/nested-form.ts
 var import_rxjs21 = require("rxjs");
-var _firstNonValidFormElementTracker, _finalizerManager, _multiFieldValidatorMessagesAggregator, _omitByDefault3, _omit2;
 var NestedForm = class extends AbstractNestedForm {
   constructor(userFacingFields, firstNonValidFormElementTracker, finalizerManager, multiFieldValidatorMessagesAggregator, omitByDefault) {
     super();
-    __privateAdd(this, _firstNonValidFormElementTracker, void 0);
-    __privateAdd(this, _finalizerManager, void 0);
-    __privateAdd(this, _multiFieldValidatorMessagesAggregator, void 0);
-    __privateAdd(this, _omitByDefault3, void 0);
-    __privateAdd(this, _omit2, void 0);
     this.userFacingFields = userFacingFields;
-    __privateSet(this, _firstNonValidFormElementTracker, firstNonValidFormElementTracker);
-    __privateSet(this, _finalizerManager, finalizerManager);
-    __privateSet(this, _multiFieldValidatorMessagesAggregator, multiFieldValidatorMessagesAggregator);
-    __privateSet(this, _omitByDefault3, omitByDefault);
-    __privateSet(this, _omit2, __privateGet(this, _omitByDefault3));
-    __privateGet(this, _multiFieldValidatorMessagesAggregator).messagesChanges.subscribe(
+    this._firstNonValidFormElementTracker = firstNonValidFormElementTracker;
+    this._finalizerManager = finalizerManager;
+    this._multiFieldValidatorMessagesAggregator = multiFieldValidatorMessagesAggregator;
+    this._omitByDefault = omitByDefault;
+    this._omit = this._omitByDefault;
+    this._multiFieldValidatorMessagesAggregator.messagesChanges.subscribe(
       () => {
         var _a;
         (_a = this.stateChanges) == null ? void 0 : _a.next(this.state);
       }
     );
-    __privateGet(this, _finalizerManager).stateChanges.subscribe(() => {
+    this._finalizerManager.stateChanges.subscribe(() => {
       var _a;
       if (this.stateChanges)
         (_a = this.stateChanges) == null ? void 0 : _a.next(this.state);
@@ -2710,40 +2442,35 @@ var NestedForm = class extends AbstractNestedForm {
     this.stateChanges = new import_rxjs21.BehaviorSubject(this.state);
   }
   get state() {
-    return copyObject(__spreadProps(__spreadValues({}, __privateGet(this, _finalizerManager).state), {
+    return copyObject(__spreadProps(__spreadValues({}, this._finalizerManager.state), {
       messages: [
-        ...__privateGet(this, _multiFieldValidatorMessagesAggregator).messages,
-        ...__privateGet(this, _finalizerManager).state.messages
+        ...this._multiFieldValidatorMessagesAggregator.messages,
+        ...this._finalizerManager.state.messages
       ],
-      omit: __privateGet(this, _omit2)
+      omit: this._omit
     }));
   }
   get firstNonValidFormElement() {
-    return __privateGet(this, _firstNonValidFormElementTracker).firstNonValidFormElement;
+    return this._firstNonValidFormElementTracker.firstNonValidFormElement;
   }
   get firstNonValidFormElementChanges() {
-    return __privateGet(this, _firstNonValidFormElementTracker).firstNonValidFormElementChanges;
+    return this._firstNonValidFormElementTracker.firstNonValidFormElementChanges;
   }
   set omit(omit) {
-    __privateSet(this, _omit2, omit);
+    this._omit = omit;
     if (this.stateChanges)
       this.stateChanges.next(this.state);
   }
   get omit() {
-    return __privateGet(this, _omit2);
+    return this._omit;
   }
   reset() {
-    __privateSet(this, _omit2, __privateGet(this, _omitByDefault3));
+    this._omit = this._omitByDefault;
     for (const fieldName in this.userFacingFields) {
       this.userFacingFields[fieldName].reset();
     }
   }
 };
-_firstNonValidFormElementTracker = new WeakMap();
-_finalizerManager = new WeakMap();
-_multiFieldValidatorMessagesAggregator = new WeakMap();
-_omitByDefault3 = new WeakMap();
-_omit2 = new WeakMap();
 
 // src/model/templates/finalizers/finalizer-template-dictionary-parser.interface.ts
 var FinalizerTemplateDictionaryParserKey = "FinalizerTemplateDictionaryParser";
@@ -2755,30 +2482,26 @@ var FormElementTemplateDictionaryParserKey = "FormElementTemplateDictionaryParse
 var NestedFormTemplateParserKey = "NestedFormTemplateParser";
 
 // src/model/templates/forms/nested-form-template-parser-impl.ts
-var _formElementTemplateDictionaryParser, _multiFieldValidatorsTemplateParser, _finalizerTemplateDictionaryParser;
 var NestedFormTemplateParserImpl = class {
   constructor(formElementTemplateDictionaryParser, multiFieldValidatorsTemplateParser, finalizerTemplateDictionaryParser) {
-    __privateAdd(this, _formElementTemplateDictionaryParser, void 0);
-    __privateAdd(this, _multiFieldValidatorsTemplateParser, void 0);
-    __privateAdd(this, _finalizerTemplateDictionaryParser, void 0);
-    __privateSet(this, _formElementTemplateDictionaryParser, formElementTemplateDictionaryParser);
-    __privateSet(this, _multiFieldValidatorsTemplateParser, multiFieldValidatorsTemplateParser);
-    __privateSet(this, _finalizerTemplateDictionaryParser, finalizerTemplateDictionaryParser);
+    this._formElementTemplateDictionaryParser = formElementTemplateDictionaryParser;
+    this._multiFieldValidatorsTemplateParser = multiFieldValidatorsTemplateParser;
+    this._finalizerTemplateDictionaryParser = finalizerTemplateDictionaryParser;
   }
   parseTemplate(template) {
     var _a, _b, _c;
-    const [baseFields, firstNonValidFormElementTracker] = __privateGet(this, _formElementTemplateDictionaryParser).parseTemplate(template.fields);
+    const [baseFields, firstNonValidFormElementTracker] = this._formElementTemplateDictionaryParser.parseTemplate(template.fields);
     const multiFieldValidatorsTemplate = (_a = template.multiFieldValidators) != null ? _a : {};
     const [
       userFacingFields,
       finalizerFacingFields,
       multiInputValidatorMessagesAggregator
-    ] = __privateGet(this, _multiFieldValidatorsTemplateParser).parseTemplate(
+    ] = this._multiFieldValidatorsTemplateParser.parseTemplate(
       multiFieldValidatorsTemplate,
       baseFields
     );
     const finalizedFields = (_b = template.finalizedFields) != null ? _b : {};
-    const finalizerManager = __privateGet(this, _finalizerTemplateDictionaryParser).parseTemplate(
+    const finalizerManager = this._finalizerTemplateDictionaryParser.parseTemplate(
       finalizedFields,
       finalizerFacingFields
     );
@@ -2792,9 +2515,6 @@ var NestedFormTemplateParserImpl = class {
     return form;
   }
 };
-_formElementTemplateDictionaryParser = new WeakMap();
-_multiFieldValidatorsTemplateParser = new WeakMap();
-_finalizerTemplateDictionaryParser = new WeakMap();
 var NestedFormTemplateParserService = (0, import_undecorated_di20.autowire)(NestedFormTemplateParserImpl, NestedFormTemplateParserKey, [
   FormElementTemplateDictionaryParserKey,
   MultiFieldValidatorsTemplateParserKey,
@@ -2812,31 +2532,34 @@ var AbstractRootForm = class {
 };
 
 // src/model/forms/root-form.ts
-var _firstNonValidFormElementTracker2, _finalizerManager2, _multiFieldValidatorMessagesAggregator2, _submissionManager;
 var RootForm = class extends AbstractRootForm {
   constructor(userFacingFields, firstNonValidFormElementTracker, finalizerManager, multiFieldValidatorMessagesAggregator, submissionManager) {
     super();
-    __privateAdd(this, _firstNonValidFormElementTracker2, void 0);
-    __privateAdd(this, _finalizerManager2, void 0);
-    __privateAdd(this, _multiFieldValidatorMessagesAggregator2, void 0);
-    __privateAdd(this, _submissionManager, void 0);
+    this.submit = () => {
+      console.log(this._submissionManager);
+      console.log(this._submissionManager.submit);
+      return this._submissionManager.submit(this.state);
+    };
     this.userFacingFields = userFacingFields;
-    __privateSet(this, _firstNonValidFormElementTracker2, firstNonValidFormElementTracker);
-    __privateSet(this, _finalizerManager2, finalizerManager);
-    __privateSet(this, _multiFieldValidatorMessagesAggregator2, multiFieldValidatorMessagesAggregator);
-    __privateSet(this, _submissionManager, submissionManager);
-    __privateGet(this, _multiFieldValidatorMessagesAggregator2).messagesChanges.subscribe(
+    this._firstNonValidFormElementTracker = firstNonValidFormElementTracker;
+    this._finalizerManager = finalizerManager;
+    this._multiFieldValidatorMessagesAggregator = multiFieldValidatorMessagesAggregator;
+    this._submissionManager = submissionManager;
+    console.log("this.submission manager");
+    console.log(this._submissionManager);
+    console.log("after this.submissionManager");
+    this._multiFieldValidatorMessagesAggregator.messagesChanges.subscribe(
       () => {
         var _a;
         (_a = this.stateChanges) == null ? void 0 : _a.next(this.state);
       }
     );
-    __privateGet(this, _finalizerManager2).stateChanges.subscribe(() => {
+    this._finalizerManager.stateChanges.subscribe(() => {
       var _a;
-      __privateGet(this, _submissionManager).clearMessage();
+      this._submissionManager.clearMessage();
       (_a = this.stateChanges) == null ? void 0 : _a.next(this.state);
     });
-    __privateGet(this, _submissionManager).submissionStateChanges.subscribe(() => {
+    this._submissionManager.submissionStateChanges.subscribe(() => {
       if (this.stateChanges)
         this.stateChanges.next(this.state);
       if (this.submissionStateChanges)
@@ -2846,82 +2569,71 @@ var RootForm = class extends AbstractRootForm {
     this.stateChanges = new import_rxjs22.BehaviorSubject(this.state);
   }
   get state() {
-    const messages = this.aggregateMessages();
-    return copyObject(__spreadProps(__spreadValues({}, __privateGet(this, _finalizerManager2).state), {
+    const messages = this._aggregateMessages();
+    return copyObject(__spreadProps(__spreadValues({}, this._finalizerManager.state), {
       messages
     }));
   }
   get firstNonValidFormElement() {
-    return __privateGet(this, _firstNonValidFormElementTracker2).firstNonValidFormElement;
+    return this._firstNonValidFormElementTracker.firstNonValidFormElement;
   }
   get firstNonValidFormElementChanges() {
-    return __privateGet(this, _firstNonValidFormElementTracker2).firstNonValidFormElementChanges;
+    return this._firstNonValidFormElementTracker.firstNonValidFormElementChanges;
   }
   get submissionState() {
     return {
-      submissionAttempted: __privateGet(this, _submissionManager).submissionState.submissionAttempted
+      submissionAttempted: this._submissionManager.submissionState.submissionAttempted
     };
   }
-  submit() {
-    return __async(this, null, function* () {
-      return __privateGet(this, _submissionManager).submit(this.state);
-    });
-  }
   reset() {
-    __privateGet(this, _submissionManager).reset();
+    this._submissionManager.reset();
     for (const fieldName in this.userFacingFields) {
       this.userFacingFields[fieldName].reset();
     }
   }
-  aggregateMessages() {
+  _aggregateMessages() {
     const messages = [
-      ...__privateGet(this, _multiFieldValidatorMessagesAggregator2).messages,
-      ...__privateGet(this, _finalizerManager2).state.messages
+      ...this._multiFieldValidatorMessagesAggregator.messages,
+      ...this._finalizerManager.state.messages
     ];
-    if (__privateGet(this, _submissionManager).submissionState.message)
-      messages.push(__privateGet(this, _submissionManager).submissionState.message);
+    if (this._submissionManager.submissionState.message)
+      messages.push(this._submissionManager.submissionState.message);
     return messages;
   }
 };
-_firstNonValidFormElementTracker2 = new WeakMap();
-_finalizerManager2 = new WeakMap();
-_multiFieldValidatorMessagesAggregator2 = new WeakMap();
-_submissionManager = new WeakMap();
 
 // src/model/templates/forms/root-form-template-parser.interface.ts
 var RootFormTemplateParserKey = "RootFormTemplateParser";
 
 // src/model/templates/forms/root-form-template-parser-impl.ts
-var _formElementTemplateDictionaryParser2, _multiFieldValidatorsTemplateParser2, _finalizerTemplateDictionaryParser2, _submissionManagerFactory;
 var RootFormTemplateParserImpl = class {
   constructor(formElementTemplateDictionaryParser, multiFieldValidatorsTemplateParser, finalizerTemplateDictionaryParser, submissionManagerFactory) {
-    __privateAdd(this, _formElementTemplateDictionaryParser2, void 0);
-    __privateAdd(this, _multiFieldValidatorsTemplateParser2, void 0);
-    __privateAdd(this, _finalizerTemplateDictionaryParser2, void 0);
-    __privateAdd(this, _submissionManagerFactory, void 0);
-    __privateSet(this, _formElementTemplateDictionaryParser2, formElementTemplateDictionaryParser);
-    __privateSet(this, _multiFieldValidatorsTemplateParser2, multiFieldValidatorsTemplateParser);
-    __privateSet(this, _finalizerTemplateDictionaryParser2, finalizerTemplateDictionaryParser);
-    __privateSet(this, _submissionManagerFactory, submissionManagerFactory);
+    this._formElementTemplateDictionaryParser = formElementTemplateDictionaryParser;
+    this._multiFieldValidatorsTemplateParser = multiFieldValidatorsTemplateParser;
+    this._finalizerTemplateDictionaryParser = finalizerTemplateDictionaryParser;
+    this._submissionManagerFactory = submissionManagerFactory;
   }
   parseTemplate(template) {
     var _a, _b;
-    const [baseFields, firstNonValidFormElementTracker] = __privateGet(this, _formElementTemplateDictionaryParser2).parseTemplate(template.fields);
+    const [baseFields, firstNonValidFormElementTracker] = this._formElementTemplateDictionaryParser.parseTemplate(template.fields);
     const multiFieldValidatorsTemplate = (_a = template.multiFieldValidators) != null ? _a : {};
     const [
       userFacingFields,
       finalizerFacingFields,
       multiInputValidatorMessagesAggregator
-    ] = __privateGet(this, _multiFieldValidatorsTemplateParser2).parseTemplate(
+    ] = this._multiFieldValidatorsTemplateParser.parseTemplate(
       multiFieldValidatorsTemplate,
       baseFields
     );
     const finalizedFields = (_b = template.finalizedFields) != null ? _b : {};
-    const finalizerManager = __privateGet(this, _finalizerTemplateDictionaryParser2).parseTemplate(
+    const finalizerManager = this._finalizerTemplateDictionaryParser.parseTemplate(
       finalizedFields,
       finalizerFacingFields
     );
-    const submissionManager = __privateGet(this, _submissionManagerFactory).createSubmissionManager(template.submitFn);
+    const submissionManager = this._submissionManagerFactory.createSubmissionManager(template.submitFn);
+    console.log("submission manager: ");
+    console.log(submissionManager);
+    console.log("after submission manager");
     const form = new RootForm(
       userFacingFields,
       firstNonValidFormElementTracker,
@@ -2932,10 +2644,6 @@ var RootFormTemplateParserImpl = class {
     return form;
   }
 };
-_formElementTemplateDictionaryParser2 = new WeakMap();
-_multiFieldValidatorsTemplateParser2 = new WeakMap();
-_finalizerTemplateDictionaryParser2 = new WeakMap();
-_submissionManagerFactory = new WeakMap();
 var RootFormTemplateParserService = (0, import_undecorated_di21.autowire)(RootFormTemplateParserImpl, RootFormTemplateParserKey, [
   FormElementTemplateDictionaryParserKey,
   MultiFieldValidatorsTemplateParserKey,
@@ -2951,35 +2659,30 @@ var ControlledFieldTemplateParserKey = "ControlledFieldTemplateParser";
 
 // src/model/templates/form-elements/form-element-template-dictionary-parser-impl.ts
 var import_undecorated_di22 = require("undecorated-di");
-var _baseFieldTemplateParser, _controlledFieldTemplateParser, _nestedFormTemplateParser, _trackerFactory;
 var FormElementDictionaryParserImpl = class {
   constructor(baseFieldTemplateParser, controlledFieldTemplateParser, nestedFormTemplateParser, trackerFactory) {
-    __privateAdd(this, _baseFieldTemplateParser, void 0);
-    __privateAdd(this, _controlledFieldTemplateParser, void 0);
-    __privateAdd(this, _nestedFormTemplateParser, void 0);
-    __privateAdd(this, _trackerFactory, void 0);
-    __privateSet(this, _baseFieldTemplateParser, baseFieldTemplateParser);
-    __privateSet(this, _controlledFieldTemplateParser, controlledFieldTemplateParser);
-    __privateSet(this, _nestedFormTemplateParser, nestedFormTemplateParser);
-    __privateSet(this, _trackerFactory, trackerFactory);
+    this._baseFieldTemplateParser = baseFieldTemplateParser;
+    this._controlledFieldTemplateParser = controlledFieldTemplateParser;
+    this._nestedFormTemplateParser = nestedFormTemplateParser;
+    this._trackerFactory = trackerFactory;
   }
   parseTemplate(template) {
     const formElementDictionary = {};
-    const firstNonValidFormElementTracker = __privateGet(this, _trackerFactory).createFirstNonValidFormElementTracker();
+    const firstNonValidFormElementTracker = this._trackerFactory.createFirstNonValidFormElementTracker();
     const controlledFields = /* @__PURE__ */ new Set();
     for (const [fieldName, formElementTemplate] of Object.entries(template)) {
-      const formElement = this.isNestedForm(formElementTemplate) ? __privateGet(this, _nestedFormTemplateParser).parseTemplate(formElementTemplate) : __privateGet(this, _baseFieldTemplateParser).parseTemplate(formElementTemplate);
+      const formElement = this._isNestedForm(formElementTemplate) ? this._nestedFormTemplateParser.parseTemplate(formElementTemplate) : this._baseFieldTemplateParser.parseTemplate(formElementTemplate);
       formElementDictionary[fieldName] = formElement;
       firstNonValidFormElementTracker.trackFormElementValidity(
         fieldName,
         formElement
       );
-      if (this.isControlledField(formElementTemplate))
+      if (this._isControlledField(formElementTemplate))
         controlledFields.add(fieldName);
     }
     for (const fieldName of controlledFields) {
       const formElementTemplate = template instanceof Map ? template.get(fieldName) : template[fieldName];
-      formElementDictionary[fieldName] = __privateGet(this, _controlledFieldTemplateParser).parseTemplateAndDecorateField(
+      formElementDictionary[fieldName] = this._controlledFieldTemplateParser.parseTemplateAndDecorateField(
         formElementDictionary[fieldName],
         formElementTemplate,
         formElementDictionary
@@ -2987,17 +2690,13 @@ var FormElementDictionaryParserImpl = class {
     }
     return [formElementDictionary, firstNonValidFormElementTracker];
   }
-  isNestedForm(template) {
+  _isNestedForm(template) {
     return typeof template === "object" && "fields" in template;
   }
-  isControlledField(template) {
+  _isControlledField(template) {
     return typeof template === "object" && ("asyncStateControlFn" in template || "syncStateControlFn" in template || "asyncValueControlFn" in template || "syncValueControlFn" in template);
   }
 };
-_baseFieldTemplateParser = new WeakMap();
-_controlledFieldTemplateParser = new WeakMap();
-_nestedFormTemplateParser = new WeakMap();
-_trackerFactory = new WeakMap();
 var FormElementTemplateDictionaryParserService = (0, import_undecorated_di22.autowire)(FormElementDictionaryParserImpl, FormElementTemplateDictionaryParserKey, [
   BaseFieldTemplateParserKey,
   ControlledFieldTemplateParserKey,
@@ -3017,27 +2716,25 @@ var BaseFieldParsingError = class extends Error {
 };
 
 // src/model/templates/fields/base/base-field-template-parser-impl.ts
-var _baseFieldFactory;
 var BaseFieldTemplateParserImpl = class {
   constructor(baseFieldFactory) {
-    __privateAdd(this, _baseFieldFactory, void 0);
-    __privateSet(this, _baseFieldFactory, baseFieldFactory);
+    this._baseFieldFactory = baseFieldFactory;
   }
   parseTemplate(template) {
     if (typeof template === "string")
-      return this.parseString(template);
+      return this._parseString(template);
     else {
-      const templateType = this.determineTemplateType(template);
+      const templateType = this._determineTemplateType(template);
       if (templateType === "DUAL_FIELD" /* DUAL_FIELD */) {
-        return this.parseDualFieldTemplate(template);
+        return this._parseDualFieldTemplate(template);
       } else
-        return this.parseFieldTemplate(template);
+        return this._parseFieldTemplate(template);
     }
   }
-  parseString(template) {
-    return __privateGet(this, _baseFieldFactory).createField(template, false, [], []);
+  _parseString(template) {
+    return this._baseFieldFactory.createField(template, false, [], []);
   }
-  determineTemplateType(template) {
+  _determineTemplateType(template) {
     if (typeof template !== "object")
       throw new BaseFieldParsingError(
         "Field template was not a string or an object."
@@ -3055,21 +2752,21 @@ var BaseFieldTemplateParserImpl = class {
     return isDualField ? "DUAL_FIELD" /* DUAL_FIELD */ : "FIELD" /* FIELD */;
   }
   //at this point, we know the field has a defaultValue property and lacks primaryDefaultValue/secondaryDefaultValue
-  parseFieldTemplate(template) {
+  _parseFieldTemplate(template) {
     if (typeof template.defaultValue !== "string") {
       throw new BaseFieldParsingError(
         "BaseFieldTemplateParser received a template object whose defaultValue was not of type 'string'"
       );
     }
-    this.validateBaseFieldTemplate(template);
-    const baseFieldProps = this.extractBaseFieldProperties(template);
-    return __privateGet(this, _baseFieldFactory).createField(
+    this._validateBaseFieldTemplate(template);
+    const baseFieldProps = this._extractBaseFieldProperties(template);
+    return this._baseFieldFactory.createField(
       template.defaultValue,
       ...baseFieldProps,
       template.pendingAsyncValidatorMessage
     );
   }
-  parseDualFieldTemplate(template) {
+  _parseDualFieldTemplate(template) {
     if (!("primaryDefaultValue" in template)) {
       throw new BaseFieldParsingError(
         "BaseFieldTemplateParser received a template object containing a secondaryDefaultValue property, but not a primaryDefaultValue property. If you wish to create a dual field, ensure that both properties are included in the template."
@@ -3090,16 +2787,16 @@ var BaseFieldTemplateParserImpl = class {
         "BaseFieldTemplateParser received a template object whose secondaryDefaultValue was not of type string."
       );
     }
-    this.validateBaseFieldTemplate(template);
-    const extractBaseFieldProperties = this.extractBaseFieldProperties(template);
-    return __privateGet(this, _baseFieldFactory).createDualField(
+    this._validateBaseFieldTemplate(template);
+    const _extractBaseFieldProperties = this._extractBaseFieldProperties(template);
+    return this._baseFieldFactory.createDualField(
       template.primaryDefaultValue,
       template.secondaryDefaultValue,
-      ...extractBaseFieldProperties,
+      ..._extractBaseFieldProperties,
       template.pendingAsyncValidatorMessage
     );
   }
-  validateBaseFieldTemplate(template) {
+  _validateBaseFieldTemplate(template) {
     if ("omitByDefault" in template && typeof template.omitByDefault !== "boolean") {
       throw new BaseFieldParsingError(
         "BaseFieldTemplateParser received a template object whose omitByDefault property was not of type 'boolean.'"
@@ -3121,7 +2818,7 @@ var BaseFieldTemplateParserImpl = class {
       );
     }
   }
-  extractBaseFieldProperties(template) {
+  _extractBaseFieldProperties(template) {
     var _a, _b, _c;
     const omitByDefault = (_a = template.omitByDefault) != null ? _a : false;
     const syncValidators = (_b = template.syncValidators) != null ? _b : [];
@@ -3129,7 +2826,6 @@ var BaseFieldTemplateParserImpl = class {
     return [omitByDefault, syncValidators, asyncValidators];
   }
 };
-_baseFieldFactory = new WeakMap();
 var BaseFieldTemplateParserService = (0, import_undecorated_di23.autowire)(BaseFieldTemplateParserImpl, BaseFieldTemplateParserKey, [
   BaseFieldFactoryKey
 ]);
@@ -3153,11 +2849,9 @@ var ControlType = /* @__PURE__ */ ((ControlType2) => {
   ControlType2["ASYNC_VALUE_CONTROL_FN"] = "asyncValueControlFn";
   return ControlType2;
 })(ControlType || {});
-var _controlledFieldFactory;
 var ControlledFieldTemplateParserImpl = class {
   constructor(controlledFieldFactory) {
-    __privateAdd(this, _controlledFieldFactory, void 0);
-    __privateSet(this, _controlledFieldFactory, controlledFieldFactory);
+    this._controlledFieldFactory = controlledFieldFactory;
   }
   parseTemplateAndDecorateField(baseField, template, fields) {
     if (!(baseField instanceof AbstractField)) {
@@ -3165,35 +2859,35 @@ var ControlledFieldTemplateParserImpl = class {
         "ControlledFieldTemplateParser expected instanceof AbstractField."
       );
     }
-    const controlFnType = this.getControlFnType(template);
+    const controlFnType = this._getControlFnType(template);
     switch (controlFnType) {
       case "syncStateControlFn" /* SYNC_STATE_CONTROL_FN */:
-        return __privateGet(this, _controlledFieldFactory).createStateControlledFieldWithSyncAdapter(
+        return this._controlledFieldFactory.createStateControlledFieldWithSyncAdapter(
           baseField,
           template.syncStateControlFn,
           fields
         );
       case "asyncStateControlFn" /* ASYNC_STATE_CONTROL_FN */:
-        return __privateGet(this, _controlledFieldFactory).createStateControlledFieldWithAsyncAdapter(
+        return this._controlledFieldFactory.createStateControlledFieldWithAsyncAdapter(
           baseField,
           template.asyncStateControlFn,
           fields
         );
       case "syncValueControlFn" /* SYNC_VALUE_CONTROL_FN */:
-        return __privateGet(this, _controlledFieldFactory).createValueControlledFieldWithSyncAdapter(
+        return this._controlledFieldFactory.createValueControlledFieldWithSyncAdapter(
           baseField,
           template.syncValueControlFn,
           fields
         );
       case "asyncValueControlFn" /* ASYNC_VALUE_CONTROL_FN */:
-        return __privateGet(this, _controlledFieldFactory).createValueControlledFieldWithAsyncAdapter(
+        return this._controlledFieldFactory.createValueControlledFieldWithAsyncAdapter(
           baseField,
           template.asyncValueControlFn,
           fields
         );
     }
   }
-  getControlFnType(template) {
+  _getControlFnType(template) {
     const controlTypes = Object.values(ControlType);
     let controlFnType = null;
     for (const controlType of controlTypes) {
@@ -3213,32 +2907,27 @@ var ControlledFieldTemplateParserImpl = class {
     return controlFnType;
   }
 };
-_controlledFieldFactory = new WeakMap();
 var ControlledFieldTemplateParserService = (0, import_undecorated_di24.autowire)(ControlledFieldTemplateParserImpl, ControlledFieldTemplateParserKey, [
   ControlledFieldFactoryKey
 ]);
 
 // src/model/templates/finalizers/finalizer-template-dictionary-parser-impl.ts
 var import_undecorated_di25 = require("undecorated-di");
-var _finalizerFnFactory, _finalizerFactory, _finalizerManagerFactory;
 var FinalizerTemplateDictionaryParserImpl = class {
   constructor(finalizerFnFactory, finalizerFactory, finalizerManagerFactory) {
-    __privateAdd(this, _finalizerFnFactory, void 0);
-    __privateAdd(this, _finalizerFactory, void 0);
-    __privateAdd(this, _finalizerManagerFactory, void 0);
-    __privateSet(this, _finalizerFnFactory, finalizerFnFactory);
-    __privateSet(this, _finalizerFactory, finalizerFactory);
-    __privateSet(this, _finalizerManagerFactory, finalizerManagerFactory);
+    this._finalizerFnFactory = finalizerFnFactory;
+    this._finalizerFactory = finalizerFactory;
+    this._finalizerManagerFactory = finalizerManagerFactory;
   }
   parseTemplate(template, finalizerFacingFields) {
     const finalizers = {};
     let originalFieldsToPreserve = /* @__PURE__ */ new Set();
     for (const [finalizerName, finalizerTemplate] of Object.entries(template)) {
       if (finalizerTemplate.syncFinalizerFn) {
-        const finalizerFn = __privateGet(this, _finalizerFnFactory).createSyncFinalizerFn(
+        const finalizerFn = this._finalizerFnFactory.createSyncFinalizerFn(
           finalizerTemplate.syncFinalizerFn
         );
-        const finalizer = __privateGet(this, _finalizerFactory).createSyncFinalizer(
+        const finalizer = this._finalizerFactory.createSyncFinalizer(
           finalizerFn,
           finalizerFacingFields
         );
@@ -3252,10 +2941,10 @@ var FinalizerTemplateDictionaryParserImpl = class {
           }
         });
       } else if (finalizerTemplate.asyncFinalizerFn) {
-        const finalizerFn = __privateGet(this, _finalizerFnFactory).createAsyncFinalizerFn(
+        const finalizerFn = this._finalizerFnFactory.createAsyncFinalizerFn(
           finalizerTemplate.asyncFinalizerFn
         );
-        const finalizer = __privateGet(this, _finalizerFactory).createAsyncFinalizer(
+        const finalizer = this._finalizerFactory.createAsyncFinalizer(
           finalizerFn,
           finalizerFacingFields
         );
@@ -3272,15 +2961,12 @@ var FinalizerTemplateDictionaryParserImpl = class {
     }
     for (const [fieldName, field] of Object.entries(finalizerFacingFields)) {
       if (originalFieldsToPreserve.has(fieldName) || !(fieldName in finalizers)) {
-        finalizers[fieldName] = __privateGet(this, _finalizerFactory).createDefaultFinalizer(field);
+        finalizers[fieldName] = this._finalizerFactory.createDefaultFinalizer(field);
       }
     }
-    return __privateGet(this, _finalizerManagerFactory).createFinalizerManager(finalizers);
+    return this._finalizerManagerFactory.createFinalizerManager(finalizers);
   }
 };
-_finalizerFnFactory = new WeakMap();
-_finalizerFactory = new WeakMap();
-_finalizerManagerFactory = new WeakMap();
 var FinalizerTemplateDictionaryParserService = (0, import_undecorated_di25.autowire)(FinalizerTemplateDictionaryParserImpl, FinalizerTemplateDictionaryParserKey, [
   FinalizerFnFactoryKey,
   FinalizerFactoryKey,
@@ -3308,56 +2994,48 @@ var import_undecorated_di27 = require("undecorated-di");
 
 // src/model/fields/auto-transformed/auto-transformed-field.ts
 var import_rxjs23 = require("rxjs");
-var _baseField3, _autoTransformer;
 var AutoTransformedField = class extends AbstractField {
   constructor(baseField, autoTransformer17) {
     super();
-    __privateAdd(this, _baseField3, void 0);
-    __privateAdd(this, _autoTransformer, void 0);
-    __privateSet(this, _baseField3, baseField);
-    __privateSet(this, _autoTransformer, autoTransformer17);
-    __privateGet(this, _baseField3).stateChanges.subscribe(() => {
+    this.reset = () => {
+      this._baseField.reset();
+    };
+    this._baseField = baseField;
+    this._autoTransformer = autoTransformer17;
+    this._baseField.stateChanges.subscribe(() => {
       if (this.stateChanges)
         this.stateChanges.next(this.state);
     });
     this.stateChanges = new import_rxjs23.BehaviorSubject(this.state);
   }
   get omit() {
-    return __privateGet(this, _baseField3).omit;
+    return this._baseField.omit;
   }
   set omit(omit) {
-    __privateGet(this, _baseField3).omit = omit;
+    this._baseField.omit = omit;
   }
   get state() {
-    return __spreadProps(__spreadValues({}, __privateGet(this, _baseField3).state), {
-      value: __privateGet(this, _autoTransformer).transform(__privateGet(this, _baseField3).state.value)
+    return __spreadProps(__spreadValues({}, this._baseField.state), {
+      value: this._autoTransformer.transform(this._baseField.state.value)
     });
   }
   setState(state) {
-    __privateGet(this, _baseField3).setState(state);
+    this._baseField.setState(state);
   }
   setValue(value) {
-    __privateGet(this, _baseField3).setValue(value);
-  }
-  reset() {
-    __privateGet(this, _baseField3).reset();
+    this._baseField.setValue(value);
   }
 };
-_baseField3 = new WeakMap();
-_autoTransformer = new WeakMap();
 
 // src/model/fields/auto-transformed/auto-transformed-field-factory-impl.ts
-var _autoTransformer2;
 var AutoTransformedFieldFactoryImpl = class {
   constructor(autoTransformer17) {
-    __privateAdd(this, _autoTransformer2, void 0);
-    __privateSet(this, _autoTransformer2, autoTransformer17);
+    this._autoTransformer = autoTransformer17;
   }
   createAutoTransformedField(baseField) {
-    return new AutoTransformedField(baseField, __privateGet(this, _autoTransformer2));
+    return new AutoTransformedField(baseField, this._autoTransformer);
   }
 };
-_autoTransformer2 = new WeakMap();
 var AutoTransformedFieldFactoryService = (0, import_undecorated_di27.autowire)(AutoTransformedFieldFactoryImpl, AutoTransformedFieldFactoryKey, [
   AutoTransformerKey
 ]);
@@ -3713,7 +3391,7 @@ function useField(field) {
   const updateValue = (value2) => {
     field.setValue(value2);
   };
-  const reset = field.reset;
+  const reset = () => field.reset();
   return {
     value,
     validity,
@@ -3751,10 +3429,12 @@ function useDualField(dualField) {
   const usePrimaryField = () => useField(dualField.primaryField);
   const useSecondaryField = () => useField(dualField.secondaryField);
   const useSwitchToSecondaryField2 = () => useSwitchToSecondaryField(dualField);
+  const reset = () => dualField.reset();
   return {
     usePrimaryField,
     useSecondaryField,
-    useSwitchToSecondaryField: useSwitchToSecondaryField2
+    useSwitchToSecondaryField: useSwitchToSecondaryField2,
+    reset
   };
 }
 
@@ -3785,7 +3465,7 @@ function useOmittableFormElement(formElement) {
 function useForm(form) {
   const useFormState2 = () => useFormState(form);
   const useFirstNonValidFormElement2 = () => useFirstNonValidFormElement(form);
-  const { reset } = form;
+  const reset = () => form.reset();
   const useField2 = (fieldName) => {
     if (!(fieldName in form.userFacingFields)) {
       throw new Error(
@@ -3873,7 +3553,7 @@ function useRootForm(template) {
   const form = (0, import_react7.useMemo)(() => rootFormTemplateParser.parseTemplate(template), [template]);
   const formRef = (0, import_react7.useRef)(form);
   const useSubmissionAttempted2 = () => useSubmissionAttempted(formRef.current);
-  const { submit } = formRef.current;
+  const submit = () => formRef.current.submit();
   return __spreadProps(__spreadValues({}, useForm(formRef.current)), {
     useSubmissionAttempted: useSubmissionAttempted2,
     submit

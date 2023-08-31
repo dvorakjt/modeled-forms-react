@@ -8,22 +8,22 @@ import { FieldState } from '../../state/field-state.interface';
 
 export class AutoTransformedField extends AbstractField {
   stateChanges: Subject<State<string>>;
-  #baseField: AbstractField;
-  #autoTransformer: AutoTransformer;
+  _baseField: AbstractField;
+  _autoTransformer: AutoTransformer;
 
   get omit() {
-    return this.#baseField.omit;
+    return this._baseField.omit;
   }
 
   set omit(omit) {
-    this.#baseField.omit = omit;
+    this._baseField.omit = omit;
   }
 
   constructor(baseField: AbstractField, autoTransformer: AutoTransformer) {
     super();
-    this.#baseField = baseField;
-    this.#autoTransformer = autoTransformer;
-    this.#baseField.stateChanges.subscribe(() => {
+    this._baseField = baseField;
+    this._autoTransformer = autoTransformer;
+    this._baseField.stateChanges.subscribe(() => {
       if (this.stateChanges) this.stateChanges.next(this.state);
     });
     this.stateChanges = new BehaviorSubject(this.state);
@@ -31,20 +31,20 @@ export class AutoTransformedField extends AbstractField {
 
   get state(): State<string> {
     return {
-      ...this.#baseField.state,
-      value: this.#autoTransformer.transform(this.#baseField.state.value),
+      ...this._baseField.state,
+      value: this._autoTransformer.transform(this._baseField.state.value),
     };
   }
 
   setState(state: FieldState | DualFieldSetStateArg): void {
-    this.#baseField.setState(state);
+    this._baseField.setState(state);
   }
 
   setValue(value: string | DualFieldSetValueArg): void {
-    this.#baseField.setValue(value);
+    this._baseField.setValue(value);
   }
 
-  reset(): void {
-    this.#baseField.reset();
+  reset = () => { 
+    this._baseField.reset();
   }
 }

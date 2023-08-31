@@ -21,36 +21,36 @@ import {
 import { NestedFormTemplate } from './nested-form-template.interface';
 
 class NestedFormTemplateParserImpl implements NestedFormTemplateParser {
-  #formElementTemplateDictionaryParser: FormElementTemplateDictionaryParser;
-  #multiFieldValidatorsTemplateParser: MultiFieldValidatorsTemplateParser;
-  #finalizerTemplateDictionaryParser: FinalizerTemplateDictionaryParser;
+  _formElementTemplateDictionaryParser: FormElementTemplateDictionaryParser;
+  _multiFieldValidatorsTemplateParser: MultiFieldValidatorsTemplateParser;
+  _finalizerTemplateDictionaryParser: FinalizerTemplateDictionaryParser;
 
   constructor(
     formElementTemplateDictionaryParser: FormElementTemplateDictionaryParser,
     multiFieldValidatorsTemplateParser: MultiFieldValidatorsTemplateParser,
     finalizerTemplateDictionaryParser: FinalizerTemplateDictionaryParser,
   ) {
-    this.#formElementTemplateDictionaryParser =
+    this._formElementTemplateDictionaryParser =
       formElementTemplateDictionaryParser;
-    this.#multiFieldValidatorsTemplateParser =
+    this._multiFieldValidatorsTemplateParser =
       multiFieldValidatorsTemplateParser;
-    this.#finalizerTemplateDictionaryParser = finalizerTemplateDictionaryParser;
+    this._finalizerTemplateDictionaryParser = finalizerTemplateDictionaryParser;
   }
   parseTemplate(template: NestedFormTemplate): AbstractNestedForm {
     const [baseFields, firstNonValidFormElementTracker] =
-      this.#formElementTemplateDictionaryParser.parseTemplate(template.fields);
+      this._formElementTemplateDictionaryParser.parseTemplate(template.fields);
     const multiFieldValidatorsTemplate = template.multiFieldValidators ?? {};
     const [
       userFacingFields,
       finalizerFacingFields,
       multiInputValidatorMessagesAggregator,
-    ] = this.#multiFieldValidatorsTemplateParser.parseTemplate(
+    ] = this._multiFieldValidatorsTemplateParser.parseTemplate(
       multiFieldValidatorsTemplate,
       baseFields,
     );
     const finalizedFields = template.finalizedFields ?? {};
     const finalizerManager =
-      this.#finalizerTemplateDictionaryParser.parseTemplate(
+      this._finalizerTemplateDictionaryParser.parseTemplate(
         finalizedFields,
         finalizerFacingFields,
       );

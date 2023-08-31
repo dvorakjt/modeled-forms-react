@@ -7,23 +7,23 @@ import type { ValidatorSuiteResultsObject } from '../validator-suite-results-obj
 export class HybridSingleInputValidatorSuite<T>
   implements SingleInputValidatorSuite<T>
 {
-  readonly #syncValidatorSuite: SyncSingleInputValidatorSuite<T>;
-  readonly #asyncValidatorSuite: AsyncSingleInputValidatorSuite<T>;
+  readonly _syncValidatorSuite: SyncSingleInputValidatorSuite<T>;
+  readonly _asyncValidatorSuite: AsyncSingleInputValidatorSuite<T>;
   constructor(
     syncValidatorSuite: SyncSingleInputValidatorSuite<T>,
     asyncValidatorSuite: AsyncSingleInputValidatorSuite<T>,
   ) {
-    this.#syncValidatorSuite = syncValidatorSuite;
-    this.#asyncValidatorSuite = asyncValidatorSuite;
+    this._syncValidatorSuite = syncValidatorSuite;
+    this._asyncValidatorSuite = asyncValidatorSuite;
   }
 
   evaluate(value: T) {
     const result: ValidatorSuiteResultsObject<T> =
-      this.#syncValidatorSuite.evaluate(value);
+      this._syncValidatorSuite.evaluate(value);
 
     if (result.syncResult.validity <= Validity.INVALID) return result;
 
-    const asyncResult = this.#asyncValidatorSuite.evaluate(value);
+    const asyncResult = this._asyncValidatorSuite.evaluate(value);
 
     return {
       syncResult: {

@@ -12,10 +12,10 @@ import { OnInitialSubscriptionHandlingBehaviorSubjectImpl } from './on-initial-s
 import { autowire } from 'undecorated-di';
 
 class SubjectFactoryImpl implements SubjectFactory {
-  #emitterFactory: EmitterFactory;
+  _emitterFactory: EmitterFactory;
 
   constructor(emitterFactory: EmitterFactory) {
-    this.#emitterFactory = emitterFactory;
+    this._emitterFactory = emitterFactory;
   }
 
   createOnInitialSubscriptionHandlingBehaviorSubject<T>(
@@ -23,7 +23,7 @@ class SubjectFactoryImpl implements SubjectFactory {
   ): OnInitialSubscriptionHandlingBehaviorSubject<T> {
     return new OnInitialSubscriptionHandlingBehaviorSubjectImpl(
       initialValue,
-      this.#emitterFactory.createOneTimeEventEmitter(),
+      this._emitterFactory.createOneTimeEventEmitter(),
     );
   }
 }

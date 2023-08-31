@@ -6,10 +6,12 @@ export function useDualField(dualField: AbstractDualField) {
   const usePrimaryField = () => useField(dualField.primaryField);
   const useSecondaryField = () => useField(dualField.secondaryField);
   const useSwitchToSecondaryField = () => _useSwitchToSecondaryField(dualField);
+  const reset = () => dualField.reset();
 
   return {
     usePrimaryField,
     useSecondaryField,
-    useSwitchToSecondaryField
+    useSwitchToSecondaryField,
+    reset
   };
 }

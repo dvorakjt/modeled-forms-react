@@ -25,10 +25,10 @@ import {
 import { RootFormTemplate } from './root-form-template.interface';
 
 class RootFormTemplateParserImpl implements RootFormTemplateParser {
-  #formElementTemplateDictionaryParser: FormElementTemplateDictionaryParser;
-  #multiFieldValidatorsTemplateParser: MultiFieldValidatorsTemplateParser;
-  #finalizerTemplateDictionaryParser: FinalizerTemplateDictionaryParser;
-  #submissionManagerFactory: SubmissionManagerFactory;
+  _formElementTemplateDictionaryParser: FormElementTemplateDictionaryParser;
+  _multiFieldValidatorsTemplateParser: MultiFieldValidatorsTemplateParser;
+  _finalizerTemplateDictionaryParser: FinalizerTemplateDictionaryParser;
+  _submissionManagerFactory: SubmissionManagerFactory;
 
   constructor(
     formElementTemplateDictionaryParser: FormElementTemplateDictionaryParser,
@@ -36,33 +36,36 @@ class RootFormTemplateParserImpl implements RootFormTemplateParser {
     finalizerTemplateDictionaryParser: FinalizerTemplateDictionaryParser,
     submissionManagerFactory: SubmissionManagerFactory,
   ) {
-    this.#formElementTemplateDictionaryParser =
+    this._formElementTemplateDictionaryParser =
       formElementTemplateDictionaryParser;
-    this.#multiFieldValidatorsTemplateParser =
+    this._multiFieldValidatorsTemplateParser =
       multiFieldValidatorsTemplateParser;
-    this.#finalizerTemplateDictionaryParser = finalizerTemplateDictionaryParser;
-    this.#submissionManagerFactory = submissionManagerFactory;
+    this._finalizerTemplateDictionaryParser = finalizerTemplateDictionaryParser;
+    this._submissionManagerFactory = submissionManagerFactory;
   }
   parseTemplate(template: RootFormTemplate): AbstractRootForm {
     const [baseFields, firstNonValidFormElementTracker] =
-      this.#formElementTemplateDictionaryParser.parseTemplate(template.fields);
+      this._formElementTemplateDictionaryParser.parseTemplate(template.fields);
     const multiFieldValidatorsTemplate = template.multiFieldValidators ?? {};
     const [
       userFacingFields,
       finalizerFacingFields,
       multiInputValidatorMessagesAggregator,
-    ] = this.#multiFieldValidatorsTemplateParser.parseTemplate(
+    ] = this._multiFieldValidatorsTemplateParser.parseTemplate(
       multiFieldValidatorsTemplate,
       baseFields,
     );
     const finalizedFields = template.finalizedFields ?? {};
     const finalizerManager =
-      this.#finalizerTemplateDictionaryParser.parseTemplate(
+      this._finalizerTemplateDictionaryParser.parseTemplate(
         finalizedFields,
         finalizerFacingFields,
       );
     const submissionManager =
-      this.#submissionManagerFactory.createSubmissionManager(template.submitFn);
+      this._submissionManagerFactory.createSubmissionManager(template.submitFn);
+    console.log('submission manager: ')
+    console.log(submissionManager);
+    console.log('after submission manager');
     const form = new RootForm(
       userFacingFields,
       firstNonValidFormElementTracker,

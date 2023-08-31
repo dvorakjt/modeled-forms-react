@@ -16,40 +16,40 @@ export class AsyncMultiInputValidator implements MultiInputValidator {
   readonly overallValidityChanges: Subject<Validity>;
   readonly messageChanges: Subject<Message | null>;
   readonly accessedFields: OneTimeValueEmitter<Set<string>>;
-  readonly #pendingMessage: string;
-  readonly #multiFieldAggregator: MultiFieldAggregator;
-  readonly #validator: AsyncValidator<AggregatedStateChanges>;
-  #validatorSubscription?: Subscription;
-  #firstRunCompleted = false;
+  readonly _pendingMessage: string;
+  readonly _multiFieldAggregator: MultiFieldAggregator;
+  readonly _validator: AsyncValidator<AggregatedStateChanges>;
+  _validatorSubscription?: Subscription;
+  _firstRunCompleted = false;
 
   constructor(
     multiFieldAggregator: MultiFieldAggregator,
     validator: AsyncValidator<AggregatedStateChanges>,
     pendingMessage: string,
   ) {
-    this.#validator = validator;
-    this.#multiFieldAggregator = multiFieldAggregator;
-    this.#pendingMessage = pendingMessage;
+    this._validator = validator;
+    this._multiFieldAggregator = multiFieldAggregator;
+    this._pendingMessage = pendingMessage;
     this.accessedFields = multiFieldAggregator.accessedFields;
     this.calculatedValidityChanges = new ReplaySubject<Validity>(1);
     this.overallValidityChanges = new ReplaySubject<Validity>(1);
     this.messageChanges = new ReplaySubject<Message | null>(1);
-    this.#multiFieldAggregator.aggregateChanges.subscribe(
+    this._multiFieldAggregator.aggregateChanges.subscribe(
       (aggregateChange: AggregatedStateChanges) => {
         //unsubscribe from currently running validator
-        this.#validatorSubscription &&
-          this.#validatorSubscription.unsubscribe();
+        this._validatorSubscription &&
+          this._validatorSubscription.unsubscribe();
         let observableResult;
         let error;
 
-        if (!this.#firstRunCompleted) {
+        if (!this._firstRunCompleted) {
           try {
-            observableResult = from(this.#validator(aggregateChange));
+            observableResult = from(this._validator(aggregateChange));
           } catch (e) {
             logErrorInDevMode(e);
             error = e;
           } finally {
-            this.#firstRunCompleted = true;
+            this._firstRunCompleted = true;
           }
         }
         //if there are omitted fields, this validator is effectively not checked
@@ -79,12 +79,12 @@ export class AsyncMultiInputValidator implements MultiInputValidator {
           this.overallValidityChanges.next(Validity.PENDING);
           this.messageChanges.next({
             type: MessageType.PENDING, //
-            text: this.#pendingMessage,
+            text: this._pendingMessage,
           });
           try {
             if (!observableResult)
-              observableResult = from(this.#validator(aggregateChange));
-            this.#validatorSubscription = observableResult.subscribe({
+              observableResult = from(this._validator(aggregateChange));
+            this._validatorSubscription = observableResult.subscribe({
               next: result => {
                 const validity = result.isValid
                   ? Validity.VALID_FINALIZABLE

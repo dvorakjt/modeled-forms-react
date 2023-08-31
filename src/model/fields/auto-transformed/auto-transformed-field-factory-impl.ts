@@ -12,14 +12,14 @@ import {
 } from './auto-transformed-field-factory.interface';
 
 class AutoTransformedFieldFactoryImpl implements AutoTransformedFieldFactory {
-  #autoTransformer: AutoTransformer;
+  _autoTransformer: AutoTransformer;
 
   constructor(autoTransformer: AutoTransformer) {
-    this.#autoTransformer = autoTransformer;
+    this._autoTransformer = autoTransformer;
   }
 
   createAutoTransformedField(baseField: AbstractField): AutoTransformedField {
-    return new AutoTransformedField(baseField, this.#autoTransformer);
+    return new AutoTransformedField(baseField, this._autoTransformer);
   }
 }
 

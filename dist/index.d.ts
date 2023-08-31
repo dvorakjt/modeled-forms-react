@@ -300,7 +300,7 @@ declare function useRootForm(template: RootFormTemplate): {
     useFirstNonValidFormElement: () => {
         firstNonValidFormElement: string | undefined;
     };
-    reset: (() => void) | (() => void);
+    reset: () => void;
     useField: (fieldName: string) => {
         value: string;
         validity: Validity;
@@ -327,6 +327,7 @@ declare function useRootForm(template: RootFormTemplate): {
             useSecondaryField: boolean;
             setUseSecondaryField: (useSecondaryField: boolean) => void;
         };
+        reset: () => void;
     };
     useNestedForm: (fieldName: string) => {
         useFormState: () => {
@@ -337,7 +338,7 @@ declare function useRootForm(template: RootFormTemplate): {
         useFirstNonValidFormElement: () => {
             firstNonValidFormElement: string | undefined;
         };
-        reset: (() => void) | (() => void);
+        reset: () => void;
         useField: (fieldName: string) => {
             value: string;
             validity: Validity;
@@ -364,6 +365,7 @@ declare function useRootForm(template: RootFormTemplate): {
                 useSecondaryField: boolean;
                 setUseSecondaryField: (useSecondaryField: boolean) => void;
             };
+            reset: () => void;
         };
         useNestedForm: any;
         useOmittableFormElement: (fieldName: string) => {
@@ -401,7 +403,7 @@ declare const FormContext: React.Context<{
     useFirstNonValidFormElement: () => {
         firstNonValidFormElement: string | undefined;
     };
-    reset: (() => void) | (() => void);
+    reset: () => void;
     useField: (fieldName: string) => {
         value: string;
         validity: Validity;
@@ -428,6 +430,7 @@ declare const FormContext: React.Context<{
             useSecondaryField: boolean;
             setUseSecondaryField: (useSecondaryField: boolean) => void;
         };
+        reset: () => void;
     };
     useNestedForm: (fieldName: string) => any;
     useOmittableFormElement: (fieldName: string) => {

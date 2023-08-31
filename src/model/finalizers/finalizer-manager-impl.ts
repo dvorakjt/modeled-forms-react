@@ -13,16 +13,16 @@ import { FinalizerManager } from './finalizer-manager.interface';
 
 export class FinalizerManagerImpl implements FinalizerManager {
   stateChanges: Subject<State<any>>;
-  #value: FormValue = {};
-  #finalizerMap: FinalizerDictionary;
-  #finalizerValidityReducer: FinalizerValidityReducer;
-  #finalizerValidityTranslator: FinalizerValidityTranslator;
+  _value: FormValue = {};
+  _finalizerMap: FinalizerDictionary;
+  _finalizerValidityReducer: FinalizerValidityReducer;
+  _finalizerValidityTranslator: FinalizerValidityTranslator;
 
   get state() {
     return {
-      value: copyObject(this.#value),
-      validity: this.getValidity(),
-      messages: this.getMessages(),
+      value: copyObject(this._value),
+      validity: this._getValidity(),
+      messages: this._getMessages(),
     };
   }
 
@@ -31,37 +31,37 @@ export class FinalizerManagerImpl implements FinalizerManager {
     finalizerValidityReducer: FinalizerValidityReducer,
     finalizerValidityTranslator: FinalizerValidityTranslator,
   ) {
-    this.#finalizerMap = finalizerMap;
-    this.#finalizerValidityReducer = finalizerValidityReducer;
-    this.#finalizerValidityTranslator = finalizerValidityTranslator;
-    for (const finalizerName in this.#finalizerMap) {
-      const finalizer = this.#finalizerMap[finalizerName];
+    this._finalizerMap = finalizerMap;
+    this._finalizerValidityReducer = finalizerValidityReducer;
+    this._finalizerValidityTranslator = finalizerValidityTranslator;
+    for (const finalizerName in this._finalizerMap) {
+      const finalizer = this._finalizerMap[finalizerName];
       finalizer.stream.subscribe(finalizerStateChange => {
-        this.#finalizerValidityReducer.updateTallies(
+        this._finalizerValidityReducer.updateTallies(
           finalizerName,
           finalizerStateChange.finalizerValidity,
         );
-        delete this.#value[finalizerName];
+        delete this._value[finalizerName];
         if (finalizerStateChange.value)
-          this.#value[finalizerName] = finalizerStateChange.value;
+          this._value[finalizerName] = finalizerStateChange.value;
         if (this.stateChanges) this.stateChanges.next(this.state);
       });
     }
     this.stateChanges = new BehaviorSubject(this.state);
   }
 
-  private getValidity() {
+  _getValidity() {
     const reducedFinalizerValidity =
-      this.#finalizerValidityReducer.finalizerValidity;
-    return this.#finalizerValidityTranslator.translateFinalizerValidityToValidity(
+      this._finalizerValidityReducer.finalizerValidity;
+    return this._finalizerValidityTranslator.translateFinalizerValidityToValidity(
       reducedFinalizerValidity,
     );
   }
 
-  private getMessages() {
+  _getMessages() {
     const messages: Array<Message> = [];
     const reducedFinalizerValidity =
-      this.#finalizerValidityReducer.finalizerValidity;
+      this._finalizerValidityReducer.finalizerValidity;
     if (reducedFinalizerValidity === FinalizerValidity.FINALIZER_ERROR) {
       messages.push({
         type: MessageType.ERROR,

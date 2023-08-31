@@ -21,7 +21,7 @@ export function useField(field: AbstractField) {
     field.setValue(value);
   };
 
-  const reset = field.reset;
+  const reset = () => field.reset();
 
   return {
     value,

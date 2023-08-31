@@ -6,30 +6,30 @@ import type { Adapter } from '../../adapters/adapter.interface';
 import type { FieldState } from '../../state/field-state.interface';
 
 export class StateControlledField extends AbstractField {
-  readonly #field: AbstractField;
-  readonly #adapter: Adapter<FieldState>;
+  readonly _field: AbstractField;
+  readonly _adapter: Adapter<FieldState>;
 
   get stateChanges() {
-    return this.#field.stateChanges;
+    return this._field.stateChanges;
   }
 
   get state() {
-    return this.#field.state;
+    return this._field.state;
   }
 
   set omit(omit: boolean) {
-    this.#field.omit = omit;
+    this._field.omit = omit;
   }
 
   get omit() {
-    return this.#field.omit;
+    return this._field.omit;
   }
 
   constructor(field: AbstractField, adapter: Adapter<FieldState>) {
     super();
-    this.#field = field;
-    this.#adapter = adapter;
-    this.#adapter.stream.subscribe({
+    this._field = field;
+    this._adapter = adapter;
+    this._adapter.stream.subscribe({
       next: (next: FieldState) => this.setState(next),
       error: () => {
         this.setState({
@@ -47,14 +47,14 @@ export class StateControlledField extends AbstractField {
   }
 
   setValue(value: string) {
-    this.#field.setValue(value);
+    this._field.setValue(value);
   }
 
   setState(state: FieldState): void {
-    this.#field.setState(state);
+    this._field.setState(state);
   }
 
   reset() {
-    this.#field.reset();
+    this._field.reset();
   }
 }

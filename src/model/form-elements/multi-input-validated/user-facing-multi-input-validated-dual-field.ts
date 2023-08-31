@@ -13,39 +13,39 @@ export class UserFacingMultiInputValidatedDualField
   extends AbstractDualField
   implements MultiInputValidatedFormElement
 {
-  readonly #baseField: AbstractDualField;
-  readonly #multiInputValidatorReducer: MultiInputValidatorValidityReducer;
+  readonly _baseField: AbstractDualField;
+  readonly _multiInputValidatorReducer: MultiInputValidatorValidityReducer;
   stateChanges: Subject<State<string>>;
 
   get state(): FieldState {
     return {
-      ...copyObject(this.#baseField.state),
-      validity: this.calculateValidity(),
+      ...copyObject(this._baseField.state),
+      validity: this._calculateValidity(),
     };
   }
 
   get omit() {
-    return this.#baseField.omit;
+    return this._baseField.omit;
   }
 
   set omit(omit: boolean) {
-    this.#baseField.omit = omit;
+    this._baseField.omit = omit;
   }
 
   get primaryField() {
-    return this.#baseField.primaryField;
+    return this._baseField.primaryField;
   }
 
   get secondaryField() {
-    return this.#baseField.secondaryField;
+    return this._baseField.secondaryField;
   }
 
   set useSecondaryField(useSecondaryField) {
-    this.#baseField.useSecondaryField = useSecondaryField;
+    this._baseField.useSecondaryField = useSecondaryField;
   }
 
   get useSecondaryField() {
-    return this.#baseField.useSecondaryField;
+    return this._baseField.useSecondaryField;
   }
 
   constructor(
@@ -53,37 +53,37 @@ export class UserFacingMultiInputValidatedDualField
     multiInputValidityReducer: MultiInputValidatorValidityReducer,
   ) {
     super();
-    this.#baseField = baseField;
-    this.#multiInputValidatorReducer = multiInputValidityReducer;
-    this.#baseField.stateChanges.subscribe(() => {
+    this._baseField = baseField;
+    this._multiInputValidatorReducer = multiInputValidityReducer;
+    this._baseField.stateChanges.subscribe(() => {
       if (this.stateChanges) this.stateChanges.next(this.state);
     });
-    this.#multiInputValidatorReducer.validityChanges.subscribe(() => {
+    this._multiInputValidatorReducer.validityChanges.subscribe(() => {
       if (this.stateChanges) this.stateChanges.next(this.state);
     });
     this.stateChanges = new BehaviorSubject(this.state);
   }
 
   setValue(value: DualFieldSetValueArg) {
-    this.#baseField.setValue(value);
+    this._baseField.setValue(value);
   }
 
   setState(state: DualFieldSetStateArg): void {
-    this.#baseField.setState(state);
+    this._baseField.setState(state);
   }
 
   reset(): void {
-    this.#baseField.reset();
+    this._baseField.reset();
   }
 
   addValidator(validator: MultiInputValidator): void {
-    this.#multiInputValidatorReducer.addValidator(validator);
+    this._multiInputValidatorReducer.addValidator(validator);
   }
 
-  private calculateValidity() {
+  _calculateValidity() {
     return Math.min(
-      this.#baseField.state.validity,
-      this.#multiInputValidatorReducer.validity,
+      this._baseField.state.validity,
+      this._multiInputValidatorReducer.validity,
     );
   }
 }

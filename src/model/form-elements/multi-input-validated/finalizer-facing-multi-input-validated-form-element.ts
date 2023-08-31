@@ -14,43 +14,43 @@ export class FinalizerFacingMultiInputValidatedFormElement
     MultiInputValidatedFormElement
 {
   stateChanges: Subject<State<any>>;
-  #baseFormElement: StatefulFormElement<any> & OmittableFormElement;
-  #multiInputValidatorReducer: MultiInputValidatorValidityReducer;
+  _baseFormElement: StatefulFormElement<any> & OmittableFormElement;
+  _multiInputValidatorReducer: MultiInputValidatorValidityReducer;
 
   get state(): State<any> {
     return {
-      ...copyObject(this.#baseFormElement.state),
-      validity: this.calculateValidity(),
+      ...copyObject(this._baseFormElement.state),
+      validity: this._calculateValidity(),
     };
   }
 
   get omit(): boolean {
-    return this.#baseFormElement.omit;
+    return this._baseFormElement.omit;
   }
 
   constructor(
     baseFormElement: StatefulFormElement<any> & OmittableFormElement,
     finalizerFacingMultiInputValidityReducer: MultiInputValidatorValidityReducer,
   ) {
-    this.#baseFormElement = baseFormElement;
-    this.#multiInputValidatorReducer = finalizerFacingMultiInputValidityReducer;
-    // this.#baseFormElement.stateChanges.subscribe(() => {
+    this._baseFormElement = baseFormElement;
+    this._multiInputValidatorReducer = finalizerFacingMultiInputValidityReducer;
+    // this._baseFormElement.stateChanges.subscribe(() => {
     //   if (this.stateChanges) this.stateChanges.next(this.state);
     // });
-    this.#multiInputValidatorReducer.validityChanges.subscribe(() => {
+    this._multiInputValidatorReducer.validityChanges.subscribe(() => {
       if (this.stateChanges) this.stateChanges.next(this.state);
     });
     this.stateChanges = new BehaviorSubject(this.state);
   }
 
   addValidator(validator: MultiInputValidator): void {
-    this.#multiInputValidatorReducer.addValidator(validator);
+    this._multiInputValidatorReducer.addValidator(validator);
   }
 
-  private calculateValidity() {
+  _calculateValidity() {
     return Math.min(
-      this.#baseFormElement.state.validity,
-      this.#multiInputValidatorReducer.validity,
+      this._baseFormElement.state.validity,
+      this._multiInputValidatorReducer.validity,
     );
   }
 }

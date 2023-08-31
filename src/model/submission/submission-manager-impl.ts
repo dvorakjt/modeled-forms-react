@@ -10,24 +10,24 @@ import { config } from '../../config';
 
 export class SubmissionManagerImpl implements SubmissionManager {
   submissionStateChanges: Subject<SubmissionState>;
-  #submitFn: SubmitFn;
+  _submitFn: SubmitFn;
 
-  #submissionState: SubmissionState = {
+  _submissionState: SubmissionState = {
     submissionAttempted: false,
   };
 
   set submissionState(submissionState: SubmissionState) {
-    this.#submissionState = submissionState;
+    this._submissionState = submissionState;
     this.submissionStateChanges.next(this.submissionState);
   }
 
   get submissionState() {
-    return copyObject(this.#submissionState);
+    return copyObject(this._submissionState);
   }
 
   constructor(submitFn: SubmitFn) {
     this.submissionStateChanges = new BehaviorSubject(this.submissionState);
-    this.#submitFn = submitFn;
+    this._submitFn = submitFn;
   }
 
   submit(state: State<any>) {
@@ -37,7 +37,7 @@ export class SubmissionManagerImpl implements SubmissionManager {
     return new Promise<any>((resolve, reject) => {
       if (state.validity < Validity.VALID_FINALIZABLE) {
         this.submissionState = {
-          ...this.#submissionState,
+          ...this._submissionState,
           message: {
             type: MessageType.INVALID,
             text: config.globalMessages.submissionFailed,
@@ -45,14 +45,14 @@ export class SubmissionManagerImpl implements SubmissionManager {
         };
         reject(new Error(config.globalMessages.submissionFailed));
       } else {
-        this.#submitFn(state)
+        this._submitFn(state)
           .then(res => {
             resolve(res);
           })
           .catch(e => {
             if (e.message)
               this.submissionState = {
-                ...this.#submissionState,
+                ...this._submissionState,
                 message: {
                   type: MessageType.ERROR,
                   text: e.message,

@@ -20,10 +20,10 @@ import { logErrorInDevMode } from '../../util/log-error-in-dev-mode';
 import { autowire } from 'undecorated-di';
 
 class FinalizerFnFactoryImpl implements FinalizerFnFactory {
-  #finalizerValidityTranslator: FinalizerValidityTranslator;
+  _finalizerValidityTranslator: FinalizerValidityTranslator;
 
   constructor(finalizerValidityTranslator: FinalizerValidityTranslator) {
-    this.#finalizerValidityTranslator = finalizerValidityTranslator;
+    this._finalizerValidityTranslator = finalizerValidityTranslator;
   }
 
   createSyncFinalizerFn(
@@ -49,7 +49,7 @@ class FinalizerFnFactoryImpl implements FinalizerFnFactory {
       if (overallValidity < Validity.VALID_FINALIZABLE) {
         return {
           finalizerValidity:
-            this.#finalizerValidityTranslator.translateValidityToFinalizerValidity(
+            this._finalizerValidityTranslator.translateValidityToFinalizerValidity(
               overallValidity,
             ),
         };
@@ -98,7 +98,7 @@ class FinalizerFnFactoryImpl implements FinalizerFnFactory {
         ) {
           subscriber.next({
             finalizerValidity:
-              this.#finalizerValidityTranslator.translateValidityToFinalizerValidity(
+              this._finalizerValidityTranslator.translateValidityToFinalizerValidity(
                 aggregatedStateChanges.overallValidity(),
               ),
           });

@@ -16,27 +16,27 @@ export class SyncMultiInputValidator implements MultiInputValidator {
   readonly overallValidityChanges: Subject<Validity>;
   readonly messageChanges: Subject<Message | null>;
   readonly accessedFields: OneTimeValueEmitter<Set<string>>;
-  readonly #multiFieldAggregator: MultiFieldAggregator;
-  readonly #validator: SyncValidator<AggregatedStateChanges>;
-  #completedFirstRun = false;
+  readonly _multiFieldAggregator: MultiFieldAggregator;
+  readonly _validator: SyncValidator<AggregatedStateChanges>;
+  _completedFirstRun = false;
 
   constructor(
     multiFieldAggregator: MultiFieldAggregator,
     validator: SyncValidator<AggregatedStateChanges>,
   ) {
-    this.#validator = validator;
-    this.#multiFieldAggregator = multiFieldAggregator;
+    this._validator = validator;
+    this._multiFieldAggregator = multiFieldAggregator;
     this.accessedFields = multiFieldAggregator.accessedFields;
     this.calculatedValidityChanges = new ReplaySubject<Validity>(1);
     this.overallValidityChanges = new ReplaySubject<Validity>(1);
     this.messageChanges = new ReplaySubject<Message | null>(1);
-    this.#multiFieldAggregator.aggregateChanges.subscribe(
+    this._multiFieldAggregator.aggregateChanges.subscribe(
       (aggregateChange: AggregatedStateChanges) => {
         //first, run the validator so hasOmittedFields and overallValidity are accurate
         let result;
-        if (!this.#completedFirstRun) {
-          result = this.runValidator(aggregateChange);
-          this.#completedFirstRun = true;
+        if (!this._completedFirstRun) {
+          result = this._runValidator(aggregateChange);
+          this._completedFirstRun = true;
         }
         //if there are omitted fields, this validator is effectively not checked
         if (aggregateChange.hasOmittedFields()) {
@@ -58,7 +58,7 @@ export class SyncMultiInputValidator implements MultiInputValidator {
           this.overallValidityChanges.next(result.validity);
           this.messageChanges.next(result.message);
         } else {
-          result = this.runValidator(aggregateChange);
+          result = this._runValidator(aggregateChange);
           this.calculatedValidityChanges.next(result.validity);
           this.overallValidityChanges.next(result.validity);
           this.messageChanges.next(result.message);
@@ -67,13 +67,13 @@ export class SyncMultiInputValidator implements MultiInputValidator {
     );
   }
 
-  private runValidator(aggregateChange: AggregatedStateChanges): {
+  _runValidator(aggregateChange: AggregatedStateChanges): {
     validity: Validity;
     message: Message | null;
   } {
     try {
       let message: Message | null;
-      const result = this.#validator(aggregateChange);
+      const result = this._validator(aggregateChange);
       const validity = result.isValid
         ? Validity.VALID_FINALIZABLE
         : Validity.INVALID;

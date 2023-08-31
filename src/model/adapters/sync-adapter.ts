@@ -7,12 +7,12 @@ import type { AggregatedStateChanges } from '../aggregators/aggregated-state-cha
 
 export class SyncAdapter<V> implements Adapter<V> {
   readonly stream: Subject<V>;
-  readonly #aggregator: MultiFieldAggregator;
+  readonly _aggregator: MultiFieldAggregator;
 
   constructor(adapterFn: SyncAdapterFn<V>, aggregator: MultiFieldAggregator) {
-    this.#aggregator = aggregator;
+    this._aggregator = aggregator;
     this.stream = new ReplaySubject<V>(1);
-    this.#aggregator.aggregateChanges.subscribe(
+    this._aggregator.aggregateChanges.subscribe(
       (aggregateChange: AggregatedStateChanges) => {
         try {
           const nextValue = adapterFn(aggregateChange); //adapters can return no value

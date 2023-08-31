@@ -16,20 +16,20 @@ type ValidatorSubscriptionMap = {
 export class AsyncSingleInputValidatorSuite<T>
   implements SingleInputValidatorSuite<T>
 {
-  readonly #validators: Array<AsyncValidator<T>>;
-  readonly #pendingValidatorMessage: string;
-  #validatorSubscriptions: ValidatorSubscriptionMap = {};
+  readonly _validators: Array<AsyncValidator<T>>;
+  readonly _pendingValidatorMessage: string;
+  _validatorSubscriptions: ValidatorSubscriptionMap = {};
 
   constructor(
     validators: Array<AsyncValidator<T>>,
     pendingValidatorMessage: string,
   ) {
-    this.#validators = validators;
-    this.#pendingValidatorMessage = pendingValidatorMessage;
+    this._validators = validators;
+    this._pendingValidatorMessage = pendingValidatorMessage;
   }
 
   evaluate(value: T) {
-    this.unsubscribeAll();
+    this._unsubscribeAll();
     const result: ValidatorSuiteResultsObject<T> = {
       syncResult: {
         value,
@@ -37,7 +37,7 @@ export class AsyncSingleInputValidatorSuite<T>
         messages: [
           {
             type: MessageType.PENDING,
-            text: this.#pendingValidatorMessage,
+            text: this._pendingValidatorMessage,
           },
         ],
       },
@@ -50,23 +50,23 @@ export class AsyncSingleInputValidatorSuite<T>
       };
       for (
         let validatorId = 0;
-        validatorId < this.#validators.length;
+        validatorId < this._validators.length;
         validatorId++
       ) {
-        const validator = this.#validators[validatorId];
+        const validator = this._validators[validatorId];
         try {
           //as the validator function is user-defined, it may throw errors even before the promise rejects
           const promise = validator(value);
           const subscription = from(promise).subscribe(
-            this.createValidatorObserver(
+            this._createValidatorObserver(
               observableResult,
               subscriber,
               validatorId,
             ),
           );
-          this.#validatorSubscriptions[validatorId] = subscription;
+          this._validatorSubscriptions[validatorId] = subscription;
         } catch (e) {
-          this.createValidatorObserverErrorMethod(
+          this._createValidatorObserverErrorMethod(
             observableResult,
             subscriber,
           )(e);
@@ -76,25 +76,25 @@ export class AsyncSingleInputValidatorSuite<T>
     return result;
   }
 
-  private createValidatorObserver(
+  _createValidatorObserver(
     observableResult: ValidatorSuiteResult<T>,
     outerSubscriber: Subscriber<ValidatorSuiteResult<T>>,
     validatorId: number,
   ) {
     return {
-      next: this.createValidatorObserverNextMethod(
+      next: this._createValidatorObserverNextMethod(
         observableResult,
         outerSubscriber,
         validatorId,
       ),
-      error: this.createValidatorObserverErrorMethod(
+      error: this._createValidatorObserverErrorMethod(
         observableResult,
         outerSubscriber,
       ),
     };
   }
 
-  private createValidatorObserverNextMethod(
+  _createValidatorObserverNextMethod(
     observableResult: ValidatorSuiteResult<T>,
     outerSubscriber: Subscriber<ValidatorSuiteResult<T>>,
     validatorId: number,
@@ -102,7 +102,7 @@ export class AsyncSingleInputValidatorSuite<T>
     const nextMethod = (next: ValidatorResult) => {
       const { isValid, message: messageTxt } = next;
       if (!isValid) {
-        this.unsubscribeAll();
+        this._unsubscribeAll();
         observableResult.validity = Validity.INVALID;
         if (messageTxt) {
           observableResult.messages.push({
@@ -119,8 +119,8 @@ export class AsyncSingleInputValidatorSuite<T>
             text: messageTxt,
           });
         }
-        this.unsubscribeById(validatorId);
-        if (this.allValidatorsCompleted()) {
+        this._unsubscribeById(validatorId);
+        if (this._allValidatorsCompleted()) {
           outerSubscriber.next(observableResult);
           outerSubscriber.complete();
         }
@@ -129,12 +129,12 @@ export class AsyncSingleInputValidatorSuite<T>
     return nextMethod;
   }
 
-  private createValidatorObserverErrorMethod(
+  _createValidatorObserverErrorMethod(
     observableResult: ValidatorSuiteResult<T>,
     outerSubscriber: Subscriber<ValidatorSuiteResult<T>>,
   ) {
     const errorMethod = (e: any) => {
-      this.unsubscribeAll();
+      this._unsubscribeAll();
       logErrorInDevMode(e);
       observableResult.validity = Validity.ERROR;
       observableResult.messages.push({
@@ -147,19 +147,19 @@ export class AsyncSingleInputValidatorSuite<T>
     return errorMethod;
   }
 
-  private unsubscribeAll() {
-    for (const key in this.#validatorSubscriptions) {
-      this.#validatorSubscriptions[key].unsubscribe();
+  _unsubscribeAll() {
+    for (const key in this._validatorSubscriptions) {
+      this._validatorSubscriptions[key].unsubscribe();
     }
-    this.#validatorSubscriptions = {};
+    this._validatorSubscriptions = {};
   }
 
-  private unsubscribeById(validatorId: number) {
-    this.#validatorSubscriptions[validatorId].unsubscribe();
-    delete this.#validatorSubscriptions[validatorId];
+  _unsubscribeById(validatorId: number) {
+    this._validatorSubscriptions[validatorId].unsubscribe();
+    delete this._validatorSubscriptions[validatorId];
   }
 
-  private allValidatorsCompleted() {
-    return Object.keys(this.#validatorSubscriptions).length === 0;
+  _allValidatorsCompleted() {
+    return Object.keys(this._validatorSubscriptions).length === 0;
   }
 }

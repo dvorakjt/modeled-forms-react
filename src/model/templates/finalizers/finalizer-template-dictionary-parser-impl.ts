@@ -24,18 +24,18 @@ import { FinalizerTemplateDictionary } from './finalizer-template-dictionary.typ
 class FinalizerTemplateDictionaryParserImpl
   implements FinalizerTemplateDictionaryParser
 {
-  #finalizerFnFactory: FinalizerFnFactory;
-  #finalizerFactory: FinalizerFactory;
-  #finalizerManagerFactory: FinalizerManagerFactory;
+  _finalizerFnFactory: FinalizerFnFactory;
+  _finalizerFactory: FinalizerFactory;
+  _finalizerManagerFactory: FinalizerManagerFactory;
 
   constructor(
     finalizerFnFactory: FinalizerFnFactory,
     finalizerFactory: FinalizerFactory,
     finalizerManagerFactory: FinalizerManagerFactory,
   ) {
-    this.#finalizerFnFactory = finalizerFnFactory;
-    this.#finalizerFactory = finalizerFactory;
-    this.#finalizerManagerFactory = finalizerManagerFactory;
+    this._finalizerFnFactory = finalizerFnFactory;
+    this._finalizerFactory = finalizerFactory;
+    this._finalizerManagerFactory = finalizerManagerFactory;
   }
 
   parseTemplate(
@@ -47,10 +47,10 @@ class FinalizerTemplateDictionaryParserImpl
 
     for (const [finalizerName, finalizerTemplate] of Object.entries(template)) {
       if (finalizerTemplate.syncFinalizerFn) {
-        const finalizerFn = this.#finalizerFnFactory.createSyncFinalizerFn(
+        const finalizerFn = this._finalizerFnFactory.createSyncFinalizerFn(
           finalizerTemplate.syncFinalizerFn,
         );
-        const finalizer = this.#finalizerFactory.createSyncFinalizer(
+        const finalizer = this._finalizerFactory.createSyncFinalizer(
           finalizerFn,
           finalizerFacingFields,
         );
@@ -64,10 +64,10 @@ class FinalizerTemplateDictionaryParserImpl
           }
         });
       } else if (finalizerTemplate.asyncFinalizerFn) {
-        const finalizerFn = this.#finalizerFnFactory.createAsyncFinalizerFn(
+        const finalizerFn = this._finalizerFnFactory.createAsyncFinalizerFn(
           finalizerTemplate.asyncFinalizerFn,
         );
-        const finalizer = this.#finalizerFactory.createAsyncFinalizer(
+        const finalizer = this._finalizerFactory.createAsyncFinalizer(
           finalizerFn,
           finalizerFacingFields,
         );
@@ -89,11 +89,11 @@ class FinalizerTemplateDictionaryParserImpl
         !(fieldName in finalizers)
       ) {
         finalizers[fieldName] =
-          this.#finalizerFactory.createDefaultFinalizer(field);
+          this._finalizerFactory.createDefaultFinalizer(field);
       }
     }
 
-    return this.#finalizerManagerFactory.createFinalizerManager(finalizers);
+    return this._finalizerManagerFactory.createFinalizerManager(finalizers);
   }
 }
 

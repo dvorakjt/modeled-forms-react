@@ -6,18 +6,18 @@ import { Validity } from '../../../model/state/validity.enum';
 
 export class MockField extends AbstractField {
   stateChanges: Subject<FieldState>;
-  #state: FieldState;
-  #defaultValue: string;
-  #defaultValidity: Validity;
+  _state: FieldState;
+  _defaultValue: string;
+  _defaultValidity: Validity;
 
   constructor(
     defaultValue: string,
     defaultValidity: Validity = Validity.VALID_FINALIZABLE,
   ) {
     super();
-    this.#defaultValue = defaultValue;
-    this.#defaultValidity = defaultValidity;
-    this.#state = {
+    this._defaultValue = defaultValue;
+    this._defaultValidity = defaultValidity;
+    this._state = {
       value: defaultValue,
       validity: defaultValidity,
       messages: [],
@@ -27,7 +27,7 @@ export class MockField extends AbstractField {
   }
 
   setState(state: FieldState): void {
-    this.#state = state;
+    this._state = state;
     this.stateChanges.next(this.state);
   }
   setValue(value: string): void {
@@ -37,7 +37,7 @@ export class MockField extends AbstractField {
     });
   }
   get state(): State<string> {
-    return this.#state;
+    return this._state;
   }
   set omit(omit: boolean) {
     this.setState({
@@ -48,10 +48,10 @@ export class MockField extends AbstractField {
   get omit(): boolean {
     return this.state.omit as boolean;
   }
-  reset(): void {
+  reset: () => void = () => {
     this.setState({
-      value: this.#defaultValue,
-      validity: this.#defaultValidity,
+      value: this._defaultValue,
+      validity: this._defaultValidity,
       messages: [],
       omit: false,
     });
