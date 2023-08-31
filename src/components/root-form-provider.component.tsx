@@ -8,7 +8,8 @@ type RootFormProviderProps = {
   template : RootFormTemplate
 } & PropsWithChildren;
 
-type RootFormContextType = ReturnType<typeof useSubmissionAttempted> & {
+type RootFormContextType = {
+  useSubmissionAttempted : () => ReturnType<typeof useSubmissionAttempted>;
   submit : () => Promise<any>;
 }
 
@@ -18,15 +19,13 @@ export function RootFormProvider({ template, children } : RootFormProviderProps)
   const rootForm = useRootForm(template);
 
   const rootFormCtxValue : RootFormContextType = {
-    submissionAttempted : rootForm.submissionAttempted,
+    useSubmissionAttempted : rootForm.useSubmissionAttempted,
     submit : rootForm.submit
   }
 
   const formCtxValue : FormContextType = {
-    value : rootForm.value,
-    validity : rootForm.validity,
-    messages : rootForm.messages,
-    firstNonValidFormElement : rootForm.firstNonValidFormElement,
+    useFormState : rootForm.useFormState,
+    useFirstNonValidFormElement : rootForm.useFirstNonValidFormElement,
     useField : rootForm.useField,
     useDualField : rootForm.useDualField,
     useNestedForm : rootForm.useNestedForm,

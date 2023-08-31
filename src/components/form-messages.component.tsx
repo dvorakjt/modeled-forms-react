@@ -17,7 +17,7 @@ export function FormMessages({
   const formCtx = useContext(FormContext);
   if(formCtx === null) throw new Error('FieldMessages cannot access useField property of null FormContext');
   else {
-    const { messages } = formCtx;
+    const { messages } = formCtx.useFormState();
     return <Messages messages={messages} messagesContainerClassName={messagesContainerClassName} messageClassName={messageClassName} MessageComponent={MessageComponent} />
   }
 }

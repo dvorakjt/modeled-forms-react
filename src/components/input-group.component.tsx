@@ -10,7 +10,7 @@ export type InputGroupProps = {
 export function InputGroup({fieldName, inputGroupClassName, inputClassName, inputType, readOnly, labelText, labelClassName, messageClassName, messagesContainerClassName, MessageComponent} : InputGroupProps) {
   return (
     <div className={inputGroupClassName}>
-      <Label labelText={labelText} labelClassName={labelClassName} />
+      <Label fieldName={fieldName} labelText={labelText} labelClassName={labelClassName} />
       <Input fieldName={fieldName} inputClassName={inputClassName} inputType={inputType} readOnly={readOnly} />
       <FieldMessages fieldName={fieldName} messagesContainerClassName={messagesContainerClassName} messageClassName={messageClassName} MessageComponent={MessageComponent} />
     </div>

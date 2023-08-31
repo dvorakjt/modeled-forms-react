@@ -1,5 +1,5 @@
-import { useFormState } from './use-form-state';
-import { useFirstNonValidFormElement } from './use-first-non-valid-form-element';
+import { useFormState as _useFormState } from './use-form-state';
+import { useFirstNonValidFormElement as _useFirstNonValidFormElement } from './use-first-non-valid-form-element';
 import { useField as _useField } from './use-field';
 import { useDualField as _useDualField } from './use-dual-field';
 import { useOmittableFormElement as _useOmittableFormElement } from './use-omittable-form-element';
@@ -9,9 +9,9 @@ import { AbstractField } from '../model/fields/base/abstract-field';
 import { AbstractDualField } from '../model/fields/base/abstract-dual-field';
 
 export function useForm(form: AbstractRootForm | AbstractNestedForm) {
-  const { value, validity, messages } = useFormState(form);
-  const { firstNonValidFormElement } = useFirstNonValidFormElement(form);
-  const reset = () => form.reset();
+  const useFormState = () => _useFormState(form);
+  const useFirstNonValidFormElement = () => _useFirstNonValidFormElement(form);
+  const { reset } = form;
 
   const useField = (fieldName: string) => {
     if (!(fieldName in form.userFacingFields)) {
@@ -25,9 +25,8 @@ export function useForm(form: AbstractRootForm | AbstractNestedForm) {
           fieldName +
           ' exists but is not an instance of AbstractField. Use useNestedForm instead.',
       );
-    } else {
-      return _useField(form.userFacingFields[fieldName] as AbstractField);
-    }
+    } 
+    return _useField(form.userFacingFields[fieldName] as AbstractField);
   };
 
   const useDualField = (fieldName: string) => {
@@ -42,11 +41,10 @@ export function useForm(form: AbstractRootForm | AbstractNestedForm) {
           fieldName +
           ' exists but is not an instance of AbstractDualField. Use useField or useNestedForm instead.',
       );
-    } else {
-      return _useDualField(
-        form.userFacingFields[fieldName] as AbstractDualField,
-      );
-    }
+    } 
+    return _useDualField(
+      form.userFacingFields[fieldName] as AbstractDualField,
+    );
   };
 
   const useNestedForm = (fieldName: string) => {
@@ -61,9 +59,8 @@ export function useForm(form: AbstractRootForm | AbstractNestedForm) {
           fieldName +
           ' exists but is not an instance of AbstractNestedForm.',
       );
-    } else {
-      return useForm(form.userFacingFields[fieldName] as AbstractNestedForm);
     }
+    return useForm(form.userFacingFields[fieldName] as AbstractNestedForm);
   };
 
   const useOmittableFormElement = (fieldName: string) => {
@@ -76,10 +73,8 @@ export function useForm(form: AbstractRootForm | AbstractNestedForm) {
   };
 
   return {
-    value,
-    validity,
-    messages,
-    firstNonValidFormElement,
+    useFormState,
+    useFirstNonValidFormElement,
     reset,
     useField,
     useDualField,

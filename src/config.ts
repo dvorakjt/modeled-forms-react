@@ -1,6 +1,6 @@
 import rc from 'rc';
 
-const config = rc('modeledformsreact', {
+const config : any = rc('modeledformsreact', {
   autoTrim: true,
   emailRegex:
     /^[A-Z0-9]+(?:[_%+.-][A-Z0-9]+)*@[A-Z0-9]+(?:[.-][A-Z0-9]+)\.[A-Z]{2,}$/i,
