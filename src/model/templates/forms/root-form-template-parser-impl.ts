@@ -63,9 +63,6 @@ class RootFormTemplateParserImpl implements RootFormTemplateParser {
       );
     const submissionManager =
       this._submissionManagerFactory.createSubmissionManager(template.submitFn);
-    console.log('submission manager: ')
-    console.log(submissionManager);
-    console.log('after submission manager');
     const form = new RootForm(
       userFacingFields,
       firstNonValidFormElementTracker,

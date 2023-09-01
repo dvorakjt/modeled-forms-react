@@ -57,9 +57,6 @@ export class RootForm extends AbstractRootForm {
     this._multiFieldValidatorMessagesAggregator =
       multiFieldValidatorMessagesAggregator;
     this._submissionManager = submissionManager;
-    console.log('this.submission manager');
-    console.log(this._submissionManager);
-    console.log('after this.submissionManager');
 
     this._multiFieldValidatorMessagesAggregator.messagesChanges.subscribe(
       () => {
@@ -83,9 +80,7 @@ export class RootForm extends AbstractRootForm {
     this.stateChanges = new BehaviorSubject(this.state);
   }
 
-  submit = () => {
-    console.log(this._submissionManager);
-    console.log(this._submissionManager.submit);
+  submit() {
     return this._submissionManager.submit(this.state);
   }
 

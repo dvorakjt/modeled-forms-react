@@ -79,7 +79,7 @@ export class DualField extends AbstractDualField {
       this.useSecondaryField = stateObj.useSecondaryField;
   }
 
-  reset = () => {
+  reset() : void {
     this._omit = this._omitByDefault;
     this.primaryField.reset();
     this.secondaryField.reset();

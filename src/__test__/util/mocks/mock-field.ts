@@ -48,7 +48,7 @@ export class MockField extends AbstractField {
   get omit(): boolean {
     return this.state.omit as boolean;
   }
-  reset: () => void = () => {
+  reset() : void {
     this.setState({
       value: this._defaultValue,
       validity: this._defaultValidity,

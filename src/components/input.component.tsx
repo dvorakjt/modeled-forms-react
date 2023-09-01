@@ -17,7 +17,6 @@ export function Input({fieldName, inputType, inputClassName, readOnly = false} :
     const { value, validity, updateValue } = useField(fieldName);
     
     return <input id={fieldName} type={inputType} className={inputClassName} readOnly={readOnly} data-validity={validityToString(validity)} value={value} onChange={(e) => {
-      console.log(e.target.value);
       updateValue(e.target.value);
     }} />
   }

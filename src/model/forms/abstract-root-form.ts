@@ -13,5 +13,5 @@ export abstract class AbstractRootForm implements BaseForm {
   abstract reset(): void;
   abstract submissionState: SubmissionState;
   abstract submissionStateChanges: Subject<SubmissionState>;
-  abstract submit: () => Promise<any>;
+  abstract submit() : Promise<any>;
 }
