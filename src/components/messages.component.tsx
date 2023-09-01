@@ -27,7 +27,7 @@ export function Messages({
     <div className={messagesContainerClassName}>
       {statefulMessages.map((message, index) => {
         return (
-          <MessageComponent type={message.type} text={message.text} className={messageClassName} key={index.toString()} />
+          <MessageComponent validity={message.type} text={message.text} className={messageClassName} key={index.toString()} />
         )
       })}
     </div>

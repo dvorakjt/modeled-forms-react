@@ -104,7 +104,7 @@ var import_rc = __toESM(require("rc"), 1);
 var config = (0, import_rc.default)("modeledformsreact", {
   autoTrim: true,
   emailRegex: /^[A-Z0-9]+(?:[_%+.-][A-Z0-9]+)*@[A-Z0-9]+(?:[.-][A-Z0-9]+)*\.[A-Z]{2,}$/i,
-  symbolRegex: /[ !"#$%&'()*+,-./\\:;<=>?@[\]^_`{|}~]/g,
+  symbolRegex: /[ !"#$%&'()*+,-./\\:;<=>?@[\]^_`{|}~]/,
   globalMessages: {
     pendingAsyncValidatorSuite: "Checking field...",
     singleFieldValidationError: "An unexpected error occurred while validating the field.",
@@ -3572,8 +3572,8 @@ var import_react10 = __toESM(require("react"), 1);
 
 // src/components/default-message.component.tsx
 var import_react9 = __toESM(require("react"), 1);
-var DefaultMessage = ({ className, type, text }) => {
-  return /* @__PURE__ */ import_react9.default.createElement("span", { className, "data-type": type }, text);
+var DefaultMessage = ({ className, validity, text }) => {
+  return /* @__PURE__ */ import_react9.default.createElement("span", { className, "data-validity": validity }, text);
 };
 
 // src/components/messages.component.tsx
@@ -3588,7 +3588,7 @@ function Messages({
     setStatefulMessages(messages);
   }, [messages]);
   return /* @__PURE__ */ import_react10.default.createElement("div", { className: messagesContainerClassName }, statefulMessages.map((message, index) => {
-    return /* @__PURE__ */ import_react10.default.createElement(MessageComponent, { type: message.type, text: message.text, className: messageClassName, key: index.toString() });
+    return /* @__PURE__ */ import_react10.default.createElement(MessageComponent, { validity: message.type, text: message.text, className: messageClassName, key: index.toString() });
   }));
 }
 
@@ -3635,14 +3635,14 @@ var import_react13 = __toESM(require("react"), 1);
 function validityToString(validity) {
   switch (validity) {
     case 0 /* ERROR */:
-      return "error";
+      return "ERROR";
     case 1 /* INVALID */:
-      return "invalid";
+      return "INVALID";
     case 2 /* PENDING */:
-      return "pending";
+      return "PENDING";
     case 3 /* VALID_UNFINALIZABLE */:
     case 4 /* VALID_FINALIZABLE */:
-      return "valid";
+      return "VALID";
   }
 }
 

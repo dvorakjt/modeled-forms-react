@@ -3,13 +3,13 @@ import { Validity } from "../../model/state/validity.enum";
 export function validityToString(validity : Validity) {
   switch(validity) {
     case Validity.ERROR :
-      return 'error';
+      return 'ERROR';
     case Validity.INVALID :
-      return 'invalid';
+      return 'INVALID';
     case Validity.PENDING :
-      return 'pending';
+      return 'PENDING';
     case Validity.VALID_UNFINALIZABLE :
     case Validity.VALID_FINALIZABLE :
-      return 'valid';
+      return 'VALID';
   }
 }

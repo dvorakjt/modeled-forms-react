@@ -2,7 +2,7 @@ import { MessageType } from "../model/state/messages/message-type.enum"
 
 export type MessageComponentProps = {
   className? : string,
-  type : MessageType,
+  validity : MessageType,
   text : string
 }
 

@@ -42,7 +42,7 @@ import rc from "rc";
 var config = rc("modeledformsreact", {
   autoTrim: true,
   emailRegex: /^[A-Z0-9]+(?:[_%+.-][A-Z0-9]+)*@[A-Z0-9]+(?:[.-][A-Z0-9]+)*\.[A-Z]{2,}$/i,
-  symbolRegex: /[ !"#$%&'()*+,-./\\:;<=>?@[\]^_`{|}~]/g,
+  symbolRegex: /[ !"#$%&'()*+,-./\\:;<=>?@[\]^_`{|}~]/,
   globalMessages: {
     pendingAsyncValidatorSuite: "Checking field...",
     singleFieldValidationError: "An unexpected error occurred while validating the field.",
@@ -3512,8 +3512,8 @@ import React2, { useState as useState7, useEffect as useEffect7 } from "react";
 
 // src/components/default-message.component.tsx
 import React from "react";
-var DefaultMessage = ({ className, type, text }) => {
-  return /* @__PURE__ */ React.createElement("span", { className, "data-type": type }, text);
+var DefaultMessage = ({ className, validity, text }) => {
+  return /* @__PURE__ */ React.createElement("span", { className, "data-validity": validity }, text);
 };
 
 // src/components/messages.component.tsx
@@ -3528,7 +3528,7 @@ function Messages({
     setStatefulMessages(messages);
   }, [messages]);
   return /* @__PURE__ */ React2.createElement("div", { className: messagesContainerClassName }, statefulMessages.map((message, index) => {
-    return /* @__PURE__ */ React2.createElement(MessageComponent, { type: message.type, text: message.text, className: messageClassName, key: index.toString() });
+    return /* @__PURE__ */ React2.createElement(MessageComponent, { validity: message.type, text: message.text, className: messageClassName, key: index.toString() });
   }));
 }
 
@@ -3575,14 +3575,14 @@ import React5, { useContext as useContext3 } from "react";
 function validityToString(validity) {
   switch (validity) {
     case 0 /* ERROR */:
-      return "error";
+      return "ERROR";
     case 1 /* INVALID */:
-      return "invalid";
+      return "INVALID";
     case 2 /* PENDING */:
-      return "pending";
+      return "PENDING";
     case 3 /* VALID_UNFINALIZABLE */:
     case 4 /* VALID_FINALIZABLE */:
-      return "valid";
+      return "VALID";
   }
 }
 

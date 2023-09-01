@@ -381,7 +381,7 @@ declare function useRootForm(template: RootFormTemplate): {
 
 type MessageComponentProps = {
     className?: string;
-    type: MessageType;
+    validity: MessageType;
     text: string;
 };
 type MessageComponent = (props: MessageComponentProps) => JSX.Element;
@@ -487,6 +487,6 @@ interface SubmitButtonProps {
 }
 declare function SubmitButton({ className }: SubmitButtonProps): React__default.JSX.Element;
 
-declare function validityToString(validity: Validity): "error" | "invalid" | "pending" | "valid";
+declare function validityToString(validity: Validity): "ERROR" | "INVALID" | "PENDING" | "VALID";
 
 export { AnyState, DualFieldSetStateArg, DualFieldSetValueArg, FieldMessages, FieldState, FormContext, FormMessages, Input, InputGroup, Label, Message, MessageComponent, MessageComponentProps, MessageType, NestedFormProvider, NestedFormTemplate, ResetButton, RootFormProvider, RootFormTemplate, State, SubmitButton, Validity, email, inDateRange, inLengthRange, inNumRange, includesDigit, includesLower, includesSymbol, includesUpper, maxDate, maxLength, maxNum, minDate, minLength, minNum, pattern, required, useRootForm, validityToString };

@@ -4,7 +4,7 @@ const config : any = rc('modeledformsreact', {
   autoTrim: true,
   emailRegex:
     /^[A-Z0-9]+(?:[_%+.-][A-Z0-9]+)*@[A-Z0-9]+(?:[.-][A-Z0-9]+)*\.[A-Z]{2,}$/i,
-  symbolRegex: /[ !"#$%&'()*+,-./\\:;<=>?@[\]^_`{|}~]/g,
+  symbolRegex: /[ !"#$%&'()*+,-./\\:;<=>?@[\]^_`{|}~]/,
   globalMessages: {
     pendingAsyncValidatorSuite: 'Checking field...',
     singleFieldValidationError:
