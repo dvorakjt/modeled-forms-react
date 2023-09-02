@@ -392,12 +392,6 @@ var DualField = class extends AbstractDualField {
   constructor(primaryField, secondaryField, omitByDefault) {
     super();
     this._useSecondaryField = false;
-    this.reset = () => {
-      this._omit = this._omitByDefault;
-      this.primaryField.reset();
-      this.secondaryField.reset();
-      this.useSecondaryField = false;
-    };
     this.primaryField = primaryField;
     this.secondaryField = secondaryField;
     this._omitByDefault = omitByDefault;
@@ -454,6 +448,12 @@ var DualField = class extends AbstractDualField {
       this.secondaryField.setState(stateObj.secondaryFieldState);
     if (stateObj.useSecondaryField !== void 0)
       this.useSecondaryField = stateObj.useSecondaryField;
+  }
+  reset() {
+    this._omit = this._omitByDefault;
+    this.primaryField.reset();
+    this.secondaryField.reset();
+    this.useSecondaryField = false;
   }
 };
 
@@ -2535,19 +2535,11 @@ var AbstractRootForm = class {
 var RootForm = class extends AbstractRootForm {
   constructor(userFacingFields, firstNonValidFormElementTracker, finalizerManager, multiFieldValidatorMessagesAggregator, submissionManager) {
     super();
-    this.submit = () => {
-      console.log(this._submissionManager);
-      console.log(this._submissionManager.submit);
-      return this._submissionManager.submit(this.state);
-    };
     this.userFacingFields = userFacingFields;
     this._firstNonValidFormElementTracker = firstNonValidFormElementTracker;
     this._finalizerManager = finalizerManager;
     this._multiFieldValidatorMessagesAggregator = multiFieldValidatorMessagesAggregator;
     this._submissionManager = submissionManager;
-    console.log("this.submission manager");
-    console.log(this._submissionManager);
-    console.log("after this.submissionManager");
     this._multiFieldValidatorMessagesAggregator.messagesChanges.subscribe(
       () => {
         var _a;
@@ -2584,6 +2576,9 @@ var RootForm = class extends AbstractRootForm {
     return {
       submissionAttempted: this._submissionManager.submissionState.submissionAttempted
     };
+  }
+  submit() {
+    return this._submissionManager.submit(this.state);
   }
   reset() {
     this._submissionManager.reset();
@@ -2631,9 +2626,6 @@ var RootFormTemplateParserImpl = class {
       finalizerFacingFields
     );
     const submissionManager = this._submissionManagerFactory.createSubmissionManager(template.submitFn);
-    console.log("submission manager: ");
-    console.log(submissionManager);
-    console.log("after submission manager");
     const form = new RootForm(
       userFacingFields,
       firstNonValidFormElementTracker,
@@ -2997,9 +2989,6 @@ var import_rxjs23 = require("rxjs");
 var AutoTransformedField = class extends AbstractField {
   constructor(baseField, autoTransformer17) {
     super();
-    this.reset = () => {
-      this._baseField.reset();
-    };
     this._baseField = baseField;
     this._autoTransformer = autoTransformer17;
     this._baseField.stateChanges.subscribe(() => {
@@ -3024,6 +3013,9 @@ var AutoTransformedField = class extends AbstractField {
   }
   setValue(value) {
     this._baseField.setValue(value);
+  }
+  reset() {
+    this._baseField.reset();
   }
 };
 
@@ -3572,8 +3564,8 @@ var import_react10 = __toESM(require("react"), 1);
 
 // src/components/default-message.component.tsx
 var import_react9 = __toESM(require("react"), 1);
-var DefaultMessage = ({ className, validity, text }) => {
-  return /* @__PURE__ */ import_react9.default.createElement("span", { className, "data-validity": validity }, text);
+var DefaultMessage = ({ className, validity, text, id }) => {
+  return /* @__PURE__ */ import_react9.default.createElement("span", { className, "data-validity": validity, id }, text);
 };
 
 // src/components/messages.component.tsx
@@ -3581,15 +3573,21 @@ function Messages({
   messages,
   messagesContainerClassName = "messages",
   messageClassName = "message",
-  MessageComponent = DefaultMessage
+  MessageComponent = DefaultMessage,
+  idPrefix
 }) {
   const [statefulMessages, setStatefulMessages] = (0, import_react10.useState)(messages);
   (0, import_react10.useEffect)(() => {
     setStatefulMessages(messages);
   }, [messages]);
-  return /* @__PURE__ */ import_react10.default.createElement("div", { className: messagesContainerClassName }, statefulMessages.map((message, index) => {
-    return /* @__PURE__ */ import_react10.default.createElement(MessageComponent, { validity: message.type, text: message.text, className: messageClassName, key: index.toString() });
+  return /* @__PURE__ */ import_react10.default.createElement("div", { className: messagesContainerClassName, "aria-live": "polite" }, statefulMessages.map((message, index) => {
+    return /* @__PURE__ */ import_react10.default.createElement(MessageComponent, { validity: message.type, text: message.text, className: messageClassName, key: index.toString(), id: `${idPrefix}-${index.toString()}` });
   }));
+}
+
+// src/components/util/get-field-message-id-prefix.ts
+function getFieldMessageIdPrefix(fieldName) {
+  return `${fieldName}-messages`;
 }
 
 // src/components/field-messages.component.tsx
@@ -3605,7 +3603,7 @@ function FieldMessages({
   else {
     const { useField: useField2 } = formCtx;
     const { messages } = useField2(fieldName);
-    return /* @__PURE__ */ import_react11.default.createElement(Messages, { messages, messagesContainerClassName, messageClassName, MessageComponent });
+    return /* @__PURE__ */ import_react11.default.createElement(Messages, { messages, messagesContainerClassName, messageClassName, MessageComponent, idPrefix: getFieldMessageIdPrefix(fieldName) });
   }
 }
 
@@ -3614,14 +3612,15 @@ var import_react12 = __toESM(require("react"), 1);
 function FormMessages({
   messagesContainerClassName,
   messageClassName,
-  MessageComponent
+  MessageComponent,
+  idPrefix
 }) {
   const formCtx = (0, import_react12.useContext)(FormContext);
   if (formCtx === null)
     throw new Error("FieldMessages cannot access useField property of null FormContext");
   else {
     const { messages } = formCtx.useFormState();
-    return /* @__PURE__ */ import_react12.default.createElement(Messages, { messages, messagesContainerClassName, messageClassName, MessageComponent });
+    return /* @__PURE__ */ import_react12.default.createElement(Messages, { messages, messagesContainerClassName, messageClassName, MessageComponent, idPrefix });
   }
 }
 
@@ -3660,17 +3659,51 @@ function Label({ fieldName, labelText, labelClassName = "label" }) {
 
 // src/components/input.component.tsx
 var import_react14 = __toESM(require("react"), 1);
-function Input({ fieldName, inputType, inputClassName, readOnly = false }) {
+
+// src/components/util/get-field-aria-described-by.ts
+function getFieldAriaDescribedBy(fieldName, messageCount) {
+  const describedBy = [];
+  for (let i = 0; i < messageCount; i++) {
+    describedBy.push(`${getFieldMessageIdPrefix(fieldName)}-${i}`);
+  }
+  return describedBy.join(" ");
+}
+
+// src/components/input.component.tsx
+function Input({ fieldName, inputType, inputClassName, readOnly = false, autoComplete, placeholder, list, autoFocus, step, max, min, maxLength: maxLength2, size }) {
   const formCtx = (0, import_react14.useContext)(FormContext);
   if (formCtx === null)
     throw new Error("Input cannot access property useField of null FormContext");
   else {
     const { useField: useField2 } = formCtx;
-    const { value, validity, updateValue } = useField2(fieldName);
-    return /* @__PURE__ */ import_react14.default.createElement("input", { id: fieldName, type: inputType, className: inputClassName, readOnly, "data-validity": validityToString(validity), value, onChange: (e) => {
-      console.log(e.target.value);
-      updateValue(e.target.value);
-    } });
+    const { value, validity, messages, updateValue } = useField2(fieldName);
+    return /* @__PURE__ */ import_react14.default.createElement(
+      "input",
+      {
+        id: fieldName,
+        name: fieldName,
+        type: inputType,
+        className: inputClassName,
+        "data-validity": validityToString(validity),
+        "aria-invalid": validity <= 1 /* INVALID */,
+        value,
+        onChange: (e) => {
+          updateValue(e.target.value);
+        },
+        readOnly,
+        "aria-readonly": readOnly,
+        "aria-describedby": getFieldAriaDescribedBy(fieldName, messages.length),
+        autoComplete,
+        placeholder,
+        list,
+        autoFocus,
+        step,
+        max,
+        min,
+        maxLength: maxLength2,
+        size
+      }
+    );
   }
 }
 

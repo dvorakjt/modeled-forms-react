@@ -96,18 +96,18 @@ interface OmittableFormElement {
     get omit(): boolean;
 }
 
+interface ResettableFormElement {
+    reset(): void;
+}
+
 interface StatefulFormElement<T> {
     stateChanges: Subject<State<T>>;
     get state(): State<T>;
 }
 
-interface ResettableFormElement {
-    reset(): void;
-}
-
 declare abstract class AbstractField implements StatefulFormElement<string>, OmittableFormElement, ResettableFormElement {
     abstract state: FieldState;
-    abstract stateChanges: Subject<State<string>>;
+    abstract stateChanges: Subject<FieldState>;
     abstract omit: boolean;
     abstract setState(state: FieldState | DualFieldSetStateArg): void;
     abstract setValue(value: string | DualFieldSetValueArg): void;
@@ -383,6 +383,7 @@ type MessageComponentProps = {
     className?: string;
     validity: MessageType;
     text: string;
+    id: string;
 };
 type MessageComponent = (props: MessageComponentProps) => JSX.Element;
 
@@ -443,8 +444,9 @@ type FormMessagesProps = {
     messagesContainerClassName?: string;
     messageClassName?: string;
     MessageComponent?: MessageComponent;
+    idPrefix: string;
 };
-declare function FormMessages({ messagesContainerClassName, messageClassName, MessageComponent }: FormMessagesProps): React__default.JSX.Element;
+declare function FormMessages({ messagesContainerClassName, messageClassName, MessageComponent, idPrefix }: FormMessagesProps): React__default.JSX.Element;
 
 type LabelProps = {
     fieldName: string;
@@ -458,8 +460,17 @@ type InputProps = {
     inputType: string;
     inputClassName: string;
     readOnly?: boolean;
+    autoComplete?: string;
+    placeholder?: string;
+    list?: string;
+    autoFocus?: boolean;
+    step?: number;
+    max?: string;
+    min?: string;
+    maxLength?: number;
+    size?: number;
 };
-declare function Input({ fieldName, inputType, inputClassName, readOnly }: InputProps): React__default.JSX.Element;
+declare function Input({ fieldName, inputType, inputClassName, readOnly, autoComplete, placeholder, list, autoFocus, step, max, min, maxLength, size }: InputProps): React__default.JSX.Element;
 
 type InputGroupProps = {
     inputGroupClassName?: string;

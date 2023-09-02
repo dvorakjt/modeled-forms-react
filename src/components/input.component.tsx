@@ -1,6 +1,8 @@
 import React, { useContext } from 'react';
 import { FormContext } from './form-context';
 import { validityToString } from './util/validity-to-string';
+import { Validity } from '../model/state/validity.enum';
+import { getFieldAriaDescribedBy } from './util/get-field-aria-described-by';
 
 export type InputProps = {
   fieldName : string;
@@ -18,14 +20,12 @@ export type InputProps = {
   size? : number;
 }
 
-//need to include aria-invalid and aria-errormessage, these should only be set after the form has been submitted
-//these props should be added to InputGroup
 export function Input({fieldName, inputType, inputClassName, readOnly = false, autoComplete, placeholder, list, autoFocus, step, max, min, maxLength, size} : InputProps) {
   const formCtx = useContext(FormContext);
   if(formCtx === null) throw new Error('Input cannot access property useField of null FormContext');
   else {
     const { useField } = formCtx;
-    const { value, validity, updateValue } = useField(fieldName);
+    const { value, validity, messages, updateValue } = useField(fieldName);
     
     return (
     <input 
@@ -34,11 +34,14 @@ export function Input({fieldName, inputType, inputClassName, readOnly = false, a
       type={inputType}
       className={inputClassName} 
       data-validity={validityToString(validity)} 
+      aria-invalid={validity <= Validity.INVALID}
       value={value} 
       onChange={(e) => {
        updateValue(e.target.value);
       }}
-      readOnly={readOnly} 
+      readOnly={readOnly}
+      aria-readonly={readOnly}
+      aria-describedby={getFieldAriaDescribedBy(fieldName, messages.length)}
       autoComplete={autoComplete}
       placeholder={placeholder}
       list={list}

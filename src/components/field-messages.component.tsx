@@ -2,6 +2,7 @@ import React, { useContext} from 'react';
 import { FormContext } from './form-context';
 import { Messages } from './messages.component';
 import { MessageComponent } from './message-component.type';
+import { getFieldMessageIdPrefix } from './util/get-field-message-id-prefix';
 
 export type FieldMessagesProps = {
   fieldName : string;
@@ -21,6 +22,6 @@ export function FieldMessages({
   else {
     const { useField } = formCtx;
     const { messages } = useField(fieldName);
-    return <Messages messages={messages} messagesContainerClassName={messagesContainerClassName} messageClassName={messageClassName} MessageComponent={MessageComponent} />
+    return <Messages messages={messages} messagesContainerClassName={messagesContainerClassName} messageClassName={messageClassName} MessageComponent={MessageComponent} idPrefix={getFieldMessageIdPrefix(fieldName)}/>
   }
 }

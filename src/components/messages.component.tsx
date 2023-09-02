@@ -8,6 +8,7 @@ interface MessagesProps {
   messagesContainerClassName? : string; //defaults to .messages
   messageClassName? : string; //defaults to .message
   MessageComponent? : MessageComponent;
+  idPrefix: string;
 }
 
 export function Messages({
@@ -15,6 +16,7 @@ export function Messages({
   messagesContainerClassName = 'messages',
   messageClassName = 'message',
   MessageComponent = DefaultMessage,
+  idPrefix
 } : MessagesProps) {
  
   const [statefulMessages, setStatefulMessages] = useState(messages);
@@ -24,10 +26,10 @@ export function Messages({
   }, [messages])
 
   return (
-    <div className={messagesContainerClassName}>
+    <div className={messagesContainerClassName} aria-live='polite'>
       {statefulMessages.map((message, index) => {
         return (
-          <MessageComponent validity={message.type} text={message.text} className={messageClassName} key={index.toString()} />
+          <MessageComponent validity={message.type} text={message.text} className={messageClassName} key={index.toString()} id={`${idPrefix}-${index.toString()}`}/>
         )
       })}
     </div>
