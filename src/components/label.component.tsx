@@ -7,10 +7,9 @@ import { Validity } from "../model";
 export type LabelProps = {
   fieldName : string;
   labelText : string;
-  labelClassName? : string;
 }
 
-export function Label({fieldName, labelText, labelClassName = 'label'} : LabelProps) {
+export function Label({fieldName, labelText} : LabelProps) {
   const rootFormCtx = useContext(RootFormContext);
   const formCtx = useContext(FormContext);
   if(!rootFormCtx) throw new Error('Input cannot access properties of null or undefined RootFormContext');
@@ -21,6 +20,17 @@ export function Label({fieldName, labelText, labelClassName = 'label'} : LabelPr
     const { useSubmissionAttempted } = rootFormCtx;
     const { submissionAttempted } = useSubmissionAttempted();
 
-    return <label htmlFor={fieldName} className={labelClassName} data-validity={submissionAttempted || interactions.visited || interactions.modified ? validityToString(validity) : validityToString(Validity.VALID_FINALIZABLE)}>{labelText}</label>
+    return (
+    <label 
+      htmlFor={fieldName} 
+      className="label"
+      data-validity={submissionAttempted || interactions.visited || interactions.modified ? validityToString(validity) : validityToString(Validity.VALID_FINALIZABLE)}
+      data-visited={interactions.visited}
+      data-modified={interactions.modified}
+      data-submitted={submissionAttempted}
+    >
+      {labelText}
+    </label>
+    );
   }
 }

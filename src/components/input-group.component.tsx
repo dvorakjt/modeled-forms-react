@@ -9,8 +9,7 @@ export type InputGroupProps = {
 
 export function InputGroup({
   fieldName, 
-  inputGroupClassName, 
-  inputClassName, 
+  inputGroupClassName,
   inputType, 
   readOnly, 
   autoComplete,
@@ -22,18 +21,14 @@ export function InputGroup({
   min,
   maxLength,
   size,
-  labelText, 
-  labelClassName, 
-  messageClassName, 
-  messagesContainerClassName, 
+  labelText,
   MessageComponent
 } : InputGroupProps) {
   return (
     <div className={inputGroupClassName}>
-      <Label fieldName={fieldName} labelText={labelText} labelClassName={labelClassName} />
+      <Label fieldName={fieldName} labelText={labelText} />
       <Input 
-        fieldName={fieldName} 
-        inputClassName={inputClassName} 
+        fieldName={fieldName}
         inputType={inputType} 
         readOnly={readOnly} 
         autoComplete={autoComplete} 
@@ -46,7 +41,7 @@ export function InputGroup({
         maxLength={maxLength}
         size={size}
       />
-      <FieldMessages fieldName={fieldName} messagesContainerClassName={messagesContainerClassName} messageClassName={messageClassName} MessageComponent={MessageComponent} />
+      <FieldMessages fieldName={fieldName} MessageComponent={MessageComponent} />
     </div>
   )
 }

@@ -7,15 +7,11 @@ import { RootFormContext } from './root-form-provider.component';
 
 export type FieldMessagesProps = {
   fieldName : string;
-  messagesContainerClassName? : string; //defaults to .messages
-  messageClassName? : string; //defaults to .message
   MessageComponent? : MessageComponent;
 }
 
 export function FieldMessages({
   fieldName,
-  messagesContainerClassName,
-  messageClassName,
   MessageComponent
 } : FieldMessagesProps) {
   const rootFormCtx = useContext(RootFormContext);
@@ -27,6 +23,6 @@ export function FieldMessages({
     const { messages, interactions } = useField(fieldName);
     const { useSubmissionAttempted } = rootFormCtx;
     const { submissionAttempted } = useSubmissionAttempted();
-    return <Messages messages={submissionAttempted || interactions.visited || interactions.modified ? messages : []} messagesContainerClassName={messagesContainerClassName} messageClassName={messageClassName} MessageComponent={MessageComponent} idPrefix={getFieldMessageIdPrefix(fieldName)}/>
+    return <Messages messages={submissionAttempted || interactions.visited || interactions.modified ? messages : []} MessageComponent={MessageComponent} idPrefix={getFieldMessageIdPrefix(fieldName)}/>
   }
 }

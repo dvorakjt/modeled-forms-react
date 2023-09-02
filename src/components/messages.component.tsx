@@ -5,16 +5,12 @@ import { DefaultMessage } from "./default-message.component";
 
 interface MessagesProps {
   messages : Array<Message>;
-  messagesContainerClassName? : string; //defaults to .messages
-  messageClassName? : string; //defaults to .message
   MessageComponent? : MessageComponent;
   idPrefix: string;
 }
 
 export function Messages({
   messages,
-  messagesContainerClassName = 'messages',
-  messageClassName = 'message',
   MessageComponent = DefaultMessage,
   idPrefix
 } : MessagesProps) {
@@ -26,10 +22,10 @@ export function Messages({
   }, [messages])
 
   return (
-    <div className={messagesContainerClassName} aria-live='polite'>
+    <div className="messages" aria-live='polite'>
       {statefulMessages.map((message, index) => {
         return (
-          <MessageComponent validity={message.type} text={message.text} className={messageClassName} key={index.toString()} id={`${idPrefix}-${index.toString()}`}/>
+          <MessageComponent validity={message.type} text={message.text} className="message" key={index.toString()} id={`${idPrefix}-${index.toString()}`}/>
         )
       })}
     </div>

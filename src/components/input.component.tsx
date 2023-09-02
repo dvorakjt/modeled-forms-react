@@ -8,7 +8,6 @@ import { RootFormContext } from './root-form-provider.component';
 export type InputProps = {
   fieldName : string;
   inputType : string;
-  inputClassName : string;
   readOnly? : boolean;
   autoComplete? : string;
   placeholder? : string;
@@ -21,7 +20,7 @@ export type InputProps = {
   size? : number;
 }
 
-export function Input({fieldName, inputType, inputClassName, readOnly = false, autoComplete, placeholder, list, autoFocus, step, max, min, maxLength, size} : InputProps) {
+export function Input({fieldName, inputType, readOnly = false, autoComplete, placeholder, list, autoFocus, step, max, min, maxLength, size} : InputProps) {
   const rootFormCtx = useContext(RootFormContext);
   const formCtx = useContext(FormContext);
   if(!rootFormCtx) throw new Error('Input cannot access properties of null or undefined RootFormContext');
@@ -37,8 +36,11 @@ export function Input({fieldName, inputType, inputClassName, readOnly = false, a
       id={fieldName}
       name={fieldName}
       type={inputType}
-      className={inputClassName} 
+      className="input"
       data-validity={submissionAttempted || interactions.visited || interactions.modified ? validityToString(validity) : validityToString(Validity.VALID_FINALIZABLE)} 
+      data-visited={interactions.visited}
+      data-modified={interactions.modified}
+      data-submitted={submissionAttempted}
       aria-invalid={(submissionAttempted || interactions.visited || interactions.modified) && validity <= Validity.INVALID}
       value={value} 
       onChange={(e) => {
