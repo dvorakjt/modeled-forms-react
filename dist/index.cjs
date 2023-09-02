@@ -407,6 +407,23 @@ var DualField = class extends AbstractDualField {
         (_a = this.stateChanges) == null ? void 0 : _a.next(this.state);
     });
     this.stateChanges = new import_rxjs4.BehaviorSubject(this.state);
+    this.primaryField.interactionsChanges.subscribe(() => {
+      var _a;
+      if (!this._useSecondaryField)
+        (_a = this.interactionsChanges) == null ? void 0 : _a.next(this.interactions);
+    });
+    this.secondaryField.interactionsChanges.subscribe(() => {
+      var _a;
+      if (this._useSecondaryField)
+        (_a = this.interactionsChanges) == null ? void 0 : _a.next(this.interactions);
+    });
+    this.interactionsChanges = new import_rxjs4.BehaviorSubject(this.interactions);
+  }
+  get interactions() {
+    if (this.useSecondaryField)
+      return this.secondaryField.interactions;
+    else
+      return this.primaryField.interactions;
   }
   get state() {
     const state = !this._useSecondaryField ? this.primaryField.state : this.secondaryField.state;
@@ -472,6 +489,11 @@ var Field = class extends AbstractField {
     this.stateChanges = new import_rxjs5.BehaviorSubject(this.state);
     if (initialState.observable)
       this._handleValidityObservable(initialState.observable);
+    this._interactions = {
+      visited: false,
+      modified: this._defaultValue.length > 0
+    };
+    this.interactionsChanges = new import_rxjs5.BehaviorSubject(this.interactions);
   }
   get state() {
     return copyObject(this._state);
@@ -483,6 +505,14 @@ var Field = class extends AbstractField {
   }
   get omit() {
     return this.state.omit;
+  }
+  get interactions() {
+    return copyObject(this._interactions);
+  }
+  set interactions(interactions) {
+    this._interactions = interactions;
+    if (this.interactionsChanges)
+      this.interactionsChanges.next(this.interactions);
   }
   setValue(value) {
     if (this._validatorSuiteSubscription)
@@ -497,10 +527,17 @@ var Field = class extends AbstractField {
   setState(state) {
     this._state = copyObject(state);
     this.stateChanges.next(this.state);
+    this.interactions = __spreadProps(__spreadValues({}, this.interactions), {
+      modified: true
+    });
   }
   reset() {
     this._state.omit = this._omitByDefault;
     this.setValue(this._defaultValue);
+    this.interactions = {
+      visited: false,
+      modified: this._defaultValue.length > 0
+    };
   }
   _handleValidityObservable(observable) {
     var _a;
@@ -592,6 +629,12 @@ var StateControlledDualField = class extends AbstractDualField {
   get state() {
     return this._field.state;
   }
+  get interactions() {
+    return this._field.interactions;
+  }
+  get interactionsChanges() {
+    return this._field.interactionsChanges;
+  }
   set omit(omit) {
     this._field.omit = omit;
   }
@@ -651,6 +694,15 @@ var StateControlledField = class extends AbstractField {
   }
   get state() {
     return this._field.state;
+  }
+  get interactions() {
+    return this._field.interactions;
+  }
+  set interactions(interactions) {
+    this._field.interactions = interactions;
+  }
+  get interactionsChanges() {
+    return this._field.interactionsChanges;
   }
   set omit(omit) {
     this._field.omit = omit;
@@ -721,6 +773,12 @@ var ValueControlledDualField = class extends AbstractDualField {
   set useSecondaryField(useSecondaryField) {
     this._dualField.useSecondaryField = useSecondaryField;
   }
+  get interactions() {
+    return this._field.interactions;
+  }
+  get interactionsChanges() {
+    return this._field.interactionsChanges;
+  }
   get useSecondaryField() {
     return this._dualField.useSecondaryField;
   }
@@ -768,6 +826,15 @@ var ValueControlledField = class extends AbstractField {
   }
   get state() {
     return this._field.state;
+  }
+  get interactions() {
+    return this._field.interactions;
+  }
+  set interactions(interactions) {
+    this._field.interactions = interactions;
+  }
+  get interactionsChanges() {
+    return this._field.interactionsChanges;
   }
   set omit(omit) {
     this._field.omit = omit;
@@ -1907,6 +1974,12 @@ var UserFacingMultiInputValidatedDualField = class extends AbstractDualField {
   set omit(omit) {
     this._baseField.omit = omit;
   }
+  get interactions() {
+    return this._baseField.interactions;
+  }
+  get interactionsChanges() {
+    return this._baseField.interactionsChanges;
+  }
   get primaryField() {
     return this._baseField.primaryField;
   }
@@ -1956,6 +2029,15 @@ var UserFacingMultiInputValidatedField = class extends AbstractField {
     return __spreadProps(__spreadValues({}, copyObject(this._baseField.state)), {
       validity: this._calculateValidity()
     });
+  }
+  get interactions() {
+    return this._baseField.interactions;
+  }
+  set interactions(interactions) {
+    this._baseField.interactions = interactions;
+  }
+  get interactionsChanges() {
+    return this._baseField.interactionsChanges;
   }
   get omit() {
     return this._baseField.omit;
@@ -3368,20 +3450,31 @@ function useField(field) {
   const [value, setValue] = (0, import_react3.useState)(field.state.value);
   const [validity, setValidity] = (0, import_react3.useState)(field.state.validity);
   const [messages, setMessages] = (0, import_react3.useState)(field.state.messages);
+  const [interactions, setInteractions] = (0, import_react3.useState)(field.interactions);
   const stateChangesSubRef = (0, import_react3.useRef)(null);
+  const interactionsChangesSubRef = (0, import_react3.useRef)(null);
   (0, import_react3.useEffect)(() => {
     stateChangesSubRef.current = field.stateChanges.subscribe((change) => {
       setValue(change.value);
       setValidity(change.validity);
       setMessages(change.messages);
     });
+    interactionsChangesSubRef.current = field.interactionsChanges.subscribe((change) => {
+      setInteractions(change);
+    });
     return () => {
-      var _a;
-      return (_a = stateChangesSubRef.current) == null ? void 0 : _a.unsubscribe();
+      var _a, _b;
+      (_a = stateChangesSubRef.current) == null ? void 0 : _a.unsubscribe();
+      (_b = interactionsChangesSubRef.current) == null ? void 0 : _b.unsubscribe();
     };
   }, []);
   const updateValue = (value2) => {
     field.setValue(value2);
+  };
+  const visit = () => {
+    field.interactions = __spreadProps(__spreadValues({}, field.interactions), {
+      visited: true
+    });
   };
   const reset = () => field.reset();
   return {
@@ -3389,6 +3482,8 @@ function useField(field) {
     validity,
     messages,
     updateValue,
+    interactions,
+    visit,
     reset
   };
 }
@@ -3553,7 +3648,7 @@ function useRootForm(template) {
 }
 
 // src/components/field-messages.component.tsx
-var import_react11 = __toESM(require("react"), 1);
+var import_react12 = __toESM(require("react"), 1);
 
 // src/components/form-context.ts
 var import_react8 = require("react");
@@ -3590,6 +3685,27 @@ function getFieldMessageIdPrefix(fieldName) {
   return `${fieldName}-messages`;
 }
 
+// src/components/root-form-provider.component.tsx
+var import_react11 = __toESM(require("react"), 1);
+var RootFormContext = (0, import_react11.createContext)(null);
+function RootFormProvider({ template, children }) {
+  const rootForm = useRootForm(template);
+  const rootFormCtxValue = {
+    useSubmissionAttempted: rootForm.useSubmissionAttempted,
+    submit: rootForm.submit
+  };
+  const formCtxValue = {
+    useFormState: rootForm.useFormState,
+    useFirstNonValidFormElement: rootForm.useFirstNonValidFormElement,
+    useField: rootForm.useField,
+    useDualField: rootForm.useDualField,
+    useNestedForm: rootForm.useNestedForm,
+    useOmittableFormElement: rootForm.useOmittableFormElement,
+    reset: rootForm.reset
+  };
+  return /* @__PURE__ */ import_react11.default.createElement(RootFormContext.Provider, { value: rootFormCtxValue }, /* @__PURE__ */ import_react11.default.createElement(FormContext.Provider, { value: formCtxValue }, children));
+}
+
 // src/components/field-messages.component.tsx
 function FieldMessages({
   fieldName,
@@ -3597,38 +3713,43 @@ function FieldMessages({
   messageClassName,
   MessageComponent
 }) {
-  const formCtx = (0, import_react11.useContext)(FormContext);
-  if (formCtx === null)
-    throw new Error("FieldMessages cannot access useField property of null FormContext");
+  const rootFormCtx = (0, import_react12.useContext)(RootFormContext);
+  const formCtx = (0, import_react12.useContext)(FormContext);
+  if (!rootFormCtx)
+    throw new Error("FieldMessages cannot access properties of null or undefined RootFormContext.");
+  if (!formCtx)
+    throw new Error("FieldMessages cannot access properties of null or undefined FormContext.");
   else {
     const { useField: useField2 } = formCtx;
-    const { messages } = useField2(fieldName);
-    return /* @__PURE__ */ import_react11.default.createElement(Messages, { messages, messagesContainerClassName, messageClassName, MessageComponent, idPrefix: getFieldMessageIdPrefix(fieldName) });
+    const { messages, interactions } = useField2(fieldName);
+    const { useSubmissionAttempted: useSubmissionAttempted2 } = rootFormCtx;
+    const { submissionAttempted } = useSubmissionAttempted2();
+    return /* @__PURE__ */ import_react12.default.createElement(Messages, { messages: submissionAttempted || interactions.visited || interactions.modified ? messages : [], messagesContainerClassName, messageClassName, MessageComponent, idPrefix: getFieldMessageIdPrefix(fieldName) });
   }
 }
 
 // src/components/form-messages.component.tsx
-var import_react12 = __toESM(require("react"), 1);
+var import_react13 = __toESM(require("react"), 1);
 function FormMessages({
   messagesContainerClassName,
   messageClassName,
   MessageComponent,
   idPrefix
 }) {
-  const formCtx = (0, import_react12.useContext)(FormContext);
+  const formCtx = (0, import_react13.useContext)(FormContext);
   if (formCtx === null)
     throw new Error("FieldMessages cannot access useField property of null FormContext");
   else {
     const { messages } = formCtx.useFormState();
-    return /* @__PURE__ */ import_react12.default.createElement(Messages, { messages, messagesContainerClassName, messageClassName, MessageComponent, idPrefix });
+    return /* @__PURE__ */ import_react13.default.createElement(Messages, { messages, messagesContainerClassName, messageClassName, MessageComponent, idPrefix });
   }
 }
 
 // src/components/input-group.component.tsx
-var import_react15 = __toESM(require("react"), 1);
+var import_react16 = __toESM(require("react"), 1);
 
 // src/components/label.component.tsx
-var import_react13 = __toESM(require("react"), 1);
+var import_react14 = __toESM(require("react"), 1);
 
 // src/components/util/validity-to-string.ts
 function validityToString(validity) {
@@ -3647,18 +3768,18 @@ function validityToString(validity) {
 
 // src/components/label.component.tsx
 function Label({ fieldName, labelText, labelClassName = "label" }) {
-  const formCtx = (0, import_react13.useContext)(FormContext);
+  const formCtx = (0, import_react14.useContext)(FormContext);
   if (formCtx === null)
     throw new Error("Input cannot access property useField of null FormContext");
   else {
     const { useField: useField2 } = formCtx;
     const { validity } = useField2(fieldName);
-    return /* @__PURE__ */ import_react13.default.createElement("label", { htmlFor: fieldName, className: labelClassName, "data-validity": validityToString(validity) }, labelText);
+    return /* @__PURE__ */ import_react14.default.createElement("label", { htmlFor: fieldName, className: labelClassName, "data-validity": validityToString(validity) }, labelText);
   }
 }
 
 // src/components/input.component.tsx
-var import_react14 = __toESM(require("react"), 1);
+var import_react15 = __toESM(require("react"), 1);
 
 // src/components/util/get-field-aria-described-by.ts
 function getFieldAriaDescribedBy(fieldName, messageCount) {
@@ -3671,28 +3792,33 @@ function getFieldAriaDescribedBy(fieldName, messageCount) {
 
 // src/components/input.component.tsx
 function Input({ fieldName, inputType, inputClassName, readOnly = false, autoComplete, placeholder, list, autoFocus, step, max, min, maxLength: maxLength2, size }) {
-  const formCtx = (0, import_react14.useContext)(FormContext);
-  if (formCtx === null)
-    throw new Error("Input cannot access property useField of null FormContext");
+  const rootFormCtx = (0, import_react15.useContext)(RootFormContext);
+  const formCtx = (0, import_react15.useContext)(FormContext);
+  if (!rootFormCtx)
+    throw new Error("Input cannot access properties of null or undefined RootFormContext");
+  if (!formCtx)
+    throw new Error("Input cannot access properties of null or undefined FormContext");
   else {
     const { useField: useField2 } = formCtx;
-    const { value, validity, messages, updateValue } = useField2(fieldName);
-    return /* @__PURE__ */ import_react14.default.createElement(
+    const { value, validity, messages, updateValue, interactions, visit } = useField2(fieldName);
+    const { useSubmissionAttempted: useSubmissionAttempted2 } = rootFormCtx;
+    const { submissionAttempted } = useSubmissionAttempted2();
+    return /* @__PURE__ */ import_react15.default.createElement(
       "input",
       {
         id: fieldName,
         name: fieldName,
         type: inputType,
         className: inputClassName,
-        "data-validity": validityToString(validity),
-        "aria-invalid": validity <= 1 /* INVALID */,
+        "data-validity": submissionAttempted || interactions.visited || interactions.modified ? validityToString(validity) : validityToString(4 /* VALID_FINALIZABLE */),
+        "aria-invalid": (submissionAttempted || interactions.visited || interactions.modified) && validity <= 1 /* INVALID */,
         value,
         onChange: (e) => {
           updateValue(e.target.value);
         },
         readOnly,
         "aria-readonly": readOnly,
-        "aria-describedby": getFieldAriaDescribedBy(fieldName, messages.length),
+        "aria-describedby": submissionAttempted || interactions.visited || interactions.modified ? getFieldAriaDescribedBy(fieldName, messages.length) : "",
         autoComplete,
         placeholder,
         list,
@@ -3701,65 +3827,82 @@ function Input({ fieldName, inputType, inputClassName, readOnly = false, autoCom
         max,
         min,
         maxLength: maxLength2,
-        size
+        size,
+        onBlur: visit
       }
     );
   }
 }
 
 // src/components/input-group.component.tsx
-function InputGroup({ fieldName, inputGroupClassName, inputClassName, inputType, readOnly, labelText, labelClassName, messageClassName, messagesContainerClassName, MessageComponent }) {
-  return /* @__PURE__ */ import_react15.default.createElement("div", { className: inputGroupClassName }, /* @__PURE__ */ import_react15.default.createElement(Label, { fieldName, labelText, labelClassName }), /* @__PURE__ */ import_react15.default.createElement(Input, { fieldName, inputClassName, inputType, readOnly }), /* @__PURE__ */ import_react15.default.createElement(FieldMessages, { fieldName, messagesContainerClassName, messageClassName, MessageComponent }));
+function InputGroup({
+  fieldName,
+  inputGroupClassName,
+  inputClassName,
+  inputType,
+  readOnly,
+  autoComplete,
+  placeholder,
+  list,
+  autoFocus,
+  step,
+  max,
+  min,
+  maxLength: maxLength2,
+  size,
+  labelText,
+  labelClassName,
+  messageClassName,
+  messagesContainerClassName,
+  MessageComponent
+}) {
+  return /* @__PURE__ */ import_react16.default.createElement("div", { className: inputGroupClassName }, /* @__PURE__ */ import_react16.default.createElement(Label, { fieldName, labelText, labelClassName }), /* @__PURE__ */ import_react16.default.createElement(
+    Input,
+    {
+      fieldName,
+      inputClassName,
+      inputType,
+      readOnly,
+      autoComplete,
+      placeholder,
+      list,
+      autoFocus,
+      step,
+      max,
+      min,
+      maxLength: maxLength2,
+      size
+    }
+  ), /* @__PURE__ */ import_react16.default.createElement(FieldMessages, { fieldName, messagesContainerClassName, messageClassName, MessageComponent }));
 }
 
 // src/components/nested-form-provider.component.tsx
-var import_react16 = __toESM(require("react"), 1);
+var import_react17 = __toESM(require("react"), 1);
 function NestedFormProvider({ fieldName, children }) {
-  const formCtx = (0, import_react16.useContext)(FormContext);
+  const formCtx = (0, import_react17.useContext)(FormContext);
   if (formCtx === null)
     throw new Error("NestedFormProvider cannot access useNestedForm property of null context.");
   else {
     const { useNestedForm } = formCtx;
     const nestedForm = useNestedForm(fieldName);
-    return /* @__PURE__ */ import_react16.default.createElement(FormContext.Provider, { value: nestedForm }, children);
+    return /* @__PURE__ */ import_react17.default.createElement(FormContext.Provider, { value: nestedForm }, children);
   }
 }
 
 // src/components/reset-button.component.tsx
-var import_react17 = __toESM(require("react"), 1);
+var import_react18 = __toESM(require("react"), 1);
 function ResetButton(props) {
-  const [disabled, setDisabled] = (0, import_react17.useState)(props.disabled);
-  const formCtx = (0, import_react17.useContext)(FormContext);
-  (0, import_react17.useEffect)(() => {
+  const [disabled, setDisabled] = (0, import_react18.useState)(props.disabled);
+  const formCtx = (0, import_react18.useContext)(FormContext);
+  (0, import_react18.useEffect)(() => {
     setDisabled(props.disabled);
   }, [props.disabled]);
   if (formCtx === null)
     throw new Error("Reset button cannot read property reset of null FormContext");
   else {
     const { reset } = formCtx;
-    return /* @__PURE__ */ import_react17.default.createElement("button", { onClick: reset, className: props.className, disabled }, "Reset");
+    return /* @__PURE__ */ import_react18.default.createElement("button", { onClick: reset, className: props.className, disabled }, "Reset");
   }
-}
-
-// src/components/root-form-provider.component.tsx
-var import_react18 = __toESM(require("react"), 1);
-var RootFormContext = (0, import_react18.createContext)(null);
-function RootFormProvider({ template, children }) {
-  const rootForm = useRootForm(template);
-  const rootFormCtxValue = {
-    useSubmissionAttempted: rootForm.useSubmissionAttempted,
-    submit: rootForm.submit
-  };
-  const formCtxValue = {
-    useFormState: rootForm.useFormState,
-    useFirstNonValidFormElement: rootForm.useFirstNonValidFormElement,
-    useField: rootForm.useField,
-    useDualField: rootForm.useDualField,
-    useNestedForm: rootForm.useNestedForm,
-    useOmittableFormElement: rootForm.useOmittableFormElement,
-    reset: rootForm.reset
-  };
-  return /* @__PURE__ */ import_react18.default.createElement(RootFormContext.Provider, { value: rootFormCtxValue }, /* @__PURE__ */ import_react18.default.createElement(FormContext.Provider, { value: formCtxValue }, children));
 }
 
 // src/components/submit-button.component.tsx

@@ -4,14 +4,21 @@ import { AbstractDualField } from './abstract-dual-field';
 import type { DualFieldSetValueArg } from '../../state/dual-field-set-value-arg.interface';
 import type { DualFieldSetStateArg } from '../../state/dual-field-set-state-arg.interface';
 import type { FieldState } from '../../state/field-state.interface';
+import { Interactions } from '../../state/interactions.interface';
 
 export class DualField extends AbstractDualField {
   readonly primaryField: AbstractField;
   readonly secondaryField: AbstractField;
   readonly stateChanges: Subject<FieldState>;
+  readonly interactionsChanges: Subject<Interactions>;
   _useSecondaryField: boolean = false;
   _omit: boolean;
   _omitByDefault: boolean;
+
+  get interactions(): Interactions {
+    if(this.useSecondaryField) return this.secondaryField.interactions;
+    else return this.primaryField.interactions;
+  }
 
   get state() {
     const state = !this._useSecondaryField
@@ -58,6 +65,13 @@ export class DualField extends AbstractDualField {
       if (this._useSecondaryField) this.stateChanges?.next(this.state);
     });
     this.stateChanges = new BehaviorSubject(this.state);
+    this.primaryField.interactionsChanges.subscribe(() => {
+      if(!this._useSecondaryField) this.interactionsChanges?.next(this.interactions);
+    });
+    this.secondaryField.interactionsChanges.subscribe(() => {
+      if(this._useSecondaryField) this.interactionsChanges?.next(this.interactions);
+    });
+    this.interactionsChanges = new BehaviorSubject(this.interactions);
   }
 
   setValue(valueObj: DualFieldSetValueArg) {

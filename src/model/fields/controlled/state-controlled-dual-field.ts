@@ -19,6 +19,15 @@ export class StateControlledDualField extends AbstractDualField {
     return this._field.state;
   }
 
+  get interactions() {
+    return this._field.interactions;
+  }
+
+  get interactionsChanges() {
+    return this._field.interactionsChanges;
+  }
+
+
   set omit(omit: boolean) {
     this._field.omit = omit;
   }

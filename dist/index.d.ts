@@ -105,10 +105,22 @@ interface StatefulFormElement<T> {
     get state(): State<T>;
 }
 
-declare abstract class AbstractField implements StatefulFormElement<string>, OmittableFormElement, ResettableFormElement {
+interface Interactions {
+    visited: boolean;
+    modified: boolean;
+}
+
+interface InteractableFormElement {
+    interactions: Interactions;
+    interactionsChanges: Subject<Interactions>;
+}
+
+declare abstract class AbstractField implements StatefulFormElement<string>, OmittableFormElement, ResettableFormElement, InteractableFormElement {
     abstract state: FieldState;
     abstract stateChanges: Subject<FieldState>;
     abstract omit: boolean;
+    abstract interactions: Interactions;
+    abstract interactionsChanges: Subject<Interactions>;
     abstract setState(state: FieldState | DualFieldSetStateArg): void;
     abstract setValue(value: string | DualFieldSetValueArg): void;
     abstract reset(): void;
@@ -306,6 +318,8 @@ declare function useRootForm(template: RootFormTemplate): {
         validity: Validity;
         messages: Message[];
         updateValue: (value: string) => void;
+        interactions: Interactions;
+        visit: () => void;
         reset: () => void;
     };
     useDualField: (fieldName: string) => {
@@ -314,6 +328,8 @@ declare function useRootForm(template: RootFormTemplate): {
             validity: Validity;
             messages: Message[];
             updateValue: (value: string) => void;
+            interactions: Interactions;
+            visit: () => void;
             reset: () => void;
         };
         useSecondaryField: () => {
@@ -321,6 +337,8 @@ declare function useRootForm(template: RootFormTemplate): {
             validity: Validity;
             messages: Message[];
             updateValue: (value: string) => void;
+            interactions: Interactions;
+            visit: () => void;
             reset: () => void;
         };
         useSwitchToSecondaryField: () => {
@@ -344,6 +362,8 @@ declare function useRootForm(template: RootFormTemplate): {
             validity: Validity;
             messages: Message[];
             updateValue: (value: string) => void;
+            interactions: Interactions;
+            visit: () => void;
             reset: () => void;
         };
         useDualField: (fieldName: string) => {
@@ -352,6 +372,8 @@ declare function useRootForm(template: RootFormTemplate): {
                 validity: Validity;
                 messages: Message[];
                 updateValue: (value: string) => void;
+                interactions: Interactions;
+                visit: () => void;
                 reset: () => void;
             };
             useSecondaryField: () => {
@@ -359,6 +381,8 @@ declare function useRootForm(template: RootFormTemplate): {
                 validity: Validity;
                 messages: Message[];
                 updateValue: (value: string) => void;
+                interactions: Interactions;
+                visit: () => void;
                 reset: () => void;
             };
             useSwitchToSecondaryField: () => {
@@ -410,6 +434,8 @@ declare const FormContext: React.Context<{
         validity: Validity;
         messages: Message[];
         updateValue: (value: string) => void;
+        interactions: Interactions;
+        visit: () => void;
         reset: () => void;
     };
     useDualField: (fieldName: string) => {
@@ -418,6 +444,8 @@ declare const FormContext: React.Context<{
             validity: Validity;
             messages: Message[];
             updateValue: (value: string) => void;
+            interactions: Interactions;
+            visit: () => void;
             reset: () => void;
         };
         useSecondaryField: () => {
@@ -425,6 +453,8 @@ declare const FormContext: React.Context<{
             validity: Validity;
             messages: Message[];
             updateValue: (value: string) => void;
+            interactions: Interactions;
+            visit: () => void;
             reset: () => void;
         };
         useSwitchToSecondaryField: () => {
@@ -475,7 +505,7 @@ declare function Input({ fieldName, inputType, inputClassName, readOnly, autoCom
 type InputGroupProps = {
     inputGroupClassName?: string;
 } & LabelProps & InputProps & FieldMessagesProps;
-declare function InputGroup({ fieldName, inputGroupClassName, inputClassName, inputType, readOnly, labelText, labelClassName, messageClassName, messagesContainerClassName, MessageComponent }: InputGroupProps): React__default.JSX.Element;
+declare function InputGroup({ fieldName, inputGroupClassName, inputClassName, inputType, readOnly, autoComplete, placeholder, list, autoFocus, step, max, min, maxLength, size, labelText, labelClassName, messageClassName, messagesContainerClassName, MessageComponent }: InputGroupProps): React__default.JSX.Element;
 
 type NestedFormProviderProps = {
     fieldName: string;

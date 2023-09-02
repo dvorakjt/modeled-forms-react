@@ -4,6 +4,7 @@ import { config } from '../../../config';
 import { AbstractField } from '../base/abstract-field';
 import type { Adapter } from '../../adapters/adapter.interface';
 import type { FieldState } from '../../state/field-state.interface';
+import { Interactions } from '../../state/interactions.interface';
 
 export class ValueControlledField extends AbstractField {
   readonly _field: AbstractField;
@@ -15,6 +16,18 @@ export class ValueControlledField extends AbstractField {
 
   get state() {
     return this._field.state;
+  }
+
+  get interactions() {
+    return this._field.interactions;
+  }
+
+  set interactions(interactions : Interactions) {
+    this._field.interactions = interactions;
+  }
+
+  get interactionsChanges() {
+    return this._field.interactionsChanges;
   }
 
   set omit(omit: boolean) {
