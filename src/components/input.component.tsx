@@ -27,28 +27,33 @@ export function Input({fieldName, inputType, readOnly = false, autoComplete, pla
   if(!formCtx) throw new Error('Input cannot access properties of null or undefined FormContext');
   else {
     const { useField } = formCtx;
-    const { value, validity, messages, updateValue, interactions, visit } = useField(fieldName);
-    const { useSubmissionAttempted } = rootFormCtx;
-    const { submissionAttempted } = useSubmissionAttempted();
+    const { value, validity, messages, updateValue} = useField(fieldName);
+    // const { useSubmissionAttempted } = rootFormCtx;
+    // const { submissionAttempted } = useSubmissionAttempted();
     
+    //always set the validity property to the actual validity
+    //the visited, modified, submitted properties can be used in conjunction with this property to determine how to style the component
+    //aria-invalid is set only if visited, modified or submitted AND the field is invalid
+    //similarly, aria-describedby is set only under the same conditions, with the exception that the validity does not have to be invalid
+    //onBlur should call the field's visit method
     return (
     <input 
       id={fieldName}
       name={fieldName}
       type={inputType}
       className="input"
-      data-validity={submissionAttempted || interactions.visited || interactions.modified ? validityToString(validity) : validityToString(Validity.VALID_FINALIZABLE)} 
-      data-visited={interactions.visited}
-      data-modified={interactions.modified}
-      data-submitted={submissionAttempted}
-      aria-invalid={(submissionAttempted || interactions.visited || interactions.modified) && validity <= Validity.INVALID}
+      data-validity={validityToString(validity)} 
+      // data-visited={}
+      // data-modified={}
+      // data-submitted={submissionAttempted}
+      aria-invalid={validity <= Validity.INVALID}
       value={value} 
       onChange={(e) => {
        updateValue(e.target.value);
       }}
       readOnly={readOnly}
       aria-readonly={readOnly}
-      aria-describedby={submissionAttempted || interactions.visited || interactions.modified ? getFieldAriaDescribedBy(fieldName, messages.length) : ""}
+      aria-describedby={getFieldAriaDescribedBy(fieldName, messages.length)}
       autoComplete={autoComplete}
       placeholder={placeholder}
       list={list}
@@ -58,7 +63,7 @@ export function Input({fieldName, inputType, readOnly = false, autoComplete, pla
       min={min}
       maxLength={maxLength}
       size={size}
-      onBlur={visit}
+      // onBlur={visit}
     />);
   }
 }

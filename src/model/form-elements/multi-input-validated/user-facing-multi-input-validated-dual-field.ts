@@ -32,15 +32,6 @@ export class UserFacingMultiInputValidatedDualField
     this._baseField.omit = omit;
   }
 
-  get interactions() {
-    return this._baseField.interactions;
-  }
-
-  get interactionsChanges() {
-    return this._baseField.interactionsChanges;
-  }
-
-
   get primaryField() {
     return this._baseField.primaryField;
   }

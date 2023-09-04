@@ -7,7 +7,6 @@ import { FieldState } from '../../state/field-state.interface';
 import { State } from '../../state/state.interface';
 import { copyObject } from '../../util/copy-object';
 import { MultiInputValidator } from '../../validators/multi-input/multi-input-validator.interface';
-import { Interactions } from '../../state/interactions.interface';
 
 export class UserFacingMultiInputValidatedField extends AbstractField {
   readonly _baseField: AbstractField;
@@ -20,19 +19,7 @@ export class UserFacingMultiInputValidatedField extends AbstractField {
       validity: this._calculateValidity(),
     };
   }
-
-  get interactions() {
-    return this._baseField.interactions;
-  }
-
-  set interactions(interactions : Interactions) {
-    this._baseField.interactions = interactions;
-  }
-
-  get interactionsChanges() {
-    return this._baseField.interactionsChanges;
-  }
-
+  
   get omit() {
     return this._baseField.omit;
   }

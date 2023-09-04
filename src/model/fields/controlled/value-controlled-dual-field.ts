@@ -39,14 +39,6 @@ export class ValueControlledDualField extends AbstractDualField {
     this._dualField.useSecondaryField = useSecondaryField;
   }
 
-  get interactions() {
-    return this._field.interactions;
-  }
-
-  get interactionsChanges() {
-    return this._field.interactionsChanges;
-  }
-
   get useSecondaryField() {
     return this._dualField.useSecondaryField;
   }
