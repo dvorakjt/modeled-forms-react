@@ -33,29 +33,21 @@ export function Input({fieldName, inputType, readOnly = false, autoComplete, pla
     const { useSubmissionAttempted } = rootFormCtx;
     const { submissionAttempted } = useSubmissionAttempted();
     
-    //always set the validity property to the actual validity
-    //the visited, modified, submitted properties can be used in conjunction with this property to determine how to style the component
-    //aria-invalid is set only if visited, modified or submitted AND the field is invalid
-    //similarly, aria-describedby is set only under the same conditions, with the exception that the validity does not have to be invalid
-    //onBlur should call the field's visit method
     return (
     <input 
       id={fieldName}
       name={fieldName}
       type={inputType}
       className="input"
-      data-validity={validityToString(validity)} 
-      data-visited={visited === Visited.YES}
-      data-modified={modified === Modified.YES}
-      data-submitted={submissionAttempted}
-      aria-invalid={validity <= Validity.INVALID}
+      data-validity={(submissionAttempted || visited === Visited.YES || modified === Modified.YES) ? validityToString(validity) : validityToString(Validity.VALID_FINALIZABLE)} 
+      aria-invalid={(submissionAttempted || visited === Visited.YES || modified === Modified.YES) && validity <= Validity.INVALID}
       value={value} 
       onChange={(e) => {
        updateValue(e.target.value);
       }}
       readOnly={readOnly}
       aria-readonly={readOnly}
-      aria-describedby={getFieldAriaDescribedBy(fieldName, messages.length)}
+      aria-describedby={(submissionAttempted || visited === Visited.YES || modified === Modified.YES) ? getFieldAriaDescribedBy(fieldName, messages.length) : ""}
       autoComplete={autoComplete}
       placeholder={placeholder}
       list={list}

@@ -85,4 +85,5 @@ export class DualField extends AbstractDualField {
     this.secondaryField.reset();
     this.useSecondaryField = false;
   }
+
 }

@@ -44,6 +44,7 @@ class FinalizerTemplateDictionaryParserImpl
   ): FinalizerManager {
     const finalizers: FinalizerDictionary = {};
     let originalFieldsToPreserve = new Set<string>();
+    let finalizedFields = new Set<string>();
 
     for (const [finalizerName, finalizerTemplate] of Object.entries(template)) {
       if (finalizerTemplate.syncFinalizerFn) {
@@ -62,6 +63,10 @@ class FinalizerTemplateDictionaryParserImpl
               ...accessedFields,
             ]);
           }
+          finalizedFields = new Set([
+            ...finalizedFields,
+            ...accessedFields
+          ]);
         });
       } else if (finalizerTemplate.asyncFinalizerFn) {
         const finalizerFn = this._finalizerFnFactory.createAsyncFinalizerFn(
@@ -79,6 +84,10 @@ class FinalizerTemplateDictionaryParserImpl
               ...accessedFields,
             ]);
           }
+          finalizedFields = new Set([
+            ...finalizedFields,
+            ...accessedFields
+          ]);
         });
       }
     }
@@ -86,7 +95,7 @@ class FinalizerTemplateDictionaryParserImpl
     for (const [fieldName, field] of Object.entries(finalizerFacingFields)) {
       if (
         originalFieldsToPreserve.has(fieldName) ||
-        !(fieldName in finalizers)
+        (!(fieldName in finalizers) && !finalizedFields.has(fieldName))
       ) {
         finalizers[fieldName] =
           this._finalizerFactory.createDefaultFinalizer(field);

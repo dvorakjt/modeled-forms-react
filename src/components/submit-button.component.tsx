@@ -16,5 +16,8 @@ export function SubmitButton({ className } : SubmitButtonProps) {
   const { submit } = rootFormCtx;
   const { validity } = formCtx.useFormState();
 
-  return <button className={className} onClick={submit} disabled={validity < Validity.VALID_FINALIZABLE}>Submit</button>
+  return <button 
+    className={className} onClick={submit} 
+    disabled={validity < Validity.VALID_FINALIZABLE}
+  >Submit</button>
 }
