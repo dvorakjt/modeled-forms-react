@@ -10,6 +10,8 @@ import { FinalizerValidity } from '../state/finalizer-validity.enum';
 import { MessageType } from '../state/messages/message-type.enum';
 import { config } from '../../config';
 import { FinalizerManager } from './finalizer-manager.interface';
+import { ModificationReducer } from '../reducers/modification/modification-reducer.interface';
+import { VisitationReducer } from '../reducers/visitation/visitation-reducer.interface';
 
 export class FinalizerManagerImpl implements FinalizerManager {
   stateChanges: Subject<State<any>>;
@@ -17,12 +19,16 @@ export class FinalizerManagerImpl implements FinalizerManager {
   _finalizerMap: FinalizerDictionary;
   _finalizerValidityReducer: FinalizerValidityReducer;
   _finalizerValidityTranslator: FinalizerValidityTranslator;
+  _visitationReducer : VisitationReducer;
+  _modificationReducer : ModificationReducer;
 
   get state() {
     return {
       value: copyObject(this._value),
       validity: this._getValidity(),
       messages: this._getMessages(),
+      visited : this._visitationReducer.visited,
+      modified : this._modificationReducer.modified
     };
   }
 
@@ -30,10 +36,15 @@ export class FinalizerManagerImpl implements FinalizerManager {
     finalizerMap: FinalizerDictionary,
     finalizerValidityReducer: FinalizerValidityReducer,
     finalizerValidityTranslator: FinalizerValidityTranslator,
+    visitationReducer : VisitationReducer,
+    modificationReducer : ModificationReducer
   ) {
     this._finalizerMap = finalizerMap;
     this._finalizerValidityReducer = finalizerValidityReducer;
     this._finalizerValidityTranslator = finalizerValidityTranslator;
+    this._visitationReducer = visitationReducer;
+    this._modificationReducer = modificationReducer;
+
     for (const finalizerName in this._finalizerMap) {
       const finalizer = this._finalizerMap[finalizerName];
       finalizer.stream.subscribe(finalizerStateChange => {
@@ -41,6 +52,8 @@ export class FinalizerManagerImpl implements FinalizerManager {
           finalizerName,
           finalizerStateChange.finalizerValidity,
         );
+        this._visitationReducer.updateTallies(finalizerName, finalizerStateChange.visited);
+        this._modificationReducer.updateTallies(finalizerName, finalizerStateChange.modified);
         delete this._value[finalizerName];
         if (finalizerStateChange.value)
           this._value[finalizerName] = finalizerStateChange.value;

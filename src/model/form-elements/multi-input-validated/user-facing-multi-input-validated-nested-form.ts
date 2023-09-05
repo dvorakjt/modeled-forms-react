@@ -59,7 +59,7 @@ export class UserFacingMultiInputValidatedNestedForm
   }
 
   reset(): void {
-    throw new Error('Method not implemented.');
+    this._baseNestedForm.reset();
   }
 
   addValidator(validator: MultiInputValidator): void {

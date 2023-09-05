@@ -6,6 +6,7 @@ import type { Adapter } from '../../adapters/adapter.interface';
 import type { DualFieldSetStateArg } from '../../state/dual-field-set-state-arg.interface';
 import type { DualFieldSetValueArg } from '../../state/dual-field-set-value-arg.interface';
 import type { FieldState } from '../../state/field-state.interface';
+import { Modified } from '../../state/modified-enum';
 
 export class StateControlledDualField extends AbstractDualField {
   readonly _field: AbstractDualField;
@@ -57,7 +58,7 @@ export class StateControlledDualField extends AbstractDualField {
     this._adapter.stream.subscribe({
       next: (next: DualFieldSetStateArg) => this.setState(next),
       error: () => {
-        const errorState: FieldState = {
+        const errorState: Partial<FieldState> = {
           value: '',
           validity: Validity.ERROR,
           messages: [
@@ -66,6 +67,7 @@ export class StateControlledDualField extends AbstractDualField {
               text: config.globalMessages.adapterError,
             },
           ],
+          modified : Modified.YES
         };
         const setStateArg: DualFieldSetStateArg = this._dualField
           .useSecondaryField

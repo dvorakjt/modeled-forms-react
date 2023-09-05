@@ -33,11 +33,15 @@ export class DefaultFinalizer implements Finalizer {
           this._finalizerValidityTranslator.translateValidityToFinalizerValidity(
             fieldState.validity,
           ),
+        visited : fieldState.visited,
+        modified : fieldState.modified
       };
 
     return {
       finalizerValidity: FinalizerValidity.VALID_FINALIZED,
       value: fieldState.value,
+      visited : fieldState.visited,
+      modified : fieldState.modified
     };
   }
 }

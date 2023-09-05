@@ -13,10 +13,18 @@ import { FinalizerValidityReducerImpl } from './finalizer-validity/finalizer-val
 import { UserFacingMultiInputValidatorReducer } from './multi-input-validator-validity/user-facing-multi-input-validator-reducer';
 import { ValidityReducerImpl } from './validity/validity-reducer-impl';
 import { autowire } from 'undecorated-di';
+import { VisitationReducer } from './visitation/visitation-reducer.interface';
+import { VisitationReducerImpl } from './visitation/visitation-reducer-impl';
+import { ModificationReducer } from './modification/modification-reducer.interface';
+import { ModificationReducerImpl } from './modification/modification-reducer-impl';
 
 class ReducerFactoryImpl implements ReducerFactory {
   createFieldStateReducer(): FieldStateReducer {
-    return new FieldStateReducerImpl(this.createValidityReducer());
+    return new FieldStateReducerImpl(
+      this.createValidityReducer(),
+      this.createVisitationReducer(),
+      this.createModificationReducer()
+    );
   }
   createFinalizerValidityReducer(): FinalizerValidityReducer {
     return new FinalizerValidityReducerImpl();
@@ -33,6 +41,12 @@ class ReducerFactoryImpl implements ReducerFactory {
   }
   createValidityReducer(): ValidityReducer {
     return new ValidityReducerImpl();
+  }
+  createVisitationReducer(): VisitationReducer {
+    return new VisitationReducerImpl();
+  }
+  createModificationReducer(): ModificationReducer {
+    return new ModificationReducerImpl();
   }
 }
 

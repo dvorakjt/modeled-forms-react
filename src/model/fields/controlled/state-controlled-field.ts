@@ -4,10 +4,11 @@ import { config } from '../../../config';
 import { AbstractField } from '../base/abstract-field';
 import type { Adapter } from '../../adapters/adapter.interface';
 import type { FieldState } from '../../state/field-state.interface';
+import { Modified } from '../../state/modified-enum';
 
 export class StateControlledField extends AbstractField {
   readonly _field: AbstractField;
-  readonly _adapter: Adapter<FieldState>;
+  readonly _adapter: Adapter<Partial<FieldState>>;
 
   get stateChanges() {
     return this._field.stateChanges;
@@ -25,12 +26,12 @@ export class StateControlledField extends AbstractField {
     return this._field.omit;
   }
 
-  constructor(field: AbstractField, adapter: Adapter<FieldState>) {
+  constructor(field: AbstractField, adapter: Adapter<Partial<FieldState>>) {
     super();
     this._field = field;
     this._adapter = adapter;
     this._adapter.stream.subscribe({
-      next: (next: FieldState) => this.setState(next),
+      next: (next: Partial<FieldState>) => this.setState(next),
       error: () => {
         this.setState({
           value: '',
@@ -41,6 +42,7 @@ export class StateControlledField extends AbstractField {
               text: config.globalMessages.adapterError,
             },
           ],
+          modified : Modified.YES
         });
       },
     });
@@ -50,7 +52,7 @@ export class StateControlledField extends AbstractField {
     this._field.setValue(value);
   }
 
-  setState(state: FieldState): void {
+  setState(state: Partial<FieldState>): void {
     this._field.setState(state);
   }
 

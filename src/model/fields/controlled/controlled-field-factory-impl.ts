@@ -50,7 +50,7 @@ class ControlledFieldFactoryImpl implements ControlledFieldFactory {
         )
       : new StateControlledField(
           baseField,
-          adapter as unknown as Adapter<FieldState>,
+          adapter as unknown as Adapter<Partial<FieldState>>,
         );
   }
 
@@ -69,7 +69,7 @@ class ControlledFieldFactoryImpl implements ControlledFieldFactory {
         )
       : new StateControlledField(
           baseField,
-          adapter as unknown as Adapter<FieldState>,
+          adapter as unknown as Adapter<Partial<FieldState>>,
         );
   }
   createValueControlledFieldWithSyncAdapter(

@@ -6,6 +6,7 @@ import { Validity } from '../../state/validity.enum';
 import { MessageType } from '../../state/messages/message-type.enum';
 import { config } from '../../../config';
 import { FieldState } from '../../state/field-state.interface';
+import { Modified } from '../../state/modified-enum';
 
 export class ValueControlledDualField extends AbstractDualField {
   readonly _field: AbstractDualField;
@@ -59,7 +60,7 @@ export class ValueControlledDualField extends AbstractDualField {
         if (next) this.setValue(next);
       },
       error: () => {
-        const errorState: FieldState = {
+        const errorState: Partial<FieldState> = {
           value: '',
           validity: Validity.ERROR,
           messages: [
@@ -68,6 +69,7 @@ export class ValueControlledDualField extends AbstractDualField {
               text: config.globalMessages.adapterError,
             },
           ],
+          modified : Modified.YES
         };
         const setStateArg: DualFieldSetStateArg = this._dualField
           .useSecondaryField

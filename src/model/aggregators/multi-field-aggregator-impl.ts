@@ -24,6 +24,8 @@ export class MultiFieldAggregatorImpl implements MultiFieldAggregator {
       ...this._aggregatedFieldState,
       overallValidity: () => this._fieldStateReducer.validity,
       hasOmittedFields: () => this._fieldStateReducer.omit,
+      visited: () => this._fieldStateReducer.visited,
+      modified: () => this._fieldStateReducer.modified
     } as AggregatedStateChanges;
   }
 

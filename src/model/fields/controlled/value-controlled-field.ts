@@ -4,6 +4,7 @@ import { config } from '../../../config';
 import { AbstractField } from '../base/abstract-field';
 import type { Adapter } from '../../adapters/adapter.interface';
 import type { FieldState } from '../../state/field-state.interface';
+import { Modified } from '../../state/modified-enum';
 
 export class ValueControlledField extends AbstractField {
   readonly _field: AbstractField;
@@ -43,6 +44,7 @@ export class ValueControlledField extends AbstractField {
               text: config.globalMessages.adapterError,
             },
           ],
+          modified : Modified.YES
         });
       },
     });
@@ -52,7 +54,7 @@ export class ValueControlledField extends AbstractField {
     this._field.setValue(value);
   }
 
-  setState(state: FieldState): void {
+  setState(state: Partial<FieldState>): void {
     this._field.setState(state);
   }
 

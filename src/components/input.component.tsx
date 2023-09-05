@@ -4,6 +4,8 @@ import { validityToString } from './util/validity-to-string';
 import { Validity } from '../model/state/validity.enum';
 import { getFieldAriaDescribedBy } from './util/get-field-aria-described-by';
 import { RootFormContext } from './root-form-provider.component';
+import { Visited } from '../model/state/visited.enum';
+import { Modified } from '../model/state/modified-enum';
 
 export type InputProps = {
   fieldName : string;
@@ -27,9 +29,9 @@ export function Input({fieldName, inputType, readOnly = false, autoComplete, pla
   if(!formCtx) throw new Error('Input cannot access properties of null or undefined FormContext');
   else {
     const { useField } = formCtx;
-    const { value, validity, messages, updateValue} = useField(fieldName);
-    // const { useSubmissionAttempted } = rootFormCtx;
-    // const { submissionAttempted } = useSubmissionAttempted();
+    const { value, validity, messages, visited, modified, updateValue, visit} = useField(fieldName);
+    const { useSubmissionAttempted } = rootFormCtx;
+    const { submissionAttempted } = useSubmissionAttempted();
     
     //always set the validity property to the actual validity
     //the visited, modified, submitted properties can be used in conjunction with this property to determine how to style the component
@@ -43,9 +45,9 @@ export function Input({fieldName, inputType, readOnly = false, autoComplete, pla
       type={inputType}
       className="input"
       data-validity={validityToString(validity)} 
-      // data-visited={}
-      // data-modified={}
-      // data-submitted={submissionAttempted}
+      data-visited={visited === Visited.YES}
+      data-modified={modified === Modified.YES}
+      data-submitted={submissionAttempted}
       aria-invalid={validity <= Validity.INVALID}
       value={value} 
       onChange={(e) => {
@@ -63,7 +65,7 @@ export function Input({fieldName, inputType, readOnly = false, autoComplete, pla
       min={min}
       maxLength={maxLength}
       size={size}
-      // onBlur={visit}
+      onBlur={visit}
     />);
   }
 }
