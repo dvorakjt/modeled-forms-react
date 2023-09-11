@@ -5,16 +5,18 @@ import { OneTimeValueEmitter } from '../../emitters/one-time-value-emitter.inter
 import { MultiInputValidator } from './multi-input-validator.interface';
 import { AsyncValidator } from '../async-validator.type';
 import { Validity } from '../../state/validity.enum';
-import { Message } from '../../state/messages/message.interface';
+import { MultiInputValidatorMessage } from '../../state/messages/multi-input-validator-message.interface';
 import { MessageType } from '../../state/messages/message-type.enum';
 import { logErrorInDevMode } from '../../util/log-error-in-dev-mode';
 import { config } from '../../../config';
+import { Modified } from '../../state/modified-enum';
+import { Visited } from '../../state/visited.enum';
 
 export class AsyncMultiInputValidator implements MultiInputValidator {
   //messages, calculatedValidity, and overallValidityChanges all go to different destinations
   readonly calculatedValidityChanges: Subject<Validity>;
   readonly overallValidityChanges: Subject<Validity>;
-  readonly messageChanges: Subject<Message | null>;
+  readonly messageChanges: Subject<MultiInputValidatorMessage | null>;
   readonly accessedFields: OneTimeValueEmitter<Set<string>>;
   readonly _pendingMessage: string;
   readonly _multiFieldAggregator: MultiFieldAggregator;
@@ -33,7 +35,7 @@ export class AsyncMultiInputValidator implements MultiInputValidator {
     this.accessedFields = multiFieldAggregator.accessedFields;
     this.calculatedValidityChanges = new ReplaySubject<Validity>(1);
     this.overallValidityChanges = new ReplaySubject<Validity>(1);
-    this.messageChanges = new ReplaySubject<Message | null>(1);
+    this.messageChanges = new ReplaySubject<MultiInputValidatorMessage | null>(1);
     this._multiFieldAggregator.aggregateChanges.subscribe(
       (aggregateChange: AggregatedStateChanges) => {
         //unsubscribe from currently running validator
@@ -73,13 +75,15 @@ export class AsyncMultiInputValidator implements MultiInputValidator {
           this.messageChanges.next({
             type: MessageType.ERROR,
             text: config.globalMessages.multiFieldValidationError,
+            hasUnvisitedOrUnmodifiedFields: this.hasUnvisitedOrUnmodifiedFields(aggregateChange)
           });
         } else {
           this.calculatedValidityChanges.next(Validity.PENDING);
           this.overallValidityChanges.next(Validity.PENDING);
           this.messageChanges.next({
-            type: MessageType.PENDING, //
+            type: MessageType.PENDING, 
             text: this._pendingMessage,
+            hasUnvisitedOrUnmodifiedFields: this.hasUnvisitedOrUnmodifiedFields(aggregateChange)
           });
           try {
             if (!observableResult)
@@ -97,6 +101,7 @@ export class AsyncMultiInputValidator implements MultiInputValidator {
                       ? MessageType.VALID
                       : MessageType.INVALID,
                     text: result.message,
+                    hasUnvisitedOrUnmodifiedFields: this.hasUnvisitedOrUnmodifiedFields(aggregateChange)
                   };
                   this.messageChanges.next(message);
                 } else this.messageChanges.next(null);
@@ -108,6 +113,7 @@ export class AsyncMultiInputValidator implements MultiInputValidator {
                 this.messageChanges.next({
                   type: MessageType.ERROR,
                   text: config.globalMessages.multiFieldValidationError,
+                  hasUnvisitedOrUnmodifiedFields: this.hasUnvisitedOrUnmodifiedFields(aggregateChange)
                 });
               },
             });
@@ -118,10 +124,15 @@ export class AsyncMultiInputValidator implements MultiInputValidator {
             this.messageChanges.next({
               type: MessageType.ERROR,
               text: config.globalMessages.multiFieldValidationError,
+              hasUnvisitedOrUnmodifiedFields: this.hasUnvisitedOrUnmodifiedFields(aggregateChange)
             });
           }
         }
       },
     );
+  }
+
+  hasUnvisitedOrUnmodifiedFields(aggregateChange : AggregatedStateChanges) {
+    return aggregateChange.modified() < Modified.YES || aggregateChange.visited() < Visited.YES;
   }
 }
