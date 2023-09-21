@@ -10,7 +10,6 @@ export function useSubmissionAttempted(form: AbstractRootForm) {
 
   useEffect(() => {
     subRef.current = form.submissionStateChanges.subscribe(change => {
-      console.log(change);
       setSubmissionAttempted(change.submissionAttempted);
     });
     return () => subRef.current?.unsubscribe();

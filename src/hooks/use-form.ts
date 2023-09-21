@@ -2,6 +2,7 @@ import { useFormState as _useFormState } from './use-form-state';
 import { useFirstNonValidFormElement as _useFirstNonValidFormElement } from './use-first-non-valid-form-element';
 import { useField as _useField } from './use-field';
 import { useDualField as _useDualField } from './use-dual-field';
+import { useExtractedValue as _useExtractedValue } from './use-extracted-value';
 import { useOmittableFormElement as _useOmittableFormElement } from './use-omittable-form-element';
 import { AbstractRootForm } from '../model/forms/abstract-root-form';
 import { AbstractNestedForm } from '../model/forms/abstract-nested-form';
@@ -72,6 +73,16 @@ export function useForm(form: AbstractRootForm | AbstractNestedForm) {
     return _useOmittableFormElement(form.userFacingFields[fieldName]);
   };
 
+  const useExtractedValue = (key : string) => {
+    if(!(key in form.extractedValues)) {
+      throw new Error(
+        'No extracted value with key ' + key + ' found in extractedValues.'
+      );
+    }
+
+    return _useExtractedValue(form.extractedValues[key]);
+  }
+
   return {
     useFormState,
     useFirstNonValidFormElement,
@@ -80,5 +91,6 @@ export function useForm(form: AbstractRootForm | AbstractNestedForm) {
     useDualField,
     useNestedForm,
     useOmittableFormElement,
+    useExtractedValue
   };
 }

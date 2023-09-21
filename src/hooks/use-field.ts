@@ -14,7 +14,6 @@ export function useField(field: AbstractField) {
 
   useEffect(() => {
     stateChangesSubRef.current = field.stateChanges.subscribe(change => {
-      console.log(change);
       setValue(change.value);
       setValidity(change.validity);
       setMessages(change.messages);

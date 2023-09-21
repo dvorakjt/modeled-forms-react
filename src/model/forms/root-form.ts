@@ -9,11 +9,13 @@ import type { FormElementDictionary } from '../form-elements/form-element-dictio
 import type { MultiInputValidatorMessagesAggregator } from '../aggregators/multi-input-validator-messages-aggregator.interface';
 import type { SubmissionState } from '../submission/submission-state.interface';
 import { FirstNonValidFormElementTracker } from '../trackers/first-nonvalid-form-element-tracker.interface';
+import { ExtractedValueDictionary } from '../extracted-values/extracted-value-dictionary.type';
 
 export class RootForm extends AbstractRootForm {
   readonly stateChanges: Subject<State<any>>;
   readonly submissionStateChanges: Subject<SubmissionState>;
   readonly userFacingFields: FormElementDictionary;
+  readonly extractedValues: ExtractedValueDictionary;
   readonly _firstNonValidFormElementTracker: FirstNonValidFormElementTracker;
   readonly _finalizerManager: FinalizerManager;
   readonly _multiFieldValidatorMessagesAggregator: MultiInputValidatorMessagesAggregator;
@@ -45,6 +47,7 @@ export class RootForm extends AbstractRootForm {
 
   constructor(
     userFacingFields: FormElementDictionary,
+    extractedValues : ExtractedValueDictionary,
     firstNonValidFormElementTracker: FirstNonValidFormElementTracker,
     finalizerManager: FinalizerManager,
     multiFieldValidatorMessagesAggregator: MultiInputValidatorMessagesAggregator,
@@ -52,6 +55,7 @@ export class RootForm extends AbstractRootForm {
   ) {
     super();
     this.userFacingFields = userFacingFields;
+    this.extractedValues = extractedValues;
     this._firstNonValidFormElementTracker = firstNonValidFormElementTracker;
     this._finalizerManager = finalizerManager;
     this._multiFieldValidatorMessagesAggregator =

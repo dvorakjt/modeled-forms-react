@@ -19,22 +19,26 @@ import {
   NestedFormTemplateParserKeyType,
 } from './nested-form-template-parser.interface';
 import { NestedFormTemplate } from './nested-form-template.interface';
+import { ExtractedValuesTemplateParser, ExtractedValuesTemplateParserKey } from '../extracted-values/extracted-values-template-parser.interface';
 
 class NestedFormTemplateParserImpl implements NestedFormTemplateParser {
   _formElementTemplateDictionaryParser: FormElementTemplateDictionaryParser;
   _multiFieldValidatorsTemplateParser: MultiFieldValidatorsTemplateParser;
   _finalizerTemplateDictionaryParser: FinalizerTemplateDictionaryParser;
+  _extractedValuesTemplateParser : ExtractedValuesTemplateParser;
 
   constructor(
     formElementTemplateDictionaryParser: FormElementTemplateDictionaryParser,
     multiFieldValidatorsTemplateParser: MultiFieldValidatorsTemplateParser,
     finalizerTemplateDictionaryParser: FinalizerTemplateDictionaryParser,
+    extractedValuesTemplate : ExtractedValuesTemplateParser
   ) {
     this._formElementTemplateDictionaryParser =
       formElementTemplateDictionaryParser;
     this._multiFieldValidatorsTemplateParser =
       multiFieldValidatorsTemplateParser;
     this._finalizerTemplateDictionaryParser = finalizerTemplateDictionaryParser;
+    this._extractedValuesTemplateParser = extractedValuesTemplate;
   }
   parseTemplate(template: NestedFormTemplate): AbstractNestedForm {
     const [baseFields, firstNonValidFormElementTracker] =
@@ -54,8 +58,13 @@ class NestedFormTemplateParserImpl implements NestedFormTemplateParser {
         finalizedFields,
         finalizerFacingFields,
       );
+    const extractedValues = this._extractedValuesTemplateParser.parseTemplate(template.extractedValues ?? {
+      syncExtractedValues : {},
+      asyncExtractedValues : {}
+    }, finalizerFacingFields)
     const form = new NestedForm(
       userFacingFields,
+      extractedValues,
       firstNonValidFormElementTracker,
       finalizerManager,
       multiInputValidatorMessagesAggregator,
@@ -73,6 +82,7 @@ const NestedFormTemplateParserService = autowire<
   FormElementTemplateDictionaryParserKey,
   MultiFieldValidatorsTemplateParserKey,
   FinalizerTemplateDictionaryParserKey,
+  ExtractedValuesTemplateParserKey
 ]);
 
 export { NestedFormTemplateParserImpl, NestedFormTemplateParserService };

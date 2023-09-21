@@ -30,6 +30,7 @@ export function RootFormProvider({ template, children } : RootFormProviderProps)
     useDualField : rootForm.useDualField,
     useNestedForm : rootForm.useNestedForm,
     useOmittableFormElement : rootForm.useOmittableFormElement,
+    useExtractedValue : rootForm.useExtractedValue,
     reset : rootForm.reset
   }
 

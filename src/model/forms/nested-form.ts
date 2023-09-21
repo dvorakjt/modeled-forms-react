@@ -6,10 +6,12 @@ import type { FinalizerManager } from '../finalizers/finalizer-manager.interface
 import type { FormElementDictionary } from '../form-elements/form-element-dictionary.type';
 import type { MultiInputValidatorMessagesAggregator } from '../aggregators/multi-input-validator-messages-aggregator.interface';
 import { FirstNonValidFormElementTracker } from '../trackers/first-nonvalid-form-element-tracker.interface';
+import { ExtractedValueDictionary } from '../extracted-values/extracted-value-dictionary.type';
 
 export class NestedForm extends AbstractNestedForm {
   readonly stateChanges: Subject<State<any>>;
   readonly userFacingFields: FormElementDictionary;
+  readonly extractedValues: ExtractedValueDictionary;
   readonly _firstNonValidFormElementTracker: FirstNonValidFormElementTracker;
   readonly _finalizerManager: FinalizerManager;
   readonly _multiFieldValidatorMessagesAggregator: MultiInputValidatorMessagesAggregator;
@@ -47,6 +49,7 @@ export class NestedForm extends AbstractNestedForm {
 
   constructor(
     userFacingFields: FormElementDictionary,
+    extractedValues : ExtractedValueDictionary,
     firstNonValidFormElementTracker: FirstNonValidFormElementTracker,
     finalizerManager: FinalizerManager,
     multiFieldValidatorMessagesAggregator: MultiInputValidatorMessagesAggregator,
@@ -54,6 +57,7 @@ export class NestedForm extends AbstractNestedForm {
   ) {
     super();
     this.userFacingFields = userFacingFields;
+    this.extractedValues = extractedValues;
     this._firstNonValidFormElementTracker = firstNonValidFormElementTracker;
     this._finalizerManager = finalizerManager;
     this._multiFieldValidatorMessagesAggregator =

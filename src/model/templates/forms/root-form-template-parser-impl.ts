@@ -23,18 +23,21 @@ import {
   RootFormTemplateParserKeyType,
 } from './root-form-template-parser.interface';
 import { RootFormTemplate } from './root-form-template.interface';
+import { ExtractedValuesTemplateParser, ExtractedValuesTemplateParserKey } from '../extracted-values/extracted-values-template-parser.interface';
 
 class RootFormTemplateParserImpl implements RootFormTemplateParser {
   _formElementTemplateDictionaryParser: FormElementTemplateDictionaryParser;
   _multiFieldValidatorsTemplateParser: MultiFieldValidatorsTemplateParser;
   _finalizerTemplateDictionaryParser: FinalizerTemplateDictionaryParser;
   _submissionManagerFactory: SubmissionManagerFactory;
+  _extractedValuesTemplateParser : ExtractedValuesTemplateParser;
 
   constructor(
     formElementTemplateDictionaryParser: FormElementTemplateDictionaryParser,
     multiFieldValidatorsTemplateParser: MultiFieldValidatorsTemplateParser,
     finalizerTemplateDictionaryParser: FinalizerTemplateDictionaryParser,
     submissionManagerFactory: SubmissionManagerFactory,
+    extractedValuesTemplateParser : ExtractedValuesTemplateParser
   ) {
     this._formElementTemplateDictionaryParser =
       formElementTemplateDictionaryParser;
@@ -42,6 +45,7 @@ class RootFormTemplateParserImpl implements RootFormTemplateParser {
       multiFieldValidatorsTemplateParser;
     this._finalizerTemplateDictionaryParser = finalizerTemplateDictionaryParser;
     this._submissionManagerFactory = submissionManagerFactory;
+    this._extractedValuesTemplateParser = extractedValuesTemplateParser;
   }
   parseTemplate(template: RootFormTemplate): AbstractRootForm {
     const [baseFields, firstNonValidFormElementTracker] =
@@ -63,8 +67,14 @@ class RootFormTemplateParserImpl implements RootFormTemplateParser {
       );
     const submissionManager =
       this._submissionManagerFactory.createSubmissionManager(template.submitFn);
+    const extractedValues = this._extractedValuesTemplateParser.parseTemplate(template.extractedValues
+      ?? {
+        syncExtractedValues : {},
+        asyncExtractedValues : {}
+      }, finalizerFacingFields);
     const form = new RootForm(
       userFacingFields,
+      extractedValues,
       firstNonValidFormElementTracker,
       finalizerManager,
       multiInputValidatorMessagesAggregator,
@@ -83,6 +93,7 @@ const RootFormTemplateParserService = autowire<
   MultiFieldValidatorsTemplateParserKey,
   FinalizerTemplateDictionaryParserKey,
   SubmissionManagerFactoryKey,
+  ExtractedValuesTemplateParserKey
 ]);
 
 export { RootFormTemplateParserImpl, RootFormTemplateParserService };
