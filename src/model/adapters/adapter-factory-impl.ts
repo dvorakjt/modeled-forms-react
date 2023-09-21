@@ -15,10 +15,10 @@ import { AsyncAdapter } from './async-adapter';
 import { SyncAdapter } from './sync-adapter';
 
 class AdapterFactoryImpl implements AdapterFactory {
-  readonly #aggregatorFactory: AggregatorFactory;
+  readonly _aggregatorFactory: AggregatorFactory;
 
   constructor(aggregatorFactory: AggregatorFactory) {
-    this.#aggregatorFactory = aggregatorFactory;
+    this._aggregatorFactory = aggregatorFactory;
   }
 
   createSyncAdapterFromFnWithFields<V>(
@@ -26,7 +26,7 @@ class AdapterFactoryImpl implements AdapterFactory {
     fields: FormElementDictionary,
   ): SyncAdapter<V> {
     const multiFieldAggregator =
-      this.#aggregatorFactory.createMultiFieldAggregatorFromFields(fields);
+      this._aggregatorFactory.createMultiFieldAggregatorFromFields(fields);
     return new SyncAdapter(syncAdapterFn, multiFieldAggregator);
   }
   createAsyncAdapterFromFnWithFields<V>(
@@ -34,7 +34,7 @@ class AdapterFactoryImpl implements AdapterFactory {
     fields: FormElementDictionary,
   ): AsyncAdapter<V> {
     const multiFieldAggregator =
-      this.#aggregatorFactory.createMultiFieldAggregatorFromFields(fields);
+      this._aggregatorFactory.createMultiFieldAggregatorFromFields(fields);
     return new AsyncAdapter(asyncAdapterFn, multiFieldAggregator);
   }
 }

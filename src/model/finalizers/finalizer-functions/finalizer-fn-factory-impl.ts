@@ -20,19 +20,18 @@ import { logErrorInDevMode } from '../../util/log-error-in-dev-mode';
 import { autowire } from 'undecorated-di';
 
 class FinalizerFnFactoryImpl implements FinalizerFnFactory {
-  #finalizerValidityTranslator: FinalizerValidityTranslator;
+  _finalizerValidityTranslator: FinalizerValidityTranslator;
 
   constructor(finalizerValidityTranslator: FinalizerValidityTranslator) {
-    this.#finalizerValidityTranslator = finalizerValidityTranslator;
+    this._finalizerValidityTranslator = finalizerValidityTranslator;
   }
 
   createSyncFinalizerFn(
     baseAdapterFn: SyncBaseFinalizerFn,
   ): SyncAdapterFn<FinalizerState> {
-
     return (aggregatedStateChanges: AggregatedStateChanges) => {
-      let value : any;
-      let error : any;
+      let value: any;
+      let error: any;
 
       //attempt to create the value first so that fields are accessed and hasOmittedFields, overallValidity
       //can be accessed the first time
@@ -41,30 +40,39 @@ class FinalizerFnFactoryImpl implements FinalizerFnFactory {
       } catch (e) {
         logErrorInDevMode(e);
         error = e;
-      } 
-      
+      }
+
       if (aggregatedStateChanges.hasOmittedFields()) {
-        return { finalizerValidity: FinalizerValidity.VALID_FINALIZED };
+        return { 
+          finalizerValidity: FinalizerValidity.VALID_FINALIZED,
+          visited : aggregatedStateChanges.visited(),
+          modified : aggregatedStateChanges.modified()
+        };
       }
       const overallValidity = aggregatedStateChanges.overallValidity();
       if (overallValidity < Validity.VALID_FINALIZABLE) {
         return {
           finalizerValidity:
-            this.#finalizerValidityTranslator.translateValidityToFinalizerValidity(
+            this._finalizerValidityTranslator.translateValidityToFinalizerValidity(
               overallValidity,
             ),
+          visited : aggregatedStateChanges.visited(),
+          modified : aggregatedStateChanges.modified()
         };
       }
-      if(error) {
+      if (error) {
         return {
-          finalizerValidity : FinalizerValidity.FINALIZER_ERROR
-        }
-      }
-      else {
+          finalizerValidity: FinalizerValidity.FINALIZER_ERROR,
+          visited : aggregatedStateChanges.visited(),
+          modified : aggregatedStateChanges.modified()
+        };
+      } else {
         return {
           value,
-          finalizerValidity : FinalizerValidity.VALID_FINALIZED
-        }
+          finalizerValidity: FinalizerValidity.VALID_FINALIZED,
+          visited : aggregatedStateChanges.visited(),
+          modified : aggregatedStateChanges.modified()
+        };
       }
     };
   }
@@ -75,8 +83,8 @@ class FinalizerFnFactoryImpl implements FinalizerFnFactory {
     return (aggregatedStateChanges: AggregatedStateChanges) => {
       return new Observable<FinalizerState>(subscriber => {
         //first attempt to create the promise so that hasOmittedFields and overallValidity can be accessed the first time
-        let promise : Promise<any> | undefined = undefined;
-        let error : any;
+        let promise: Promise<any> | undefined = undefined;
+        let error: any;
 
         try {
           promise = baseAdapterFn(aggregatedStateChanges);
@@ -84,32 +92,45 @@ class FinalizerFnFactoryImpl implements FinalizerFnFactory {
           error = e;
         }
 
-        if(error) {
+        if (error) {
           logErrorInDevMode(error);
           subscriber.next({
-            finalizerValidity : FinalizerValidity.FINALIZER_ERROR
+            finalizerValidity: FinalizerValidity.FINALIZER_ERROR,
+            visited : aggregatedStateChanges.visited(),
+            modified : aggregatedStateChanges.modified()
           });
           subscriber.complete();
-        } else if(aggregatedStateChanges.hasOmittedFields()) {
+        } else if (aggregatedStateChanges.hasOmittedFields()) {
           subscriber.next({
-            finalizerValidity : FinalizerValidity.VALID_FINALIZED
+            finalizerValidity: FinalizerValidity.VALID_FINALIZED,
+            visited : aggregatedStateChanges.visited(),
+            modified : aggregatedStateChanges.modified()
           });
           subscriber.complete();
-        } else if(aggregatedStateChanges.overallValidity() < Validity.VALID_FINALIZABLE) {
+        } else if (
+          aggregatedStateChanges.overallValidity() < Validity.VALID_FINALIZABLE
+        ) {
           subscriber.next({
-            finalizerValidity: this.#finalizerValidityTranslator.translateValidityToFinalizerValidity(
-              aggregatedStateChanges.overallValidity(),
-            ),
+            finalizerValidity:
+              this._finalizerValidityTranslator.translateValidityToFinalizerValidity(
+                aggregatedStateChanges.overallValidity(),
+              ),
+            visited : aggregatedStateChanges.visited(),
+            modified : aggregatedStateChanges.modified()
           });
-        } else if(promise) {
+        } else if (promise) {
           subscriber.next({
             finalizerValidity: FinalizerValidity.VALID_FINALIZING,
+            visited : aggregatedStateChanges.visited(),
+            modified : aggregatedStateChanges.modified()
           });
           promise
             .then(value => {
               subscriber.next({
                 value,
                 finalizerValidity: FinalizerValidity.VALID_FINALIZED,
+                visited : aggregatedStateChanges.visited(),
+                modified : aggregatedStateChanges.modified()
               });
               subscriber.complete();
             })
@@ -117,6 +138,8 @@ class FinalizerFnFactoryImpl implements FinalizerFnFactory {
               logErrorInDevMode(e);
               subscriber.next({
                 finalizerValidity: FinalizerValidity.FINALIZER_ERROR,
+                visited : aggregatedStateChanges.visited(),
+                modified : aggregatedStateChanges.modified()
               });
               subscriber.complete();
             });
@@ -132,8 +155,7 @@ const FinalizerFnFactoryService = autowire<
   FinalizerFnFactoryKeyType,
   FinalizerFnFactory,
   FinalizerFnFactoryImpl
->(FinalizerFnFactoryImpl, FinalizerFnFactoryKey, 
-[
+>(FinalizerFnFactoryImpl, FinalizerFnFactoryKey, [
   FinalizerValidityTranslatorKey,
 ]);
 

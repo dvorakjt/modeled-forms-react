@@ -9,59 +9,56 @@ import { copyObject } from '../../util/copy-object';
 import { MultiInputValidator } from '../../validators/multi-input/multi-input-validator.interface';
 
 export class UserFacingMultiInputValidatedField extends AbstractField {
-  readonly #baseField: AbstractField;
-  readonly #multiInputValidatorReducer: MultiInputValidatorValidityReducer;
+  readonly _baseField: AbstractField;
+  readonly _multiInputValidatorReducer: MultiInputValidatorValidityReducer;
   stateChanges: Subject<State<string>>;
-  
+
   get state(): FieldState {
     return {
-      ...copyObject(this.#baseField.state),
-      validity: this.calculateValidity(),
+      ...copyObject(this._baseField.state),
+      validity: this._calculateValidity(),
     };
   }
-
+  
   get omit() {
-    return this.#baseField.omit;
+    return this._baseField.omit;
   }
 
-  set omit(omit : boolean) {
-    this.#baseField.omit = omit;
-  } 
+  set omit(omit: boolean) {
+    this._baseField.omit = omit;
+  }
 
   constructor(
     baseField: AbstractField,
     userFacingMultiInputValidityReducer: MultiInputValidatorValidityReducer,
   ) {
     super();
-    this.#baseField = baseField;
-    this.#multiInputValidatorReducer = userFacingMultiInputValidityReducer;
-    // this.#baseField.stateChanges.subscribe(() => {
-    //   if (this.stateChanges) this.stateChanges.next(this.state);
-    // });
-    this.#multiInputValidatorReducer.validityChanges.subscribe(() => {
+    this._baseField = baseField;
+    this._multiInputValidatorReducer = userFacingMultiInputValidityReducer;
+    this._multiInputValidatorReducer.validityChanges.subscribe(() => {
       if (this.stateChanges) this.stateChanges.next(this.state);
     });
     this.stateChanges = new BehaviorSubject(this.state);
   }
 
   setState(state: FieldState | DualFieldSetStateArg): void {
-    this.#baseField.setState(state);
+    this._baseField.setState(state);
   }
   setValue(value: string | DualFieldSetValueArg): void {
-    this.#baseField.setValue(value);
+    this._baseField.setValue(value);
   }
   reset(): void {
-    this.#baseField.reset();
+    this._baseField.reset();
   }
 
   addValidator(validator: MultiInputValidator): void {
-    this.#multiInputValidatorReducer.addValidator(validator);
+    this._multiInputValidatorReducer.addValidator(validator);
   }
 
-  private calculateValidity() {
+  _calculateValidity() {
     return Math.min(
-      this.#baseField.state.validity,
-      this.#multiInputValidatorReducer.validity,
+      this._baseField.state.validity,
+      this._multiInputValidatorReducer.validity,
     );
   }
 }

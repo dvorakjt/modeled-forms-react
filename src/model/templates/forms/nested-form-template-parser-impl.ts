@@ -1,49 +1,88 @@
-import { autowire } from "undecorated-di";
-import { AbstractNestedForm } from "../../forms/abstract-nested-form";
-import { NestedForm } from "../../forms/nested-form";
-import { FinalizerTemplateDictionaryParser, FinalizerTemplateDictionaryParserKey } from "../finalizers/finalizer-template-dictionary-parser.interface";
-import { FormElementTemplateDictionaryParser, FormElementTemplateDictionaryParserKey } from "../form-elements/form-element-template-dictionary-parser.interface";
-import { MultiFieldValidatorsTemplateParser, MultiFieldValidatorsTemplateParserKey } from "../multi-field-validators/multi-field-validators-template-parser.interface";
-import { NestedFormTemplateParser, NestedFormTemplateParserKey, NestedFormTemplateParserKeyType } from "./nested-form-template-parser.interface";
-import { NestedFormTemplate } from "./nested-form-template.interface";
+import { autowire } from 'undecorated-di';
+import { AbstractNestedForm } from '../../forms/abstract-nested-form';
+import { NestedForm } from '../../forms/nested-form';
+import {
+  FinalizerTemplateDictionaryParser,
+  FinalizerTemplateDictionaryParserKey,
+} from '../finalizers/finalizer-template-dictionary-parser.interface';
+import {
+  FormElementTemplateDictionaryParser,
+  FormElementTemplateDictionaryParserKey,
+} from '../form-elements/form-element-template-dictionary-parser.interface';
+import {
+  MultiFieldValidatorsTemplateParser,
+  MultiFieldValidatorsTemplateParserKey,
+} from '../multi-field-validators/multi-field-validators-template-parser.interface';
+import {
+  NestedFormTemplateParser,
+  NestedFormTemplateParserKey,
+  NestedFormTemplateParserKeyType,
+} from './nested-form-template-parser.interface';
+import { NestedFormTemplate } from './nested-form-template.interface';
+import { ExtractedValuesTemplateParser, ExtractedValuesTemplateParserKey } from '../extracted-values/extracted-values-template-parser.interface';
 
 class NestedFormTemplateParserImpl implements NestedFormTemplateParser {
-  #formElementTemplateDictionaryParser : FormElementTemplateDictionaryParser;
-  #multiFieldValidatorsTemplateParser : MultiFieldValidatorsTemplateParser;
-  #finalizerTemplateDictionaryParser : FinalizerTemplateDictionaryParser;
+  _formElementTemplateDictionaryParser: FormElementTemplateDictionaryParser;
+  _multiFieldValidatorsTemplateParser: MultiFieldValidatorsTemplateParser;
+  _finalizerTemplateDictionaryParser: FinalizerTemplateDictionaryParser;
+  _extractedValuesTemplateParser : ExtractedValuesTemplateParser;
 
   constructor(
-    formElementTemplateDictionaryParser : FormElementTemplateDictionaryParser,
-    multiFieldValidatorsTemplateParser : MultiFieldValidatorsTemplateParser,
-    finalizerTemplateDictionaryParser : FinalizerTemplateDictionaryParser,
+    formElementTemplateDictionaryParser: FormElementTemplateDictionaryParser,
+    multiFieldValidatorsTemplateParser: MultiFieldValidatorsTemplateParser,
+    finalizerTemplateDictionaryParser: FinalizerTemplateDictionaryParser,
+    extractedValuesTemplate : ExtractedValuesTemplateParser
   ) {
-    this.#formElementTemplateDictionaryParser = formElementTemplateDictionaryParser;
-    this.#multiFieldValidatorsTemplateParser = multiFieldValidatorsTemplateParser;
-    this.#finalizerTemplateDictionaryParser = finalizerTemplateDictionaryParser;
+    this._formElementTemplateDictionaryParser =
+      formElementTemplateDictionaryParser;
+    this._multiFieldValidatorsTemplateParser =
+      multiFieldValidatorsTemplateParser;
+    this._finalizerTemplateDictionaryParser = finalizerTemplateDictionaryParser;
+    this._extractedValuesTemplateParser = extractedValuesTemplate;
   }
   parseTemplate(template: NestedFormTemplate): AbstractNestedForm {
-    const [baseFields, firstNonValidFormElementTracker] = this.#formElementTemplateDictionaryParser.parseTemplate(template.fields);
+    const [baseFields, firstNonValidFormElementTracker] =
+      this._formElementTemplateDictionaryParser.parseTemplate(template.fields);
     const multiFieldValidatorsTemplate = template.multiFieldValidators ?? {};
     const [
-      userFacingFields, 
+      userFacingFields,
       finalizerFacingFields,
-      multiInputValidatorMessagesAggregator
-    ] = this.#multiFieldValidatorsTemplateParser.parseTemplate(multiFieldValidatorsTemplate, baseFields);
+      multiInputValidatorMessagesAggregator,
+    ] = this._multiFieldValidatorsTemplateParser.parseTemplate(
+      multiFieldValidatorsTemplate,
+      baseFields,
+    );
     const finalizedFields = template.finalizedFields ?? {};
-    const finalizerManager = this.#finalizerTemplateDictionaryParser.parseTemplate(finalizedFields, finalizerFacingFields);
-    const form = new NestedForm(userFacingFields, firstNonValidFormElementTracker, finalizerManager, multiInputValidatorMessagesAggregator, template.omitByDefault ?? false);
+    const finalizerManager =
+      this._finalizerTemplateDictionaryParser.parseTemplate(
+        finalizedFields,
+        finalizerFacingFields,
+      );
+    const extractedValues = this._extractedValuesTemplateParser.parseTemplate(template.extractedValues ?? {
+      syncExtractedValues : {},
+      asyncExtractedValues : {}
+    }, finalizerFacingFields)
+    const form = new NestedForm(
+      userFacingFields,
+      extractedValues,
+      firstNonValidFormElementTracker,
+      finalizerManager,
+      multiInputValidatorMessagesAggregator,
+      template.omitByDefault ?? false,
+    );
     return form; //the new form part should come from a factory
   }
 }
 
-const NestedFormTemplateParserService = autowire<NestedFormTemplateParserKeyType, NestedFormTemplateParser, NestedFormTemplateParserImpl>(
-  NestedFormTemplateParserImpl,
-  NestedFormTemplateParserKey,
-  [
-    FormElementTemplateDictionaryParserKey,
-    MultiFieldValidatorsTemplateParserKey,
-    FinalizerTemplateDictionaryParserKey
-  ]
-)
+const NestedFormTemplateParserService = autowire<
+  NestedFormTemplateParserKeyType,
+  NestedFormTemplateParser,
+  NestedFormTemplateParserImpl
+>(NestedFormTemplateParserImpl, NestedFormTemplateParserKey, [
+  FormElementTemplateDictionaryParserKey,
+  MultiFieldValidatorsTemplateParserKey,
+  FinalizerTemplateDictionaryParserKey,
+  ExtractedValuesTemplateParserKey
+]);
 
-export { NestedFormTemplateParserImpl, NestedFormTemplateParserService }
+export { NestedFormTemplateParserImpl, NestedFormTemplateParserService };

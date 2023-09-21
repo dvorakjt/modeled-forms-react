@@ -12,25 +12,25 @@ export class MultiInputValidatorMessagesAggregatorImpl
   implements MultiInputValidatorMessagesAggregator
 {
   messagesChanges: Subject<Message[]>;
-  #messages: MessagesByValidatorId = {};
+  _messages: MessagesByValidatorId = {};
 
   get messages() {
-    return [...this.generateMessages()];
+    return [...this._generateMessages()];
   }
 
   constructor(validators: Array<MultiInputValidator>) {
     for (let i = 0; i < validators.length; i++) {
       const validator = validators[i];
       validator.messageChanges.subscribe(next => {
-        if (next) this.#messages[i] = next;
-        else delete this.#messages[i];
+        if (next) this._messages[i] = next;
+        else delete this._messages[i];
         if (this.messagesChanges) this.messagesChanges.next(this.messages);
       });
     }
     this.messagesChanges = new BehaviorSubject(this.messages);
   }
 
-  private *generateMessages() {
-    for (const key in this.#messages) yield copyObject(this.#messages[key]);
+  *_generateMessages() {
+    for (const key in this._messages) yield copyObject(this._messages[key]);
   }
 }

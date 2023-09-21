@@ -12,7 +12,7 @@ export function includesLower(
     value = autoTransformer.transform(value);
 
     const result: ValidatorResult = {
-      isValid: /[a-z]/.test(value)
+      isValid: /[a-z]/.test(value),
     };
     if (!result.isValid) {
       result.message = errorMessage;

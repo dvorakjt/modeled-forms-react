@@ -59,7 +59,7 @@ describe('HybridSingleInputValidatorSuite', () => {
         messages: [
           {
             type: MessageType.ERROR,
-            text: config.globalMessages.singleFieldValidationError
+            text: config.globalMessages.singleFieldValidationError,
           },
         ],
       },

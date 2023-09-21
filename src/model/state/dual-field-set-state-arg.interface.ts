@@ -1,8 +1,8 @@
-import type { ValidatorSuiteResult } from '../validators/validator-suite-result.interface';
+import { FieldState } from './field-state.interface';
 
 export interface DualFieldSetStateArg {
-  primaryFieldState?: ValidatorSuiteResult<string>;
-  secondaryFieldState?: ValidatorSuiteResult<string>;
+  primaryFieldState?: Partial<FieldState>;
+  secondaryFieldState?: Partial<FieldState>;
   useSecondaryField?: boolean;
   omit?: boolean;
 }

@@ -8,27 +8,27 @@ export class UserFacingMultiInputValidatorReducer
   implements MultiInputValidatorValidityReducer
 {
   validityChanges: Subject<Validity>;
-  #validityReducer: ValidityReducer;
-  #multiInputValidators: Array<MultiInputValidator> = [];
+  _validityReducer: ValidityReducer;
+  _multiInputValidators: Array<MultiInputValidator> = [];
 
   get validity() {
-    return this.#validityReducer.validity;
+    return this._validityReducer.validity;
   }
 
   constructor(validityReducer: ValidityReducer) {
-    this.#validityReducer = validityReducer;
+    this._validityReducer = validityReducer;
     this.validityChanges = new BehaviorSubject<Validity>(
-      this.#validityReducer.validity,
+      this._validityReducer.validity,
     );
   }
 
   addValidator(multiFieldValidator: MultiInputValidator): void {
-    const validatorId = String(this.#multiInputValidators.length);
-    this.#multiInputValidators.push(multiFieldValidator);
+    const validatorId = String(this._multiInputValidators.length);
+    this._multiInputValidators.push(multiFieldValidator);
     multiFieldValidator.calculatedValidityChanges.subscribe(
       (validityChange: Validity) => {
-        this.#validityReducer.updateTallies(validatorId, validityChange);
-        this.validityChanges.next(this.#validityReducer.validity);
+        this._validityReducer.updateTallies(validatorId, validityChange);
+        this.validityChanges.next(this._validityReducer.validity);
       },
     );
   }

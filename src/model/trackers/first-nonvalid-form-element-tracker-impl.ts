@@ -8,17 +8,17 @@ export class FirstNonValidFormElementTrackerImpl
   implements FirstNonValidFormElementTracker
 {
   firstNonValidFormElementChanges: Subject<string | undefined>;
-  #nonValidFormElementHeap: InsertionOrderHeap;
+  _nonValidFormElementHeap: InsertionOrderHeap;
 
   constructor(nonValidFormElementHeap: InsertionOrderHeap) {
-    this.#nonValidFormElementHeap = nonValidFormElementHeap;
+    this._nonValidFormElementHeap = nonValidFormElementHeap;
     this.firstNonValidFormElementChanges = new BehaviorSubject(
-      this.firstNonValidFormElement
+      this.firstNonValidFormElement,
     );
   }
 
-  get firstNonValidFormElement() : string | undefined {
-    return this.#nonValidFormElementHeap.topValue;
+  get firstNonValidFormElement(): string | undefined {
+    return this._nonValidFormElementHeap.topValue;
   }
 
   trackFormElementValidity(
@@ -26,15 +26,13 @@ export class FirstNonValidFormElementTrackerImpl
     formElement: StatefulFormElement<any>,
   ): void {
     //first add it as a key to the dictionary
-    this.#nonValidFormElementHeap.addValue(formElementKey);
+    this._nonValidFormElementHeap.addValue(formElementKey);
     //then subscribe to its state--remove it when valid, and add it when not valid
     formElement.stateChanges.subscribe(({ validity }) => {
       if (validity < Validity.VALID_FINALIZABLE) {
-        this.#nonValidFormElementHeap.addValue(formElementKey);
-      } else this.#nonValidFormElementHeap.removeValue(formElementKey);
-      this.firstNonValidFormElementChanges.next(
-        this.firstNonValidFormElement
-      );
+        this._nonValidFormElementHeap.addValue(formElementKey);
+      } else this._nonValidFormElementHeap.removeValue(formElementKey);
+      this.firstNonValidFormElementChanges.next(this.firstNonValidFormElement);
     });
   }
 }

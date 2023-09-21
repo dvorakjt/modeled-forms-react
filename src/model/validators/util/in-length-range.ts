@@ -14,7 +14,7 @@ export function inLengthRange(
     value = autoTransformer.transform(value);
 
     const result: ValidatorResult = {
-      isValid: value.length >= minLength && value.length <= maxLength
+      isValid: value.length >= minLength && value.length <= maxLength,
     };
     if (!result.isValid) {
       result.message = errorMessage;

@@ -13,9 +13,9 @@ export function maxDate(
     value = autoTransformer.transform(value);
 
     const millis = new Date(value).getTime();
- 
+
     const result: ValidatorResult = {
-      isValid: !Number.isNaN(millis) && millis <= max.getTime()
+      isValid: !Number.isNaN(millis) && millis <= max.getTime(),
     };
     if (!result.isValid) {
       result.message = errorMessage;

@@ -7,14 +7,14 @@ export class OnInitialSubscriptionHandlingBehaviorSubjectImpl<T>
   extends BehaviorSubject<T>
   implements OnInitialSubscriptionHandlingBehaviorSubject<T>
 {
-  readonly #onInitialSubscriptionEventEmitter: OneTimeEventEmitter;
+  readonly _onInitialSubscriptionEventEmitter: OneTimeEventEmitter;
 
   constructor(
     initialValue: T,
     onInitialSubscriptionEventEmitter: OneTimeEventEmitter,
   ) {
     super(initialValue);
-    this.#onInitialSubscriptionEventEmitter = onInitialSubscriptionEventEmitter;
+    this._onInitialSubscriptionEventEmitter = onInitialSubscriptionEventEmitter;
   }
 
   subscribe(
@@ -28,11 +28,11 @@ export class OnInitialSubscriptionHandlingBehaviorSubjectImpl<T>
         subscription = super.subscribe(observerOrNext, error, complete);
       else subscription = super.subscribe(observerOrNext);
     } else subscription = super.subscribe();
-    this.#onInitialSubscriptionEventEmitter.triggerEvent();
+    this._onInitialSubscriptionEventEmitter.triggerEvent();
     return subscription;
   }
 
   onInitialSubscription(cb: () => void): void {
-    this.#onInitialSubscriptionEventEmitter.onEvent(cb);
+    this._onInitialSubscriptionEventEmitter.onEvent(cb);
   }
 }

@@ -18,7 +18,8 @@ class SingleInputValidatorSuiteFactoryImpl
   createSingleInputValidatorSuite<T>(
     syncValidators: SyncValidator<T>[],
     asyncValidators: AsyncValidator<T>[],
-    pendingAsyncValidatorMessage: string = config.globalMessages.pendingAsyncValidatorSuite,
+    pendingAsyncValidatorMessage: string = config.globalMessages
+      .pendingAsyncValidatorSuite,
   ): SingleInputValidatorSuite<T> {
     const syncValidatorSuite = new SyncSingleInputValidatorSuite(
       syncValidators,

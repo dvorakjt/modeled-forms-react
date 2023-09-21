@@ -16,12 +16,12 @@ import { Field } from './field';
 import { autowire } from 'undecorated-di';
 
 class BaseFieldFactoryImpl implements BaseFieldFactory {
-  #singleInputValidatorSuiteFactory: SingleInputValidatorSuiteFactory;
+  _singleInputValidatorSuiteFactory: SingleInputValidatorSuiteFactory;
 
   constructor(
     singleInputValidatorSuiteFactory: SingleInputValidatorSuiteFactory,
   ) {
-    this.#singleInputValidatorSuiteFactory = singleInputValidatorSuiteFactory;
+    this._singleInputValidatorSuiteFactory = singleInputValidatorSuiteFactory;
   }
 
   createField(
@@ -32,7 +32,7 @@ class BaseFieldFactoryImpl implements BaseFieldFactory {
     pendingAsyncValidatorMessage?: string,
   ): AbstractField {
     const validatorSuite =
-      this.#singleInputValidatorSuiteFactory.createSingleInputValidatorSuite(
+      this._singleInputValidatorSuiteFactory.createSingleInputValidatorSuite(
         syncValidators,
         asyncValidators,
         pendingAsyncValidatorMessage,

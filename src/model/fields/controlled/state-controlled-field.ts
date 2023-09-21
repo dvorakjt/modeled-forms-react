@@ -4,33 +4,34 @@ import { config } from '../../../config';
 import { AbstractField } from '../base/abstract-field';
 import type { Adapter } from '../../adapters/adapter.interface';
 import type { FieldState } from '../../state/field-state.interface';
+import { Modified } from '../../state/modified-enum';
 
 export class StateControlledField extends AbstractField {
-  readonly #field: AbstractField;
-  readonly #adapter: Adapter<FieldState>;
+  readonly _field: AbstractField;
+  readonly _adapter: Adapter<Partial<FieldState>>;
 
   get stateChanges() {
-    return this.#field.stateChanges;
+    return this._field.stateChanges;
   }
 
   get state() {
-    return this.#field.state;
+    return this._field.state;
   }
 
   set omit(omit: boolean) {
-    this.#field.omit = omit;
+    this._field.omit = omit;
   }
 
   get omit() {
-    return this.#field.omit;
+    return this._field.omit;
   }
 
-  constructor(field: AbstractField, adapter: Adapter<FieldState>) {
+  constructor(field: AbstractField, adapter: Adapter<Partial<FieldState>>) {
     super();
-    this.#field = field;
-    this.#adapter = adapter;
-    this.#adapter.stream.subscribe({
-      next: (next: FieldState) => this.setState(next),
+    this._field = field;
+    this._adapter = adapter;
+    this._adapter.stream.subscribe({
+      next: (next: Partial<FieldState>) => this.setState(next),
       error: () => {
         this.setState({
           value: '',
@@ -38,23 +39,24 @@ export class StateControlledField extends AbstractField {
           messages: [
             {
               type: MessageType.ERROR,
-              text: config.globalMessages.adapterError
+              text: config.globalMessages.adapterError,
             },
           ],
+          modified : Modified.YES
         });
       },
     });
   }
 
   setValue(value: string) {
-    this.#field.setValue(value);
+    this._field.setValue(value);
   }
 
-  setState(state: FieldState): void {
-    this.#field.setState(state);
+  setState(state: Partial<FieldState>): void {
+    this._field.setState(state);
   }
 
   reset() {
-    this.#field.reset();
+    this._field.reset();
   }
 }

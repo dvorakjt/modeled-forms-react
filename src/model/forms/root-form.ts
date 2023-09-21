@@ -9,66 +9,71 @@ import type { FormElementDictionary } from '../form-elements/form-element-dictio
 import type { MultiInputValidatorMessagesAggregator } from '../aggregators/multi-input-validator-messages-aggregator.interface';
 import type { SubmissionState } from '../submission/submission-state.interface';
 import { FirstNonValidFormElementTracker } from '../trackers/first-nonvalid-form-element-tracker.interface';
+import { ExtractedValueDictionary } from '../extracted-values/extracted-value-dictionary.type';
 
 export class RootForm extends AbstractRootForm {
   readonly stateChanges: Subject<State<any>>;
   readonly submissionStateChanges: Subject<SubmissionState>;
   readonly userFacingFields: FormElementDictionary;
-  readonly #firstNonValidFormElementTracker : FirstNonValidFormElementTracker;
-  readonly #finalizerManager: FinalizerManager;
-  readonly #multiFieldValidatorMessagesAggregator: MultiInputValidatorMessagesAggregator;
-  readonly #submissionManager: SubmissionManager;
+  readonly extractedValues: ExtractedValueDictionary;
+  readonly _firstNonValidFormElementTracker: FirstNonValidFormElementTracker;
+  readonly _finalizerManager: FinalizerManager;
+  readonly _multiFieldValidatorMessagesAggregator: MultiInputValidatorMessagesAggregator;
+  readonly _submissionManager: SubmissionManager;
 
   get state() {
-    const messages = this.aggregateMessages();
+    const messages = this._aggregateMessages();
     return copyObject({
-      ...this.#finalizerManager.state,
+      ...this._finalizerManager.state,
       messages,
     });
   }
 
-  get firstNonValidFormElement() : string | undefined {
-    return this.#firstNonValidFormElementTracker.firstNonValidFormElement;
+  get firstNonValidFormElement(): string | undefined {
+    return this._firstNonValidFormElementTracker.firstNonValidFormElement;
   }
 
-  get firstNonValidFormElementChanges() : Subject<string | undefined> {
-    return this.#firstNonValidFormElementTracker.firstNonValidFormElementChanges;
+  get firstNonValidFormElementChanges(): Subject<string | undefined> {
+    return this._firstNonValidFormElementTracker
+      .firstNonValidFormElementChanges;
   }
 
   get submissionState() {
     return {
       submissionAttempted:
-        this.#submissionManager.submissionState.submissionAttempted,
+        this._submissionManager.submissionState.submissionAttempted,
     };
   }
-  
+
   constructor(
     userFacingFields: FormElementDictionary,
-    firstNonValidFormElementTracker : FirstNonValidFormElementTracker,
+    extractedValues : ExtractedValueDictionary,
+    firstNonValidFormElementTracker: FirstNonValidFormElementTracker,
     finalizerManager: FinalizerManager,
     multiFieldValidatorMessagesAggregator: MultiInputValidatorMessagesAggregator,
     submissionManager: SubmissionManager,
   ) {
     super();
     this.userFacingFields = userFacingFields;
-    this.#firstNonValidFormElementTracker = firstNonValidFormElementTracker;
-    this.#finalizerManager = finalizerManager;
-    this.#multiFieldValidatorMessagesAggregator =
+    this.extractedValues = extractedValues;
+    this._firstNonValidFormElementTracker = firstNonValidFormElementTracker;
+    this._finalizerManager = finalizerManager;
+    this._multiFieldValidatorMessagesAggregator =
       multiFieldValidatorMessagesAggregator;
-    this.#submissionManager = submissionManager;
+    this._submissionManager = submissionManager;
 
-    this.#multiFieldValidatorMessagesAggregator.messagesChanges.subscribe(
+    this._multiFieldValidatorMessagesAggregator.messagesChanges.subscribe(
       () => {
         this.stateChanges?.next(this.state);
       },
     );
 
-    this.#finalizerManager.stateChanges.subscribe(() => {
-      this.#submissionManager.clearMessage();
+    this._finalizerManager.stateChanges.subscribe(() => {
+      this._submissionManager.clearMessage();
       this.stateChanges?.next(this.state);
     });
 
-    this.#submissionManager.submissionStateChanges.subscribe(() => {
+    this._submissionManager.submissionStateChanges.subscribe(() => {
       if (this.stateChanges) this.stateChanges.next(this.state);
       if (this.submissionStateChanges)
         this.submissionStateChanges.next(this.submissionState);
@@ -79,24 +84,24 @@ export class RootForm extends AbstractRootForm {
     this.stateChanges = new BehaviorSubject(this.state);
   }
 
-  async submit() {
-    return this.#submissionManager.submit(this.state);
+  submit() {
+    return this._submissionManager.submit(this.state);
   }
 
   reset() {
-    this.#submissionManager.reset();
+    this._submissionManager.reset();
     for (const fieldName in this.userFacingFields) {
       this.userFacingFields[fieldName].reset();
     }
   }
 
-  private aggregateMessages(): Array<Message> {
+  _aggregateMessages(): Array<Message> {
     const messages = [
-      ...this.#multiFieldValidatorMessagesAggregator.messages,
-      ...this.#finalizerManager.state.messages,
+      ...this._multiFieldValidatorMessagesAggregator.messages,
+      ...this._finalizerManager.state.messages,
     ];
-    if (this.#submissionManager.submissionState.message)
-      messages.push(this.#submissionManager.submissionState.message);
+    if (this._submissionManager.submissionState.message)
+      messages.push(this._submissionManager.submissionState.message);
     return messages;
   }
 }

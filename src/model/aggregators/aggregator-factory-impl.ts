@@ -28,10 +28,10 @@ import { MultiInputValidatorMessagesAggregatorImpl } from './multi-input-validat
 import { autowire } from 'undecorated-di';
 
 class AggregatorFactoryImpl implements AggregatorFactory {
-  #proxyProducerFactory: ProxyProducerFactory;
-  #reducerFactory: ReducerFactory;
-  #emitterFactory: EmitterFactory;
-  #subjectFactory: SubjectFactory;
+  _proxyProducerFactory: ProxyProducerFactory;
+  _reducerFactory: ReducerFactory;
+  _emitterFactory: EmitterFactory;
+  _subjectFactory: SubjectFactory;
 
   constructor(
     proxyProducerFactory: ProxyProducerFactory,
@@ -39,10 +39,10 @@ class AggregatorFactoryImpl implements AggregatorFactory {
     emitterFactory: EmitterFactory,
     subjectFactory: SubjectFactory,
   ) {
-    this.#proxyProducerFactory = proxyProducerFactory;
-    this.#reducerFactory = reducerFactory;
-    this.#emitterFactory = emitterFactory;
-    this.#subjectFactory = subjectFactory;
+    this._proxyProducerFactory = proxyProducerFactory;
+    this._reducerFactory = reducerFactory;
+    this._emitterFactory = emitterFactory;
+    this._subjectFactory = subjectFactory;
   }
 
   createMultiFieldAggregatorFromFields(
@@ -50,10 +50,10 @@ class AggregatorFactoryImpl implements AggregatorFactory {
   ): MultiFieldAggregator {
     return new MultiFieldAggregatorImpl(
       fields,
-      this.#proxyProducerFactory.createAggregatedStateChangesProxyProducer(),
-      this.#reducerFactory.createFieldStateReducer(),
-      this.#emitterFactory.createOneTimeValueEmitter<Set<string>>(),
-      this.#subjectFactory,
+      this._proxyProducerFactory.createAggregatedStateChangesProxyProducer(),
+      this._reducerFactory.createFieldStateReducer(),
+      this._emitterFactory.createOneTimeValueEmitter<Set<string>>(),
+      this._subjectFactory,
     );
   }
   createMultiInputValidatorMessagesAggregatorFromValidators(

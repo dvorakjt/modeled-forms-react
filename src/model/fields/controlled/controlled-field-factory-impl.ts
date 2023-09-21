@@ -29,10 +29,10 @@ import {
 } from './controlled-field-factory.interface';
 
 class ControlledFieldFactoryImpl implements ControlledFieldFactory {
-  #adapterFactory: AdapterFactory;
+  _adapterFactory: AdapterFactory;
 
   constructor(adapterFactory: AdapterFactory) {
-    this.#adapterFactory = adapterFactory;
+    this._adapterFactory = adapterFactory;
   }
 
   createStateControlledFieldWithSyncAdapter(
@@ -40,7 +40,7 @@ class ControlledFieldFactoryImpl implements ControlledFieldFactory {
     stateControlFn: SyncDualFieldStateControlFn | SyncFieldStateControlFn,
     fields: FormElementDictionary,
   ): StateControlledDualField | StateControlledField {
-    const adapter = this.#adapterFactory.createSyncAdapterFromFnWithFields<
+    const adapter = this._adapterFactory.createSyncAdapterFromFnWithFields<
       DualFieldSetStateArg | FieldState
     >(stateControlFn, fields);
     return baseField instanceof AbstractDualField
@@ -50,7 +50,7 @@ class ControlledFieldFactoryImpl implements ControlledFieldFactory {
         )
       : new StateControlledField(
           baseField,
-          adapter as unknown as Adapter<FieldState>,
+          adapter as unknown as Adapter<Partial<FieldState>>,
         );
   }
 
@@ -59,7 +59,7 @@ class ControlledFieldFactoryImpl implements ControlledFieldFactory {
     stateControlFn: AsyncFieldStateControlFn | AsyncDualFieldStateControlFn,
     fields: FormElementDictionary,
   ): StateControlledDualField | StateControlledField {
-    const adapter = this.#adapterFactory.createAsyncAdapterFromFnWithFields<
+    const adapter = this._adapterFactory.createAsyncAdapterFromFnWithFields<
       DualFieldSetStateArg | FieldState
     >(stateControlFn, fields);
     return baseField instanceof AbstractDualField
@@ -69,7 +69,7 @@ class ControlledFieldFactoryImpl implements ControlledFieldFactory {
         )
       : new StateControlledField(
           baseField,
-          adapter as unknown as Adapter<FieldState>,
+          adapter as unknown as Adapter<Partial<FieldState>>,
         );
   }
   createValueControlledFieldWithSyncAdapter(
@@ -77,7 +77,7 @@ class ControlledFieldFactoryImpl implements ControlledFieldFactory {
     valueControlFn: SyncFieldValueControlFn | SyncDualFieldValueControlFn,
     fields: FormElementDictionary,
   ): ValueControlledField | ValueControlledDualField {
-    const adapter = this.#adapterFactory.createSyncAdapterFromFnWithFields<
+    const adapter = this._adapterFactory.createSyncAdapterFromFnWithFields<
       DualFieldSetValueArg | string | undefined
     >(valueControlFn, fields);
     return baseField instanceof AbstractDualField
@@ -95,7 +95,7 @@ class ControlledFieldFactoryImpl implements ControlledFieldFactory {
     valueControlFn: AsyncFieldValueControlFn | AsyncDualFieldValueControlFn,
     fields: FormElementDictionary,
   ): ValueControlledField | ValueControlledDualField {
-    const adapter = this.#adapterFactory.createAsyncAdapterFromFnWithFields<
+    const adapter = this._adapterFactory.createAsyncAdapterFromFnWithFields<
       DualFieldSetValueArg | string | undefined
     >(valueControlFn, fields);
     return baseField instanceof AbstractDualField

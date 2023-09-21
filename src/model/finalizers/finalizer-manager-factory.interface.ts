@@ -1,10 +1,16 @@
-import { FinalizerManager } from "./finalizer-manager.interface";
-import { FinalizerDictionary } from "./finalizer-map.type";
+import { FinalizerManager } from './finalizer-manager.interface';
+import { FinalizerDictionary } from './finalizer-map.type';
 
 interface FinalizerManagerFactory {
-  createFinalizerManager(finalizerDictionary : FinalizerDictionary) : FinalizerManager;
+  createFinalizerManager(
+    finalizerDictionary: FinalizerDictionary,
+  ): FinalizerManager;
 }
 const FinalizerManagerFactoryKey = 'FinalizerManager';
 type FinalizerManagerFactoryKeyType = typeof FinalizerManagerFactoryKey;
 
-export { FinalizerManagerFactoryKey, type FinalizerManagerFactory, type FinalizerManagerFactoryKeyType };
+export {
+  FinalizerManagerFactoryKey,
+  type FinalizerManagerFactory,
+  type FinalizerManagerFactoryKeyType,
+};

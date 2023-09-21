@@ -26,30 +26,30 @@ type ExtractedBaseFields = [
 ];
 
 class BaseFieldTemplateParserImpl implements BaseFieldTemplateParser {
-  #baseFieldFactory: BaseFieldFactory;
+  _baseFieldFactory: BaseFieldFactory;
 
   constructor(baseFieldFactory: BaseFieldFactory) {
-    this.#baseFieldFactory = baseFieldFactory;
+    this._baseFieldFactory = baseFieldFactory;
   }
 
   parseTemplate(
     template: FieldTemplateVariations,
   ): AbstractField | AbstractDualField {
-    if (typeof template === 'string') return this.parseString(template);
+    if (typeof template === 'string') return this._parseString(template);
     else {
-      const templateType = this.determineTemplateType(template);
+      const templateType = this._determineTemplateType(template);
 
       if (templateType === BaseFieldTemplateTypes.DUAL_FIELD) {
-        return this.parseDualFieldTemplate(template as DualFieldTemplate);
-      } else return this.parseFieldTemplate(template as FieldTemplate);
+        return this._parseDualFieldTemplate(template as DualFieldTemplate);
+      } else return this._parseFieldTemplate(template as FieldTemplate);
     }
   }
 
-  private parseString(template: string) {
-    return this.#baseFieldFactory.createField(template, false, [], []);
+  _parseString(template: string) {
+    return this._baseFieldFactory.createField(template, false, [], []);
   }
 
-  private determineTemplateType(
+  _determineTemplateType(
     template: FieldTemplateVariations,
   ): BaseFieldTemplateTypes {
     if (typeof template !== 'object')
@@ -57,10 +57,13 @@ class BaseFieldTemplateParserImpl implements BaseFieldTemplateParser {
         'Field template was not a string or an object.',
       );
 
-    const isField = 'defaultValue' in template && typeof template.defaultValue === 'string';
+    const isField =
+      'defaultValue' in template && typeof template.defaultValue === 'string';
     const isDualField =
-      ('primaryDefaultValue' in template && typeof template.primaryDefaultValue === 'string') ||
-      ('secondaryDefaultValue' in template && typeof template.primaryDefaultValue === 'string');
+      ('primaryDefaultValue' in template &&
+        typeof template.primaryDefaultValue === 'string') ||
+      ('secondaryDefaultValue' in template &&
+        typeof template.primaryDefaultValue === 'string');
 
     if (isField && isDualField)
       throw new BaseFieldParsingError(
@@ -77,22 +80,22 @@ class BaseFieldTemplateParserImpl implements BaseFieldTemplateParser {
   }
 
   //at this point, we know the field has a defaultValue property and lacks primaryDefaultValue/secondaryDefaultValue
-  private parseFieldTemplate(template: FieldTemplate): AbstractField {
+  _parseFieldTemplate(template: FieldTemplate): AbstractField {
     if (typeof template.defaultValue !== 'string') {
       throw new BaseFieldParsingError(
         "BaseFieldTemplateParser received a template object whose defaultValue was not of type 'string'",
       );
     }
-    this.validateBaseFieldTemplate(template);
-    const baseFieldProps = this.extractBaseFieldProperties(template);
-    return this.#baseFieldFactory.createField(
+    this._validateBaseFieldTemplate(template);
+    const baseFieldProps = this._extractBaseFieldProperties(template);
+    return this._baseFieldFactory.createField(
       template.defaultValue,
       ...baseFieldProps,
       template.pendingAsyncValidatorMessage,
     );
   }
 
-  private parseDualFieldTemplate(
+  _parseDualFieldTemplate(
     template: DualFieldTemplate,
   ): AbstractDualField {
     if (!('primaryDefaultValue' in template)) {
@@ -115,18 +118,18 @@ class BaseFieldTemplateParserImpl implements BaseFieldTemplateParser {
         'BaseFieldTemplateParser received a template object whose secondaryDefaultValue was not of type string.',
       );
     }
-    this.validateBaseFieldTemplate(template);
-    const extractBaseFieldProperties =
-      this.extractBaseFieldProperties(template);
-    return this.#baseFieldFactory.createDualField(
+    this._validateBaseFieldTemplate(template);
+    const _extractBaseFieldProperties =
+      this._extractBaseFieldProperties(template);
+    return this._baseFieldFactory.createDualField(
       template.primaryDefaultValue,
       template.secondaryDefaultValue,
-      ...extractBaseFieldProperties,
+      ..._extractBaseFieldProperties,
       template.pendingAsyncValidatorMessage,
     );
   }
 
-  private validateBaseFieldTemplate(template: BaseFieldTemplate) {
+  _validateBaseFieldTemplate(template: BaseFieldTemplate) {
     if (
       'omitByDefault' in template &&
       typeof template.omitByDefault !== 'boolean'
@@ -161,7 +164,7 @@ class BaseFieldTemplateParserImpl implements BaseFieldTemplateParser {
     }
   }
 
-  private extractBaseFieldProperties(
+  _extractBaseFieldProperties(
     template: BaseFieldTemplate,
   ): ExtractedBaseFields {
     const omitByDefault = template.omitByDefault ?? false;

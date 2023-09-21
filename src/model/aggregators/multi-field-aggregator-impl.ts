@@ -11,19 +11,21 @@ import type { SubjectFactory } from '../subjects/subject-factory.interface';
 export class MultiFieldAggregatorImpl implements MultiFieldAggregator {
   readonly aggregateChanges: OnInitialSubscriptionHandlingBehaviorSubject<AggregatedStateChanges>;
   readonly accessedFields: OneTimeValueEmitter<Set<string>>;
-  readonly #fields: FormElementDictionary;
-  readonly #fieldStateReducer: FieldStateReducer;
-  readonly #aggregatedFieldState: {
+  readonly _fields: FormElementDictionary;
+  readonly _fieldStateReducer: FieldStateReducer;
+  readonly _aggregatedFieldState: {
     [key: string]: AnyState;
   } = {};
-  #aggregatedStateChangesProxyProducer: AggregatedStateChangesProxyProducer | null;
-  #accessedFieldsSubscriptionProcessCompleted = false;
+  _aggregatedStateChangesProxyProducer: AggregatedStateChangesProxyProducer | null;
+  _accessedFieldsSubscriptionProcessCompleted = false;
 
   get aggregatedStateChanges() {
     return {
-      ...this.#aggregatedFieldState,
-      overallValidity: () => this.#fieldStateReducer.validity,
-      hasOmittedFields: () => this.#fieldStateReducer.omit,
+      ...this._aggregatedFieldState,
+      overallValidity: () => this._fieldStateReducer.validity,
+      hasOmittedFields: () => this._fieldStateReducer.omit,
+      visited: () => this._fieldStateReducer.visited,
+      modified: () => this._fieldStateReducer.modified
     } as AggregatedStateChanges;
   }
 
@@ -34,32 +36,32 @@ export class MultiFieldAggregatorImpl implements MultiFieldAggregator {
     accessedFields: OneTimeValueEmitter<Set<string>>,
     subjectFactory: SubjectFactory,
   ) {
-    this.#fields = fields;
-    this.#aggregatedStateChangesProxyProducer =
+    this._fields = fields;
+    this._aggregatedStateChangesProxyProducer =
       aggregatedStateChangesProxyProducer;
-    this.#fieldStateReducer = fieldStateReducer;
+    this._fieldStateReducer = fieldStateReducer;
     this.aggregateChanges =
       subjectFactory.createOnInitialSubscriptionHandlingBehaviorSubject(
-        this.#aggregatedStateChangesProxyProducer.getProxy(this.#fields),
+        this._aggregatedStateChangesProxyProducer.getProxy(this._fields),
       );
     this.accessedFields = accessedFields;
-    this.aggregateChanges.onInitialSubscription(this.subscribeToAccessedFields);
+    this.aggregateChanges.onInitialSubscription(this._subscribeToAccessedFields);
   }
 
-  private subscribeToAccessedFields = () => {
+  _subscribeToAccessedFields = () => {
     if (
-      !this.#accessedFieldsSubscriptionProcessCompleted &&
-      this.#aggregatedStateChangesProxyProducer
+      !this._accessedFieldsSubscriptionProcessCompleted &&
+      this._aggregatedStateChangesProxyProducer
     ) {
       const accessedFieldNames =
-        this.#aggregatedStateChangesProxyProducer.accessedFieldNames;
+        this._aggregatedStateChangesProxyProducer.accessedFieldNames;
 
       for (const fieldName of accessedFieldNames) {
-        this.#fields[fieldName].stateChanges.subscribe(
+        this._fields[fieldName].stateChanges.subscribe(
           (stateChange: AnyState) => {
-            this.#aggregatedFieldState[fieldName] = stateChange;
-            this.#fieldStateReducer.updateTallies(fieldName, stateChange);
-            if (this.#accessedFieldsSubscriptionProcessCompleted) {
+            this._aggregatedFieldState[fieldName] = stateChange;
+            this._fieldStateReducer.updateTallies(fieldName, stateChange);
+            if (this._accessedFieldsSubscriptionProcessCompleted) {
               this.aggregateChanges.next(this.aggregatedStateChanges);
             }
           },
@@ -67,8 +69,8 @@ export class MultiFieldAggregatorImpl implements MultiFieldAggregator {
       }
 
       this.accessedFields.setValue(accessedFieldNames);
-      this.#aggregatedStateChangesProxyProducer = null;
-      this.#accessedFieldsSubscriptionProcessCompleted = true;
+      this._aggregatedStateChangesProxyProducer = null;
+      this._accessedFieldsSubscriptionProcessCompleted = true;
     }
   };
 }

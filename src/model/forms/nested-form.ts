@@ -6,67 +6,72 @@ import type { FinalizerManager } from '../finalizers/finalizer-manager.interface
 import type { FormElementDictionary } from '../form-elements/form-element-dictionary.type';
 import type { MultiInputValidatorMessagesAggregator } from '../aggregators/multi-input-validator-messages-aggregator.interface';
 import { FirstNonValidFormElementTracker } from '../trackers/first-nonvalid-form-element-tracker.interface';
+import { ExtractedValueDictionary } from '../extracted-values/extracted-value-dictionary.type';
 
 export class NestedForm extends AbstractNestedForm {
   readonly stateChanges: Subject<State<any>>;
   readonly userFacingFields: FormElementDictionary;
-  readonly #firstNonValidFormElementTracker : FirstNonValidFormElementTracker;
-  readonly #finalizerManager: FinalizerManager;
-  readonly #multiFieldValidatorMessagesAggregator: MultiInputValidatorMessagesAggregator;
-  readonly #omitByDefault;
-  #omit;
+  readonly extractedValues: ExtractedValueDictionary;
+  readonly _firstNonValidFormElementTracker: FirstNonValidFormElementTracker;
+  readonly _finalizerManager: FinalizerManager;
+  readonly _multiFieldValidatorMessagesAggregator: MultiInputValidatorMessagesAggregator;
+  readonly _omitByDefault;
+  _omit;
 
   get state() {
     return copyObject({
-      ...this.#finalizerManager.state,
+      ...this._finalizerManager.state,
       messages: [
-        ...this.#multiFieldValidatorMessagesAggregator.messages,
-        ...this.#finalizerManager.state.messages,
+        ...this._multiFieldValidatorMessagesAggregator.messages,
+        ...this._finalizerManager.state.messages,
       ],
-      omit: this.#omit,
+      omit: this._omit,
     });
   }
 
-  get firstNonValidFormElement() : string | undefined {
-    return this.#firstNonValidFormElementTracker.firstNonValidFormElement;
+  get firstNonValidFormElement(): string | undefined {
+    return this._firstNonValidFormElementTracker.firstNonValidFormElement;
   }
 
-  get firstNonValidFormElementChanges() : Subject<string | undefined> {
-    return this.#firstNonValidFormElementTracker.firstNonValidFormElementChanges;
+  get firstNonValidFormElementChanges(): Subject<string | undefined> {
+    return this._firstNonValidFormElementTracker
+      .firstNonValidFormElementChanges;
   }
 
   set omit(omit: boolean) {
-    this.#omit = omit;
+    this._omit = omit;
     if (this.stateChanges) this.stateChanges.next(this.state);
   }
 
   get omit() {
-    return this.#omit;
+    return this._omit;
   }
 
   constructor(
     userFacingFields: FormElementDictionary,
-    firstNonValidFormElementTracker : FirstNonValidFormElementTracker,
+    extractedValues : ExtractedValueDictionary,
+    firstNonValidFormElementTracker: FirstNonValidFormElementTracker,
     finalizerManager: FinalizerManager,
     multiFieldValidatorMessagesAggregator: MultiInputValidatorMessagesAggregator,
     omitByDefault: boolean,
   ) {
     super();
     this.userFacingFields = userFacingFields;
-    this.#firstNonValidFormElementTracker = firstNonValidFormElementTracker;
-    this.#finalizerManager = finalizerManager;
-    this.#multiFieldValidatorMessagesAggregator =
+    this.extractedValues = extractedValues;
+    this._firstNonValidFormElementTracker = firstNonValidFormElementTracker;
+    this._finalizerManager = finalizerManager;
+    this._multiFieldValidatorMessagesAggregator =
       multiFieldValidatorMessagesAggregator;
-    this.#omitByDefault = omitByDefault;
-    this.#omit = this.#omitByDefault;
+    this._omitByDefault = omitByDefault;
+    this._omit = this._omitByDefault;
 
-    this.#multiFieldValidatorMessagesAggregator.messagesChanges.subscribe(
+    this._multiFieldValidatorMessagesAggregator.messagesChanges.subscribe(
       () => {
         this.stateChanges?.next(this.state);
       },
     );
 
-    this.#finalizerManager.stateChanges.subscribe(() => {
+    this._finalizerManager.stateChanges.subscribe(() => {
       if (this.stateChanges) this.stateChanges?.next(this.state);
     });
 
@@ -74,7 +79,7 @@ export class NestedForm extends AbstractNestedForm {
   }
 
   reset() {
-    this.#omit = this.#omitByDefault;
+    this._omit = this._omitByDefault;
     for (const fieldName in this.userFacingFields) {
       this.userFacingFields[fieldName].reset();
     }

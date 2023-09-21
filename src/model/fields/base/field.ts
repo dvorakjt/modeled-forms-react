@@ -11,17 +11,19 @@ import type { FieldState } from '../../state/field-state.interface';
 import type { SingleInputValidatorSuite } from '../../validators/single-input/single-input-validator-suite.interface';
 import type { ValidatorSuiteResult } from '../../validators/validator-suite-result.interface';
 import type { Message } from '../../state/messages/message.interface';
+import { Visited } from '../../state/visited.enum';
+import { Modified } from '../../state/modified-enum';
 
 export class Field extends AbstractField {
   readonly stateChanges: Subject<FieldState>;
-  readonly #validatorSuite: SingleInputValidatorSuite<string>;
-  readonly #defaultValue: string;
-  readonly #omitByDefault;
-  #state: FieldState;
-  #validatorSuiteSubscription?: Subscription;
-
+  readonly _validatorSuite: SingleInputValidatorSuite<string>;
+  readonly _defaultValue: string;
+  readonly _omitByDefault;
+  _state: FieldState;
+  _validatorSuiteSubscription?: Subscription;
+  
   get state() {
-    return copyObject(this.#state);
+    return copyObject(this._state);
   }
 
   set omit(omit: boolean) {
@@ -41,46 +43,58 @@ export class Field extends AbstractField {
     omitByDefault: boolean,
   ) {
     super();
-    this.#validatorSuite = validatorSuite;
-    this.#defaultValue = defaultValue;
-    this.#omitByDefault = omitByDefault;
-    const initialState = this.#validatorSuite.evaluate(this.#defaultValue);
-    this.#state = {
+    this._validatorSuite = validatorSuite;
+    this._defaultValue = defaultValue;
+    this._omitByDefault = omitByDefault;
+    const initialState = this._validatorSuite.evaluate(this._defaultValue);
+    this._state = {
       ...initialState.syncResult,
-      omit: this.#omitByDefault,
+      omit: this._omitByDefault,
+      visited : Visited.NO,
+      modified : this._getDefaultModifiedValue()
     };
     this.stateChanges = new BehaviorSubject(this.state);
     if (initialState.observable)
-      this.handleValidityObservable(initialState.observable);
+      this._handleValidityObservable(initialState.observable);
   }
 
-  setValue(value: string) {
-    if (this.#validatorSuiteSubscription)
-      this.#validatorSuiteSubscription.unsubscribe();
-    const validityResult = this.#validatorSuite.evaluate(value);
+  setValue(value: string, modified = Modified.YES) {
+    if (this._validatorSuiteSubscription)
+      this._validatorSuiteSubscription.unsubscribe();
+    const validityResult = this._validatorSuite.evaluate(value);
     this.setState({
       ...validityResult.syncResult,
       omit: this.state.omit,
+      visited : this.state.visited,
+      modified
     });
     if (validityResult.observable)
-      this.handleValidityObservable(validityResult.observable);
+      this._handleValidityObservable(validityResult.observable);
   }
 
-  setState(state: FieldState) {
-    this.#state = copyObject(state);
+  setState(state: Partial<FieldState>) {
+    this._state = {
+      ...this._state,
+      ...state
+    }
     this.stateChanges.next(this.state);
   }
 
   reset() {
-    this.#state.omit = this.#omitByDefault;
-    this.setValue(this.#defaultValue);
+    this._state.omit = this._omitByDefault;
+    this._state.visited = Visited.NO;
+    this.setValue(this._defaultValue, this._getDefaultModifiedValue());
   }
 
-  private handleValidityObservable(
+  _getDefaultModifiedValue() {
+    return this._defaultValue.length > 0 ? Modified.YES : Modified.NO
+  }
+
+  _handleValidityObservable(
     observable: Observable<ValidatorSuiteResult<string>>,
   ) {
-    this.#validatorSuiteSubscription?.unsubscribe();
-    this.#validatorSuiteSubscription = observable.subscribe(result => {
+    this._validatorSuiteSubscription?.unsubscribe();
+    this._validatorSuiteSubscription = observable.subscribe(result => {
       this.setState({
         ...result,
         messages: [

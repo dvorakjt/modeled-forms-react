@@ -8,8 +8,7 @@ import { OneTimeValueEmitter } from '../emitters/one-time-value-emitter.interfac
 
 export class SyncFinalizer
   extends SyncAdapter<FinalizerState>
-  implements Finalizer,
-  AccessibleFields
+  implements Finalizer, AccessibleFields
 {
   accessedFields: OneTimeValueEmitter<Set<string>>;
 

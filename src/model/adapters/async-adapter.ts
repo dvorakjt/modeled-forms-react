@@ -7,18 +7,18 @@ import type { AggregatedStateChanges } from '../aggregators/aggregated-state-cha
 
 export class AsyncAdapter<V> implements Adapter<V> {
   readonly stream: Subject<V>;
-  readonly #aggregator: MultiFieldAggregator;
-  #adapterFnSubscription?: Subscription;
+  readonly _aggregator: MultiFieldAggregator;
+  _adapterFnSubscription?: Subscription;
 
   constructor(adapterFn: AsyncAdapterFn<V>, aggregator: MultiFieldAggregator) {
-    this.#aggregator = aggregator;
+    this._aggregator = aggregator;
     (this.stream = new ReplaySubject<V>(1)),
-      this.#aggregator.aggregateChanges.subscribe(
+      this._aggregator.aggregateChanges.subscribe(
         (aggregateChange: AggregatedStateChanges) => {
-          this.#adapterFnSubscription?.unsubscribe();
+          this._adapterFnSubscription?.unsubscribe();
           try {
             const promiseOrObservable = adapterFn(aggregateChange);
-            this.#adapterFnSubscription = from(promiseOrObservable).subscribe({
+            this._adapterFnSubscription = from(promiseOrObservable).subscribe({
               next: next => this.stream.next(next),
               error: e => {
                 logErrorInDevMode(e);

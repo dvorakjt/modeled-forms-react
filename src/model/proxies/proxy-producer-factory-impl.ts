@@ -12,15 +12,15 @@ import { AggregatedStateChangesProxyProducerImpl } from './aggregated-state-chan
 import { autowire } from 'undecorated-di';
 
 class ProxyProducerFactoryImpl implements ProxyProducerFactory {
-  #reducerFactory: ReducerFactory;
+  _reducerFactory: ReducerFactory;
 
   constructor(reducerFactory: ReducerFactory) {
-    this.#reducerFactory = reducerFactory;
+    this._reducerFactory = reducerFactory;
   }
 
   createAggregatedStateChangesProxyProducer(): AggregatedStateChangesProxyProducer {
     return new AggregatedStateChangesProxyProducerImpl(
-      this.#reducerFactory.createFieldStateReducer(),
+      this._reducerFactory.createFieldStateReducer(),
     );
   }
 }

@@ -1,5 +1,5 @@
-import { OneTimeValueEmitter } from "../emitters/one-time-value-emitter.interface";
+import { OneTimeValueEmitter } from '../emitters/one-time-value-emitter.interface';
 
 export interface AccessibleFields {
-  accessedFields : OneTimeValueEmitter<Set<string>>;
+  accessedFields: OneTimeValueEmitter<Set<string>>;
 }

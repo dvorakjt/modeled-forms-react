@@ -9,26 +9,26 @@ import type { ValidatorSuiteResult } from '../validator-suite-result.interface';
 export class SyncSingleInputValidatorSuite<T>
   implements SingleInputValidatorSuite<T>
 {
-  readonly #validators: Array<SyncValidator<T>>;
+  readonly _validators: Array<SyncValidator<T>>;
 
   constructor(validators: Array<SyncValidator<T>>) {
-    this.#validators = validators;
+    this._validators = validators;
   }
 
   evaluate(value: T) {
     return {
-      syncResult: this.evaluateSync(value),
+      syncResult: this._evaluateSync(value),
     };
   }
 
-  private evaluateSync(value: T) {
+  _evaluateSync(value: T) {
     const result: ValidatorSuiteResult<T> = {
       value,
       validity: Validity.VALID_FINALIZABLE,
       messages: [],
     };
     try {
-      for (const validator of this.#validators) {
+      for (const validator of this._validators) {
         const { isValid, message: messageTxt } = validator(value);
         if (!isValid) result.validity = Validity.INVALID;
         if (messageTxt) {
@@ -43,7 +43,7 @@ export class SyncSingleInputValidatorSuite<T>
       result.validity = Validity.ERROR;
       result.messages.push({
         type: MessageType.ERROR,
-        text: config.globalMessages.singleFieldValidationError
+        text: config.globalMessages.singleFieldValidationError,
       });
     }
     return result;

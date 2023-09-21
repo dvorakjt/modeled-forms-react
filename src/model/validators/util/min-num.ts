@@ -15,7 +15,7 @@ export function minNum(
     const numericValue = Number(value);
 
     const result: ValidatorResult = {
-      isValid: !Number.isNaN(numericValue) && numericValue >= min
+      isValid: !Number.isNaN(numericValue) && numericValue >= min,
     };
     if (!result.isValid) {
       result.message = errorMessage;

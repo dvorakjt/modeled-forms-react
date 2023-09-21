@@ -14,12 +14,12 @@ export abstract class AbstractMultiInputValidatedField
 {
   readonly stateChanges: Subject<State<string>>;
   protected readonly baseField: AbstractField;
-  readonly #multiInputValidatorReducer: MultiInputValidatorValidityReducer;
+  readonly _multiInputValidatorReducer: MultiInputValidatorValidityReducer;
 
   get state(): FieldState {
     return {
       ...copyObject(this.baseField.state),
-      validity: this.calculateValidity(),
+      validity: this._calculateValidity(),
     };
   }
 
@@ -32,11 +32,11 @@ export abstract class AbstractMultiInputValidatedField
     multiInputValidityReducer: MultiInputValidatorValidityReducer,
   ) {
     this.baseField = baseField;
-    this.#multiInputValidatorReducer = multiInputValidityReducer;
+    this._multiInputValidatorReducer = multiInputValidityReducer;
     this.baseField.stateChanges.subscribe(() => {
       if (this.stateChanges) this.stateChanges.next(this.state);
     });
-    this.#multiInputValidatorReducer.validityChanges.subscribe(() => {
+    this._multiInputValidatorReducer.validityChanges.subscribe(() => {
       if (this.stateChanges) this.stateChanges.next(this.state);
     });
     this.stateChanges = new BehaviorSubject(this.state);
@@ -55,13 +55,13 @@ export abstract class AbstractMultiInputValidatedField
   }
 
   addValidator(validator: MultiInputValidator): void {
-    this.#multiInputValidatorReducer.addValidator(validator);
+    this._multiInputValidatorReducer.addValidator(validator);
   }
 
-  private calculateValidity() {
+  _calculateValidity() {
     return Math.min(
       this.baseField.state.validity,
-      this.#multiInputValidatorReducer.validity,
+      this._multiInputValidatorReducer.validity,
     );
   }
 }

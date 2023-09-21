@@ -12,15 +12,15 @@ import { FirstNonValidFormElementTrackerImpl } from './first-nonvalid-form-eleme
 import { autowire } from 'undecorated-di';
 
 class TrackerFactoryImpl implements TrackerFactory {
-  #insertionOrderHeapFactory: InsertionOrderHeapFactory;
+  _insertionOrderHeapFactory: InsertionOrderHeapFactory;
 
   constructor(insertionOrderHeapFactory: InsertionOrderHeapFactory) {
-    this.#insertionOrderHeapFactory = insertionOrderHeapFactory;
+    this._insertionOrderHeapFactory = insertionOrderHeapFactory;
   }
 
   createFirstNonValidFormElementTracker(): FirstNonValidFormElementTracker {
     return new FirstNonValidFormElementTrackerImpl(
-      this.#insertionOrderHeapFactory.createInsertionOrderHeap(),
+      this._insertionOrderHeapFactory.createInsertionOrderHeap(),
     );
   }
 }

@@ -26,6 +26,7 @@ import { ControlledFieldTemplateParserService } from './templates/fields/control
 import { FinalizerTemplateDictionaryParserService } from './templates/finalizers/finalizer-template-dictionary-parser-impl';
 import { AutoTransformerService } from './auto-transforms/auto-transformer-impl';
 import { AutoTransformedFieldFactoryService } from './fields/auto-transformed/auto-transformed-field-factory-impl';
+import { ExtractedValuesTemplateParserService } from './templates/extracted-values/extracted-values-template-parser-impl';
 
 const container = ContainerBuilder.createContainerBuilder()
   .registerSingletonService(AdapterFactoryService)
@@ -55,6 +56,7 @@ const container = ContainerBuilder.createContainerBuilder()
   .registerSingletonService(RootFormTemplateParserService)
   .registerSingletonService(AutoTransformerService)
   .registerSingletonService(AutoTransformedFieldFactoryService)
+  .registerSingletonService(ExtractedValuesTemplateParserService)
   .build();
 
 export { container };

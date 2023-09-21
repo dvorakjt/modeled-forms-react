@@ -1,4 +1,3 @@
-
 export enum FinalizerValidity {
   FINALIZER_ERROR = -1,
   FIELD_ERROR,

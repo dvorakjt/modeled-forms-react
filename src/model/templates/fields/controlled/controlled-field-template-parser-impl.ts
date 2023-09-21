@@ -36,10 +36,10 @@ enum ControlType {
 class ControlledFieldTemplateParserImpl
   implements ControlledFieldTemplateParser
 {
-  #controlledFieldFactory: ControlledFieldFactory;
+  _controlledFieldFactory: ControlledFieldFactory;
 
   constructor(controlledFieldFactory: ControlledFieldFactory) {
-    this.#controlledFieldFactory = controlledFieldFactory;
+    this._controlledFieldFactory = controlledFieldFactory;
   }
 
   parseTemplateAndDecorateField(
@@ -51,15 +51,17 @@ class ControlledFieldTemplateParserImpl
     | StateControlledDualField
     | ValueControlledField
     | ValueControlledDualField {
-      if(!(baseField instanceof AbstractField)) {
-        throw new ControlledFieldTemplateParsingError('ControlledFieldTemplateParser expected instanceof AbstractField.');
-      }
+    if (!(baseField instanceof AbstractField)) {
+      throw new ControlledFieldTemplateParsingError(
+        'ControlledFieldTemplateParser expected instanceof AbstractField.',
+      );
+    }
 
-    const controlFnType = this.getControlFnType(template);
+    const controlFnType = this._getControlFnType(template);
 
     switch (controlFnType) {
       case ControlType.SYNC_STATE_CONTROL_FN:
-        return this.#controlledFieldFactory.createStateControlledFieldWithSyncAdapter(
+        return this._controlledFieldFactory.createStateControlledFieldWithSyncAdapter(
           baseField,
           template.syncStateControlFn as
             | SyncFieldStateControlFn
@@ -67,7 +69,7 @@ class ControlledFieldTemplateParserImpl
           fields,
         );
       case ControlType.ASYNC_STATE_CONTROL_FN:
-        return this.#controlledFieldFactory.createStateControlledFieldWithAsyncAdapter(
+        return this._controlledFieldFactory.createStateControlledFieldWithAsyncAdapter(
           baseField,
           template.asyncStateControlFn as
             | AsyncFieldStateControlFn
@@ -75,7 +77,7 @@ class ControlledFieldTemplateParserImpl
           fields,
         );
       case ControlType.SYNC_VALUE_CONTROL_FN:
-        return this.#controlledFieldFactory.createValueControlledFieldWithSyncAdapter(
+        return this._controlledFieldFactory.createValueControlledFieldWithSyncAdapter(
           baseField,
           template.syncValueControlFn as
             | SyncFieldValueControlFn
@@ -83,7 +85,7 @@ class ControlledFieldTemplateParserImpl
           fields,
         );
       case ControlType.ASYNC_VALUE_CONTROL_FN:
-        return this.#controlledFieldFactory.createValueControlledFieldWithAsyncAdapter(
+        return this._controlledFieldFactory.createValueControlledFieldWithAsyncAdapter(
           baseField,
           template.asyncValueControlFn as
             | AsyncFieldValueControlFn
@@ -93,7 +95,7 @@ class ControlledFieldTemplateParserImpl
     }
   }
 
-  private getControlFnType(
+  _getControlFnType(
     template: ControlledFieldTemplateVariations,
   ): ControlType {
     const controlTypes = Object.values(ControlType) as Array<ControlType>;
