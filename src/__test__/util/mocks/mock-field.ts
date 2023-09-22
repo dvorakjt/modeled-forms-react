@@ -3,6 +3,9 @@ import { AbstractField } from '../../../model/fields/base/abstract-field';
 import { FieldState } from '../../../model/state/field-state.interface';
 import { State } from '../../../model/state/state.interface';
 import { Validity } from '../../../model/state/validity.enum';
+import { Visited } from '../../../model/state/visited.enum';
+import { Modified } from '../../../model/state/modified-enum';
+import { Message } from '../../../model';
 
 export class MockField extends AbstractField {
   stateChanges: Subject<FieldState>;
@@ -13,6 +16,7 @@ export class MockField extends AbstractField {
   constructor(
     defaultValue: string,
     defaultValidity: Validity = Validity.VALID_FINALIZABLE,
+    defaultMessages : Array<Message> = []
   ) {
     super();
     this._defaultValue = defaultValue;
@@ -20,7 +24,9 @@ export class MockField extends AbstractField {
     this._state = {
       value: defaultValue,
       validity: defaultValidity,
-      messages: [],
+      visited : Visited.NO,
+      modified : Modified.NO,
+      messages: defaultMessages,
       omit: false,
     };
     this.stateChanges = new BehaviorSubject(this.state);
@@ -52,8 +58,22 @@ export class MockField extends AbstractField {
     this.setState({
       value: this._defaultValue,
       validity: this._defaultValidity,
+      visited : Visited.NO,
+      modified : Modified.NO,
       messages: [],
       omit: false,
+    });
+  }
+  visit() : void {
+    this.setState({
+      ...this.state,
+      visited : Visited.YES
+    });
+  }
+  modify() : void {
+    this.setState({
+      ...this.state,
+      modified : Modified.YES
     });
   }
 }
