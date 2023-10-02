@@ -93,7 +93,6 @@ export class Field extends AbstractField {
   _handleValidityObservable(
     observable: Observable<ValidatorSuiteResult<string>>,
   ) {
-    this._validatorSuiteSubscription?.unsubscribe();
     this._validatorSuiteSubscription = observable.subscribe(result => {
       this.setState({
         ...result,

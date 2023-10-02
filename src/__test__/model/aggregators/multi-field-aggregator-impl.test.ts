@@ -1,5 +1,4 @@
 import { describe, test, expect, beforeEach, vi } from 'vitest';
-import { getTestContainer } from '../test-container';
 import { MultiFieldAggregatorImpl } from '../../../model/aggregators/multi-field-aggregator-impl';
 import { MockField } from '../../util/mocks/mock-field';
 import { AggregatedStateChangesProxyProducer } from '../../../model/proxies/aggregated-state-changes-proxy-producer.interface';
@@ -10,9 +9,9 @@ import { FormElementDictionary } from '../../../model/form-elements/form-element
 import { AggregatedStateChanges } from '../../../model/aggregators/aggregated-state-changes.interface';
 import { Visited } from '../../../model/state/visited.enum';
 import { Modified } from '../../../model/state/modified-enum';
+import { container } from '../../../model/container';
 
 describe('MultiFieldAggregatorImpl', () => {
-  const container = getTestContainer();
   const subjectFactory = container.services.SubjectFactory;
   const proxyProducerFactory = container.services.ProxyProducerFactory;
   const reducerFactory = container.services.ReducerFactory;

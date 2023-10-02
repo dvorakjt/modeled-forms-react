@@ -1,12 +1,11 @@
 import { describe, expect, test } from 'vitest';
-import { getTestContainer } from '../test-container';
 import { SyncAdapter } from '../../../model/adapters/sync-adapter';
 import { FormElementDictionary } from '../../../model/form-elements/form-element-dictionary.type';
 import { MockField } from '../../util/mocks/mock-field';
 import { AggregatedStateChanges } from '../../../model/aggregators/aggregated-state-changes.interface';
+import { container } from '../../../model/container';
 
 describe('SyncAdapter', () => {
-  const container = getTestContainer();
   const aggregatorFactory = container.services.AggregatorFactory;
 
   test('It emits adapted values through its stream property.', () => {

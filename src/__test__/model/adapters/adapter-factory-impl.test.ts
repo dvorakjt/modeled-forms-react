@@ -1,6 +1,6 @@
 import { describe, test, expect } from 'vitest';
 import { AdapterFactoryImpl } from '../../../model/adapters/adapter-factory-impl';
-import { getTestContainer } from '../test-container';
+import { container } from '../../../model/container';
 import { MockField } from '../../util/mocks/mock-field';
 import { Validity } from '../../../model';
 import { SyncAdapterFn } from '../../../model/adapters/sync-adapter-fn.type';
@@ -9,7 +9,6 @@ import { AsyncAdapterFn } from '../../../model/adapters/async-adapter-fn.type';
 import { AsyncAdapter } from '../../../model/adapters/async-adapter';
 
 describe('AdapterFactoryImpl', () => {
-  const container = getTestContainer();
   const fields = {
     fieldA : new MockField('', Validity.VALID_FINALIZABLE),
     fieldB : new MockField('', Validity.VALID_FINALIZABLE)
