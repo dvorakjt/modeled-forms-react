@@ -1,5 +1,5 @@
 # Modeled Forms React
-Modeled Forms React is provides declarative HTML form state management for React applications. Modeled Forms React is currently a work in progress. Completion of the alpha release is projected by late October 2023. Complete documentation will be published at that time. Please read further for a synopsis of project goals, features and sample usage.
+Modeled Forms React provides declarative HTML form state management for React applications. Modeled Forms React is currently a work in progress. Completion of the alpha release is projected by late October 2023. Complete documentation will be published at that time. Please read further for a synopsis of project goals, features and sample usage.
 
 ## Goals
 The impetus for this project was a very complicated form for voter registration. The form had fields whose values were derived from each other (for example, a zip code determines a user's state), fields that produced temporary values which controlled modals displayed to the user (for instance, a user's birthday determines their age, which--in conjunction with their state--determines their eligibility to register to vote and thus the message they are shown), fields which required async validation, and even a field whose value could be set in one of two ways (a `<select>` element where the user could select 'other' and enter a value manually). The form was even split into 4 separate pages to simplify the UI for users, and thus could be thought of as having four nested forms. To add to this, the input elements that had relatively complex styling requirements.
@@ -41,7 +41,7 @@ Forms may be nested, and can be used as arguments in finalizers or field control
 
 MultiInputValidators allow you to determine the validity of several fields as a group. An use-case could be evaluating the validity of an address after the user has completed all fields. Of course, async validation is possible, meaning an API call to the Google Maps or MapQuest APIs could be made to perform this validation.
 
-✔️ **Extract Values allow you to hook into field values and generate values based on those fields**
+✔️ **Extracted Values allow you to hook into field values and generate values based on those fields**
 
 If you need to generate a value that is not to be included in the form, but should be synchronized with updates to the value of a field, this can be performed by utilizing Extracted Values.
 
