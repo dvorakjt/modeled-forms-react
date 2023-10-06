@@ -18,7 +18,7 @@ Fields can control other fields by value or by state. To do this a control funct
 
     const controlFn : SyncFieldValueControlFn = ({ firstName, lastName }) => { 
 	    if(firstName.value && lastName.value) {
-		    return `${firstName[0]}.${lastName[0]}.`;
+		    return `${firstName.value[0]}.${lastName.value[0]}.`;
 	    }
     }
 This demonstrates a field control function that could be used to determine the user's initials. If the control function returns a falsy value, the controlled field's value will not be set. Unexpected errors are also caught at this level and result in a validity of ERROR, as well as setting an error message on the field. A customizable, global error message is used for this purpose. If a control function could throw an error, though, it is better to catch it inside the control function and handle it in a way that is most meaningful to your form and users. This control function will run anytime either firstName or lastName updates.
