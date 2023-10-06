@@ -4,7 +4,7 @@ Modeled Forms React is provides declarative HTML form state management for React
 ## Goals
 The impetus for this project was a very complicated form for voter registration. The form had fields whose values were derived from each other (for example, a zip code determines a user's state), fields that produced temporary values which controlled modals displayed to the user (for instance, a user's birthday determines their age, which--in conjunction with their state--determines their eligibility to register to vote and thus the message they are shown), fields which required async validation, and even a field whose value could be set in one of two ways (a `<select>` element where the user could select 'other' and enter a value manually). The form was even split into 4 separate pages to simplify the UI for users, and thus could be thought of as having four nested forms. To add to this, the input elements that had relatively complex styling requirements.
 
-The code with which I accomplished this was...a bit of a mess, and I felt strongly that the logic related to the state and value of the form fields should be abstracted away and separated from the logic related to its presentation. This architecture, in which the view, model and controller for interacting with the model, is of course, the classic MVC architecture (thus the name Modeled Forms React). Inspired by Angular's [reactive approach to forms](https://angular.io/guide/reactive-forms), I decided to create a library for React that provided declarative management of form state, allowed for interactivity of form fields (meaning that fields could be related--an update to one field could trigger an update to another), guaranteed that validity and value were encapsulated together, and was design-agnostic while providing highly customizable components that easily hooked into this state. The library should also provide easy-to-use built-in validators, and handle asynchronous code as seamlessly as synchronous code (for instance, asynchronous validation, asynchronous field interactions).
+The code with which I accomplished this was...a bit of a mess, and I felt strongly that the logic related to the state and value of the form fields should be abstracted away and separated from the logic related to its presentation. This architecture, in which the view, model and controller for interacting with the model are cleanly separated from each other, is of course, the classic MVC architecture (thus the name Modeled Forms React). Inspired by Angular's [reactive approach to forms](https://angular.io/guide/reactive-forms), I decided to create a library for React that provided declarative management of form state, allowed for interactivity of form fields (meaning that fields could be related--an update to one field could trigger an update to another), guaranteed that validity and value were encapsulated together, and was design-agnostic while providing highly customizable components that easily hooked into this state. The library should also provide easy-to-use built-in validators, and handle asynchronous code as seamlessly as synchronous code (for instance, asynchronous validation, asynchronous field interactions).
 
 ## Features at a High Level
 
@@ -229,7 +229,7 @@ export const template: RootFormTemplate = {
 
 ```
 
-### Create A Component Which Displays an Extracted Value, in this case age
+### 2. Create A Component Which Displays an Extracted Value, in this case age
 
 ```
 import { FormContext } from "modeled-forms-react";
@@ -250,7 +250,7 @@ export function Age() {
 }
 ```
 
-### Create The Form!
+### 3. Create The Form!
 
 ```
 import { 
@@ -295,7 +295,7 @@ export function Form() {
 }
 ```
 
-### Style the Form!
+### 4. Style the Form!
 
 Notice how we can hook into the validity of various components via the data-validity attribute.
 
