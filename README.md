@@ -41,7 +41,7 @@ Forms may be nested, and can be used as arguments in finalizers or field control
 
 MultiInputValidators allow you to determine the validity of several fields as a group. An use-case could be evaluating the validity of an address after the user has completed all fields. Of course, async validation is possible, meaning an API call to the Google Maps or MapQuest APIs could be made to perform this validation.
 
-✔️ **Extract Values allow you to hook into field values and generate values based on those fields**
+✔️ **Extracted Values allow you to hook into field values and generate values based on those fields**
 
 If you need to generate a value that is not to be included in the form, but should be synchronized with updates to the value of a field, this can be performed by utilizing Extracted Values.
 
