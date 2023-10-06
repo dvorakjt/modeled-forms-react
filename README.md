@@ -8,11 +8,11 @@ The code with which I accomplished this was...a bit of a mess, and I felt strong
 
 ## Features at a High Level
 
-**Fields have a state, which consists of their value, validity, messages, visited and modified.**
+✔️ **Fields have a state, which consists of their value, validity, messages, visited and modified.**
 
 Upon construction, fields can be granted synchronous and/or asynchronous validators. Anytime the field's setValue() method is called, these validators run, and the field's validity is updated to the syncResult of those validators immediately, which async validators are awaited (passing or no sync validators in combination with async validators results in a validity of PENDING). Thus form value and validity are always updated simultaneously. 
 
-**Fields can control other Fields**
+✔️ **Fields can control other Fields**
 
 Fields can control other fields by value or by state. To do this a control function is passed into the template, which might look something like this:
 
@@ -25,35 +25,35 @@ This demonstrates a field control function that could be used to determine the u
 
 Fields can also be 'state-controlled' meaning that instead of returning a string value, the control function returns a FieldState object.
 
-**Fields are Omittable**
+✔️ **Fields are Omittable**
 
 A field's omit property determines whether it is included in the finalized form value.
 
-**The Finalized Form of the Data is Configurable**
+✔️ **The Finalized Form of the Data is Configurable**
 
 Finalizers allow you to transform the data that will be submitted to your backend, and configure this transformation in a declarative way. This means that  not only is the state of the form always up to date in terms of the relationship between its value and its validity, but the data is also always ready to be submitted to the backend (assuming it is in a valid state).
 
-**Forms Can Be Nested, and First Nonvalid Field Is Tracked**
+✔️ **Forms Can Be Nested, and First Nonvalid Field Is Tracked**
 
 Forms may be nested, and can be used as arguments in finalizers or field control functions. Additionally, the first nonvalid (meaning errant, invalid, pending) field in the form is tracked using the InsertionOrderHeap class. In a form with multiple sub-forms spread across several pages, this could allow programmatic navigation to the first subform which is not in a valid state.
 
-**Fields can be evaluated for validity as a group**
+✔️ **Fields can be evaluated for validity as a group**
 
 MultiInputValidators allow you to determine the validity of several fields as a group. An use-case could be evaluating the validity of an address after the user has completed all fields. Of course, async validation is possible, meaning an API call to the Google Maps or MapQuest APIs could be made to perform this validation.
 
-**Extract Values allow you to hook into field values and generate values based on those fields**
+✔️ **Extract Values allow you to hook into field values and generate values based on those fields**
 
 If you need to generate a value that is not to be included in the form, but should be synchronized with updates to the value of a field, this can be performed by utilizing Extracted Values.
 
-**Auto Transforms and Configuration**
+✔️ **Auto Transforms and Configuration**
 
 By default, autoTrim is set to true. This means that before running default validators that may depend on the length of the value string of a field, that field's value will be trimmed. The field's value will also be trimmed when it is finalized. This can be configured by creating a .modeledformsreactrc file and setting the autoTrim property. Global messages can also be configured here, for instance, for internationalization purposes. Regular expressions used to provide email address validation and the like can also be configured in this file.
 
-**Common Validators are provided out of the box**
+✔️ **Common Validators are provided out of the box**
 
 Validators like **required, pattern, email, minDate,** and more are provided out of the box and require minimal configuration.
 
-**Hooks and Customizable Components are also built into the library**
+✔️ **Hooks and Customizable Components are also built into the library**
 
 Hooks and components integrate the RxJS-based model with the React-based view. Components are design-agnostic and provide only what is necessary to style the component as you wish based on the corresponding field's state.
 
