@@ -32,7 +32,7 @@ export class ValueControlledField extends AbstractField {
     this._adapter = adapter;
     this._adapter.stream.subscribe({
       next: (next: string | undefined) => {
-        if (next) this.setValue(next);
+        if (next != undefined) this.setValue(next);
       },
       error: () => {
         this.setState({
