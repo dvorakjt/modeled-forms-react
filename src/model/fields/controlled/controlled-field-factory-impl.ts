@@ -27,12 +27,15 @@ import {
   ControlledFieldFactoryKey,
   ControlledFieldFactoryKeyType,
 } from './controlled-field-factory.interface';
+import { ConfigLoader, ConfigLoaderKey } from '../../config-loader/config-loader.interface';
 
 class ControlledFieldFactoryImpl implements ControlledFieldFactory {
   _adapterFactory: AdapterFactory;
+  _configLoader : ConfigLoader;
 
-  constructor(adapterFactory: AdapterFactory) {
+  constructor(adapterFactory: AdapterFactory, configLoader : ConfigLoader) {
     this._adapterFactory = adapterFactory;
+    this._configLoader = configLoader;
   }
 
   createStateControlledFieldWithSyncAdapter(
@@ -47,10 +50,12 @@ class ControlledFieldFactoryImpl implements ControlledFieldFactory {
       ? new StateControlledDualField(
           baseField,
           adapter as unknown as Adapter<DualFieldSetStateArg>,
+          this._configLoader.config
         )
       : new StateControlledField(
           baseField,
           adapter as unknown as Adapter<Partial<FieldState>>,
+          this._configLoader.config
         );
   }
 
@@ -66,10 +71,12 @@ class ControlledFieldFactoryImpl implements ControlledFieldFactory {
       ? new StateControlledDualField(
           baseField,
           adapter as unknown as Adapter<DualFieldSetStateArg>,
+          this._configLoader.config
         )
       : new StateControlledField(
           baseField,
           adapter as unknown as Adapter<Partial<FieldState>>,
+          this._configLoader.config
         );
   }
   createValueControlledFieldWithSyncAdapter(
@@ -84,10 +91,12 @@ class ControlledFieldFactoryImpl implements ControlledFieldFactory {
       ? new ValueControlledDualField(
           baseField,
           adapter as unknown as Adapter<DualFieldSetValueArg>,
+          this._configLoader.config
         )
       : new ValueControlledField(
           baseField,
           adapter as unknown as Adapter<string | undefined>,
+          this._configLoader.config
         );
   }
   createValueControlledFieldWithAsyncAdapter(
@@ -102,10 +111,12 @@ class ControlledFieldFactoryImpl implements ControlledFieldFactory {
       ? new ValueControlledDualField(
           baseField,
           adapter as unknown as Adapter<DualFieldSetValueArg>,
+          this._configLoader.config
         )
       : new ValueControlledField(
           baseField,
           adapter as unknown as Adapter<string | undefined>,
+          this._configLoader.config
         );
   }
 }
@@ -114,6 +125,6 @@ const ControlledFieldFactoryService = autowire<
   ControlledFieldFactoryKeyType,
   ControlledFieldFactory,
   ControlledFieldFactoryImpl
->(ControlledFieldFactoryImpl, ControlledFieldFactoryKey, [AdapterFactoryKey]);
+>(ControlledFieldFactoryImpl, ControlledFieldFactoryKey, [AdapterFactoryKey, ConfigLoaderKey]);
 
 export { ControlledFieldFactoryImpl, ControlledFieldFactoryService };

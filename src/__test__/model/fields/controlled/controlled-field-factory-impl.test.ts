@@ -14,7 +14,7 @@ import { ValueControlledDualField } from '../../../../model/fields/controlled/va
 import { AsyncFieldValueControlFn } from '../../../../model/fields/controlled/control-functions/fields/async-field-value-control-fn.type';
 
 describe('ControlledFieldFactory', () => {
-  const controlledFieldFactory = new ControlledFieldFactoryImpl(container.services.AdapterFactory);
+  const controlledFieldFactory = new ControlledFieldFactoryImpl(container.services.AdapterFactory, container.services.ConfigLoader);
   const baseFieldFactory = container.services.BaseFieldFactory;
 
   test('createStateControlledFieldWithSyncAdapter() returns a StateControlledField when a Field is passed in as an argument.', () => {
