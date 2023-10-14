@@ -20,8 +20,4 @@ export class MockFinalizer implements Finalizer {
   constructor(initialValue : FinalizerState) {
     this.stream = new BehaviorSubject<FinalizerState>(initialValue);
   }
-
-  next(nextValue : FinalizerState) {
-    this.stream.next(nextValue);
-  }
 }

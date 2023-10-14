@@ -31,8 +31,8 @@ describe('FinalizerValidityTranslatorImpl', () => {
     expect(finalizerValidityTranslator.translateFinalizerValidityToValidity(FinalizerValidity.FIELD_VALID_UNFINALIZABLE)).toBe(Validity.VALID_UNFINALIZABLE);
   });
 
-  test('when translateFinalizerValidityToValidity() is called with FinalizerValidity.VALID_FINALIZING, it returns Validity.VALID_FINALIZABLE.', () => {
-    expect(finalizerValidityTranslator.translateFinalizerValidityToValidity(FinalizerValidity.VALID_FINALIZING)).toBe(Validity.VALID_FINALIZABLE);
+  test('when translateFinalizerValidityToValidity() is called with FinalizerValidity.VALID_FINALIZING, it returns Validity.VALID_UNFINALIZABLE.', () => {
+    expect(finalizerValidityTranslator.translateFinalizerValidityToValidity(FinalizerValidity.VALID_FINALIZING)).toBe(Validity.VALID_UNFINALIZABLE);
   });
 
   test('when translateFinalizerValidityToValidity() is called with FinalizerValidity.VALID_FINALIZED, it returns Validity.VALID_FINALIZABLE.', () => {

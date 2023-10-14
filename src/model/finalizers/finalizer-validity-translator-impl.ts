@@ -23,7 +23,7 @@ class FinalizerValidityTranslatorImpl implements FinalizerValidityTranslator {
       case FinalizerValidity.FIELD_VALID_UNFINALIZABLE:
         return Validity.VALID_UNFINALIZABLE;
       case FinalizerValidity.VALID_FINALIZING:
-        return Validity.VALID_FINALIZABLE;
+        return Validity.VALID_UNFINALIZABLE;
       case FinalizerValidity.VALID_FINALIZED:
         return Validity.VALID_FINALIZABLE;
     }
