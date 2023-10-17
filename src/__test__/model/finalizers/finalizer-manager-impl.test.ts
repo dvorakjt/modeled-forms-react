@@ -7,7 +7,7 @@ import { FinalizerDictionary } from '../../../model/finalizers/finalizer-map.typ
 import { FinalizerValidity } from '../../../model/state/finalizer-validity.enum';
 import { Visited } from '../../../model/state/visited.enum';
 import { Modified } from '../../../model/state/modified-enum';
-import { Validity } from '../../../model';
+import { MessageType, Validity } from '../../../model';
 
 describe('FinalizerManagerImpl', () => {
   let finalizerManager : FinalizerManager;
@@ -241,5 +241,17 @@ describe('FinalizerManagerImpl', () => {
     fieldB.stream.next({ value : '', finalizerValidity : FinalizerValidity.VALID_FINALIZED, visited: Visited.YES, modified: Modified.YES });
     fieldC.stream.next({ value: '', finalizerValidity : FinalizerValidity.VALID_FINALIZED, visited: Visited.YES, modified: Modified.YES });
     expect(finalizerManager.state.validity).toBe(Validity.VALID_FINALIZABLE);
+  });
+
+  test('If one or more finalizers throws an error, the messages property contains the global finalizerError message.', () => {
+    const configLoader = container.services.ConfigLoader;
+    const finalizerErrorMessage = configLoader.config.globalMessages.finalizerError;
+    const expectedMessage = {
+      type: MessageType.ERROR,
+      text: finalizerErrorMessage
+    }
+    const { fieldA } = finalizerDictionary;
+    fieldA.stream.next({ finalizerValidity: FinalizerValidity.FINALIZER_ERROR, visited: Visited.YES, modified: Modified.YES });
+    expect(finalizerManager.state.messages).toContainEqual(expectedMessage);
   });
 });
