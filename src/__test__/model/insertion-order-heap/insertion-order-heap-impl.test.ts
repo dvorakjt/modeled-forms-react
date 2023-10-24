@@ -41,4 +41,27 @@ describe('InsertionOrderHeapImpl', () => {
     }
     expect(insertionOrderHeap.topValue).toBe('c');
   });
+
+  test('After removing an element from the heap, topValue returns the next expected item.', () => {
+    const values = ['a', 'b', 'c', 'd', 'e', 'f'];
+    values.forEach(value => insertionOrderHeap.addValue(value));
+    for(let i = 0; i < values.length; i++) {
+      expect(insertionOrderHeap.topValue).toBe(values[i]);
+      insertionOrderHeap.removeValue(values[i]);
+    }
+    expect(insertionOrderHeap.topValue).toBe(undefined);
+  });
+
+  test('Removing an element from the heap whose heapIndex is -1 does not change the heap.', () => {
+    insertionOrderHeap.addValue('a');
+    insertionOrderHeap.removeValue('a');
+
+    expect(insertionOrderHeap.topValue).toBe(undefined);
+    expect(insertionOrderHeap.size).toBe(0);
+
+    insertionOrderHeap.removeValue('a');
+
+    expect(insertionOrderHeap.topValue).toBe(undefined);
+    expect(insertionOrderHeap.size).toBe(0);
+  });
 });

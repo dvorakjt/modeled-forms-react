@@ -62,19 +62,17 @@ export class InsertionOrderHeapImpl implements InsertionOrderHeap {
     //if heap is empty, or the element does not exist in the heap, return
     if (this.size === 0 || heapIndex === -1) return;
 
-    if (heapIndex === this.size - 1) {
-      const removedElement = this._heap[heapIndex];
-      this._heap.pop();
-      this._elementDictionary[removedElement.value].currentHeapIndex = -1;
-    } else {
-      const removedElement = this._heap[heapIndex];
-      const elevatedElement = (this._heap[heapIndex] =
-        this._heap[this.size - 1]);
-      this._elementDictionary[removedElement.value].currentHeapIndex = -1;
-      this._elementDictionary[elevatedElement.value].currentHeapIndex =
-        heapIndex;
+    const elementToRemove = this._heap[heapIndex];
+
+    if(heapIndex !== this.size - 1) {
+      const elementToElevate = this._heap[this.size - 1];
+      this._heap[heapIndex] = elementToElevate;
+      this._elementDictionary[elementToElevate.value].currentHeapIndex = heapIndex;
       this._heapifyDown(heapIndex);
     }
+
+    this._elementDictionary[elementToRemove.value].currentHeapIndex = -1;
+    this._heap.pop();
   }
 
   _heapifyDown(heapIndex: number) {
