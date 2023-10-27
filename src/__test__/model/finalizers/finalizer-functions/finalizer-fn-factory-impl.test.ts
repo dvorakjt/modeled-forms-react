@@ -251,4 +251,71 @@ describe('FinalizerFnFactoryImpl', () => {
 
     trigger.complete();
   });
+
+  test('createAsyncFinalizerFn() returns a function which returns an observable that emits the expected FinalizerState if the promise is rejected.', () => {
+    const fields = {
+      fieldA : new MockField('', Validity.VALID_FINALIZABLE)
+    }
+
+    const aggregator = container.services.AggregatorFactory.createMultiFieldAggregatorFromFields(fields);
+
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const baseFinalizerFn : AsyncBaseFinalizerFn = ({ fieldA }) => {
+      return new Promise((_resolve, reject) => {
+        reject(new Error('Error thrown within promise'));
+      });
+    }
+
+    let promiseRejected = false;
+
+    aggregator.aggregateChanges.subscribe(aggregateChange => {
+      const finalizerFn = finalizerFnFactory.createAsyncFinalizerFn(baseFinalizerFn);
+      const observable = finalizerFn(aggregateChange) as Observable<FinalizerState>;
+      observable.subscribe((finalizerState) => {
+        if(promiseRejected) {
+          expect(finalizerState).toStrictEqual({
+            finalizerValidity : FinalizerValidity.FINALIZER_ERROR,
+            visited : Visited.NO,
+            modified : Modified.NO
+          });
+        } else promiseRejected = true;
+      });
+    });
+  });
+
+  test('createAsyncFinalizerFn() returns a function which calls logErrorInDevMode() if the promise is rejected.', () => {
+    const fields = {
+      fieldA : new MockField('', Validity.VALID_FINALIZABLE)
+    }
+
+    const aggregator = container.services.AggregatorFactory.createMultiFieldAggregatorFromFields(fields);
+
+    const expectedError = new Error('Error thrown within promise.');
+
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const baseFinalizerFn : AsyncBaseFinalizerFn = ({ fieldA }) => {
+      return new Promise((_resolve, reject) => {
+        reject(expectedError);
+      });
+    }
+
+    const resetProcessDotEnv = setNodeEnv('development');
+    vi.stubGlobal('console', {
+      error: vi.fn(),
+    });
+
+    let promiseRejected = false;
+
+    aggregator.aggregateChanges.subscribe(aggregateChange => {
+      const finalizerFn = finalizerFnFactory.createAsyncFinalizerFn(baseFinalizerFn);
+      const observable = finalizerFn(aggregateChange) as Observable<FinalizerState>;
+      observable.subscribe(() => {
+        if(promiseRejected) {
+          expect(console.error).toHaveBeenCalledWith(expectedError);
+          resetProcessDotEnv();
+          vi.unstubAllGlobals();
+        } else promiseRejected = true;
+      })      
+    });
+  });
 });

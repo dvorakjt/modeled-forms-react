@@ -104,6 +104,6 @@ export class SyncMultiInputValidator implements MultiInputValidator {
   }
 
   hasUnvisitedOrUnmodifiedFields(aggregateChange : AggregatedStateChanges) {
-    return aggregateChange.modified() < Modified.YES || aggregateChange.visited() < Visited.YES;
+    return aggregateChange.modified() < Modified.YES || aggregateChange.visited() < Visited.YES; //should maybe be && not ||
   }
 }
