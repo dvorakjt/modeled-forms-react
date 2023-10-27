@@ -1,9 +1,10 @@
-import { describe, test, expect } from 'vitest';
+import { describe, test, expect, vi } from 'vitest';
 import { container } from '../../../../model/container';
 import { MockField } from '../../../util/mocks/mock-field';
 import { Validity } from '../../../../model';
 import { SyncValidator } from '../../../../model/validators/sync-validator.type';
 import { AggregatedStateChanges } from '../../../../model/aggregators/aggregated-state-changes.interface';
+import { setNodeEnv } from '../../../util/funcs/set-node-env';
 
 describe('SyncMultiInputValidator', () => {
   test('If there are omitted fields, calculatedValidityChanges emits Validity.VALID_FINALIZABLE.', () => {
@@ -260,31 +261,30 @@ describe('SyncMultiInputValidator', () => {
     });
   });
 
-  // FAILING
-  // test('When the validator throws an error, logErrorInDevMode() is called.', () => {
-  //   const fields = {
-  //     fieldA : new MockField('', Validity.VALID_FINALIZABLE),
-  //     fieldB : new MockField('', Validity.VALID_FINALIZABLE)
-  //   }
+  test('When the validator throws an error, logErrorInDevMode() is called.', () => {
+    const fields = {
+      fieldA : new MockField('', Validity.VALID_FINALIZABLE),
+      fieldB : new MockField('', Validity.VALID_FINALIZABLE)
+    }
 
-  //   const expectedError = new Error('Error validating fields.');
+    const expectedError = new Error('Error validating fields.');
 
-  //   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  //   const baseValidatorFn : SyncValidator<AggregatedStateChanges> = ({ fieldA, fieldB }) => {
-  //     throw expectedError;
-  //   }
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const baseValidatorFn : SyncValidator<AggregatedStateChanges> = ({ fieldA, fieldB }) => {
+      throw expectedError;
+    }
 
-  //   const validator = container.services.MultiInputValidatorFactory.createSyncMultiInputValidator(baseValidatorFn, fields);
+    const resetProcessDotEnv = setNodeEnv('development');
+    vi.stubGlobal('console', {
+      error: vi.fn(),
+    });
 
-  //   const resetProcessDotEnv = setNodeEnv('development');
-  //   vi.stubGlobal('console', {
-  //     error: vi.fn(),
-  //   });
+    const validator = container.services.MultiInputValidatorFactory.createSyncMultiInputValidator(baseValidatorFn, fields);
 
-  //   validator.calculatedValidityChanges.subscribe(() => {
-  //     expect(console.error).toHaveBeenCalledWith(expectedError);
-  //     resetProcessDotEnv();
-  //     vi.unstubAllGlobals();
-  //   });
-  // });
+    validator.calculatedValidityChanges.subscribe(() => {
+      expect(console.error).toHaveBeenCalledWith(expectedError);
+      resetProcessDotEnv();
+      vi.unstubAllGlobals();
+    });
+  });
 });
