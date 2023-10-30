@@ -36,4 +36,4 @@ const ExtractedValuesTemplateParserService = autowire<ExtractedValuesTemplatePar
   ]
 );
 
-export { ExtractedValuesTemplateParser, ExtractedValuesTemplateParserService };
+export { ExtractedValuesTemplateParserImpl, ExtractedValuesTemplateParserService };
