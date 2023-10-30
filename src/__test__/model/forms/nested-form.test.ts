@@ -82,43 +82,43 @@ describe('NestedForm', () => {
     });
   });
 
-  // test('firstNonValidFormElement returns the expected firstNonValidFormElement.', () => {
-  //   //here, we use a map to guarantee accurate key order
-  //   const nestedFormTemplate : NestedFormTemplate = {
-  //     fields : new Map([
-  //       [
-  //         'fieldA', 
-  //         {
-  //           defaultValue : '',
-  //           syncValidators : [
-  //             required('Field A is required.')
-  //           ]
-  //         }
-  //       ],
-  //       [
-  //         'fieldB',
-  //         {
-  //           defaultValue : '',
-  //           syncValidators : [
-  //             required('Field B is required.')
-  //           ]
-  //         }
-  //       ]
-  //     ])
-  //   }
+  test('firstNonValidFormElement returns the expected firstNonValidFormElement.', () => {
+    //here, we use a map to guarantee accurate key order
+    const nestedFormTemplate : NestedFormTemplate = {
+      fields : new Map([
+        [
+          'fieldA', 
+          {
+            defaultValue : '',
+            syncValidators : [
+              required('Field A is required.')
+            ]
+          }
+        ],
+        [
+          'fieldB',
+          {
+            defaultValue : '',
+            syncValidators : [
+              required('Field B is required.')
+            ]
+          }
+        ]
+      ])
+    }
 
-  //   const nestedForm = container.services.NestedFormTemplateParser.parseTemplate(nestedFormTemplate);
+    const nestedForm = container.services.NestedFormTemplateParser.parseTemplate(nestedFormTemplate);
 
-  //   console.log(nestedForm);
+    console.log(nestedForm);
 
-  //   expect(nestedForm.firstNonValidFormElement).toBe('fieldA');
+    expect(nestedForm.firstNonValidFormElement).toBe('fieldA');
 
-  //   (nestedForm.userFacingFields.fieldA as AbstractField).setValue('some value');
+    (nestedForm.userFacingFields.fieldA as AbstractField).setValue('some value');
 
-  //   expect(nestedForm.firstNonValidFormElement).toBe('fieldB');
+    expect(nestedForm.firstNonValidFormElement).toBe('fieldB');
 
-  //   (nestedForm.userFacingFields.fieldB as AbstractField).setValue('some other value');
+    (nestedForm.userFacingFields.fieldB as AbstractField).setValue('some other value');
 
-  //   expect(nestedForm.firstNonValidFormElement).toBeUndefined();
-  // });
+    expect(nestedForm.firstNonValidFormElement).toBeUndefined();
+  });
 });
