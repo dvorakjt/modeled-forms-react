@@ -11,6 +11,7 @@ export default defineConfig({
         '**/*.interface.ts',
         '**/*.type.ts',
         '**/*.enum.ts',
+        '**/*.error.ts'
       ],
     },
   },
