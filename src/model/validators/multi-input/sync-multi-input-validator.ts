@@ -5,18 +5,16 @@ import { OneTimeValueEmitter } from '../../emitters/one-time-value-emitter.inter
 import { MultiInputValidator } from './multi-input-validator.interface';
 import { SyncValidator } from '../sync-validator.type';
 import { Validity } from '../../state/validity.enum';
-import { MultiInputValidatorMessage } from '../../state/messages/multi-input-validator-message.interface';
 import { MessageType } from '../../state/messages/message-type.enum';
 import { config } from '../../../config';
 import { logErrorInDevMode } from '../../util/log-error-in-dev-mode';
-import { Modified } from '../../state/modified-enum';
-import { Visited } from '../../state/visited.enum';
+import { Message } from '../../state/messages/message.interface';
 
 export class SyncMultiInputValidator implements MultiInputValidator {
   //messages, calculatedValidity, and overallValidityChanges all go to different destinations
   readonly calculatedValidityChanges: Subject<Validity>;
   readonly overallValidityChanges: Subject<Validity>;
-  readonly messageChanges: Subject<MultiInputValidatorMessage | null>;
+  readonly messageChanges: Subject<Message | null>;
   readonly accessedFields: OneTimeValueEmitter<Set<string>>;
   readonly _multiFieldAggregator: MultiFieldAggregator;
   readonly _validator: SyncValidator<AggregatedStateChanges>;
@@ -31,7 +29,7 @@ export class SyncMultiInputValidator implements MultiInputValidator {
     this.accessedFields = multiFieldAggregator.accessedFields;
     this.calculatedValidityChanges = new ReplaySubject<Validity>(1);
     this.overallValidityChanges = new ReplaySubject<Validity>(1);
-    this.messageChanges = new ReplaySubject<MultiInputValidatorMessage | null>(1);
+    this.messageChanges = new ReplaySubject<Message | null>(1);
     this._multiFieldAggregator.aggregateChanges.subscribe(
       (aggregateChange: AggregatedStateChanges) => {
         //first, run the validator so hasOmittedFields and overallValidity are accurate
@@ -71,10 +69,10 @@ export class SyncMultiInputValidator implements MultiInputValidator {
 
   _runValidator(aggregateChange: AggregatedStateChanges): {
     validity: Validity;
-    message: MultiInputValidatorMessage | null;
+    message: Message | null;
   } {
     try {
-      let message: MultiInputValidatorMessage | null;
+      let message: Message | null;
       const result = this._validator(aggregateChange);
       const validity = result.isValid
         ? Validity.VALID_FINALIZABLE
@@ -82,8 +80,7 @@ export class SyncMultiInputValidator implements MultiInputValidator {
       if (result.message) {
         message = {
           type: result.isValid ? MessageType.VALID : MessageType.INVALID,
-          text: result.message,
-          hasUnvisitedOrUnmodifiedFields: this.hasUnvisitedOrUnmodifiedFields(aggregateChange)
+          text: result.message
         };
       } else message = null;
       return {
@@ -96,14 +93,9 @@ export class SyncMultiInputValidator implements MultiInputValidator {
         validity: Validity.ERROR,
         message: {
           type: MessageType.ERROR,
-          text: config.globalMessages.multiFieldValidationError,
-          hasUnvisitedOrUnmodifiedFields: this.hasUnvisitedOrUnmodifiedFields(aggregateChange)
+          text: config.globalMessages.multiFieldValidationError
         },
       };
     }
-  }
-
-  hasUnvisitedOrUnmodifiedFields(aggregateChange : AggregatedStateChanges) {
-    return aggregateChange.modified() < Modified.YES || aggregateChange.visited() < Visited.YES; //should maybe be && not ||
   }
 }

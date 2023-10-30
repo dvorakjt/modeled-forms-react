@@ -31,9 +31,13 @@ export function useField(field: AbstractField) {
 
   const reset = () => field.reset();
 
-  const visit = () => field.setState({
-    visited : Visited.YES
-  });
+  const visit = () => { 
+    if(field.state.visited === Visited.NO) {
+      field.setState({
+        visited : Visited.YES
+      });
+    }
+  }
 
   return {
     value,

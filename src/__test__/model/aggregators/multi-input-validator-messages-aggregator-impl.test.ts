@@ -46,13 +46,11 @@ describe('MultiInputValidatorMessagesAggregatorImpl', () => {
     const expectedMessages = [
       {
         type : MessageType.VALID,
-        text : 'Validator Function One is valid.',
-        hasUnvisitedOrUnmodifiedFields : true
+        text : 'Validator Function One is valid.'
       },
       {
         type : MessageType.INVALID,
-        text: 'Validator Function Two is invalid.',
-        hasUnvisitedOrUnmodifiedFields : true
+        text: 'Validator Function Two is invalid.'
       }
     ]
     expect(multiInputValidatorMessagesAggregator.messages).toStrictEqual(expectedMessages);
@@ -72,8 +70,7 @@ describe('MultiInputValidatorMessagesAggregatorImpl', () => {
     const expectedMessages = [
       {
         text : 'Validator Function is invalid.',
-        type : MessageType.INVALID,
-        hasUnvisitedOrUnmodifiedFields : true
+        type : MessageType.INVALID
       }
     ];
 
