@@ -12,7 +12,7 @@ import {
   BaseFieldFactoryKey,
 } from '../../../fields/base/base-field-factory.interface';
 import { FieldTemplate } from './field-template.type';
-import { BaseFieldParsingError } from './base-field-parsing-error';
+import { BaseFieldParsingError } from './base-field-parsing-error.error';
 import { BaseFieldTemplateTypes } from './base-field-template-types.enum';
 import { DualFieldTemplate } from './dual-field-template.interface';
 import { BaseFieldTemplate } from './base-field-template.type';
