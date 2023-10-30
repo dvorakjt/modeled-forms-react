@@ -4,6 +4,8 @@ import { MessageType, NestedFormTemplate, Validity, required } from '../../../mo
 import { AbstractField } from '../../../model/fields/base/abstract-field';
 import { Visited } from '../../../model/state/visited.enum';
 import { Modified } from '../../../model/state/modified-enum';
+import { AbstractDualField } from '../../../model/fields/base/abstract-dual-field';
+import { NestedForm } from '../../../model/forms/nested-form';
 
 describe('NestedForm', () => {
   test('state returns the expected value for state.', () => {
@@ -109,8 +111,6 @@ describe('NestedForm', () => {
 
     const nestedForm = container.services.NestedFormTemplateParser.parseTemplate(nestedFormTemplate);
 
-    console.log(nestedForm);
-
     expect(nestedForm.firstNonValidFormElement).toBe('fieldA');
 
     (nestedForm.userFacingFields.fieldA as AbstractField).setValue('some value');
@@ -120,5 +120,158 @@ describe('NestedForm', () => {
     (nestedForm.userFacingFields.fieldB as AbstractField).setValue('some other value');
 
     expect(nestedForm.firstNonValidFormElement).toBeUndefined();
+  });
+
+  test('firstNonFormElementChanges emits expected firstNonValidFormElements.', () => {
+    const nestedFormTemplate : NestedFormTemplate = {
+      fields : new Map([
+        [
+          'fieldA', 
+          {
+            defaultValue : '',
+            syncValidators : [
+              required('Field A is required.')
+            ]
+          }
+        ],
+        [
+          'fieldB',
+          {
+            defaultValue : '',
+            syncValidators : [
+              required('Field B is required.')
+            ]
+          }
+        ]
+      ])
+    }
+
+    const nestedForm = container.services.NestedFormTemplateParser.parseTemplate(nestedFormTemplate);
+
+    const expectedNonValidFormElements = ['fieldA', 'fieldB', undefined];
+    let expectedNonValidFormElementIndex = 0;
+    
+    nestedForm.firstNonValidFormElementChanges.subscribe(change => {
+      expect(change).toBe(expectedNonValidFormElements[expectedNonValidFormElementIndex++]);
+
+      if(expectedNonValidFormElementIndex === 1) {
+        (nestedForm.userFacingFields.fieldA as AbstractField).setValue('some value');
+      } else if(expectedNonValidFormElementIndex === 2) {
+        (nestedForm.userFacingFields.fieldB as AbstractField).setValue('some other value');
+      }
+    });
+  });
+
+  test('setting omit causes a new state to be emitted.', () => {
+    const nestedFormTemplate : NestedFormTemplate = {
+      fields : {
+        fieldA : '',
+        fieldB : ''
+      }
+    }
+
+    const nestedForm = container.services.NestedFormTemplateParser.parseTemplate(nestedFormTemplate);
+
+    nestedForm.omit = true;
+
+    nestedForm.stateChanges.subscribe(change => {
+      expect(change.omit).toBe(true);
+    });
+  });
+
+  test('getting omit returns the form\'s _omit value.', () => {
+    const nestedFormTemplate : NestedFormTemplate = {
+      fields : {
+        fieldA : '',
+        fieldB : ''
+      },
+      omitByDefault : true
+    }
+
+    const nestedForm = container.services.NestedFormTemplateParser.parseTemplate(nestedFormTemplate);
+
+    expect(nestedForm.omit).toBe(true);
+
+    nestedForm.omit = false;
+
+    expect(nestedForm.omit).toBe(false);
+  });
+
+  test('calling reset() resets all of the form\'s fields.', () => {
+    const nestedFormTemplate : NestedFormTemplate = {
+      fields : {
+        fieldA : {
+          defaultValue : '',
+          omitByDefault : true
+        },
+        fieldB : {
+          primaryDefaultValue : '',
+          secondaryDefaultValue : '',
+        }
+      }
+    }
+
+    const nestedForm = container.services.NestedFormTemplateParser.parseTemplate(nestedFormTemplate);
+
+    const { fieldA, fieldB } = nestedForm.userFacingFields;
+
+    (fieldA as AbstractField).setValue('test');
+    fieldA.omit = false;
+
+    (fieldB as AbstractDualField).useSecondaryField = true;
+
+    nestedForm.reset();
+
+    expect(fieldA.state.value).toBe('');
+    expect(fieldA.omit).toBe(true);
+
+    expect((fieldB as AbstractDualField).useSecondaryField).toBe(false);
+  });
+
+  test('When the MultiFieldValidatorAggregator emits a new message, state changes emits a new state.', () => {
+    const expectedValidMessageText = 'Field A and Field B are both valid.';
+    const expectedInvalidMessageText = 'Field B and Field A must not have empty values.';
+
+    const nestedFormTemplate : NestedFormTemplate = {
+      fields : {
+        fieldA : '',
+        fieldB : ''
+      },
+      multiFieldValidators : {
+        sync : [
+          ({ fieldA, fieldB }) => {
+            const isValid = fieldA.value && fieldB.value;
+
+            return ({
+              isValid,
+              message : isValid ? expectedValidMessageText : expectedInvalidMessageText
+            })
+          }
+        ]
+      }
+    }
+
+    const nestedForm = container.services.NestedFormTemplateParser.parseTemplate(nestedFormTemplate);
+
+    (nestedForm as NestedForm)._multiFieldValidatorMessagesAggregator.messagesChanges.subscribe(() => {
+      if(nestedForm.state.validity === Validity.INVALID) {
+        expect(nestedForm.state.messages).toStrictEqual([
+          {
+            text : expectedInvalidMessageText,
+            type : MessageType.INVALID
+          }
+        ]);
+      } else {
+        expect(nestedForm.state.messages).toStrictEqual([
+          {
+            text : expectedValidMessageText,
+            type : MessageType.VALID
+          }
+        ])
+      }
+    });
+
+    (nestedForm.userFacingFields.fieldA as AbstractField).setValue('some value');
+    (nestedForm.userFacingFields.fieldB as AbstractField).setValue('some other value');
   });
 });
