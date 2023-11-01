@@ -62,5 +62,8 @@
   },
   "peerDependencies": {
     "react": "^18.2.0"
+  },
+  "overrides": {
+    "semver": "^7.5.3"
   }
 }
