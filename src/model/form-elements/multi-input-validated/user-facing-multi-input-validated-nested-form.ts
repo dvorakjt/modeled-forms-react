@@ -6,6 +6,7 @@ import { AbstractNestedForm } from '../../forms/abstract-nested-form';
 import { FormElementDictionary } from '../form-element-dictionary.type';
 import { MultiInputValidatedFormElement } from './multi-input-validated-field.interface';
 import { MultiInputValidatorValidityReducer } from '../../reducers/multi-input-validator-validity/multi-input-validator-validity-reducer.interface';
+import { ExtractedValueDictionary } from '../../extracted-values/extracted-value-dictionary.type';
 
 export class UserFacingMultiInputValidatedNestedForm
   extends AbstractNestedForm
@@ -17,6 +18,10 @@ export class UserFacingMultiInputValidatedNestedForm
 
   get userFacingFields(): FormElementDictionary {
     return this._baseNestedForm.userFacingFields;
+  }
+
+  get extractedValues(): ExtractedValueDictionary {
+    return this._baseNestedForm.extractedValues;
   }
 
   get state(): State<any> {

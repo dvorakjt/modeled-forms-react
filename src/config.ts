@@ -1,6 +1,6 @@
 import rc from 'rc';
 
-const config : any = rc('modeledformsreact', {
+const DEFAULT_SETTINGS = {
   autoTrim: true,
   emailRegex:
     /^[A-Z0-9]+(?:[_%+.-][A-Z0-9]+)*@[A-Z0-9]+(?:[.-][A-Z0-9]+)*\.[A-Z]{2,}$/i,
@@ -20,6 +20,8 @@ const config : any = rc('modeledformsreact', {
     submissionFailed:
       'There are invalid or pending fields, or the form is currently being prepared for submission.',
   },
-});
+}
 
-export { config };
+const config : any = rc('modeledformsreact', DEFAULT_SETTINGS);
+
+export { config, DEFAULT_SETTINGS };

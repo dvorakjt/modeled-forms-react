@@ -12,7 +12,7 @@ import {
   BaseFieldFactoryKey,
 } from '../../../fields/base/base-field-factory.interface';
 import { FieldTemplate } from './field-template.type';
-import { BaseFieldParsingError } from './base-field-parsing-error';
+import { BaseFieldParsingError } from './base-field-parsing-error.error';
 import { BaseFieldTemplateTypes } from './base-field-template-types.enum';
 import { DualFieldTemplate } from './dual-field-template.interface';
 import { BaseFieldTemplate } from './base-field-template.type';
@@ -63,7 +63,7 @@ class BaseFieldTemplateParserImpl implements BaseFieldTemplateParser {
       ('primaryDefaultValue' in template &&
         typeof template.primaryDefaultValue === 'string') ||
       ('secondaryDefaultValue' in template &&
-        typeof template.primaryDefaultValue === 'string');
+        typeof template.secondaryDefaultValue === 'string');
 
     if (isField && isDualField)
       throw new BaseFieldParsingError(
@@ -81,11 +81,6 @@ class BaseFieldTemplateParserImpl implements BaseFieldTemplateParser {
 
   //at this point, we know the field has a defaultValue property and lacks primaryDefaultValue/secondaryDefaultValue
   _parseFieldTemplate(template: FieldTemplate): AbstractField {
-    if (typeof template.defaultValue !== 'string') {
-      throw new BaseFieldParsingError(
-        "BaseFieldTemplateParser received a template object whose defaultValue was not of type 'string'",
-      );
-    }
     this._validateBaseFieldTemplate(template);
     const baseFieldProps = this._extractBaseFieldProperties(template);
     return this._baseFieldFactory.createField(

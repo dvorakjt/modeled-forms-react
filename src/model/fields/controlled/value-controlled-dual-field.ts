@@ -4,9 +4,9 @@ import type { DualFieldSetValueArg } from '../../state/dual-field-set-value-arg.
 import type { DualFieldSetStateArg } from '../../state/dual-field-set-state-arg.interface';
 import { Validity } from '../../state/validity.enum';
 import { MessageType } from '../../state/messages/message-type.enum';
-import { config } from '../../../config';
 import { FieldState } from '../../state/field-state.interface';
 import { Modified } from '../../state/modified-enum';
+import { Config } from '../../config-loader/config.interface';
 
 export class ValueControlledDualField extends AbstractDualField {
   readonly _field: AbstractDualField;
@@ -51,6 +51,7 @@ export class ValueControlledDualField extends AbstractDualField {
   constructor(
     field: AbstractDualField,
     adapter: Adapter<DualFieldSetValueArg>,
+    config : Config
   ) {
     super();
     this._field = field;

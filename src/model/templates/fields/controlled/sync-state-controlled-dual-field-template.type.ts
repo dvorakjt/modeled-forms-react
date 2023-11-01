@@ -3,7 +3,7 @@ import { DualFieldTemplate } from '../base/dual-field-template.interface';
 
 export type SyncStateControlledDualFieldTemplate = DualFieldTemplate & {
   syncStateControlFn: SyncDualFieldStateControlFn;
-  asyncStateControlFn: undefined;
+  asyncStateControlFn?: undefined;
   syncValueControlFn?: undefined;
   asyncValueControlFn?: undefined;
 };

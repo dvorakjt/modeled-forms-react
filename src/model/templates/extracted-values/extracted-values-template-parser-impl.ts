@@ -14,11 +14,15 @@ class ExtractedValuesTemplateParserImpl implements ExtractedValuesTemplateParser
 
   parseTemplate(template: ExtractedValuesTemplate, fields : FormElementDictionary): ExtractedValueDictionary {
     const extractedValuesDictionary : ExtractedValueDictionary = {};
-    for(const key in template.syncExtractedValues) {
-      extractedValuesDictionary[key] = this._adapterFactory.createSyncAdapterFromFnWithFields(template.syncExtractedValues[key], fields);
+    if(template.syncExtractedValues) {
+      for(const key in template.syncExtractedValues) {
+        extractedValuesDictionary[key] = this._adapterFactory.createSyncAdapterFromFnWithFields(template.syncExtractedValues[key], fields);
+      }
     }
-    for(const key in template.asyncExtractedValues) {
-      extractedValuesDictionary[key] = this._adapterFactory.createAsyncAdapterFromFnWithFields(template.asyncExtractedValues[key], fields);
+    if(template.asyncExtractedValues) {
+      for(const key in template.asyncExtractedValues) {
+        extractedValuesDictionary[key] = this._adapterFactory.createAsyncAdapterFromFnWithFields(template.asyncExtractedValues[key], fields);
+      }
     }
     return extractedValuesDictionary;
   }
@@ -32,4 +36,4 @@ const ExtractedValuesTemplateParserService = autowire<ExtractedValuesTemplatePar
   ]
 );
 
-export { ExtractedValuesTemplateParser, ExtractedValuesTemplateParserService };
+export { ExtractedValuesTemplateParserImpl, ExtractedValuesTemplateParserService };

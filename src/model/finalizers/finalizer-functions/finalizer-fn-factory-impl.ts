@@ -82,17 +82,54 @@ class FinalizerFnFactoryImpl implements FinalizerFnFactory {
   ): AsyncAdapterFn<FinalizerState> {
     return (aggregatedStateChanges: AggregatedStateChanges) => {
       return new Observable<FinalizerState>(subscriber => {
-        //first attempt to create the promise so that hasOmittedFields and overallValidity can be accessed the first time
-        let promise: Promise<any> | undefined = undefined;
-        let error: any;
-
         try {
-          promise = baseAdapterFn(aggregatedStateChanges);
-        } catch (e) {
-          error = e;
-        }
+          const promise = baseAdapterFn(aggregatedStateChanges);
 
-        if (error) {
+          if (aggregatedStateChanges.hasOmittedFields()) {
+            subscriber.next({
+              finalizerValidity: FinalizerValidity.VALID_FINALIZED,
+              visited : aggregatedStateChanges.visited(),
+              modified : aggregatedStateChanges.modified()
+            });
+            subscriber.complete();
+          } else if (
+            aggregatedStateChanges.overallValidity() < Validity.VALID_FINALIZABLE
+          ) {
+            subscriber.next({
+              finalizerValidity:
+                this._finalizerValidityTranslator.translateValidityToFinalizerValidity(
+                  aggregatedStateChanges.overallValidity(),
+                ),
+              visited : aggregatedStateChanges.visited(),
+              modified : aggregatedStateChanges.modified()
+            });
+          } else {
+            subscriber.next({
+              finalizerValidity: FinalizerValidity.VALID_FINALIZING,
+              visited : aggregatedStateChanges.visited(),
+              modified : aggregatedStateChanges.modified()
+            });
+            promise
+              .then(value => {
+                subscriber.next({
+                  value,
+                  finalizerValidity: FinalizerValidity.VALID_FINALIZED,
+                  visited : aggregatedStateChanges.visited(),
+                  modified : aggregatedStateChanges.modified()
+                });
+                subscriber.complete();
+              })
+              .catch(e => {
+                logErrorInDevMode(e);
+                subscriber.next({
+                  finalizerValidity: FinalizerValidity.FINALIZER_ERROR,
+                  visited : aggregatedStateChanges.visited(),
+                  modified : aggregatedStateChanges.modified()
+                });
+                subscriber.complete();
+              });
+          }
+        } catch (error) {
           logErrorInDevMode(error);
           subscriber.next({
             finalizerValidity: FinalizerValidity.FINALIZER_ERROR,
@@ -100,51 +137,6 @@ class FinalizerFnFactoryImpl implements FinalizerFnFactory {
             modified : aggregatedStateChanges.modified()
           });
           subscriber.complete();
-        } else if (aggregatedStateChanges.hasOmittedFields()) {
-          subscriber.next({
-            finalizerValidity: FinalizerValidity.VALID_FINALIZED,
-            visited : aggregatedStateChanges.visited(),
-            modified : aggregatedStateChanges.modified()
-          });
-          subscriber.complete();
-        } else if (
-          aggregatedStateChanges.overallValidity() < Validity.VALID_FINALIZABLE
-        ) {
-          subscriber.next({
-            finalizerValidity:
-              this._finalizerValidityTranslator.translateValidityToFinalizerValidity(
-                aggregatedStateChanges.overallValidity(),
-              ),
-            visited : aggregatedStateChanges.visited(),
-            modified : aggregatedStateChanges.modified()
-          });
-        } else if (promise) {
-          subscriber.next({
-            finalizerValidity: FinalizerValidity.VALID_FINALIZING,
-            visited : aggregatedStateChanges.visited(),
-            modified : aggregatedStateChanges.modified()
-          });
-          promise
-            .then(value => {
-              subscriber.next({
-                value,
-                finalizerValidity: FinalizerValidity.VALID_FINALIZED,
-                visited : aggregatedStateChanges.visited(),
-                modified : aggregatedStateChanges.modified()
-              });
-              subscriber.complete();
-            })
-            .catch(e => {
-              logErrorInDevMode(e);
-              subscriber.next({
-                finalizerValidity: FinalizerValidity.FINALIZER_ERROR,
-                visited : aggregatedStateChanges.visited(),
-                modified : aggregatedStateChanges.modified()
-              });
-              subscriber.complete();
-            });
-        } else {
-          throw new Error('Async finalizer function did not return a promise.');
         }
       });
     };

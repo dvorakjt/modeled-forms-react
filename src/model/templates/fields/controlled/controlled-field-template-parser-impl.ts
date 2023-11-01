@@ -23,7 +23,7 @@ import {
   ControlledFieldTemplateParserKey,
   ControlledFieldTemplateParserKeyType,
 } from './controlled-field-template-parser.interface';
-import { ControlledFieldTemplateParsingError } from './controlled-field-template-parsing-error';
+import { ControlledFieldTemplateParsingError } from './controlled-field-template-parsing-error.error';
 import { ControlledFieldTemplateVariations } from './controlled-field-template-variations.type';
 
 enum ControlType {

@@ -5,5 +5,5 @@ export type AsyncStateControlledFieldTemplate = FieldTemplate & {
   asyncStateControlFn: AsyncFieldStateControlFn;
   syncStateControlFn?: undefined;
   asyncValueControlFn?: undefined;
-  syncValueControlFn: undefined;
+  syncValueControlFn?: undefined;
 };

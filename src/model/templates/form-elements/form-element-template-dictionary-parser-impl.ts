@@ -15,10 +15,12 @@ import {
   ControlledFieldTemplateParserKey,
 } from '../fields/controlled/controlled-field-template-parser.interface';
 import { ControlledFieldTemplateVariations } from '../fields/controlled/controlled-field-template-variations.type';
+import { FieldTemplateVariations } from '../fields/field-template-variations.type';
 import {
   NestedFormTemplateParser,
   NestedFormTemplateParserKey,
 } from '../forms/nested-form-template-parser.interface';
+import { NestedFormTemplate } from '../forms/nested-form-template.interface';
 import { FieldOrNestedFormTemplate } from './field-or-nested-form-template.type';
 import { FormElementTemplateDictionaryOrMap } from './form-element-template-dictionary-or-map.type';
 import {
@@ -56,10 +58,12 @@ class FormElementDictionaryParserImpl
       this._trackerFactory.createFirstNonValidFormElementTracker();
     const controlledFields = new Set<string>();
 
-    for (const [fieldName, formElementTemplate] of Object.entries(template)) {
+    const entries = template instanceof Map ? template.entries() : Object.entries(template);
+
+    for (const [fieldName, formElementTemplate] of entries) {
       const formElement = this._isNestedForm(formElementTemplate)
-        ? this._nestedFormTemplateParser.parseTemplate(formElementTemplate)
-        : this._baseFieldTemplateParser.parseTemplate(formElementTemplate);
+        ? this._nestedFormTemplateParser.parseTemplate(formElementTemplate as NestedFormTemplate)
+        : this._baseFieldTemplateParser.parseTemplate(formElementTemplate as FieldTemplateVariations);
       formElementDictionary[fieldName] = formElement;
 
       firstNonValidFormElementTracker.trackFormElementValidity(

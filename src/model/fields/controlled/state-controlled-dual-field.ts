@@ -1,12 +1,12 @@
 import { AbstractDualField } from '../base/abstract-dual-field';
 import { Validity } from '../../state/validity.enum';
 import { MessageType } from '../../state/messages/message-type.enum';
-import { config } from '../../../config';
 import type { Adapter } from '../../adapters/adapter.interface';
 import type { DualFieldSetStateArg } from '../../state/dual-field-set-state-arg.interface';
 import type { DualFieldSetValueArg } from '../../state/dual-field-set-value-arg.interface';
 import type { FieldState } from '../../state/field-state.interface';
 import { Modified } from '../../state/modified-enum';
+import { Config } from '../../config-loader/config.interface';
 
 export class StateControlledDualField extends AbstractDualField {
   readonly _field: AbstractDualField;
@@ -51,6 +51,7 @@ export class StateControlledDualField extends AbstractDualField {
   constructor(
     field: AbstractDualField,
     adapter: Adapter<DualFieldSetStateArg>,
+    config : Config
   ) {
     super();
     this._field = field;

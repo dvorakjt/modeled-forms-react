@@ -1,32 +1,47 @@
-import { container } from '../../container';
 import type { SyncValidator } from '../sync-validator.type';
 import type { ValidatorResult } from '../validator-result.interface';
 
-const autoTransformer = container.services.AutoTransformer;
+interface Opts {
+  successMessage? : string;
+  exclusiveMin? : boolean;
+  exclusiveMax? : boolean;
+}
 
 export function inDateRange(
   min: Date,
   max: Date,
   errorMessage: string,
-  successMessage?: string,
+  opts? : Opts
 ): SyncValidator<string> {
   return (value: string) => {
-    value = autoTransformer.transform(value);
-
     const millis = new Date(value).getTime();
+    const exclusiveMin = Boolean(opts?.exclusiveMin);
+    const exclusiveMax = Boolean(opts?.exclusiveMax);
 
     const result: ValidatorResult = {
       isValid:
         !Number.isNaN(millis) &&
-        millis >= min.getTime() &&
-        millis <= max.getTime(),
+        passesMinDateComparison(millis, min, exclusiveMin) &&
+        passesMaxDateComparison(millis, max, exclusiveMax),
     };
     if (!result.isValid) {
       result.message = errorMessage;
-    } else if (successMessage) {
-      result.message = successMessage;
+    } else if (opts?.successMessage) {
+      result.message = opts.successMessage;
     }
 
     return result;
   };
+}
+
+function passesMinDateComparison(millis : number, minDate : Date, exclusiveMin : boolean) {
+  const minMillis = minDate.getTime();
+
+  return exclusiveMin ? millis > minMillis : millis >= minMillis;
+}
+
+function passesMaxDateComparison(millis : number, maxDate : Date, exclusiveMax : boolean) {
+  const maxMillis = maxDate.getTime();
+
+  return exclusiveMax ? millis < maxMillis : millis <= maxMillis;
 }

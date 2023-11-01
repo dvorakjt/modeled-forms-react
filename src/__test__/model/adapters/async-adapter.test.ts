@@ -1,14 +1,13 @@
 import { describe, expect, test, vi } from 'vitest';
-import { getTestContainer } from '../test-container';
 import { FormElementDictionary } from '../../../model/form-elements/form-element-dictionary.type';
 import { MockField } from '../../util/mocks/mock-field';
 import { AggregatedStateChanges } from '../../../model/aggregators/aggregated-state-changes.interface';
 import { AsyncAdapter } from '../../../model/adapters/async-adapter';
 import { Observable, Subscription } from 'rxjs';
 import { AbstractField } from '../../../model/fields/base/abstract-field';
+import { container } from '../../../model/container';
 
 describe('AsyncAdapter', () => {
-  const container = getTestContainer();
   const aggregatorFactory = container.services.AggregatorFactory;
 
   test('It emits adapted values through its stream property when the adapterFn resolves.', () => {

@@ -1,8 +1,5 @@
-import { container } from '../../container';
 import type { SyncValidator } from '../sync-validator.type';
 import type { ValidatorResult } from '../validator-result.interface';
-
-const autoTransformer = container.services.AutoTransformer;
 
 export function maxDate(
   max: Date,
@@ -10,8 +7,6 @@ export function maxDate(
   successMessage?: string,
 ): SyncValidator<string> {
   return (value: string) => {
-    value = autoTransformer.transform(value);
-
     const millis = new Date(value).getTime();
 
     const result: ValidatorResult = {
