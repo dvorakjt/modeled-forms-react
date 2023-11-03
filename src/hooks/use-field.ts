@@ -4,21 +4,25 @@ import { Subscription } from 'rxjs';
 import { Visited } from '../model/state/visited.enum';
 
 export function useField(field: AbstractField) {
-  const [value, setValue] = useState(field.state.value);
-  const [validity, setValidity] = useState(field.state.validity);
-  const [messages, setMessages] = useState(field.state.messages);
-  const [visited, setVisited] = useState(field.state.visited);
-  const [modified, setModified] = useState(field.state.modified);
+  const [state, setState] = useState({
+    value : field.state.value,
+    validity : field.state.validity,
+    messages : field.state.messages,
+    visited : field.state.visited,
+    modified : field.state.modified
+  });
 
   const stateChangesSubRef = useRef<Subscription | null>(null);
 
   useEffect(() => {
-    stateChangesSubRef.current = field.stateChanges.subscribe(change => {
-      setValue(change.value);
-      setValidity(change.validity);
-      setMessages(change.messages);
-      setVisited(change.visited);
-      setModified(change.modified);
+    stateChangesSubRef.current = field.stateChanges.subscribe(stateChange => {
+      setState({
+        value : stateChange.value,
+        validity : stateChange.validity,
+        messages : stateChange.messages,
+        visited : stateChange.visited,
+        modified : stateChange.modified
+      })
     });
     return () => { 
       stateChangesSubRef.current?.unsubscribe();
@@ -40,13 +44,9 @@ export function useField(field: AbstractField) {
   }
 
   return {
-    value,
-    validity,
-    messages,
+    ...state,
     updateValue,
     reset,
-    visited,
-    modified,
     visit
   };
 }

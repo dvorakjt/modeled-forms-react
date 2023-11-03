@@ -19,7 +19,5 @@ export function useFirstNonValidFormElement(
   }, []);
 
   
-  return {
-    firstNonValidFormElement,
-  };
+  return firstNonValidFormElement;
 }

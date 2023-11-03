@@ -15,7 +15,5 @@ export function useSubmissionAttempted(form: AbstractRootForm) {
     return () => subRef.current?.unsubscribe();
   }, []);
 
-  return {
-    submissionAttempted,
-  };
+  return submissionAttempted;
 }
