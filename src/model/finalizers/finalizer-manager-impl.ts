@@ -55,7 +55,7 @@ export class FinalizerManagerImpl implements FinalizerManager {
         this._visitationReducer.updateTallies(finalizerName, finalizerStateChange.visited);
         this._modificationReducer.updateTallies(finalizerName, finalizerStateChange.modified);
         delete this._value[finalizerName];
-        if (finalizerStateChange.value)
+        if (finalizerStateChange.value !== undefined)
           this._value[finalizerName] = finalizerStateChange.value;
         if (this.stateChanges) this.stateChanges.next(this.state);
       });
