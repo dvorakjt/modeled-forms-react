@@ -2,8 +2,8 @@ import React from 'react';
 import { Meta, StoryObj } from '@storybook/react';
 import { Select } from '../../../components2/input/select.component';
 import { RootForm } from '../../../components2/forms/root-form.component';
-import { SubmitButton } from '../../../components2/buttons/submit-button.component';
 import { RootFormTemplate } from '../../../model';
+import { FormValueDisplay } from '../../utils/form-value-display.component';
 
 const meta : Meta<typeof Select> = {
   component : Select,
@@ -38,7 +38,7 @@ export const Default : Story = {
       </Select>
       <br />
       <br />
-      <SubmitButton onResolve={(value) => console.log(value)} onReject={(e) => console.log(e)} />
+      <FormValueDisplay />
     </RootForm>
     );
   }

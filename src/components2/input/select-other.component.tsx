@@ -10,16 +10,22 @@ import { Modified } from '../../model/state/modified-enum';
 
 interface SelectOtherProps {
   fieldName : string;
-  label? : string;
-  className? : string;
-  style? : CSSProperties;
+  labelText? : string;
   selectProps? : {
     autoComplete? : string;
     autoFocus? : boolean;
     disabled? : boolean;
+    labelClassName? : string;
+    labelStyle? : CSSProperties;
+    selectClassName? : string;
+    selectStyle? : CSSProperties;
   },
   inputProps? : {
     type? : string;
+    labelClassName? : string;
+    labelStyle? : CSSProperties;
+    inputClassName? : string;
+    inputStyle? : CSSProperties;
     autoComplete? : string;
     placeholder? : string;
     list? : string;
@@ -32,7 +38,7 @@ interface SelectOtherProps {
   }
 }
 
-export function SelectOther({ fieldName, label, className, style, selectProps = {}, inputProps = { type : 'text' }, children} : PropsWithChildren<SelectOtherProps>) {
+export function SelectOther({ fieldName, labelText, selectProps = {}, inputProps = { type : 'text' }, children} : PropsWithChildren<SelectOtherProps>) {
   const rootFormCtx = useContext(RootFormContext);
   const formCtx = useContext(FormContext);
   if(!rootFormCtx) throw new Error('Input cannot access properties of null or undefined RootFormContext');
@@ -79,14 +85,16 @@ export function SelectOther({ fieldName, label, className, style, selectProps = 
     }
 
     return (
-      <div className={className} style={style}>
+      <>
         <label
           htmlFor={`${fieldName}-select`}
           data-validity={(submissionAttempted || primaryVisited === Visited.YES || primaryModified === Modified.YES) ? validityToString(primaryValidity) : validityToString(Validity.VALID_FINALIZABLE)} 
           data-visited={primaryVisited !== Visited.NO ? true : null}
           data-modified={primaryModified !== Modified.NO ? true : null}
+          className={selectProps.labelClassName}
+          style={selectProps.labelStyle}
         >
-          {label ? label : fieldName}
+          {labelText ? labelText : fieldName}
         </label>
         <select 
           {...selectProps}
@@ -99,6 +107,8 @@ export function SelectOther({ fieldName, label, className, style, selectProps = 
           aria-invalid={!isUsingSecondaryField && (submissionAttempted || primaryVisited === Visited.YES || primaryModified === Modified.YES) && primaryValidity <= Validity.INVALID}
           aria-describedby={!isUsingSecondaryField && (submissionAttempted || primaryVisited === Visited.YES || primaryModified === Modified.YES) ? getAriaDescribedBy(fieldName, primaryMessages) : ""}
           id={`${fieldName}-select`}
+          className={selectProps.selectClassName}
+          style={selectProps.selectStyle}
         >
           {children}
           <option value='other'>Other</option>
@@ -111,6 +121,8 @@ export function SelectOther({ fieldName, label, className, style, selectProps = 
                 data-validity={(submissionAttempted || secondaryVisited === Visited.YES || secondaryModified === Modified.YES) ? validityToString(secondaryValidity) : validityToString(Validity.VALID_FINALIZABLE)} 
                 data-visited={secondaryVisited !== Visited.NO ? true : null}
                 data-modified={secondaryModified !== Modified.NO ? true : null}
+                className={inputProps.labelClassName}
+                style={inputProps.labelStyle}
               >
                 Other
               </label>
@@ -125,11 +137,13 @@ export function SelectOther({ fieldName, label, className, style, selectProps = 
                 aria-invalid={isUsingSecondaryField && (submissionAttempted || secondaryVisited === Visited.YES || secondaryModified === Modified.YES) && secondaryValidity <= Validity.INVALID}
                 aria-describedby={isUsingSecondaryField && (submissionAttempted || secondaryVisited === Visited.YES || secondaryModified === Modified.YES) ? getAriaDescribedBy(fieldName, secondaryMessages) : ""}
                 id={`${fieldName}-input`}
+                className={inputProps.inputClassName}
+                style={inputProps.inputStyle}
               />
             </>
           )
         }
-      </div>
+      </>
     )
   }
 }

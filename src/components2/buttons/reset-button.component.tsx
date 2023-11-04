@@ -3,9 +3,9 @@ import React, { CSSProperties, MouseEventHandler, useContext, useEffect, useStat
 import { FormContext } from "../context-providers/form-context";
 
 interface ResetButtonProps {
-  disabled : boolean;
-  className : string;
-  style : CSSProperties;
+  disabled? : boolean;
+  className? : string;
+  style? : CSSProperties;
 }
 
 export function ResetButton(props : ResetButtonProps) {

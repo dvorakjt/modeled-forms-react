@@ -2,8 +2,8 @@ import React from 'react';
 import { Meta, StoryObj } from '@storybook/react';
 import { Textarea } from '../../../components2/input/textarea.component';
 import { RootForm } from '../../../components2/forms/root-form.component';
-import { SubmitButton } from '../../../components2/buttons/submit-button.component';
 import { RootFormTemplate } from '../../../model';
+import { FormValueDisplay } from '../../utils/form-value-display.component';
 
 const meta : Meta<typeof Textarea> = {
   component : Textarea,
@@ -31,7 +31,7 @@ export const Default : Story = {
         <Textarea fieldName='comments' />
         <br />
         <br />
-        <SubmitButton onResolve={(value) => console.log(value)} onReject={(e) => console.log(e)} />
+        <FormValueDisplay />
       </RootForm>
     )
   }

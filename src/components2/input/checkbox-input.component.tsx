@@ -7,19 +7,18 @@ import { getAriaDescribedBy } from '../util/get-aria-described-by';
 import { RootFormContext } from '../context-providers/root-form-provider.component';
 import { Visited } from '../../model/state/visited.enum';
 import { Modified } from '../../model/state/modified-enum';
-import { getRadioInputId } from '../util/get-radio-input-id';
 
-interface RadioInputProps {
+interface CheckboxInputProps {
   fieldName : string;
   value : string;
   labelText : string;
   labelClassName? : string;
-  radioClassName? : string;
   labelStyle? : CSSProperties;
-  radioStyle? : CSSProperties;
+  checkboxClassName? : string;
+  checkboxStyle? : CSSProperties;
 }
 
-export function RadioInput({ fieldName, value, labelText, labelClassName, labelStyle, radioClassName, radioStyle} : RadioInputProps) {
+export function CheckboxInput({ fieldName, value, labelText, labelClassName, labelStyle, checkboxClassName, checkboxStyle} : CheckboxInputProps) {
   const rootFormCtx = useContext(RootFormContext);
   const formCtx = useContext(FormContext);
   if(!rootFormCtx) throw new Error('Input cannot access properties of null or undefined RootFormContext');
@@ -33,19 +32,21 @@ export function RadioInput({ fieldName, value, labelText, labelClassName, labelS
     return (
       <>
         <input 
-          type='radio' 
+          type='checkbox' 
           name={fieldName} 
-          id={getRadioInputId(fieldName, value)} 
+          id={fieldName} 
           value={value} 
           checked={fieldValue === value}
-          className={radioClassName}
-          style={radioStyle}
+          className={checkboxClassName}
+          style={checkboxStyle}
           onClick={visit}
-          onChange={(e) => updateValue(e.target.value)}
+          onChange={() => {
+            updateValue(fieldValue === value ? '' : value)
+          }}
           aria-describedby={(submissionAttempted || visited === Visited.YES || modified === Modified.YES) ? getAriaDescribedBy(fieldName, messages) : ""}
         />
         <label 
-          htmlFor={getRadioInputId(fieldName, value)} 
+          htmlFor={fieldName} 
           className={labelClassName} 
           style={labelStyle}
           data-validity={(submissionAttempted || visited === Visited.YES || modified === Modified.YES) ? validityToString(validity) : validityToString(Validity.VALID_FINALIZABLE)} 

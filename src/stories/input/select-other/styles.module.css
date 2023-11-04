@@ -1,19 +1,15 @@
-.select_other {
-  width: 200px;
-}
-
-.select_other label, .select_other select {
+.label, .select {
   display: block;
 }
 
-.select_other select, .select_other input {
-  width: inherit;
+.select, .input {
+  width : 200px;
 }
 
-.select_other label[data-validity="INVALID"] {
+.label[data-validity="INVALID"] {
   color : red;
 }
 
-.select_other select[data-validity="INVALID"] , .select_other input[data-validity="INVALID"]  {
+.select[data-validity="INVALID"] , .input[data-validity="INVALID"]  {
   outline : 1px solid red;
 }

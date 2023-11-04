@@ -2,10 +2,10 @@ import React from 'react';
 import { Meta, StoryObj } from '@storybook/react';
 import { Input } from '../../../components2/input/input.component';
 import { RootForm } from '../../../components2/forms/root-form.component';
-import { SubmitButton } from '../../../components2/buttons/submit-button.component';
 import { RootFormTemplate } from '../../../model';
 import { required } from '../../../model';
 import styles from './styles.module.css';
+import { FormValueDisplay } from '../../utils/form-value-display.component';
 
 const meta : Meta<typeof Input> = {
   component : Input,
@@ -38,7 +38,7 @@ export const Default : Story = {
         <Input type='text' className={styles.input} fieldName='name' />
         <br />
         <br />
-        <SubmitButton onResolve={(value) => console.log(value)} onReject={(e) => console.log(e)} />
+        <FormValueDisplay />
       </RootForm>
     )
   }

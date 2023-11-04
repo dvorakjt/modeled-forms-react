@@ -1,3 +1,4 @@
+'use client';
 import { createContext } from 'react';
 import { useForm } from '../../hooks/use-form';
 

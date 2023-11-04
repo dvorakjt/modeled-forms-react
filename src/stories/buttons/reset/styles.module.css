@@ -1,0 +1,7 @@
+.input {
+  display: block;
+}
+
+.input[data-validity="INVALID"] {
+  outline : 1px solid red;
+}
