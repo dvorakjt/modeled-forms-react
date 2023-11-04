@@ -45,6 +45,8 @@ export function Input({fieldName, className, type, disabled, readOnly = false, a
       className={className}
       data-validity={(submissionAttempted || visited === Visited.YES || modified === Modified.YES) ? validityToString(validity) : validityToString(Validity.VALID_FINALIZABLE)} 
       aria-invalid={(submissionAttempted || visited === Visited.YES || modified === Modified.YES) && validity <= Validity.INVALID}
+      data-visited={visited !== Visited.NO ? true : null}
+      data-modified={modified !== Modified.NO ? true : null}
       value={value} 
       onChange={(e) => {
        updateValue(e.target.value);

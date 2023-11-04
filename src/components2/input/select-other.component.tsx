@@ -1,1 +1,135 @@
 'use client';
+import React, { CSSProperties, ChangeEventHandler, PropsWithChildren, useContext } from 'react';
+import { FormContext } from '../context-providers/form-context';
+import { validityToString } from '../util/validity-to-string';
+import { Validity } from '../../model/state/validity.enum';
+import { getAriaDescribedBy } from '../util/get-aria-described-by';
+import { RootFormContext } from '../context-providers/root-form-provider.component';
+import { Visited } from '../../model/state/visited.enum';
+import { Modified } from '../../model/state/modified-enum';
+
+interface SelectOtherProps {
+  fieldName : string;
+  label? : string;
+  className? : string;
+  style? : CSSProperties;
+  selectProps? : {
+    autoComplete? : string;
+    autoFocus? : boolean;
+    disabled? : boolean;
+  },
+  inputProps? : {
+    type? : string;
+    autoComplete? : string;
+    placeholder? : string;
+    list? : string;
+    autoFocus? : boolean;
+    step? : number;
+    max? : string;
+    min? : string;
+    maxLength? : number;
+    size? : number;
+  }
+}
+
+export function SelectOther({ fieldName, label, className, style, selectProps = {}, inputProps = { type : 'text' }, children} : PropsWithChildren<SelectOtherProps>) {
+  const rootFormCtx = useContext(RootFormContext);
+  const formCtx = useContext(FormContext);
+  if(!rootFormCtx) throw new Error('Input cannot access properties of null or undefined RootFormContext');
+  if(!formCtx) throw new Error('Input cannot access properties of null or undefined FormContext');
+  else {
+    const { useDualField } = formCtx;
+    const { usePrimaryField, useSecondaryField, useSwitchToSecondaryField } = useDualField(fieldName);
+    const { 
+      value : primaryValue, 
+      validity : primaryValidity, 
+      messages : primaryMessages, 
+      visited : primaryVisited, 
+      modified : primaryModified, 
+      updateValue : updatePrimaryValue, 
+      visit : visitPrimary
+    } = usePrimaryField();
+    const { 
+      value : secondaryValue, 
+      validity : secondaryValidity, 
+      messages : secondaryMessages, 
+      visited : secondaryVisited, 
+      modified : secondaryModified, 
+      updateValue : updateSecondaryValue, 
+      visit : visitSecondary
+    } = useSecondaryField();
+
+    const { useSecondaryField : isUsingSecondaryField, setUseSecondaryField } = useSwitchToSecondaryField();
+
+    const { useSubmissionAttempted } = rootFormCtx;
+    const submissionAttempted = useSubmissionAttempted();
+
+    const onChangeSelect : ChangeEventHandler<HTMLSelectElement> = (e) => {
+      updatePrimaryValue(e.target.value);
+
+      if(e.target.value === 'other') {
+        setUseSecondaryField(true);
+      } else {
+        setUseSecondaryField(false);
+      }
+    }
+
+    const onChangeInput : ChangeEventHandler<HTMLInputElement> = (e) => {
+      updateSecondaryValue(e.target.value);
+    }
+
+    return (
+      <div className={className} style={style}>
+        <label
+          htmlFor={`${fieldName}-select`}
+          data-validity={(submissionAttempted || primaryVisited === Visited.YES || primaryModified === Modified.YES) ? validityToString(primaryValidity) : validityToString(Validity.VALID_FINALIZABLE)} 
+          data-visited={primaryVisited !== Visited.NO ? true : null}
+          data-modified={primaryModified !== Modified.NO ? true : null}
+        >
+          {label ? label : fieldName}
+        </label>
+        <select 
+          {...selectProps}
+          value={primaryValue}
+          onChange={onChangeSelect}
+          onBlur={visitPrimary}
+          data-validity={(submissionAttempted || primaryVisited === Visited.YES || primaryModified === Modified.YES) ? validityToString(primaryValidity) : validityToString(Validity.VALID_FINALIZABLE)} 
+          data-visited={primaryVisited !== Visited.NO ? true : null}
+          data-modified={primaryModified !== Modified.NO ? true : null}
+          aria-invalid={!isUsingSecondaryField && (submissionAttempted || primaryVisited === Visited.YES || primaryModified === Modified.YES) && primaryValidity <= Validity.INVALID}
+          aria-describedby={!isUsingSecondaryField && (submissionAttempted || primaryVisited === Visited.YES || primaryModified === Modified.YES) ? getAriaDescribedBy(fieldName, primaryMessages) : ""}
+          id={`${fieldName}-select`}
+        >
+          {children}
+          <option value='other'>Other</option>
+        </select>
+        {
+          isUsingSecondaryField && (
+            <>
+              <label
+                htmlFor={`${fieldName}-input`}
+                data-validity={(submissionAttempted || secondaryVisited === Visited.YES || secondaryModified === Modified.YES) ? validityToString(secondaryValidity) : validityToString(Validity.VALID_FINALIZABLE)} 
+                data-visited={secondaryVisited !== Visited.NO ? true : null}
+                data-modified={secondaryModified !== Modified.NO ? true : null}
+              >
+                Other
+              </label>
+              <input 
+                {...inputProps}
+                value={secondaryValue}
+                onChange={onChangeInput}
+                onBlur={visitSecondary}
+                data-validity={(submissionAttempted || secondaryVisited === Visited.YES || secondaryModified === Modified.YES) ? validityToString(secondaryValidity) : validityToString(Validity.VALID_FINALIZABLE)} 
+                data-visited={secondaryVisited !== Visited.NO ? true : null}
+                data-modified={secondaryModified !== Modified.NO ? true : null}
+                aria-invalid={isUsingSecondaryField && (submissionAttempted || secondaryVisited === Visited.YES || secondaryModified === Modified.YES) && secondaryValidity <= Validity.INVALID}
+                aria-describedby={isUsingSecondaryField && (submissionAttempted || secondaryVisited === Visited.YES || secondaryModified === Modified.YES) ? getAriaDescribedBy(fieldName, secondaryMessages) : ""}
+                id={`${fieldName}-input`}
+              />
+            </>
+          )
+        }
+      </div>
+    )
+  }
+}

@@ -35,6 +35,8 @@ export function RadioInput({ fieldName, value, className, style, labelText} : Ra
         style={style}
         data-validity={(submissionAttempted || visited === Visited.YES || modified === Modified.YES) ? validityToString(validity) : validityToString(Validity.VALID_FINALIZABLE)} 
         aria-invalid={(submissionAttempted || visited === Visited.YES || modified === Modified.YES) && validity <= Validity.INVALID}
+        data-visited={visited !== Visited.NO ? true : null}
+        data-modified={modified !== Modified.NO ? true : null}
       >
         <input 
           type='radio' 

@@ -1,7 +1,7 @@
 import React from 'react';
 import { Meta, StoryObj } from '@storybook/react';
 import { RadioInput } from '../../../components2/input/radio-input.component';
-import { RootFormProvider } from '../../../components2/context-providers/root-form-provider.component';
+import { RootForm } from '../../../components2/forms/root-form.component';
 import { SubmitButton } from '../../../components2/buttons/submit-button.component';
 import { RootFormTemplate } from '../../../model';
 
@@ -26,12 +26,12 @@ const template : RootFormTemplate = {
 export const Default : Story = {
   render : () => {
     return (
-      <RootFormProvider template={template}>
+      <RootForm template={template}>
         <RadioInput fieldName='favoriteFood' value='pizza' labelText='Pizza' /><br />
         <RadioInput fieldName='favoriteFood' value='hamburger' labelText='Hamburger' /><br />
         <RadioInput fieldName='favoriteFood' value='taco' labelText='Taco' /><br />
         <SubmitButton onResolve={(value) => console.log(value)} onReject={(e) => console.log(e)} />
-      </RootFormProvider>
+      </RootForm>
     )
   }
 }

@@ -17,12 +17,11 @@ interface TextareaProps {
   autoFocus? : boolean;
   cols? : number;
   rows? : number;
-  form? : string;
   maxLength? : number;
   placeholder? : string;
   readOnly? : boolean;
   spellCheck? : boolean | 'true' | 'false'
-  wrap : 'hard' | 'soft' | 'off'
+  wrap? : 'hard' | 'soft' | 'off'
 }
 
 export function Textarea({
@@ -34,7 +33,6 @@ export function Textarea({
   autoFocus,
   cols,
   rows,
-  form,
   maxLength,
   placeholder,
   readOnly,
@@ -56,13 +54,14 @@ export function Textarea({
       id={fieldName}
       name={fieldName}
       className={className}
-      form={form}
       style={style}
       cols={cols}
       rows={rows}
       wrap={wrap}
       data-validity={(submissionAttempted || visited === Visited.YES || modified === Modified.YES) ? validityToString(validity) : validityToString(Validity.VALID_FINALIZABLE)} 
       aria-invalid={(submissionAttempted || visited === Visited.YES || modified === Modified.YES) && validity <= Validity.INVALID}
+      data-visited={visited !== Visited.NO ? true : null}
+      data-modified={modified !== Modified.NO ? true : null}
       value={value} 
       onChange={(e) => {
        updateValue(e.target.value);

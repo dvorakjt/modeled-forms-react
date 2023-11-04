@@ -15,7 +15,6 @@ interface SelectProps {
   autoComplete? : string;
   autoFocus? : boolean;
   disabled? : boolean;
-  form? : string;
   multiple? : boolean;
   size? : number;
 }
@@ -28,7 +27,6 @@ export function Select({
   autoComplete,
   autoFocus,
   disabled,
-  form,
   multiple,
   size
 } : PropsWithChildren<SelectProps>) {
@@ -50,12 +48,13 @@ export function Select({
         data-validity={(submissionAttempted || visited === Visited.YES || modified === Modified.YES) ? validityToString(validity) : validityToString(Validity.VALID_FINALIZABLE)} 
         aria-invalid={(submissionAttempted || visited === Visited.YES || modified === Modified.YES) && validity <= Validity.INVALID}
         aria-describedby={(submissionAttempted || visited === Visited.YES || modified === Modified.YES) ? getAriaDescribedBy(fieldName, messages) : ""}
+        data-visited={visited !== Visited.NO ? true : null}
+        data-modified={modified !== Modified.NO ? true : null}
         className={className}
         style={style}
         autoComplete={autoComplete}
         autoFocus={autoFocus}
         disabled={disabled}
-        form={form}
         multiple={multiple}
         size={size}
         id={fieldName}

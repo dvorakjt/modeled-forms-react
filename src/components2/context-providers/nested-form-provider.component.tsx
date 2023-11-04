@@ -2,11 +2,11 @@
 import React, { PropsWithChildren, useContext } from 'react';
 import { FormContext } from './form-context';
 
-type NestedFormProviderProps = {
+export interface NestedFormProviderProps {
   fieldName : string;
-} & PropsWithChildren;
+}
 
-export function NestedFormProvider({fieldName, children} : NestedFormProviderProps) {
+export function NestedFormProvider({fieldName, children} : PropsWithChildren<NestedFormProviderProps>) {
   const formCtx = useContext(FormContext);
   if(formCtx === null) throw new Error('NestedFormProvider cannot access useNestedForm property of null context.');
   else {

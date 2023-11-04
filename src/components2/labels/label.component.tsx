@@ -30,6 +30,8 @@ export function Label({ fieldName, className, style, children } : PropsWithChild
         className={className} 
         style={style}
         data-validity={(submissionAttempted || visited === Visited.YES || modified === Modified.YES) ? validityToString(validity) : validityToString(Validity.VALID_FINALIZABLE)} 
+        data-visited={visited !== Visited.NO ? true : null}
+        data-modified={modified !== Modified.NO ? true : null}
       >
         {children}
       </label>

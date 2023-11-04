@@ -5,9 +5,9 @@ import { FormContext, FormContextType } from "./form-context";
 import { type RootFormTemplate } from "../../model/templates/forms/root-form-template.interface";
 import { useSubmissionAttempted } from "../../hooks/use-submission-attempted";
 
-type RootFormProviderProps = {
+export interface RootFormProviderProps {
   template : RootFormTemplate
-} & PropsWithChildren;
+};
 
 type RootFormContextType = {
   useSubmissionAttempted : () => ReturnType<typeof useSubmissionAttempted>;
@@ -16,7 +16,7 @@ type RootFormContextType = {
 
 export const RootFormContext = createContext<RootFormContextType | null>(null);
 
-export function RootFormProvider({ template, children } : RootFormProviderProps) {
+export function RootFormProvider({ template, children } : PropsWithChildren<RootFormProviderProps>) {
   const rootForm = useRootForm(template);
 
   const rootFormCtxValue : RootFormContextType = {
