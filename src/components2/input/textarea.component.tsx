@@ -10,8 +10,8 @@ import { Modified } from '../../model/state/modified-enum';
 
 interface TextareaProps {
   fieldName : string;
-  className : string;
-  style : CSSProperties;
+  className? : string;
+  style? : CSSProperties;
   autoComplete? : 'on' | 'off';
   autoCorrect? : 'on' | 'off';
   autoFocus? : boolean;

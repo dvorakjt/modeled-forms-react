@@ -10,11 +10,12 @@ import { Modified } from '../../model/state/modified-enum';
 
 interface InputProps {
   fieldName : string;
-  className : string;
+  type : string;
+  className? : string;
   style? : CSSProperties;
-  inputType : string;
   readOnly? : boolean;
   autoComplete? : string;
+  disabled? : boolean;
   placeholder? : string;
   list? : string;
   autoFocus? : boolean;
@@ -25,7 +26,7 @@ interface InputProps {
   size? : number;
 }
 
-export function Input({fieldName, className, inputType, readOnly = false, autoComplete, placeholder, list, autoFocus, step, max, min, maxLength, size, style} : InputProps) {
+export function Input({fieldName, className, type, disabled, readOnly = false, autoComplete, placeholder, list, autoFocus, step, max, min, maxLength, size, style} : InputProps) {
   const rootFormCtx = useContext(RootFormContext);
   const formCtx = useContext(FormContext);
   if(!rootFormCtx) throw new Error('Input cannot access properties of null or undefined RootFormContext');
@@ -40,7 +41,7 @@ export function Input({fieldName, className, inputType, readOnly = false, autoCo
     <input 
       id={fieldName}
       name={fieldName}
-      type={inputType}
+      type={type}
       className={className}
       data-validity={(submissionAttempted || visited === Visited.YES || modified === Modified.YES) ? validityToString(validity) : validityToString(Validity.VALID_FINALIZABLE)} 
       aria-invalid={(submissionAttempted || visited === Visited.YES || modified === Modified.YES) && validity <= Validity.INVALID}
@@ -62,6 +63,7 @@ export function Input({fieldName, className, inputType, readOnly = false, autoCo
       size={size}
       onBlur={visit}
       style={style}
+      disabled={disabled}
     />);
   }
 }

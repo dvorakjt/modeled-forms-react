@@ -1,5 +1,5 @@
 'use client';
-import React, { CSSProperties, useContext, useEffect, useState } from "react";
+import React, { CSSProperties, MouseEventHandler, useContext, useEffect, useState } from "react";
 import { FormContext } from "../context-providers/form-context";
 
 interface ResetButtonProps {
@@ -20,6 +20,11 @@ export function ResetButton(props : ResetButtonProps) {
   else {
     const { reset } = formCtx;
 
-    return <button onClick={reset} className={props.className} style={props.style} disabled={disabled}>Reset</button>
+    const onClick : MouseEventHandler<HTMLButtonElement> = (e) => {
+      e.preventDefault();
+      reset();
+    }
+
+    return <button onClick={onClick} className={props.className} style={props.style} disabled={disabled}>Reset</button>
   }
 }
