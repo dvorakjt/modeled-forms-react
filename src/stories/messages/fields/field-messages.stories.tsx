@@ -1,14 +1,14 @@
 import React from 'react';
 import { Meta, StoryObj } from '@storybook/react';
+import { FieldMessages } from '../../../components2/messages/field-messages.component';
 import { Input } from '../../../components2/input/input.component';
 import { RootForm } from '../../../components2/forms/root-form.component.component';
-import { RootFormTemplate } from '../../../model';
+import { RootFormTemplate, email } from '../../../model';
 import { required } from '../../../model';
 import styles from './styles.module.css';
-import { FormValueDisplay } from '../../utils/form-value-display.component';
 
-const meta : Meta<typeof Input> = {
-  component : Input,
+const meta : Meta<typeof FieldMessages> = {
+  component : FieldMessages,
   parameters : {
     layout: 'centered'
   }
@@ -16,14 +16,15 @@ const meta : Meta<typeof Input> = {
 
 export default meta;
 
-type Story = StoryObj<typeof Input>;
+type Story = StoryObj<typeof FieldMessages>;
 
 const template : RootFormTemplate = {
   fields : {
-    name : {
+    email : {
       defaultValue : '',
       syncValidators : [
-        required('name is required')
+        required('Email is required.'),
+        email('Please enter a valid email address.', 'Email address is valid!')
       ]
     }
   },
@@ -34,11 +35,11 @@ export const Default : Story = {
   render : () => {
     return (
       <RootForm template={template}>
-        <label>Name</label><br />
-        <Input type='text' className={styles.input} fieldName='name' />
+        <label>Email:</label>
         <br />
+        <Input type='text' className={styles.input} fieldName='email' />
         <br />
-        <FormValueDisplay />
+        <FieldMessages fieldName='email' containerClassName={styles.field_messages} messageClassName={styles.field_message} />
       </RootForm>
     )
   }

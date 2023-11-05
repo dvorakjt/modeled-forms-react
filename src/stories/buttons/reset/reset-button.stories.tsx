@@ -1,7 +1,7 @@
 import React from 'react';
 import { Meta, StoryObj } from '@storybook/react';
 import { ResetButton } from '../../../components2/buttons/reset-button.component';
-import { RootForm } from '../../../components2/forms/root-form.component';
+import { RootForm } from '../../../components2/forms/root-form.component.component';
 import { Input } from '../../../components2/input/input.component';
 import { FormValueDisplay } from '../../utils/form-value-display.component';
 import { RootFormTemplate, Validity, email, maxDate, required } from '../../../model';

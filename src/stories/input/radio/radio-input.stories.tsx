@@ -1,7 +1,7 @@
 import React from 'react';
 import { Meta, StoryObj } from '@storybook/react';
 import { RadioInput } from '../../../components2/input/radio-input.component';
-import { RootForm } from '../../../components2/forms/root-form.component';
+import { RootForm } from '../../../components2/forms/root-form.component.component';
 import { RootFormTemplate } from '../../../model';
 import { FormValueDisplay } from '../../utils/form-value-display.component';
 

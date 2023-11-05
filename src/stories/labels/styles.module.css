@@ -1,0 +1,7 @@
+.input[data-validity="INVALID"] {
+  outline : 1px solid red;
+}
+
+.label[data-validity="INVALID"] {
+  color: red;
+}
