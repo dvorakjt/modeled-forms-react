@@ -1,5 +1,5 @@
 'use client';
-import React, { CSSProperties, ChangeEventHandler, PropsWithChildren, useContext } from 'react';
+import React, { CSSProperties, ChangeEventHandler, PropsWithChildren, useContext, useEffect } from 'react';
 import { FormContext } from '../context-providers/form-context';
 import { validityToString } from '../util/validity-to-string';
 import { Validity } from '../../model/state/validity.enum';
@@ -66,14 +66,16 @@ export function SelectOther({ fieldName, labelText, selectProps = {}, inputProps
 
     const confirmationAttempted = useConfirmationAttempted();
 
-    const onChangeSelect : ChangeEventHandler<HTMLSelectElement> = (e) => {
-      updatePrimaryValue(e.target.value);
-
-      if(e.target.value === 'other') {
+    useEffect(() => {
+      if(primaryValue === 'other') {
         setUseSecondaryField(true);
       } else {
         setUseSecondaryField(false);
       }
+    }, [primaryValue])
+
+    const onChangeSelect : ChangeEventHandler<HTMLSelectElement> = (e) => {
+      updatePrimaryValue(e.target.value);
     }
 
     const onChangeInput : ChangeEventHandler<HTMLInputElement> = (e) => {
