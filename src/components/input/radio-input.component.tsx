@@ -40,6 +40,9 @@ export function RadioInput({ fieldName, value, labelText, labelClassName, labelS
           onClick={visit}
           onChange={(e) => updateValue(e.target.value)}
           aria-describedby={(confirmationAttempted || visited === Visited.YES || modified === Modified.YES) ? getAriaDescribedBy(fieldName, messages) : ""}
+          data-validity={(confirmationAttempted || visited === Visited.YES || modified === Modified.YES) ? validityToString(validity) : validityToString(Validity.VALID_FINALIZABLE)} 
+          data-visited={visited !== Visited.NO ? true : null}
+          data-modified={modified !== Modified.NO ? true : null}
         />
         <label 
           htmlFor={getRadioInputId(fieldName, value)} 
