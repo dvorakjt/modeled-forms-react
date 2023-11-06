@@ -44,13 +44,16 @@ export function CheckboxInput({ fieldName, value, labelText, labelClassName, lab
             updateValue(fieldValue === value ? '' : value)
           }}
           aria-describedby={(submissionAttempted || visited === Visited.YES || modified === Modified.YES) ? getAriaDescribedBy(fieldName, messages) : ""}
+          aria-invalid={(submissionAttempted || visited === Visited.YES || modified === Modified.YES) && validity <= Validity.INVALID}
+          data-validity={(submissionAttempted || visited === Visited.YES || modified === Modified.YES) ? validityToString(validity) : validityToString(Validity.VALID_FINALIZABLE)} 
+          data-visited={visited !== Visited.NO ? true : null}
+          data-modified={modified !== Modified.NO ? true : null}
         />
         <label 
           htmlFor={fieldName} 
           className={labelClassName} 
           style={labelStyle}
           data-validity={(submissionAttempted || visited === Visited.YES || modified === Modified.YES) ? validityToString(validity) : validityToString(Validity.VALID_FINALIZABLE)} 
-          aria-invalid={(submissionAttempted || visited === Visited.YES || modified === Modified.YES) && validity <= Validity.INVALID}
           data-visited={visited !== Visited.NO ? true : null}
           data-modified={modified !== Modified.NO ? true : null}
         >
