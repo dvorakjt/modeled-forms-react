@@ -49,4 +49,4 @@ export {
   Label,
   FieldMessages, 
   FormMessages 
-} from './components2';
+} from './components';

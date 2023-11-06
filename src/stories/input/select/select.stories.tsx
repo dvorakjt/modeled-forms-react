@@ -1,7 +1,7 @@
 import React from 'react';
 import { Meta, StoryObj } from '@storybook/react';
-import { Select } from '../../../components2/input/select.component';
-import { RootForm } from '../../../components2/forms/root-form.component.component';
+import { Select } from '../../../components/input/select.component';
+import { RootForm } from '../../../components/forms/root-form.component.component';
 import { RootFormTemplate } from '../../../model';
 import { FormValueDisplay } from '../../utils/form-value-display.component';
 

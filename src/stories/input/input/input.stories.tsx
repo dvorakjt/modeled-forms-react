@@ -1,7 +1,7 @@
 import React from 'react';
 import { Meta, StoryObj } from '@storybook/react';
-import { Input } from '../../../components2/input/input.component';
-import { RootForm } from '../../../components2/forms/root-form.component.component';
+import { Input } from '../../../components/input/input.component';
+import { RootForm } from '../../../components/forms/root-form.component.component';
 import { RootFormTemplate } from '../../../model';
 import { required } from '../../../model';
 import styles from './styles.module.css';

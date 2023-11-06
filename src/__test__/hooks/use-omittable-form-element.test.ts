@@ -1,6 +1,6 @@
 import { describe, test, expect } from 'vitest';
 import { renderHook, waitFor } from '@testing-library/react';
-import { renderErrantHook } from '../util/hooks/render-errant-hook';
+import { renderPossiblyErrantHook } from '../util/hooks/render-possibly-errant-hook';
 import { useRootForm } from '../../hooks';
 import { RootFormTemplate } from '../../model';
 
@@ -16,7 +16,7 @@ describe('useOmittableFormElement', () => {
 
     const { useOmittableFormElement } = useRootFormResult.current;
 
-    const { errorDetected } = renderErrantHook(() => useOmittableFormElement('nonExistentField'));
+    const { errorDetected } = renderPossiblyErrantHook(() => useOmittableFormElement('nonExistentField'));
 
     expect(errorDetected).toBe(true);
   });

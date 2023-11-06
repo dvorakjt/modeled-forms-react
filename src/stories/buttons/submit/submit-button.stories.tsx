@@ -1,8 +1,8 @@
 import React, { useState} from 'react';
 import { Meta, StoryObj } from '@storybook/react';
-import { SubmitButton } from '../../../components2/buttons/submit-button.component';
-import { RootForm } from '../../../components2/forms/root-form.component.component';
-import { Input } from '../../../components2/input/input.component';
+import { SubmitButton } from '../../../components/buttons/submit-button.component';
+import { RootForm } from '../../../components/forms/root-form.component.component';
+import { Input } from '../../../components/input/input.component';
 import { RootFormTemplate, Validity, email, maxDate, required } from '../../../model';
 import styles from './styles.module.css';
 

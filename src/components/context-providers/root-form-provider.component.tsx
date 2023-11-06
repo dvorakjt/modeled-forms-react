@@ -9,7 +9,7 @@ export interface RootFormProviderProps {
   template : RootFormTemplate
 };
 
-type RootFormContextType = {
+export interface RootFormContextType {
   useSubmissionAttempted : () => ReturnType<typeof useSubmissionAttempted>;
   submit : () => Promise<any>;
 }

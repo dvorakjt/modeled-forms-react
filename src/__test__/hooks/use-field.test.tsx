@@ -1,7 +1,7 @@
 import { describe, test, expect, vi } from 'vitest';
 import React from 'react';
 import { render, renderHook, waitFor } from '@testing-library/react';
-import { renderErrantHook } from '../util/hooks/render-errant-hook';
+import { renderPossiblyErrantHook } from '../util/hooks/render-possibly-errant-hook';
 import { useRootForm } from '../../hooks';
 import { MessageType, RootFormTemplate, Validity, required } from '../../model';
 import { Visited } from '../../model/state/visited.enum';
@@ -20,7 +20,7 @@ describe('useField', () => {
     const { result : useRootFormResult } = renderHook(() => useRootForm(template));
     const { useField } = useRootFormResult.current;
 
-    const { errorDetected } = renderErrantHook(() => useField('nonExistentField'));
+    const { errorDetected } = renderPossiblyErrantHook(() => useField('nonExistentField'));
 
     expect(errorDetected).toBe(true);
   });
@@ -39,7 +39,7 @@ describe('useField', () => {
     const { result : useRootFormResult } = renderHook(() => useRootForm(template));
     const { useField } = useRootFormResult.current;
 
-    const { errorDetected } = renderErrantHook(() => useField('nestedForm'));
+    const { errorDetected } = renderPossiblyErrantHook(() => useField('nestedForm'));
 
     expect(errorDetected).toBe(true);
   });
