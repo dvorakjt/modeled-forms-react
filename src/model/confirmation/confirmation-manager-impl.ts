@@ -21,9 +21,6 @@ export class ConfirmationManagerImpl implements ConfirmationManager {
   confirmationStateChanges: Subject<ConfirmationState> = new BehaviorSubject<ConfirmationState>(this.confirmationState);
 
   tryConfirm({validity, onSuccess, onError, errorMessage}: TryConfirmArgsObjectWithValidity): void {
-    //clear existing message
-    this.clearMessage();
-
     this.confirmationState = {
       confirmationAttempted : true
     }
@@ -42,11 +39,13 @@ export class ConfirmationManagerImpl implements ConfirmationManager {
       }
     } else if(onSuccess) onSuccess();
   }
+
   clearMessage(): void {
     this.confirmationState = {
       confirmationAttempted : this.confirmationState.confirmationAttempted
     }
   }
+  
   reset(): void {
     this.confirmationState = {
       confirmationAttempted : false

@@ -34,7 +34,7 @@ export class SubmissionManagerImpl implements SubmissionManager {
         if(onSuccess) onSuccess(res);
       })
       .catch((e) => {
-        if(e.message) {
+        if(e && e.message) {
           this.message = {
             text : e.message,
             type : MessageType.ERROR
