@@ -14,7 +14,7 @@ describe('SubmitButton', () => {
   test('It throws an error if rendered outside of a RootFormContext.', () => {
     const { errorDetected } = renderPossiblyErrantComponent(
       <MockFormContext>
-        <SubmitButton onResolve={(val) => console.log(val)} onReject={(e) => console.error(e)} />
+        <SubmitButton />
       </MockFormContext>
     );
     expect(errorDetected).toBe(true);
@@ -23,7 +23,7 @@ describe('SubmitButton', () => {
   test('It throws an error if rendered outside of a FormContext.', () => {
     const { errorDetected } = renderPossiblyErrantComponent(
       <MockRootFormContext>
-        <SubmitButton onResolve={(val) => console.log(val)} onReject={(e) => console.error(e)} />
+        <SubmitButton />
       </MockRootFormContext>
     );
     expect(errorDetected).toBe(true);
@@ -33,14 +33,14 @@ describe('SubmitButton', () => {
     const { errorDetected } = renderPossiblyErrantComponent(
       <MockRootFormContext>
         <MockFormContext>
-          <SubmitButton onResolve={(val) => console.log(val)} onReject={(e) => console.error(e)} />
+          <SubmitButton />
         </MockFormContext>
       </MockRootFormContext>
     );
     expect(errorDetected).toBe(false);
   });
 
-  test('The button is disabled if validity is less than Validity.VALID_FINALIZABLE.', () => {
+  test('The button is disabled if validity is less than Validity.VALID_FINALIZABLE and enableOnlyWhenValid is true.', () => {
     const template : RootFormTemplate = {
       fields : {
         fieldA : {
@@ -55,7 +55,7 @@ describe('SubmitButton', () => {
 
     render(
       <RootForm template={template}>
-        <SubmitButton onResolve={(val) => console.log(val)} onReject={(e) => console.error(e)} />
+        <SubmitButton enableOnlyWhenValid />
       </RootForm>
     );
 
@@ -64,7 +64,7 @@ describe('SubmitButton', () => {
     expect(submitButton.getAttribute('disabled')).not.toBeNull();
   });
 
-  test('The button is NOT disabled if validity is Validity.VALID_FINALIZABLE.', () => {
+  test('The button is NOT disabled if validity is Validity.VALID_FINALIZABLE and enableOnlyWhenValid is true.', () => {
     const template : RootFormTemplate = {
       fields : {
         fieldA : ''
@@ -74,7 +74,7 @@ describe('SubmitButton', () => {
 
     render(
       <RootForm template={template}>
-        <SubmitButton onResolve={(val) => console.log(val)} onReject={(e) => console.error(e)} />
+        <SubmitButton enableOnlyWhenValid/>
       </RootForm>
     );
 
@@ -84,14 +84,12 @@ describe('SubmitButton', () => {
   });
 
   test('When clicked, the RootFormContext\'s submit() method is called.', async () => {
-    const submit = vi.fn().mockResolvedValue({ fieldA : ''});
+    const trySubmit = vi.fn().mockResolvedValue({ fieldA : ''});
 
     render(
-      <MockRootFormContext mockContextValue={{ submit }}>
+      <MockRootFormContext mockContextValue={{ trySubmit }}>
         <MockFormContext>
-          <SubmitButton onResolve={() => {
-            return;
-          }} onReject={(e) => console.error(e)} />
+          <SubmitButton />
         </MockFormContext>
       </MockRootFormContext>
     );
@@ -100,90 +98,6 @@ describe('SubmitButton', () => {
 
     userEvent.click(submitButton);
 
-    await waitFor(() => expect(submit).toHaveBeenCalledOnce());
-  });
-
-  test('When clicked, if the promise returned by the submit function resolves, onResolve is called.', async () => {
-    const expectedValue = { fieldA : 'test' };
-
-    const submit = vi.fn().mockResolvedValue(expectedValue);
-
-    const onResolve = vi.fn();
-
-    render(
-      <MockRootFormContext mockContextValue={{ submit }}>
-        <MockFormContext>
-          <SubmitButton onResolve={onResolve} onReject={(e) => console.error(e)} />
-        </MockFormContext>
-      </MockRootFormContext>
-    );
-
-    const submitButton = document.getElementsByTagName('button')[0];
-
-    userEvent.click(submitButton);
-
-    await waitFor(() => expect(onResolve).toHaveBeenCalledWith(expectedValue));
-  });
-
-  test('When clicked, if the promise returned by the submit function is rejected, onReject is called.', async () => {
-    const expectedError = new Error('Error submitting form.');
-
-    const submit = vi.fn().mockRejectedValue(expectedError);
-
-    const onReject = vi.fn();
-
-    render(
-      <MockRootFormContext mockContextValue={{ submit }}>
-        <MockFormContext>
-          <SubmitButton onResolve={vi.fn()} onReject={onReject} />
-        </MockFormContext>
-      </MockRootFormContext>
-    );
-
-    const submitButton = document.getElementsByTagName('button')[0];
-
-    userEvent.click(submitButton);
-
-    await waitFor(() => expect(onReject).toHaveBeenCalledWith(expectedError));
-  });
-
-  test('When clicked, onFinally is called if the promise resolved.', async () => {
-    const submit = vi.fn().mockResolvedValue({ fieldA : ''})
-
-    const onFinally = vi.fn();
-
-    render(
-      <MockRootFormContext mockContextValue={{ submit }}>
-        <MockFormContext>
-          <SubmitButton onResolve={vi.fn()} onReject={vi.fn()} onFinally={onFinally} />
-        </MockFormContext>
-      </MockRootFormContext>
-    );
-
-    const submitButton = document.getElementsByTagName('button')[0];
-
-    userEvent.click(submitButton);
-
-    await waitFor(() => expect(onFinally).toHaveBeenCalledOnce());
-  });
-
-  test('When clicked, onFinally is called if the promise was rejected.', async () => {
-    const submit = vi.fn().mockRejectedValue(new Error('Error submitting the form.'));
-
-    const onFinally = vi.fn();
-
-    render(
-      <MockRootFormContext mockContextValue={{ submit }}>
-        <MockFormContext>
-          <SubmitButton onResolve={vi.fn()} onReject={vi.fn()} onFinally={onFinally} />
-        </MockFormContext>
-      </MockRootFormContext>
-    );
-
-    const submitButton = document.getElementsByTagName('button')[0];
-
-    userEvent.click(submitButton);
-
-    await waitFor(() => expect(onFinally).toHaveBeenCalledOnce());
+    await waitFor(() => expect(trySubmit).toHaveBeenCalledOnce());
   });
 });

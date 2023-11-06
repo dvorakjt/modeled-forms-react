@@ -91,13 +91,11 @@ describe('useFormState()', () => {
 
     const { result : useRootFormResult } = renderHook(() => useRootForm(template));
 
-    const { useFormState, submit } = useRootFormResult.current;
+    const { useFormState, trySubmit } = useRootFormResult.current;
 
     const { result : useFormStateResult } = renderHook(() => useFormState());
 
-    try {
-      await submit();
-    } catch(e) { /* empty */ }
+    trySubmit({});
 
     await waitFor(() => expect(useFormStateResult.current.messages).toStrictEqual([
       {
@@ -105,7 +103,7 @@ describe('useFormState()', () => {
         type : MessageType.INVALID
       },
       {
-        text : container.services.ConfigLoader.config.globalMessages.submissionFailed,
+        text : container.services.ConfigLoader.config.globalMessages.confirmationFailed,
         type : MessageType.INVALID
       }
     ]));

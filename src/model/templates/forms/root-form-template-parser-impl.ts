@@ -25,6 +25,7 @@ import {
 import { RootFormTemplate } from './root-form-template.interface';
 import { ExtractedValuesTemplateParser, ExtractedValuesTemplateParserKey } from '../extracted-values/extracted-values-template-parser.interface';
 import { ConfirmationManagerFactory, ConfirmationManagerFactoryKey } from '../../confirmation/confirmation-manager-factory.interface';
+import { ConfigLoader, ConfigLoaderKey } from '../../config-loader/config-loader.interface';
 
 class RootFormTemplateParserImpl implements RootFormTemplateParser {
   _formElementTemplateDictionaryParser: FormElementTemplateDictionaryParser;
@@ -33,6 +34,7 @@ class RootFormTemplateParserImpl implements RootFormTemplateParser {
   _submissionManagerFactory: SubmissionManagerFactory;
   _extractedValuesTemplateParser : ExtractedValuesTemplateParser;
   _confirmationManagerFactory : ConfirmationManagerFactory;
+  _configLoader : ConfigLoader;
 
   constructor(
     formElementTemplateDictionaryParser: FormElementTemplateDictionaryParser,
@@ -40,7 +42,8 @@ class RootFormTemplateParserImpl implements RootFormTemplateParser {
     finalizerTemplateDictionaryParser: FinalizerTemplateDictionaryParser,
     submissionManagerFactory: SubmissionManagerFactory,
     extractedValuesTemplateParser : ExtractedValuesTemplateParser,
-    confirmationManagerFactory : ConfirmationManagerFactory
+    confirmationManagerFactory : ConfirmationManagerFactory,
+    configLoader : ConfigLoader
   ) {
     this._formElementTemplateDictionaryParser =
       formElementTemplateDictionaryParser;
@@ -50,7 +53,9 @@ class RootFormTemplateParserImpl implements RootFormTemplateParser {
     this._submissionManagerFactory = submissionManagerFactory;
     this._extractedValuesTemplateParser = extractedValuesTemplateParser;
     this._confirmationManagerFactory = confirmationManagerFactory;
+    this._configLoader = configLoader;
   }
+
   parseTemplate(template: RootFormTemplate): AbstractRootForm {
     const [baseFields, firstNonValidFormElementTracker] =
       this._formElementTemplateDictionaryParser.parseTemplate(template.fields);
@@ -85,6 +90,8 @@ class RootFormTemplateParserImpl implements RootFormTemplateParser {
         asyncExtractedValues : {}
       }, finalizerFacingFields);
 
+    const { config } = this._configLoader;
+
     const form = new RootForm(
       userFacingFields,
       extractedValues,
@@ -92,7 +99,8 @@ class RootFormTemplateParserImpl implements RootFormTemplateParser {
       finalizerManager,
       multiInputValidatorMessagesAggregator,
       confirmationManager,
-      submissionManager
+      submissionManager,
+      config
     );
     
     return form; //the new form part should come from a factory
@@ -109,7 +117,8 @@ const RootFormTemplateParserService = autowire<
   FinalizerTemplateDictionaryParserKey,
   SubmissionManagerFactoryKey,
   ExtractedValuesTemplateParserKey,
-  ConfirmationManagerFactoryKey
+  ConfirmationManagerFactoryKey,
+  ConfigLoaderKey
 ]);
 
 export { RootFormTemplateParserImpl, RootFormTemplateParserService };

@@ -12,15 +12,6 @@ import { FormValueDisplay } from '../../../stories/utils/form-value-display.comp
 describe('CheckboxInput', () => {
   afterEach(cleanup);
 
-  test('It throws an error when rendered outside of a RootFormContext.', () => {
-    const { errorDetected } = renderPossiblyErrantComponent(
-      <MockFormContext>
-        <CheckboxInput fieldName='someField' value='someValue' labelText='Some Field' />
-      </MockFormContext>
-    );
-    expect(errorDetected).toBe(true);
-  });
-
   test('It throws an error when rendered outside of FormContext.', () => {
     const { errorDetected } = renderPossiblyErrantComponent(
       <MockRootFormContext>
@@ -30,13 +21,11 @@ describe('CheckboxInput', () => {
     expect(errorDetected).toBe(true);
   });
 
-  test('It does NOT throw an error when rendered inside both a RootFormContext and a FormContext.', () => {
+  test('It does NOT throw an error when rendered inside a FormContext.', () => {
     const { errorDetected } = renderPossiblyErrantComponent(
-      <MockRootFormContext>
-        <MockFormContext>
-          <CheckboxInput fieldName='someField' value='someValue' labelText='Some Field' />
-        </MockFormContext>
-      </MockRootFormContext>
+      <MockFormContext>
+        <CheckboxInput fieldName='someField' value='someValue' labelText='Some Field' />
+      </MockFormContext>
     );
     expect(errorDetected).toBe(false);
   });

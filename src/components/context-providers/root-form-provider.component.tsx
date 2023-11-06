@@ -3,13 +3,14 @@ import React, { PropsWithChildren, createContext } from "react";
 import { useRootForm } from "../../hooks/use-root-form";
 import { FormContext, FormContextType } from "./form-context";
 import { type RootFormTemplate } from "../../model/templates/forms/root-form-template.interface";
+import { TrySubmitArgsObject } from "../../model/submission/submission-manager.interface";
 
 export interface RootFormProviderProps {
   template : RootFormTemplate
 };
 
 export interface RootFormContextType {
-  submit : () => Promise<any>;
+  trySubmit : (argsObject : TrySubmitArgsObject) => void;
 }
 
 export const RootFormContext = createContext<RootFormContextType | null>(null);
@@ -18,7 +19,7 @@ export function RootFormProvider({ template, children } : PropsWithChildren<Root
   const rootForm = useRootForm(template);
 
   const rootFormCtxValue : RootFormContextType = {
-    submit : rootForm.submit
+    trySubmit : rootForm.trySubmit
   }
 
   const formCtxValue : FormContextType = {

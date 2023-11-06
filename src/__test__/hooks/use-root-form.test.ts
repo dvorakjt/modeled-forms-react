@@ -77,27 +77,6 @@ describe('useRootForm()', () => {
     const { reset } = result.current;
     expect(typeof reset).toBe('function');
   });
-
-  test('It returns submit().', () => {
-    const { result } = renderHook(() => useRootForm(formTemplate));
-    const { submit } = result.current;
-    expect(typeof submit).toBe('function')
-  });
-
-  test('submit() returns a promise that has access to the form\'s current state.', () => {
-    const { result } = renderHook(() => useRootForm(formTemplate));
-    const { submit } = result.current;
-    submit().then(value => {
-      expect(value).toStrictEqual({
-        basicField : '',
-        dualField : '',
-        nestedForm : {
-          fieldA : '',
-          fieldB : '' 
-        }
-      });
-    });
-  });
 });
 
 

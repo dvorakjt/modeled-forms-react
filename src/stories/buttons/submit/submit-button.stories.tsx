@@ -69,7 +69,7 @@ export const Default : Story = {
         <label>Birthday</label><br />
         <Input type='date' className={styles.input} fieldName='birthday'  />
         <br />
-        <SubmitButton onResolve={(value) => setSubmittedData(JSON.stringify(value))} onReject={(e) => { console.log(e) }} />
+        <SubmitButton onSuccess={(value) => setSubmittedData(JSON.stringify(value))} onError={(e) => { console.log(e) }} />
         <pre>{submittedData}</pre>
         <button onClick={(e) => {
           e.preventDefault();

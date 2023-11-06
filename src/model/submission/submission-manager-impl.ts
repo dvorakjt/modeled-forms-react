@@ -1,78 +1,58 @@
-import { BehaviorSubject, type Subject } from 'rxjs';
-import { State } from '../state/state.interface';
-import { SubmissionManager } from './submission-manager.interface';
-import { SubmissionState } from './submission-state.interface';
-import { SubmitFn } from './submit-fn.type';
-import { copyObject } from '../util/copy-object';
-import { Validity } from '../state/validity.enum';
-import { MessageType } from '../state/messages/message-type.enum';
-import { config } from '../../config';
+import { Config } from "../config-loader/config.interface";
+import { MessageType } from "../state/messages/message-type.enum";
+import { Message } from "../state/messages/message.interface";
+import { SubmissionManager, TrySubmitArgsObjectWithState } from "./submission-manager.interface";
+import { SubmitFn } from "./submit-fn.type";
+import { BehaviorSubject, Subject } from "rxjs";
 
+//submission happens in sequence after confirmation
+//confirmation calls tryConfirm on all nested forms
 export class SubmissionManagerImpl implements SubmissionManager {
-  submissionStateChanges: Subject<SubmissionState>;
-  _submitFn: SubmitFn;
+  submitFn: SubmitFn;
+  _config : Config;
+  _message : Message | null = null;
 
-  _submissionState: SubmissionState = {
-    submissionAttempted: false,
-  };
-
-  set submissionState(submissionState: SubmissionState) {
-    this._submissionState = submissionState;
-    this.submissionStateChanges.next(this.submissionState);
+  get message() : Message | null {
+    return this._message;
   }
 
-  get submissionState() {
-    return copyObject(this._submissionState);
+  set message(val : Message | null) {
+    this._message = val;
+    this.messageChanges.next(this.message);
   }
 
-  constructor(submitFn: SubmitFn) {
-    this.submissionStateChanges = new BehaviorSubject(this.submissionState);
-    this._submitFn = submitFn;
+  messageChanges: Subject<Message | null> = new BehaviorSubject<Message | null>(this.message);
+
+  constructor(submitFn : SubmitFn, config : Config) {
+    this.submitFn = submitFn;
+    this._config = config;
   }
 
-  submit(state: State<any>) {
-    this.submissionState = {
-      submissionAttempted: true,
-    };
-    return new Promise<any>((resolve, reject) => {
-      if (state.validity < Validity.VALID_FINALIZABLE) {
-        this.submissionState = {
-          ...this._submissionState,
-          message: {
-            type: MessageType.INVALID,
-            text: config.globalMessages.submissionFailed,
-          },
-        };
-        reject(new Error(config.globalMessages.submissionFailed));
-      } else {
-        this._submitFn(state)
-          .then(res => {
-            resolve(res);
-          })
-          .catch(e => {
-            if (e.message)
-              this.submissionState = {
-                ...this._submissionState,
-                message: {
-                  type: MessageType.ERROR,
-                  text: e.message,
-                },
-              };
-            reject(e);
-          });
-      }
-    });
+  trySubmit({ state, onSuccess, onError, onFinally }: TrySubmitArgsObjectWithState): void {
+    this.submitFn(state)
+      .then((res) => {
+        if(onSuccess) onSuccess(res);
+      })
+      .catch((e) => {
+        if(e.message) {
+          this.message = {
+            text : e.message,
+            type : MessageType.ERROR
+          }
+        } else {
+          this.message = {
+            text : this._config.globalMessages.submissionError,
+            type : MessageType.ERROR
+          }
+        }
+        //call on error
+        if(onError) onError(e);
+      })
+      .finally(() => {
+        if(onFinally) onFinally();
+      });
   }
-
-  clearMessage() {
-    this.submissionState = {
-      submissionAttempted: this.submissionState.submissionAttempted,
-    };
-  }
-
-  reset() {
-    this.submissionState = {
-      submissionAttempted: false,
-    };
+  reset(): void {
+    this.message = null;
   }
 }
