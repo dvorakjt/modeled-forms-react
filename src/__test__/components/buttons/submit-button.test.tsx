@@ -96,7 +96,7 @@ describe('SubmitButton', () => {
 
     const submitButton = document.getElementsByTagName('button')[0];
 
-    userEvent.click(submitButton);
+    await userEvent.click(submitButton);
 
     await waitFor(() => expect(trySubmit).toHaveBeenCalledOnce());
   });

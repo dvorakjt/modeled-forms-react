@@ -1,5 +1,5 @@
 'use client';
-import React, { CSSProperties, MouseEventHandler, useContext } from "react";
+import React, { CSSProperties, MouseEventHandler, PropsWithChildren, useContext } from "react";
 import { FormContext } from "../context-providers/form-context";
 import { Validity } from "../../model";
 import { container } from "../../model/container";
@@ -28,7 +28,7 @@ export function ConfirmButton({ className, style, enableOnlyWhenValid, onSuccess
         onSuccess,
         onError,
         errorMessage : errorMessage ?? container.services.ConfigLoader.config.globalMessages.confirmationFailed
-      })
+      });
     }
 
     return <button onClick={onClick} className={className} style={style} disabled={enableOnlyWhenValid && validity < Validity.VALID_FINALIZABLE}>{children}</button>

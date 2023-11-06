@@ -45,18 +45,18 @@ describe('ResetButton', () => {
     //add some values to the fields
     const inputElements = document.getElementsByTagName('input');
 
-    userEvent.type(inputElements[0], 'some value');
+    await userEvent.type(inputElements[0], 'some value');
 
     await waitFor(() => expect(inputElements[0].value).toBe('some value'));
 
-    userEvent.type(inputElements[1], 'some other value');
+    await userEvent.type(inputElements[1], 'some other value');
 
     await waitFor(() => expect(inputElements[1].value).toBe('some other value'));
 
     //click the reset button
     const resetButton = document.getElementsByTagName('button')[0];
 
-    userEvent.click(resetButton);
+    await userEvent.click(resetButton);
 
     //await reset
     await waitFor(() => expect(inputElements[0].value).toBe(''));

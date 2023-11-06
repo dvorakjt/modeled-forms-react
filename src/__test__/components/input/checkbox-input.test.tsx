@@ -5,7 +5,6 @@ import userEvent from '@testing-library/user-event';
 import { RootFormTemplate, required } from '../../../model';
 import { CheckboxInput, RootForm } from '../../../components';
 import { renderPossiblyErrantComponent } from '../../util/components/render-possibly-errant-component';
-import { MockRootFormContext } from '../../util/mocks/mock-root-form-context-provider';
 import { MockFormContext } from '../../util/mocks/mock-form-context-provider';
 import { FormValueDisplay } from '../../../stories/utils/form-value-display.component';
 
@@ -13,11 +12,7 @@ describe('CheckboxInput', () => {
   afterEach(cleanup);
 
   test('It throws an error when rendered outside of FormContext.', () => {
-    const { errorDetected } = renderPossiblyErrantComponent(
-      <MockRootFormContext>
-        <CheckboxInput fieldName='someField' value='someValue' labelText='Some Field' />
-      </MockRootFormContext>
-    );
+    const { errorDetected } = renderPossiblyErrantComponent(<CheckboxInput fieldName='someField' value='someValue' labelText='Some Field' />);
     expect(errorDetected).toBe(true);
   });
 
@@ -48,7 +43,7 @@ describe('CheckboxInput', () => {
 
     expect(checkbox.getAttribute('data-visited')).toBeNull();
 
-    userEvent.click(checkbox);
+    await userEvent.click(checkbox);
 
     await waitFor(() => expect(checkbox.getAttribute('data-visited')).not.toBeNull());
   });
@@ -72,7 +67,7 @@ describe('CheckboxInput', () => {
 
     expect(label.getAttribute('data-visited')).toBeNull();
 
-    userEvent.click(checkbox);
+    await userEvent.click(checkbox);
 
     await waitFor(() => expect(label.getAttribute('data-visited')).not.toBeNull());
   });
@@ -95,7 +90,7 @@ describe('CheckboxInput', () => {
 
     expect(checkbox.getAttribute('data-modified')).toBeNull();
 
-    userEvent.click(checkbox);
+    await userEvent.click(checkbox);
 
     await waitFor(() => expect(checkbox.getAttribute('data-modified')).not.toBeNull());
   });
@@ -119,7 +114,7 @@ describe('CheckboxInput', () => {
 
     expect(label.getAttribute('data-modified')).toBeNull();
 
-    userEvent.click(checkbox);
+    await userEvent.click(checkbox);
 
     await waitFor(() => expect(label.getAttribute('data-modified')).not.toBeNull());
   });
@@ -148,11 +143,11 @@ describe('CheckboxInput', () => {
     //initial value is VALID because the field is unvisited and unmodified, and the form has not been submitted
     expect(checkbox.getAttribute('data-validity')).toBe('VALID');
 
-    userEvent.dblClick(checkbox);
+    await userEvent.dblClick(checkbox);
 
     await waitFor(() => expect(checkbox.getAttribute('data-validity')).toBe('INVALID'));
 
-    userEvent.click(checkbox);
+    await userEvent.click(checkbox);
 
     await waitFor(() => expect(checkbox.getAttribute('data-validity')).toBe('VALID'));
   });
@@ -182,11 +177,11 @@ describe('CheckboxInput', () => {
     //initial value is VALID because the field is unvisited and unmodified, and the form has not been submitted
     expect(label.getAttribute('data-validity')).toBe('VALID');
 
-    userEvent.dblClick(checkbox);
+    await userEvent.dblClick(checkbox);
 
     await waitFor(() => expect(label.getAttribute('data-validity')).toBe('INVALID'));
 
-    userEvent.click(checkbox);
+    await userEvent.click(checkbox);
 
     await waitFor(() => expect(label.getAttribute('data-validity')).toBe('VALID'));
   });
@@ -209,7 +204,7 @@ describe('CheckboxInput', () => {
     const checkbox = document.getElementsByTagName('input')[0];
     const formValueDisplay = document.getElementsByTagName('pre')[0];
 
-    userEvent.dblClick(checkbox);
+    await userEvent.dblClick(checkbox);
 
     await waitFor(() => expect(formValueDisplay.textContent).toBe(JSON.stringify({ myCheckbox : ''})));
   });
