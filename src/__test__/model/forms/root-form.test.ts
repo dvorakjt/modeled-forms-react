@@ -1,4 +1,4 @@
-import { describe, test, expect } from "vitest";
+import { describe, test, expect, vi } from "vitest";
 import { container } from "../../../model/container";
 import { MessageType, RootFormTemplate, Validity, required } from "../../../model";
 import { AbstractField } from "../../../model/fields/base/abstract-field";
@@ -6,6 +6,8 @@ import { Visited } from "../../../model/state/visited.enum";
 import { Modified } from "../../../model/state/modified-enum";
 import { AbstractDualField } from "../../../model/fields/base/abstract-dual-field";
 import { RootForm } from "../../../model/forms/root-form";
+import { AbstractNestedForm } from "../../../model/forms/abstract-nested-form";
+import { waitFor } from "@testing-library/react";
 
 describe('RootForm', () => {
   test('state returns the expected value for state.', () => {
@@ -261,5 +263,93 @@ describe('RootForm', () => {
 
     (rootForm.userFacingFields.fieldA as AbstractField).setValue('some value');
     (rootForm.userFacingFields.fieldB as AbstractField).setValue('some other value');
+  });
+
+  test('calling tryConfirm() calls tryConfirm() on all fields that are nested forms.', () => {
+    const template : RootFormTemplate = {
+      fields : {
+        nestedForm : {
+          fields : {
+            fieldA : ''
+          }
+        }
+      },
+      submitFn : () => {
+        return new Promise((resolve) => {
+          resolve('Response from imaginary server')
+        })
+      }
+    }
+
+    const rootForm = container.services.RootFormTemplateParser.parseTemplate(template);
+
+    const nestedForm = rootForm.userFacingFields.nestedForm as AbstractNestedForm;
+
+    vi.spyOn(nestedForm, 'tryConfirm');
+
+    rootForm.tryConfirm({});
+
+    expect(nestedForm.tryConfirm).toHaveBeenCalledOnce();
+  });
+
+  test('If confirmationManager.confirmationState.message is defined, it is included in state.messages.', () => {
+    const template : RootFormTemplate = {
+      fields : {
+        fieldA : {
+          defaultValue : '',
+          syncValidators : [
+            required('field A is required')
+          ]
+        }
+      },
+      submitFn : () => {
+        return new Promise((resolve) => {
+          resolve('Response from imaginary server')
+        })
+      }
+    }
+
+    const rootForm = container.services.RootFormTemplateParser.parseTemplate(template);
+
+    const expectedErrorMessage = 'There are invalid or pending fields.';
+
+    rootForm.tryConfirm({errorMessage : expectedErrorMessage});
+
+    expect(rootForm.state.messages).toStrictEqual([
+      {
+        text : expectedErrorMessage,
+        type : MessageType.INVALID
+      }
+    ])
+  });
+
+  test('trySubmit resets the SubmissionManager\'s message property.', async () => {
+    const template : RootFormTemplate = {
+      fields : {
+        fieldA : ''
+      },
+      submitFn : () => {
+        return new Promise((resolve) => {
+          resolve('Response from imaginary server')
+        })
+      }
+    }
+
+    const rootForm = container.services.RootFormTemplateParser.parseTemplate(template) as RootForm;
+
+    const expectedMessage = {
+      text : 'error submitting the form',
+      type : MessageType.ERROR
+    }
+
+    rootForm._submissionManager.message = expectedMessage;
+
+    expect(rootForm.state.messages).toStrictEqual([
+      expectedMessage
+    ]);
+
+    rootForm.trySubmit({});
+
+    await waitFor(() => expect(rootForm.state.messages).toStrictEqual([]));
   });
 });
