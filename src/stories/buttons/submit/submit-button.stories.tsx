@@ -54,7 +54,7 @@ const template : RootFormTemplate = {
   submitFn : ({ value }) => new Promise((resolve) => resolve(value))
 }
 
-export const Default : Story = {
+export const AlwaysEnabled : Story = {
   render : () => {
     const [submittedData, setSubmittedData] = useState('');
 
@@ -69,7 +69,33 @@ export const Default : Story = {
         <label>Birthday</label><br />
         <Input type='date' className={styles.input} fieldName='birthday'  />
         <br />
-        <SubmitButton onResolve={(value) => setSubmittedData(JSON.stringify(value))} onReject={(e) => { console.log(e) }} />
+        <SubmitButton onSuccess={(value) => setSubmittedData(JSON.stringify(value))} onError={(e) => { console.log(e) }} />
+        <pre>{submittedData}</pre>
+        <button onClick={(e) => {
+          e.preventDefault();
+          clearSubmittedData();
+        }}>Clear Submitted Data</button>
+      </RootForm>
+    )
+  }
+}
+
+export const EnabledOnlyWhenValid : Story = {
+  render : () => {
+    const [submittedData, setSubmittedData] = useState('');
+
+    const clearSubmittedData = () => setSubmittedData('');
+
+    return (
+      <RootForm template={template}>
+        <label>Name</label><br />
+        <Input type='text' className={styles.input} fieldName='name' />
+        <label>Email</label><br />
+        <Input type='email' className={styles.input} fieldName='email' />
+        <label>Birthday</label><br />
+        <Input type='date' className={styles.input} fieldName='birthday'  />
+        <br />
+        <SubmitButton onSuccess={(value) => setSubmittedData(JSON.stringify(value))} onError={(e) => { console.log(e) }} enableOnlyWhenValid/>
         <pre>{submittedData}</pre>
         <button onClick={(e) => {
           e.preventDefault();

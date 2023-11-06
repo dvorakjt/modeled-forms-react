@@ -17,8 +17,10 @@ const DEFAULT_SETTINGS = {
     finalizerError:
       'An unexpected error occurred while preparing the form for submission.',
     finalizerPending: 'Preparing form for submission...',
-    submissionFailed:
+    confirmationFailed:
       'There are invalid or pending fields, or the form is currently being prepared for submission.',
+    submissionError:
+      'There was an unknown problem submitting the form.'
   },
 }
 

@@ -1,3 +1,5 @@
+import { getFieldMessageIdPrefix } from "./get-field-message-id-prefix"
+
 export function getMessageId(fieldName : string, id : number) {
-  return `${fieldName}-messages-${id}`;
+  return `${getFieldMessageIdPrefix(fieldName)}-${id}`;
 }

@@ -10,6 +10,7 @@ export interface Config {
     adapterError: string;
     finalizerError: string;
     finalizerPending: string;
-    submissionFailed: string;
+    confirmationFailed : string;
+    submissionError : string;
   },
 }

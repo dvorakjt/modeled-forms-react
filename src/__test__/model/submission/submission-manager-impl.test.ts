@@ -1,162 +1,134 @@
-import { describe, test, expect } from "vitest";
-import { SubmitFn } from "../../../model/submission/submit-fn.type";
+import { describe, test, expect, vi } from "vitest";
+import { waitFor } from "@testing-library/react";
 import { SubmissionManagerImpl } from "../../../model/submission/submission-manager-impl";
-import { AnyState, Message, MessageType, Validity } from "../../../model";
+import { container } from "../../../model/container";
+import { Message, MessageType, State, Validity } from "../../../model";
 import { Visited } from "../../../model/state/visited.enum";
 import { Modified } from "../../../model/state/modified-enum";
-import { container } from "../../../model/container";
 
 describe('SubmissionManagerImpl', () => {
-  test('setting submissionState causes submissionStateChanges to emit a new value.', () => {
-    const submitFn : SubmitFn = () => {
-      return new Promise((resolve) => {
-        resolve('response from an imaginary server');
-      });
-    }
-    const submissionManager = new SubmissionManagerImpl(submitFn);
+  test('trySubmit() calls onSuccess when the Promise returned by the submitFn resolves.', async () => {
+    const submitFn = () => new Promise<void>((resolve) => resolve());
 
-    const expectedSubmissionState = {
-      submissionAttempted : true,
-      message : {
-        text : 'a message',
-        type : MessageType.INVALID
-      }
-    }
+    const submissionManager = new SubmissionManagerImpl(submitFn, container.services.ConfigLoader.config);
 
-    submissionManager.submissionState = expectedSubmissionState;
+    const onSuccess = vi.fn();
 
-    submissionManager.submissionStateChanges.subscribe(change => {
-      expect(change).toStrictEqual(expectedSubmissionState);
-    })
-  });
-
-  test('When submit() is called, submissionAttempted is set to true.', () => {
-    const submitFn : SubmitFn = () => {
-      return new Promise((resolve) => {
-        resolve('response from an imaginary server');
-      });
-    }
-    const submissionManager = new SubmissionManagerImpl(submitFn);
-
-    const state : AnyState = {
-      value : {
-        someField : ''
-      },
-      validity : Validity.VALID_FINALIZABLE,
-      messages : ([] as Array<Message>),
-      visited : Visited.YES,
-      modified : Modified.YES,
-    }
-
-    submissionManager.submit(state);
-
-    expect(submissionManager.submissionState.submissionAttempted).toBe(true);
-  });
-
-  test('When submit() is called, if validity is Validity.INVALID, the promise is rejected.', async () => {
-    const submitFn : SubmitFn = () => {
-      return new Promise((resolve) => {
-        resolve('response from an imaginary server');
-      });
-    }
-    const submissionManager = new SubmissionManagerImpl(submitFn);
-
-    const state : AnyState = {
+    const state : State<any> = {
       value : {},
-      validity : Validity.INVALID,
-      messages : ([] as Array<Message>),
+      validity : Validity.VALID_FINALIZABLE,
+      messages : [] as Array<Message>,
       visited : Visited.NO,
-      modified : Modified.NO,
+      modified : Modified.NO
     }
 
-    let error : any;
+    submissionManager.trySubmit({ state, onSuccess });
 
-    try {
-      await submissionManager.submit(state)
-    } catch(e) {
-      error = e;
-    } finally {
-      expect(error).toBeInstanceOf(Error);
-    }
+    await waitFor(() => expect(onSuccess).toHaveBeenCalled());
   });
 
-  test('When submit() is called, if validity is Validity.INVALID, message is set to the expected message.', async () => {
-    const submitFn : SubmitFn = () => {
-      return new Promise((resolve) => {
-        resolve('response from an imaginary server');
-      });
-    }
-    const submissionManager = new SubmissionManagerImpl(submitFn);
+  test('If the promise returned by the submitFn is rejected with an error that has a message property, message.text is set to that message.', async () => {
+    const expectedError = 'There was a problem submitting the form.';
 
-    const state : AnyState = {
+    const submitFn = vi.fn().mockRejectedValue(new Error(expectedError));
+
+    const submissionManager = new SubmissionManagerImpl(submitFn, container.services.ConfigLoader.config);
+
+    const state : State<any> = {
       value : {},
-      validity : Validity.INVALID,
-      messages : ([] as Array<Message>),
+      validity : Validity.VALID_FINALIZABLE,
+      messages : [] as Array<Message>,
       visited : Visited.NO,
-      modified : Modified.NO,
+      modified : Modified.NO
     }
 
-    try {
-      await submissionManager.submit(state)
-    } catch(e) {
-      expect(submissionManager.submissionState.message).toStrictEqual({
-        text : container.services.ConfigLoader.config.globalMessages.submissionFailed,
-        type : MessageType.INVALID
-      });
-    } 
+    submissionManager.trySubmit({ state, });
+
+    await waitFor(() => expect(submissionManager.message).toStrictEqual({
+      text : expectedError,
+      type : MessageType.ERROR
+    }));
   });
 
-  test('When submit() is called, if validity is Validity.VALID_FINALIZABLE and the promise resolves, the promise returned by submit() resolves.', async () => {
-    const expectedResponse = 'response from an imaginary server';
+  test('If the promise returned by the submitFn is rejected without a message, message.text is set to the global default.', async () => {
+    const submitFn = vi.fn().mockRejectedValue(null);
 
-    const submitFn : SubmitFn = () => {
-      return new Promise((resolve) => {
-        resolve(expectedResponse);
-      });
-    }
-    const submissionManager = new SubmissionManagerImpl(submitFn);
+    const submissionManager = new SubmissionManagerImpl(submitFn, container.services.ConfigLoader.config);
 
-    const state : AnyState = {
-      value : {
-        someField : ''
-      },
+    const state : State<any> = {
+      value : {},
       validity : Validity.VALID_FINALIZABLE,
-      messages : ([] as Array<Message>),
-      visited : Visited.YES,
-      modified : Modified.YES,
+      messages : [] as Array<Message>,
+      visited : Visited.NO,
+      modified : Modified.NO
     }
 
-    const response = await submissionManager.submit(state);
-    expect(response).toBe(expectedResponse);
+    submissionManager.trySubmit({ state, });
+
+    await waitFor(() => expect(submissionManager.message).toStrictEqual({
+      text : container.services.ConfigLoader.config.globalMessages.submissionError,
+      type : MessageType.ERROR
+    }));
   });
 
-  test('When submit() is called, if validity is Validity.VALID_FINALIZABLE and the promise is rejected, the promise returned by submit() is rejected.', async () => {
-    const expectedError = new Error('error submitting form data');
-    const submitFn : SubmitFn = () => {
-      return new Promise((_resolve, reject) => {
-        reject(expectedError);
-      });
-    }
-    const submissionManager = new SubmissionManagerImpl(submitFn);
+  test('trySubmit() calls onError when the Promise returned by the submitFn is rejected.', async () => {
+    const submitFn = vi.fn().mockRejectedValue(new Error('error submitting the form'));
 
-    const state : AnyState = {
-      value : {
-        someField : ''
-      },
+    const submissionManager = new SubmissionManagerImpl(submitFn, container.services.ConfigLoader.config);
+
+    const onError = vi.fn();
+
+    const state : State<any> = {
+      value : {},
       validity : Validity.VALID_FINALIZABLE,
-      messages : ([] as Array<Message>),
-      visited : Visited.YES,
-      modified : Modified.YES,
+      messages : [] as Array<Message>,
+      visited : Visited.NO,
+      modified : Modified.NO
     }
 
-    let error : any;
+    submissionManager.trySubmit({ state, onError });
 
-    try {
-      await submissionManager.submit(state)
-    } catch(e) {
-      error = e;
-    } finally {
-      expect(error).toBe(expectedError);
-    }
+    await waitFor(() => expect(onError).toHaveBeenCalled());
   });
-})
+
+
+  test('trySubmit() calls onFinally when the Promise returned by the submitFn resolves.', async () => {
+    const submitFn = () => new Promise<void>((resolve) => resolve());
+
+    const submissionManager = new SubmissionManagerImpl(submitFn, container.services.ConfigLoader.config);
+
+    const onFinally= vi.fn();
+
+    const state : State<any> = {
+      value : {},
+      validity : Validity.VALID_FINALIZABLE,
+      messages : [] as Array<Message>,
+      visited : Visited.NO,
+      modified : Modified.NO
+    }
+
+    submissionManager.trySubmit({ state, onFinally });
+
+    await waitFor(() => expect(onFinally).toHaveBeenCalled());
+  });
+
+  test('trySubmit() calls onFinally when the Promise returned by the submitFn is rejected.', async () => {
+    const submitFn = vi.fn().mockRejectedValue(new Error('error submitting the form'));
+
+    const submissionManager = new SubmissionManagerImpl(submitFn, container.services.ConfigLoader.config);
+
+    const onFinally = vi.fn();
+
+    const state : State<any> = {
+      value : {},
+      validity : Validity.VALID_FINALIZABLE,
+      messages : [] as Array<Message>,
+      visited : Visited.NO,
+      modified : Modified.NO
+    }
+
+    submissionManager.trySubmit({ state, onFinally });
+
+    await waitFor(() => expect(onFinally).toHaveBeenCalled());
+  });
+});

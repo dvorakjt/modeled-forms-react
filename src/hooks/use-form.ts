@@ -4,15 +4,18 @@ import { useField as _useField } from './use-field';
 import { useDualField as _useDualField } from './use-dual-field';
 import { useExtractedValue as _useExtractedValue } from './use-extracted-value';
 import { useOmittableFormElement as _useOmittableFormElement } from './use-omittable-form-element';
+import { useConfirmationAttempted as _useConfirmationAttempted } from './use-confirmation-attempted';
 import { AbstractRootForm } from '../model/forms/abstract-root-form';
 import { AbstractNestedForm } from '../model/forms/abstract-nested-form';
 import { AbstractField } from '../model/fields/base/abstract-field';
 import { AbstractDualField } from '../model/fields/base/abstract-dual-field';
+import { TryConfirmArgsObject } from '../model/confirmation/confirmation-manager.interface';
 
 export function useForm(form: AbstractRootForm | AbstractNestedForm) {
   const useFormState = () => _useFormState(form);
   const useFirstNonValidFormElement = () => _useFirstNonValidFormElement(form);
   const reset = () => form.reset();
+  const tryConfirm = (argsObject : TryConfirmArgsObject) => form.tryConfirm(argsObject);
 
   const useField = (fieldName: string) => {
     if (!(fieldName in form.userFacingFields)) {
@@ -83,9 +86,15 @@ export function useForm(form: AbstractRootForm | AbstractNestedForm) {
     return _useExtractedValue(form.extractedValues[key]);
   }
 
+  const useConfirmationAttempted = () => {
+    return _useConfirmationAttempted(form);
+  }
+
   return {
     useFormState,
     useFirstNonValidFormElement,
+    useConfirmationAttempted,
+    tryConfirm,
     reset,
     useField,
     useDualField,

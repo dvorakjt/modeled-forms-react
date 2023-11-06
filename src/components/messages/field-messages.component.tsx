@@ -1,7 +1,6 @@
 'use client';
 import React, { CSSProperties, useContext } from 'react';
 import { FormContext } from '../context-providers/form-context';
-import { RootFormContext } from '../context-providers/root-form-provider.component';
 import { Messages } from './messages.component';
 import { Visited } from '../../model/state/visited.enum';
 import { Modified } from '../../model/state/modified-enum';
@@ -22,18 +21,17 @@ export function FieldMessages({
   messageClassName,
   messageStyle
 } : FieldMessagesProps) {
-  const rootFormCtx = useContext(RootFormContext);
   const formCtx = useContext(FormContext);
-  if(!rootFormCtx) throw new Error('FieldMessages cannot access properties of null or undefined RootFormContext.');
   if(!formCtx) throw new Error('FieldMessages cannot access properties of null or undefined FormContext.');
   else {
-    const { useField } = formCtx;
+    const { useField, useConfirmationAttempted } = formCtx;
     const { messages, visited, modified } = useField(fieldName);
-    const { useSubmissionAttempted } = rootFormCtx;
-    const submissionAttempted = useSubmissionAttempted();
+
+    const confirmationAttempted = useConfirmationAttempted();
+
     return (
       <Messages 
-        messages={(submissionAttempted || visited === Visited.YES || modified === Modified.YES) ? messages : []} 
+        messages={(confirmationAttempted || visited === Visited.YES || modified === Modified.YES) ? messages : []} 
         containerClassName={containerClassName}
         containerStyle={containerStyle}
         messageClassName={messageClassName}

@@ -1,5 +1,5 @@
 import { describe, test, expect } from 'vitest';
-import { renderHook, waitFor } from '@testing-library/react';
+import { renderHook } from '@testing-library/react';
 import { useRootForm } from '../../hooks';
 import { RootFormTemplate } from '../../model';
 
@@ -66,12 +66,6 @@ describe('useRootForm()', () => {
     expect(typeof useExtractedValue).toBe('function');
   });
 
-  test('It returns useSubmissionAttempted().', () => {
-    const { result } = renderHook(() => useRootForm(formTemplate));
-    const { useSubmissionAttempted } = result.current;
-    expect(typeof useSubmissionAttempted).toBe('function');
-  });
-
   test('It returns useFirstNonValidFormElement().', () => {
     const { result } = renderHook(() => useRootForm(formTemplate));
     const { useFirstNonValidFormElement } = result.current;
@@ -82,39 +76,6 @@ describe('useRootForm()', () => {
     const { result } = renderHook(() => useRootForm(formTemplate));
     const { reset } = result.current;
     expect(typeof reset).toBe('function');
-  });
-
-  test('It returns submit().', () => {
-    const { result } = renderHook(() => useRootForm(formTemplate));
-    const { submit } = result.current;
-    expect(typeof submit).toBe('function')
-  });
-
-  test('submit() returns a promise that has access to the form\'s current state.', () => {
-    const { result } = renderHook(() => useRootForm(formTemplate));
-    const { submit } = result.current;
-    submit().then(value => {
-      expect(value).toStrictEqual({
-        basicField : '',
-        dualField : '',
-        nestedForm : {
-          fieldA : '',
-          fieldB : '' 
-        }
-      });
-    });
-  });
-
-  test('useSubmissionAttempted() updates when submit() is called.', async () => {
-    const { result : useRootFormResult } = renderHook(() => useRootForm(formTemplate));
-    const { submit, useSubmissionAttempted } = useRootFormResult.current;
-    const { result : useSubmissionAttemptedResult } = renderHook(() => useSubmissionAttempted());
-
-    expect(useSubmissionAttemptedResult.current).toBe(false);
-
-    submit();
-
-    await waitFor(() => expect(useSubmissionAttemptedResult.current).toBe(true));
   });
 });
 

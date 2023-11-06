@@ -1,4 +1,4 @@
-import { describe, test, expect } from 'vitest';
+import { describe, test, expect, vi } from 'vitest';
 import { container } from '../../../model/container';
 import { MessageType, NestedFormTemplate, Validity, required } from '../../../model';
 import { AbstractField } from '../../../model/fields/base/abstract-field';
@@ -6,6 +6,7 @@ import { Visited } from '../../../model/state/visited.enum';
 import { Modified } from '../../../model/state/modified-enum';
 import { AbstractDualField } from '../../../model/fields/base/abstract-dual-field';
 import { NestedForm } from '../../../model/forms/nested-form';
+import { AbstractNestedForm } from '../../../model/forms/abstract-nested-form';
 
 describe('NestedForm', () => {
   test('state returns the expected value for state.', () => {
@@ -273,5 +274,53 @@ describe('NestedForm', () => {
 
     (nestedForm.userFacingFields.fieldA as AbstractField).setValue('some value');
     (nestedForm.userFacingFields.fieldB as AbstractField).setValue('some other value');
+  });
+
+  test('calling tryConfirm() calls tryConfirm() on all fields that are nested forms.', () => {
+    const template : NestedFormTemplate = {
+      fields : {
+        anotherNestedForm : {
+          fields : {
+            fieldA : ''
+          }
+        }
+      }
+    }
+
+    const nestedForm = container.services.NestedFormTemplateParser.parseTemplate(template);
+
+    const anotherNestedForm = nestedForm.userFacingFields.anotherNestedForm as AbstractNestedForm
+
+    vi.spyOn(anotherNestedForm, 'tryConfirm');
+
+    nestedForm.tryConfirm({});
+
+    expect(anotherNestedForm.tryConfirm).toHaveBeenCalledOnce();
+  });
+
+  test('If confirmationManager.confirmationState.message is defined, it is included in state.messages.', () => {
+    const template : NestedFormTemplate = {
+      fields : {
+        fieldA : {
+          defaultValue : '',
+          syncValidators : [
+            required('field A is required')
+          ]
+        }
+      }
+    }
+
+    const nestedForm = container.services.NestedFormTemplateParser.parseTemplate(template);
+
+    const expectedErrorMessage = 'There are invalid or pending fields.';
+
+    nestedForm.tryConfirm({errorMessage : expectedErrorMessage});
+
+    expect(nestedForm.state.messages).toStrictEqual([
+      {
+        text : expectedErrorMessage,
+        type : MessageType.INVALID
+      }
+    ])
   });
 });

@@ -4,6 +4,7 @@ import { FormContext, FormContextType } from "../../../components/context-provid
 import { Message, Validity } from "../../../model"
 import { Visited } from "../../../model/state/visited.enum"
 import { Modified } from "../../../model/state/modified-enum"
+import { TryConfirmArgsObject } from "../../../model/confirmation/confirmation-manager.interface"
 
 interface MockFormContextProps {
   mockContextValue? : Partial<FormContextType>
@@ -81,6 +82,10 @@ function getMockFormContextValue() {
       }
 
       return returnValue;
+    },
+    useConfirmationAttempted : () => false,
+    tryConfirm : (argsObject : TryConfirmArgsObject) => {
+      return;
     },
     reset : () => {
       return;

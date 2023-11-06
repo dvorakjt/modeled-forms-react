@@ -4,13 +4,20 @@ import {
   SubmissionManagerFactoryKey,
   SubmissionManagerFactoryKeyType,
 } from './submission-manager-factory.interface';
-import { SubmissionManagerImpl } from './submission-manager-impl';
-import { SubmissionManager } from './submission-manager.interface';
-import { SubmitFn } from './submit-fn.type';
+import { ConfigLoader, ConfigLoaderKey } from "../config-loader/config-loader.interface";
+import { SubmissionManagerImpl } from "./submission-manager-impl";
+import { SubmissionManager } from "./submission-manager.interface";
+import { SubmitFn } from "./submit-fn.type";
 
 class SubmissionManagerFactoryImpl implements SubmissionManagerFactory {
+  _configLoader : ConfigLoader;
+
+  constructor(configLoader : ConfigLoader) {
+    this._configLoader = configLoader;
+  }
+
   createSubmissionManager(submitFn: SubmitFn): SubmissionManager {
-    return new SubmissionManagerImpl(submitFn);
+    return new SubmissionManagerImpl(submitFn, this._configLoader.config);
   }
 }
 
@@ -18,6 +25,6 @@ const SubmissionManagerFactoryService = autowire<
   SubmissionManagerFactoryKeyType,
   SubmissionManagerFactory,
   SubmissionManagerFactoryImpl
->(SubmissionManagerFactoryImpl, SubmissionManagerFactoryKey);
+>(SubmissionManagerFactoryImpl, SubmissionManagerFactoryKey, [ConfigLoaderKey]);
 
 export { SubmissionManagerFactoryImpl, SubmissionManagerFactoryService };
