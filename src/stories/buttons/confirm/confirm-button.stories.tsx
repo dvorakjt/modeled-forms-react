@@ -1,13 +1,14 @@
-import React, { useState} from 'react';
+import React from 'react';
 import { Meta, StoryObj } from '@storybook/react';
-import { SubmitButton } from '../../../components/buttons/submit-button.component';
+import { ConfirmButton } from '../../../components/buttons/confirm-button.component';
 import { RootForm } from '../../../components/forms/root-form.component.component';
 import { Input } from '../../../components/input/input.component';
 import { RootFormTemplate, Validity, email, maxDate, required } from '../../../model';
 import styles from './styles.module.css';
+import { FormMessages } from '../../../components';
 
-const meta : Meta<typeof SubmitButton> = {
-  component : SubmitButton,
+const meta : Meta<typeof ConfirmButton> = {
+  component : ConfirmButton,
   parameters : {
     layout: 'centered'
   }
@@ -15,7 +16,7 @@ const meta : Meta<typeof SubmitButton> = {
 
 export default meta;
 
-type Story = StoryObj<typeof SubmitButton>;
+type Story = StoryObj<typeof ConfirmButton>;
 
 const template : RootFormTemplate = {
   fields : {
@@ -54,12 +55,8 @@ const template : RootFormTemplate = {
   submitFn : ({ value }) => new Promise((resolve) => resolve(value))
 }
 
-export const AlwaysEnabled : Story = {
+export const Default: Story = {
   render : () => {
-    const [submittedData, setSubmittedData] = useState('');
-
-    const clearSubmittedData = () => setSubmittedData('');
-
     return (
       <RootForm template={template}>
         <label>Name</label><br />
@@ -69,38 +66,8 @@ export const AlwaysEnabled : Story = {
         <label>Birthday</label><br />
         <Input type='date' className={styles.input} fieldName='birthday'  />
         <br />
-        <SubmitButton onSuccess={(value) => setSubmittedData(JSON.stringify(value))} onError={(e) => { console.log(e) }} />
-        <pre>{submittedData}</pre>
-        <button onClick={(e) => {
-          e.preventDefault();
-          clearSubmittedData();
-        }}>Clear Submitted Data</button>
-      </RootForm>
-    )
-  }
-}
-
-export const EnabledOnlyWhenValid : Story = {
-  render : () => {
-    const [submittedData, setSubmittedData] = useState('');
-
-    const clearSubmittedData = () => setSubmittedData('');
-
-    return (
-      <RootForm template={template}>
-        <label>Name</label><br />
-        <Input type='text' className={styles.input} fieldName='name' />
-        <label>Email</label><br />
-        <Input type='email' className={styles.input} fieldName='email' />
-        <label>Birthday</label><br />
-        <Input type='date' className={styles.input} fieldName='birthday'  />
-        <br />
-        <SubmitButton onSuccess={(value) => setSubmittedData(JSON.stringify(value))} onError={(e) => { console.log(e) }} enableOnlyWhenValid/>
-        <pre>{submittedData}</pre>
-        <button onClick={(e) => {
-          e.preventDefault();
-          clearSubmittedData();
-        }}>Clear Submitted Data</button>
+        <FormMessages idPrefix='myForm' />
+        <ConfirmButton>Confirm</ConfirmButton>
       </RootForm>
     )
   }
