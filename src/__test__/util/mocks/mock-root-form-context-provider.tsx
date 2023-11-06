@@ -7,9 +7,6 @@ interface MockRootFormContextProps {
 
 export function MockRootFormContext({ mockContextValue = {}, children } : PropsWithChildren<MockRootFormContextProps>) {
   const value : RootFormContextType = {
-    useSubmissionAttempted : () => {
-      return false;
-    },
     submit : () => {
       return new Promise<void>((resolve) => resolve())
     },

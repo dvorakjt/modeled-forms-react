@@ -1,5 +1,5 @@
 import { describe, test, expect } from 'vitest';
-import { renderHook, waitFor } from '@testing-library/react';
+import { renderHook } from '@testing-library/react';
 import { useRootForm } from '../../hooks';
 import { RootFormTemplate } from '../../model';
 
@@ -66,12 +66,6 @@ describe('useRootForm()', () => {
     expect(typeof useExtractedValue).toBe('function');
   });
 
-  test('It returns useSubmissionAttempted().', () => {
-    const { result } = renderHook(() => useRootForm(formTemplate));
-    const { useSubmissionAttempted } = result.current;
-    expect(typeof useSubmissionAttempted).toBe('function');
-  });
-
   test('It returns useFirstNonValidFormElement().', () => {
     const { result } = renderHook(() => useRootForm(formTemplate));
     const { useFirstNonValidFormElement } = result.current;
@@ -103,18 +97,6 @@ describe('useRootForm()', () => {
         }
       });
     });
-  });
-
-  test('useSubmissionAttempted() updates when submit() is called.', async () => {
-    const { result : useRootFormResult } = renderHook(() => useRootForm(formTemplate));
-    const { submit, useSubmissionAttempted } = useRootFormResult.current;
-    const { result : useSubmissionAttemptedResult } = renderHook(() => useSubmissionAttempted());
-
-    expect(useSubmissionAttemptedResult.current).toBe(false);
-
-    submit();
-
-    await waitFor(() => expect(useSubmissionAttemptedResult.current).toBe(true));
   });
 });
 

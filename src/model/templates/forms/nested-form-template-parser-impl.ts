@@ -20,18 +20,21 @@ import {
 } from './nested-form-template-parser.interface';
 import { NestedFormTemplate } from './nested-form-template.interface';
 import { ExtractedValuesTemplateParser, ExtractedValuesTemplateParserKey } from '../extracted-values/extracted-values-template-parser.interface';
+import { ConfirmationManagerFactory, ConfirmationManagerFactoryKey } from '../../confirmation/confirmation-manager-factory.interface';
 
 class NestedFormTemplateParserImpl implements NestedFormTemplateParser {
   _formElementTemplateDictionaryParser: FormElementTemplateDictionaryParser;
   _multiFieldValidatorsTemplateParser: MultiFieldValidatorsTemplateParser;
   _finalizerTemplateDictionaryParser: FinalizerTemplateDictionaryParser;
   _extractedValuesTemplateParser : ExtractedValuesTemplateParser;
+  _confirmationManagerFactory : ConfirmationManagerFactory;
 
   constructor(
     formElementTemplateDictionaryParser: FormElementTemplateDictionaryParser,
     multiFieldValidatorsTemplateParser: MultiFieldValidatorsTemplateParser,
     finalizerTemplateDictionaryParser: FinalizerTemplateDictionaryParser,
-    extractedValuesTemplate : ExtractedValuesTemplateParser
+    extractedValuesTemplate : ExtractedValuesTemplateParser,
+    confirmationManagerFactory : ConfirmationManagerFactory
   ) {
     this._formElementTemplateDictionaryParser =
       formElementTemplateDictionaryParser;
@@ -39,11 +42,14 @@ class NestedFormTemplateParserImpl implements NestedFormTemplateParser {
       multiFieldValidatorsTemplateParser;
     this._finalizerTemplateDictionaryParser = finalizerTemplateDictionaryParser;
     this._extractedValuesTemplateParser = extractedValuesTemplate;
+    this._confirmationManagerFactory = confirmationManagerFactory;
   }
   parseTemplate(template: NestedFormTemplate): AbstractNestedForm {
     const [baseFields, firstNonValidFormElementTracker] =
       this._formElementTemplateDictionaryParser.parseTemplate(template.fields);
+
     const multiFieldValidatorsTemplate = template.multiFieldValidators ?? {};
+
     const [
       userFacingFields,
       finalizerFacingFields,
@@ -52,24 +58,32 @@ class NestedFormTemplateParserImpl implements NestedFormTemplateParser {
       multiFieldValidatorsTemplate,
       baseFields,
     );
+
     const finalizedFields = template.finalizedFields ?? {};
+
     const finalizerManager =
       this._finalizerTemplateDictionaryParser.parseTemplate(
         finalizedFields,
         finalizerFacingFields,
       );
+
     const extractedValues = this._extractedValuesTemplateParser.parseTemplate(template.extractedValues ?? {
       syncExtractedValues : {},
       asyncExtractedValues : {}
     }, finalizerFacingFields)
+
+    const confirmationManager = this._confirmationManagerFactory.createConfirmationManager();
+
     const form = new NestedForm(
       userFacingFields,
       extractedValues,
       firstNonValidFormElementTracker,
       finalizerManager,
       multiInputValidatorMessagesAggregator,
+      confirmationManager,
       template.omitByDefault ?? false,
     );
+    
     return form; //the new form part should come from a factory
   }
 }
@@ -82,7 +96,8 @@ const NestedFormTemplateParserService = autowire<
   FormElementTemplateDictionaryParserKey,
   MultiFieldValidatorsTemplateParserKey,
   FinalizerTemplateDictionaryParserKey,
-  ExtractedValuesTemplateParserKey
+  ExtractedValuesTemplateParserKey,
+  ConfirmationManagerFactoryKey
 ]);
 
 export { NestedFormTemplateParserImpl, NestedFormTemplateParserService };

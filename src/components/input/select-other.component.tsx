@@ -4,7 +4,6 @@ import { FormContext } from '../context-providers/form-context';
 import { validityToString } from '../util/validity-to-string';
 import { Validity } from '../../model/state/validity.enum';
 import { getAriaDescribedBy } from '../util/get-aria-described-by';
-import { RootFormContext } from '../context-providers/root-form-provider.component';
 import { Visited } from '../../model/state/visited.enum';
 import { Modified } from '../../model/state/modified-enum';
 
@@ -39,12 +38,10 @@ interface SelectOtherProps {
 }
 
 export function SelectOther({ fieldName, labelText, selectProps = {}, inputProps = { type : 'text' }, children} : PropsWithChildren<SelectOtherProps>) {
-  const rootFormCtx = useContext(RootFormContext);
   const formCtx = useContext(FormContext);
-  if(!rootFormCtx) throw new Error('Input cannot access properties of null or undefined RootFormContext');
   if(!formCtx) throw new Error('Input cannot access properties of null or undefined FormContext');
   else {
-    const { useDualField } = formCtx;
+    const { useDualField, useConfirmationAttempted } = formCtx;
     const { usePrimaryField, useSecondaryField, useSwitchToSecondaryField } = useDualField(fieldName);
     const { 
       value : primaryValue, 
@@ -67,8 +64,7 @@ export function SelectOther({ fieldName, labelText, selectProps = {}, inputProps
 
     const { useSecondaryField : isUsingSecondaryField, setUseSecondaryField } = useSwitchToSecondaryField();
 
-    const { useSubmissionAttempted } = rootFormCtx;
-    const submissionAttempted = useSubmissionAttempted();
+    const confirmationAttempted = useConfirmationAttempted();
 
     const onChangeSelect : ChangeEventHandler<HTMLSelectElement> = (e) => {
       updatePrimaryValue(e.target.value);
@@ -88,7 +84,7 @@ export function SelectOther({ fieldName, labelText, selectProps = {}, inputProps
       <>
         <label
           htmlFor={`${fieldName}-select`}
-          data-validity={(submissionAttempted || primaryVisited === Visited.YES || primaryModified === Modified.YES) ? validityToString(primaryValidity) : validityToString(Validity.VALID_FINALIZABLE)} 
+          data-validity={(confirmationAttempted || primaryVisited === Visited.YES || primaryModified === Modified.YES) ? validityToString(primaryValidity) : validityToString(Validity.VALID_FINALIZABLE)} 
           data-visited={primaryVisited !== Visited.NO ? true : null}
           data-modified={primaryModified !== Modified.NO ? true : null}
           className={selectProps.labelClassName}
@@ -101,11 +97,11 @@ export function SelectOther({ fieldName, labelText, selectProps = {}, inputProps
           value={primaryValue}
           onChange={onChangeSelect}
           onBlur={visitPrimary}
-          data-validity={(submissionAttempted || primaryVisited === Visited.YES || primaryModified === Modified.YES) ? validityToString(primaryValidity) : validityToString(Validity.VALID_FINALIZABLE)} 
+          data-validity={(confirmationAttempted || primaryVisited === Visited.YES || primaryModified === Modified.YES) ? validityToString(primaryValidity) : validityToString(Validity.VALID_FINALIZABLE)} 
           data-visited={primaryVisited !== Visited.NO ? true : null}
           data-modified={primaryModified !== Modified.NO ? true : null}
-          aria-invalid={!isUsingSecondaryField && (submissionAttempted || primaryVisited === Visited.YES || primaryModified === Modified.YES) && primaryValidity <= Validity.INVALID}
-          aria-describedby={!isUsingSecondaryField && (submissionAttempted || primaryVisited === Visited.YES || primaryModified === Modified.YES) ? getAriaDescribedBy(fieldName, primaryMessages) : ""}
+          aria-invalid={!isUsingSecondaryField && (confirmationAttempted || primaryVisited === Visited.YES || primaryModified === Modified.YES) && primaryValidity <= Validity.INVALID}
+          aria-describedby={!isUsingSecondaryField && (confirmationAttempted || primaryVisited === Visited.YES || primaryModified === Modified.YES) ? getAriaDescribedBy(fieldName, primaryMessages) : ""}
           id={`${fieldName}-select`}
           className={selectProps.selectClassName}
           style={selectProps.selectStyle}
@@ -118,7 +114,7 @@ export function SelectOther({ fieldName, labelText, selectProps = {}, inputProps
             <>
               <label
                 htmlFor={`${fieldName}-input`}
-                data-validity={(submissionAttempted || secondaryVisited === Visited.YES || secondaryModified === Modified.YES) ? validityToString(secondaryValidity) : validityToString(Validity.VALID_FINALIZABLE)} 
+                data-validity={(confirmationAttempted || secondaryVisited === Visited.YES || secondaryModified === Modified.YES) ? validityToString(secondaryValidity) : validityToString(Validity.VALID_FINALIZABLE)} 
                 data-visited={secondaryVisited !== Visited.NO ? true : null}
                 data-modified={secondaryModified !== Modified.NO ? true : null}
                 className={inputProps.labelClassName}
@@ -131,11 +127,11 @@ export function SelectOther({ fieldName, labelText, selectProps = {}, inputProps
                 value={secondaryValue}
                 onChange={onChangeInput}
                 onBlur={visitSecondary}
-                data-validity={(submissionAttempted || secondaryVisited === Visited.YES || secondaryModified === Modified.YES) ? validityToString(secondaryValidity) : validityToString(Validity.VALID_FINALIZABLE)} 
+                data-validity={(confirmationAttempted || secondaryVisited === Visited.YES || secondaryModified === Modified.YES) ? validityToString(secondaryValidity) : validityToString(Validity.VALID_FINALIZABLE)} 
                 data-visited={secondaryVisited !== Visited.NO ? true : null}
                 data-modified={secondaryModified !== Modified.NO ? true : null}
-                aria-invalid={isUsingSecondaryField && (submissionAttempted || secondaryVisited === Visited.YES || secondaryModified === Modified.YES) && secondaryValidity <= Validity.INVALID}
-                aria-describedby={isUsingSecondaryField && (submissionAttempted || secondaryVisited === Visited.YES || secondaryModified === Modified.YES) ? getAriaDescribedBy(fieldName, secondaryMessages) : ""}
+                aria-invalid={isUsingSecondaryField && (confirmationAttempted || secondaryVisited === Visited.YES || secondaryModified === Modified.YES) && secondaryValidity <= Validity.INVALID}
+                aria-describedby={isUsingSecondaryField && (confirmationAttempted || secondaryVisited === Visited.YES || secondaryModified === Modified.YES) ? getAriaDescribedBy(fieldName, secondaryMessages) : ""}
                 id={`${fieldName}-input`}
                 className={inputProps.inputClassName}
                 style={inputProps.inputStyle}

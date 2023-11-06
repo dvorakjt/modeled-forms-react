@@ -4,7 +4,6 @@ import { FormContext } from '../context-providers/form-context';
 import { validityToString } from '../util/validity-to-string';
 import { Validity } from '../../model/state/validity.enum';
 import { getAriaDescribedBy } from '../util/get-aria-described-by';
-import { RootFormContext } from '../context-providers/root-form-provider.component';
 import { Visited } from '../../model/state/visited.enum';
 import { Modified } from '../../model/state/modified-enum';
 
@@ -19,15 +18,14 @@ interface CheckboxInputProps {
 }
 
 export function CheckboxInput({ fieldName, value, labelText, labelClassName, labelStyle, checkboxClassName, checkboxStyle} : CheckboxInputProps) {
-  const rootFormCtx = useContext(RootFormContext);
   const formCtx = useContext(FormContext);
-  if(!rootFormCtx) throw new Error('Input cannot access properties of null or undefined RootFormContext');
   if(!formCtx) throw new Error('Input cannot access properties of null or undefined FormContext');
+
   else {
-    const { useField } = formCtx;
-    const { value : fieldValue, validity, messages, visited, modified, updateValue, visit} = useField(fieldName);
-    const { useSubmissionAttempted } = rootFormCtx;
-    const submissionAttempted = useSubmissionAttempted();
+    const { useField, useConfirmationAttempted } = formCtx;
+    const { value : fieldValue, validity, messages, visited, modified, updateValue, visit } = useField(fieldName);
+
+    const confirmationAttempted = useConfirmationAttempted();
 
     return (
       <>
@@ -43,9 +41,9 @@ export function CheckboxInput({ fieldName, value, labelText, labelClassName, lab
           onChange={() => {
             updateValue(fieldValue === value ? '' : value)
           }}
-          aria-describedby={(submissionAttempted || visited === Visited.YES || modified === Modified.YES) ? getAriaDescribedBy(fieldName, messages) : ""}
-          aria-invalid={(submissionAttempted || visited === Visited.YES || modified === Modified.YES) && validity <= Validity.INVALID}
-          data-validity={(submissionAttempted || visited === Visited.YES || modified === Modified.YES) ? validityToString(validity) : validityToString(Validity.VALID_FINALIZABLE)} 
+          aria-describedby={(confirmationAttempted || visited === Visited.YES || modified === Modified.YES) ? getAriaDescribedBy(fieldName, messages) : ""}
+          aria-invalid={(confirmationAttempted || visited === Visited.YES || modified === Modified.YES) && validity <= Validity.INVALID}
+          data-validity={(confirmationAttempted || visited === Visited.YES || modified === Modified.YES) ? validityToString(validity) : validityToString(Validity.VALID_FINALIZABLE)} 
           data-visited={visited !== Visited.NO ? true : null}
           data-modified={modified !== Modified.NO ? true : null}
         />
@@ -53,7 +51,7 @@ export function CheckboxInput({ fieldName, value, labelText, labelClassName, lab
           htmlFor={fieldName} 
           className={labelClassName} 
           style={labelStyle}
-          data-validity={(submissionAttempted || visited === Visited.YES || modified === Modified.YES) ? validityToString(validity) : validityToString(Validity.VALID_FINALIZABLE)} 
+          data-validity={(confirmationAttempted || visited === Visited.YES || modified === Modified.YES) ? validityToString(validity) : validityToString(Validity.VALID_FINALIZABLE)} 
           data-visited={visited !== Visited.NO ? true : null}
           data-modified={modified !== Modified.NO ? true : null}
         >

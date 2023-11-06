@@ -10,15 +10,19 @@ import type { MultiInputValidatorMessagesAggregator } from '../aggregators/multi
 import type { SubmissionState } from '../submission/submission-state.interface';
 import { FirstNonValidFormElementTracker } from '../trackers/first-nonvalid-form-element-tracker.interface';
 import { ExtractedValueDictionary } from '../extracted-values/extracted-value-dictionary.type';
+import { ConfirmationManager, TryConfirmArgsObject } from '../confirmation/confirmation-manager.interface';
+import { AbstractNestedForm } from './abstract-nested-form';
 
 export class RootForm extends AbstractRootForm {
   readonly stateChanges: Subject<State<any>>;
+  readonly confirmationAttemptedChanges: Subject<boolean>;
   readonly submissionStateChanges: Subject<SubmissionState>;
   readonly userFacingFields: FormElementDictionary;
   readonly extractedValues: ExtractedValueDictionary;
   readonly _firstNonValidFormElementTracker: FirstNonValidFormElementTracker;
   readonly _finalizerManager: FinalizerManager;
   readonly _multiFieldValidatorMessagesAggregator: MultiInputValidatorMessagesAggregator;
+  readonly _confirmationManager : ConfirmationManager;
   readonly _submissionManager: SubmissionManager;
 
   get state() {
@@ -38,6 +42,10 @@ export class RootForm extends AbstractRootForm {
       .firstNonValidFormElementChanges;
   }
 
+  get confirmationAttempted() : boolean {
+    return this._confirmationManager.confirmationState.confirmationAttempted;
+  }
+
   get submissionState() {
     return {
       submissionAttempted:
@@ -51,6 +59,7 @@ export class RootForm extends AbstractRootForm {
     firstNonValidFormElementTracker: FirstNonValidFormElementTracker,
     finalizerManager: FinalizerManager,
     multiFieldValidatorMessagesAggregator: MultiInputValidatorMessagesAggregator,
+    confirmationManager : ConfirmationManager,
     submissionManager: SubmissionManager,
   ) {
     super();
@@ -60,6 +69,7 @@ export class RootForm extends AbstractRootForm {
     this._finalizerManager = finalizerManager;
     this._multiFieldValidatorMessagesAggregator =
       multiFieldValidatorMessagesAggregator;
+    this._confirmationManager = confirmationManager;
     this._submissionManager = submissionManager;
 
     this._multiFieldValidatorMessagesAggregator.messagesChanges.subscribe(
@@ -69,6 +79,8 @@ export class RootForm extends AbstractRootForm {
     );
 
     this._finalizerManager.stateChanges.subscribe(() => {
+      //if there are changes to fields, clear confirmation and submission messages
+      this._confirmationManager.clearMessage();
       this._submissionManager.clearMessage();
       this.stateChanges?.next(this.state);
     });
@@ -79,9 +91,32 @@ export class RootForm extends AbstractRootForm {
         this.submissionStateChanges.next(this.submissionState);
     });
 
+    this._confirmationManager.confirmationStateChanges.subscribe(() => {
+      if(this.stateChanges) this.stateChanges.next(this.state);
+      if(this.confirmationAttemptedChanges) this.confirmationAttemptedChanges.next(this.confirmationAttempted);
+    });
+
+    this.confirmationAttemptedChanges = new BehaviorSubject<boolean>(this.confirmationAttempted);
+
     this.submissionStateChanges = new BehaviorSubject(this.submissionState);
 
     this.stateChanges = new BehaviorSubject(this.state);
+  }
+
+  tryConfirm({onError, onSuccess, errorMessage}: TryConfirmArgsObject): void {
+    //call try confirm on all nested fields
+    for(const fieldName in this.userFacingFields) {
+      const field = this.userFacingFields[fieldName];
+      if(field instanceof AbstractNestedForm) {
+        field.tryConfirm({});
+      } 
+    }
+    this._confirmationManager.tryConfirm({
+      validity : this.state.validity,
+      onError,
+      onSuccess,
+      errorMessage
+    });
   }
 
   submit() {
@@ -89,6 +124,7 @@ export class RootForm extends AbstractRootForm {
   }
 
   reset() {
+    this._confirmationManager.reset();
     this._submissionManager.reset();
     for (const fieldName in this.userFacingFields) {
       this.userFacingFields[fieldName].reset();
@@ -100,6 +136,11 @@ export class RootForm extends AbstractRootForm {
       ...this._multiFieldValidatorMessagesAggregator.messages,
       ...this._finalizerManager.state.messages,
     ];
+
+    if(this._confirmationManager.confirmationState.message) {
+      messages.push(this._confirmationManager.confirmationState.message);
+    }
+
     if (this._submissionManager.submissionState.message)
       messages.push(this._submissionManager.submissionState.message);
     return messages;

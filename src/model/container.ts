@@ -28,6 +28,7 @@ import { AutoTransformerService } from './auto-transforms/auto-transformer-impl'
 import { AutoTransformedFieldFactoryService } from './fields/auto-transformed/auto-transformed-field-factory-impl';
 import { ExtractedValuesTemplateParserService } from './templates/extracted-values/extracted-values-template-parser-impl';
 import { ConfigLoaderService } from './config-loader/config-loader-impl';
+import { ConfirmationManagerFactoryService } from './confirmation/confirmation-manager-factory-impl';
 
 const container = ContainerBuilder.createContainerBuilder()
   .registerSingletonService(AdapterFactoryService)
@@ -59,6 +60,7 @@ const container = ContainerBuilder.createContainerBuilder()
   .registerSingletonService(AutoTransformedFieldFactoryService)
   .registerSingletonService(ExtractedValuesTemplateParserService)
   .registerSingletonService(ConfigLoaderService)
+  .registerSingletonService(ConfirmationManagerFactoryService)
   .build();
 
 export { container };

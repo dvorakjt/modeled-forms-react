@@ -1,7 +1,6 @@
 'use client';
 import React, { CSSProperties, useContext} from 'react';
 import { FormContext } from '../context-providers/form-context';
-import { RootFormContext } from '../context-providers/root-form-provider.component';
 import { Messages } from './messages.component';
 
 type FormMessagesProps = {
@@ -20,9 +19,7 @@ export function FormMessages({
   messageStyle
 } : FormMessagesProps) {
   const formCtx = useContext(FormContext);
-  const rootFormCtx = useContext(RootFormContext);
   if(!formCtx) throw new Error('FormMessages cannot access useFormState property of null or undefined FormContext');
-  if(!rootFormCtx) throw new Error('FormMessages cannot access useSubmissionAttempted property of null or undefined RootFormContext');
 
   const { messages } = formCtx.useFormState();
 
