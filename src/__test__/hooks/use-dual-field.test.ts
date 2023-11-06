@@ -1,6 +1,6 @@
 import { describe, test, expect } from "vitest";
 import { renderHook, waitFor } from "@testing-library/react";
-import { renderErrantHook } from "../util/hooks/render-errant-hook";
+import { renderPossiblyErrantHook } from "../util/hooks/render-possibly-errant-hook";
 import { useRootForm } from "../../hooks";
 import { MessageType, RootFormTemplate, Validity, maxLength } from "../../model";
 import { Modified } from "../../model/state/modified-enum";
@@ -26,7 +26,7 @@ describe('useDualField()', () => {
     const { result : useRootFormResult } = renderHook(() => useRootForm(template));
     const { useDualField } = useRootFormResult.current;
     
-    const { errorDetected } = renderErrantHook(() => useDualField('someNonExistentField'));
+    const { errorDetected } = renderPossiblyErrantHook(() => useDualField('someNonExistentField'));
 
     expect(errorDetected).toBe(true);
   });
@@ -35,7 +35,7 @@ describe('useDualField()', () => {
     const { result : useRootFormResult } = renderHook(() => useRootForm(template));
     const { useDualField } = useRootFormResult.current;
     
-    const { errorDetected } = renderErrantHook(() => useDualField('notADualField'));
+    const { errorDetected } = renderPossiblyErrantHook(() => useDualField('notADualField'));
 
     expect(errorDetected).toBe(true);
   });
@@ -44,7 +44,7 @@ describe('useDualField()', () => {
     const { result : useRootFormResult } = renderHook(() => useRootForm(template));
     const { useDualField } = useRootFormResult.current;
     
-    const { errorDetected } = renderErrantHook(() => useDualField('dualField'));
+    const { errorDetected } = renderPossiblyErrantHook(() => useDualField('dualField'));
 
     expect(errorDetected).toBe(false);
   });

@@ -1,6 +1,6 @@
 import { describe, test, expect } from 'vitest';
 import { renderHook } from '@testing-library/react';
-import { renderErrantHook } from '../util/hooks/render-errant-hook';
+import { renderPossiblyErrantHook } from '../util/hooks/render-possibly-errant-hook';
 import { useRootForm } from '../../hooks';
 import { RootFormTemplate } from '../../model';
 
@@ -21,7 +21,7 @@ describe('useNestedForm', () => {
 
     const { useNestedForm } = useRootFormResult.current;
 
-    const { errorDetected } = renderErrantHook(() => useNestedForm('nonExistentNestedForm'));
+    const { errorDetected } = renderPossiblyErrantHook(() => useNestedForm('nonExistentNestedForm'));
 
     expect(errorDetected).toBe(true);
   });
@@ -38,7 +38,7 @@ describe('useNestedForm', () => {
 
     const { useNestedForm } = useRootFormResult.current;
 
-    const { errorDetected } = renderErrantHook(() => useNestedForm('notANestedForm'));
+    const { errorDetected } = renderPossiblyErrantHook(() => useNestedForm('notANestedForm'));
 
     expect(errorDetected).toBe(true);
   });

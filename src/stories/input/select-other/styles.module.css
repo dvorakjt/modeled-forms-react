@@ -1,0 +1,15 @@
+.label, .select {
+  display: block;
+}
+
+.select, .input {
+  width : 200px;
+}
+
+.label[data-validity="INVALID"] {
+  color : red;
+}
+
+.select[data-validity="INVALID"] , .input[data-validity="INVALID"]  {
+  outline : 1px solid red;
+}

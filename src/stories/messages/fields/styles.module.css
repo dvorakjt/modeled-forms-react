@@ -1,0 +1,17 @@
+.input[data-validity="INVALID"] {
+  outline : 1px solid red;
+}
+
+.field_messages {
+  display: flex;
+  flex-direction: column;
+}
+
+.field_message {
+  display: block;
+  color : green;
+}
+
+.field_message[data-validity="INVALID"] {
+  color : red;
+}

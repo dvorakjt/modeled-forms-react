@@ -1,6 +1,6 @@
 import { describe, test, expect } from 'vitest';
 import { renderHook, waitFor } from '@testing-library/react';
-import { renderErrantHook } from '../util/hooks/render-errant-hook';
+import { renderPossiblyErrantHook } from '../util/hooks/render-possibly-errant-hook';
 import { useRootForm } from "../../hooks";
 import { RootFormTemplate } from '../../model';
 
@@ -16,7 +16,7 @@ describe('useExtractedValue()', () => {
     const { result : useRootFormResult } = renderHook(() => useRootForm(template));
     const { useExtractedValue } = useRootFormResult.current;
 
-    const { errorDetected } = renderErrantHook(() => useExtractedValue('nonExistentExtractedValueKey'));
+    const { errorDetected } = renderPossiblyErrantHook(() => useExtractedValue('nonExistentExtractedValueKey'));
 
     expect(errorDetected).toBe(true);
   });
