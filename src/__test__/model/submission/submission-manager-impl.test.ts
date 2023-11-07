@@ -4,7 +4,7 @@ import { SubmissionManagerImpl } from "../../../model/submission/submission-mana
 import { container } from "../../../model/container";
 import { Message, MessageType, State, Validity } from "../../../model";
 import { Visited } from "../../../model/state/visited.enum";
-import { Modified } from "../../../model/state/modified-enum";
+import { Modified } from "../../../model/state/modified.enum";
 
 describe('SubmissionManagerImpl', () => {
   test('trySubmit() calls onSuccess when the Promise returned by the submitFn resolves.', async () => {

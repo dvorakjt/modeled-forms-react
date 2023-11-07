@@ -7,7 +7,7 @@ import { MessageType, RootFormTemplate, Validity, required } from '../../model';
 import { Visited } from '../../model/state/visited.enum';
 import { useField as useFieldRaw } from '../../hooks/use-field';
 import { AbstractField } from '../../model/fields/base/abstract-field';
-import { Modified } from '../../model/state/modified-enum';
+import { Modified } from '../../model/state/modified.enum';
 
 describe('useField', () => {
   test('It throws an error if the field name does not exist in the template.', () => {

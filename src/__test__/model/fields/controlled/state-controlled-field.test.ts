@@ -3,7 +3,7 @@ import { container } from '../../../../model/container';
 import { FormElementDictionary } from '../../../../model/form-elements/form-element-dictionary.type';
 import { SyncFieldStateControlFn } from '../../../../model/fields/controlled/control-functions/fields/sync-field-state-control-fn.type';
 import { FieldState, MessageType, Validity } from '../../../../model';
-import { Modified } from '../../../../model/state/modified-enum';
+import { Modified } from '../../../../model/state/modified.enum';
 import { Visited } from '../../../../model/state/visited.enum';
 
 describe('StateControlledField', () => {

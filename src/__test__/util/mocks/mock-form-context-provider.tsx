@@ -3,7 +3,7 @@ import React, { PropsWithChildren } from "react"
 import { FormContext, FormContextType } from "../../../components/context-providers/form-context"
 import { Message, Validity } from "../../../model"
 import { Visited } from "../../../model/state/visited.enum"
-import { Modified } from "../../../model/state/modified-enum"
+import { Modified } from "../../../model/state/modified.enum"
 import { TryConfirmArgsObject } from "../../../model/confirmation/confirmation-manager.interface"
 
 interface MockFormContextProps {

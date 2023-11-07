@@ -4,7 +4,7 @@ import { SyncFieldValueControlFn } from '../../../../model/fields/controlled/con
 import { FieldState, MessageType, Validity, required } from '../../../../model';
 import { FormElementDictionary } from '../../../../model/form-elements/form-element-dictionary.type';
 import { Visited } from '../../../../model/state/visited.enum';
-import { Modified } from '../../../../model/state/modified-enum';
+import { Modified } from '../../../../model/state/modified.enum';
 
 describe('ValueControlledField', () => {
   const baseFieldFactory = container.services.BaseFieldFactory;

@@ -16,3 +16,7 @@ export {
   pattern,
   required
 } from './util';
+
+export type { SyncValidator } from './sync-validator.type';
+export type { AsyncValidator } from './async-validator.type';
+export type { ValidatorResult } from './validator-result.interface';

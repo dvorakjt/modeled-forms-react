@@ -12,7 +12,7 @@ import type { SingleInputValidatorSuite } from '../../validators/single-input/si
 import type { ValidatorSuiteResult } from '../../validators/validator-suite-result.interface';
 import type { Message } from '../../state/messages/message.interface';
 import { Visited } from '../../state/visited.enum';
-import { Modified } from '../../state/modified-enum';
+import { Modified } from '../../state/modified.enum';
 
 export class Field extends AbstractField {
   readonly stateChanges: Subject<FieldState>;

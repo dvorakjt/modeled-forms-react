@@ -3,7 +3,7 @@ import { renderHook, waitFor } from "@testing-library/react";
 import { renderPossiblyErrantHook } from "../util/hooks/render-possibly-errant-hook";
 import { useRootForm } from "../../hooks";
 import { MessageType, RootFormTemplate, Validity, maxLength } from "../../model";
-import { Modified } from "../../model/state/modified-enum";
+import { Modified } from "../../model/state/modified.enum";
 import { Visited } from "../../model/state/visited.enum";
 
 const invalidMessage = 'max length is 1';

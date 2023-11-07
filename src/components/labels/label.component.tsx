@@ -4,7 +4,7 @@ import { FormContext } from '../context-providers/form-context';
 import { validityToString } from '../util/validity-to-string';
 import { Validity } from '../../model/state/validity.enum';
 import { Visited } from '../../model/state/visited.enum';
-import { Modified } from '../../model/state/modified-enum';
+import { Modified } from '../../model/state/modified.enum';
 
 interface LabelComponentProps {
   fieldName : string;

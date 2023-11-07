@@ -8,7 +8,7 @@ import { Validity } from '../../../model/state/validity.enum';
 import { FormElementDictionary } from '../../../model/form-elements/form-element-dictionary.type';
 import { AggregatedStateChanges } from '../../../model/aggregators/aggregated-state-changes.interface';
 import { Visited } from '../../../model/state/visited.enum';
-import { Modified } from '../../../model/state/modified-enum';
+import { Modified } from '../../../model/state/modified.enum';
 import { container } from '../../../model/container';
 
 describe('MultiFieldAggregatorImpl', () => {

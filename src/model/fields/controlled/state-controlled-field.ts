@@ -3,7 +3,7 @@ import { Validity } from '../../state/validity.enum';
 import { AbstractField } from '../base/abstract-field';
 import type { Adapter } from '../../adapters/adapter.interface';
 import type { FieldState } from '../../state/field-state.interface';
-import { Modified } from '../../state/modified-enum';
+import { Modified } from '../../state/modified.enum';
 import { Config } from '../../config-loader/config.interface';
 
 export class StateControlledField extends AbstractField {

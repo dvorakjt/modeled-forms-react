@@ -1,5 +1,5 @@
 import type { FieldState } from '../../state/field-state.interface';
-import { Modified } from '../../state/modified-enum';
+import { Modified } from '../../state/modified.enum';
 import type { Validity } from '../../state/validity.enum';
 import { Visited } from '../../state/visited.enum';
 

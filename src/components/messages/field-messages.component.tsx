@@ -3,7 +3,7 @@ import React, { CSSProperties, useContext } from 'react';
 import { FormContext } from '../context-providers/form-context';
 import { Messages } from './messages.component';
 import { Visited } from '../../model/state/visited.enum';
-import { Modified } from '../../model/state/modified-enum';
+import { Modified } from '../../model/state/modified.enum';
 import { getFieldMessageIdPrefix } from '../util/get-field-message-id-prefix';
 
 export type FieldMessagesProps = {

@@ -3,7 +3,7 @@ import { container } from "../../../model/container";
 import { MessageType, RootFormTemplate, Validity, required } from "../../../model";
 import { AbstractField } from "../../../model/fields/base/abstract-field";
 import { Visited } from "../../../model/state/visited.enum";
-import { Modified } from "../../../model/state/modified-enum";
+import { Modified } from "../../../model/state/modified.enum";
 import { AbstractDualField } from "../../../model/fields/base/abstract-dual-field";
 import { RootForm } from "../../../model/forms/root-form";
 import { AbstractNestedForm } from "../../../model/forms/abstract-nested-form";

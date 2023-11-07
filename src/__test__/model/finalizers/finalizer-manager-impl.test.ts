@@ -6,7 +6,7 @@ import { FinalizerManager } from '../../../model/finalizers/finalizer-manager.in
 import { FinalizerDictionary } from '../../../model/finalizers/finalizer-map.type';
 import { FinalizerValidity } from '../../../model/state/finalizer-validity.enum';
 import { Visited } from '../../../model/state/visited.enum';
-import { Modified } from '../../../model/state/modified-enum';
+import { Modified } from '../../../model/state/modified.enum';
 import { MessageType, Validity } from '../../../model';
 
 describe('FinalizerManagerImpl', () => {

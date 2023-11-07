@@ -3,7 +3,7 @@ import { Finalizer } from "../../../model/finalizers/finalizer.interface";
 import { FinalizerState } from "../../../model/state/finalizer-state.interface";
 import { FinalizerValidity } from "../../../model/state/finalizer-validity.enum";
 import { Visited } from "../../../model/state/visited.enum";
-import { Modified } from "../../../model/state/modified-enum";
+import { Modified } from "../../../model/state/modified.enum";
 
 export class MockFinalizer implements Finalizer {
   static createUnvisitedUnmodifiedInvalidFinalizer() {

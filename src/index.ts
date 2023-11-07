@@ -1,5 +1,7 @@
 export { 
   Validity, 
+  Visited,
+  Modified,
   MessageType,
   email,
   inDateRange,
@@ -22,12 +24,35 @@ export {
 export type { 
   Message, 
   State, 
-  AnyState, 
   FieldState, 
   DualFieldSetStateArg, 
   DualFieldSetValueArg, 
   RootFormTemplate, 
-  NestedFormTemplate 
+  NestedFormTemplate,
+  FormElementTemplateDictionaryOrMap,
+  FieldTemplateVariations,
+  SyncValidator,
+  AsyncValidator,
+  ValidatorResult,
+  AsyncDualFieldStateControlFn,
+  AsyncDualFieldValueControlFn,
+  SyncDualFieldStateControlFn,
+  SyncDualFieldValueControlFn,
+  AsyncFieldStateControlFn,
+  AsyncFieldValueControlFn,
+  SyncFieldStateControlFn,
+  SyncFieldValueControlFn,
+  FinalizerTemplateDictionary,
+  FinalizerTemplateVariations,
+  MultiFieldValidatorsTemplate,
+  AsyncMultiFieldValidatorTemplate,
+  AggregatedStateChanges,
+  ExtractedValuesTemplate,
+  SyncExtractedValuesTemplate,
+  AsyncExtractedValuesTemplate,
+  SyncExtractedValueFn,
+  AsyncExtractedValueFn,
+  SubmitFn
 } from './model';
 
 export { useRootForm } from './hooks';

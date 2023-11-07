@@ -1,4 +1,4 @@
-import { Modified } from "../../state/modified-enum";
+import { Modified } from "../../state/modified.enum";
 import { ModificationReducer } from "./modification-reducer.interface";
 
 export class ModificationReducerImpl implements ModificationReducer {

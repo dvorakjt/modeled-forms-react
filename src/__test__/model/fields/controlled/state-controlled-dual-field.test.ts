@@ -3,7 +3,7 @@ import { container } from "../../../../model/container";
 import { SyncDualFieldStateControlFn } from '../../../../model/fields/controlled/control-functions/dual-fields/sync-dual-field-state-control-fn.type';
 import { MessageType, Validity, required } from '../../../../model';
 import { Visited } from '../../../../model/state/visited.enum';
-import { Modified } from '../../../../model/state/modified-enum';
+import { Modified } from '../../../../model/state/modified.enum';
 import { StateControlledDualField } from '../../../../model/fields/controlled/state-controlled-dual-field';
 
 describe('StateControlledDualField', () => {

@@ -5,7 +5,7 @@ import type { Adapter } from '../../adapters/adapter.interface';
 import type { DualFieldSetStateArg } from '../../state/dual-field-set-state-arg.interface';
 import type { DualFieldSetValueArg } from '../../state/dual-field-set-value-arg.interface';
 import type { FieldState } from '../../state/field-state.interface';
-import { Modified } from '../../state/modified-enum';
+import { Modified } from '../../state/modified.enum';
 import { Config } from '../../config-loader/config.interface';
 
 export class StateControlledDualField extends AbstractDualField {

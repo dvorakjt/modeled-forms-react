@@ -4,7 +4,7 @@ import { FieldState } from '../../../model/state/field-state.interface';
 import { State } from '../../../model/state/state.interface';
 import { Validity } from '../../../model/state/validity.enum';
 import { Visited } from '../../../model/state/visited.enum';
-import { Modified } from '../../../model/state/modified-enum';
+import { Modified } from '../../../model/state/modified.enum';
 import { Message } from '../../../model';
 
 export class MockField extends AbstractField {
