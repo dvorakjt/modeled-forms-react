@@ -34,6 +34,7 @@ export { useRootForm } from './hooks';
 
 export { 
   ResetButton, 
+  ConfirmButton,
   SubmitButton, 
   NestedFormProvider,
   RootFormProvider,
