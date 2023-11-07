@@ -1,5 +1,5 @@
 export { ResetButton, ConfirmButton, SubmitButton } from './buttons';
-export { NestedFormProvider, RootFormProvider } from './context-providers';
+export { NestedFormProvider, RootFormProvider, FormContext, RootFormContext } from './context-providers';
 export { NestedFormAsFieldset, NestedFormAsForm, RootForm } from './forms';
 export { CheckboxInput, Input, RadioInput, SelectOther, Select, Textarea } from './input';
 export { Label } from './labels';
