@@ -170,19 +170,19 @@ We can also add a SubmitButton which we can instruct to log the form's value whe
 You will notice that these components are completely unstyled. To change that, we can add css classes or styles to each component via their `className` or `style` props. We'll use css modules for this example.
 
     //components/my-first-form.module.css
-    .my_form {
+    .form {
       /* add styles for your form here.*/
     }
     
-    .my_label {
+    .label {
       /* add styles for your labels here */
     } 
     
-    .my_input {
+    .input {
 	  /* add styles for your input here */
     }
      
-    .my_button {
+    .button {
       /* add styles for your button here */
     }
 
@@ -206,48 +206,48 @@ Now let's import this file and apply the classes we've created.
      
     export function MyFirstForm() {
 	  return (
-	    <RootForm template={myFirstFormTemplate} className={styles.my_form}>
+	    <RootForm template={myFirstFormTemplate} className={styles.form}>
 		  <Label 
 		    fieldName={MyFirstFormFields.firstName}
-		    className={styles.my_label}
+		    className={styles.label}
 		  >
 		    First Name
 		  </Label>
 		  <Input 
 		    type='text' 
 		    fieldName={MyFirstFormFields.firstName}
-		    className={styles.my_input} 
+		    className={styles.input} 
 		  />
 		  
 		  <Label 
 		    fieldName={MyFirstFormFields.middleName}
-		    className={styles.my_label}
+		    className={styles.label}
 		  >
 		    Middle Name
 		  </Label>
 		  <Input 
 		    type='text' 
 		    fieldName={MyFirstFormFields.middleName}
-		    className={styles.my_input}
+		    className={styles.input}
 		  />
 		  
 		  <Label 
 		    fieldName={MyFirstFormFields.lastName}
-		    className={styles.my_label}
+		    className={styles.label}
 		  >
 		    Last Name
 		  </Label>
 		  <Input 
 		    type='text' 
 		    fieldName={MyFirstFormFields.lastName} 
-		    className={styles.my_input}
+		    className={styles.input}
 		  />
 
 		  <SubmitButton 
 		    onSuccess={(value) => console.log(value)} 
-		    className={styles.my_button}
+		    className={styles.button}
 		  />
-		  <ResetButton className={styles.my_button} />
+		  <ResetButton className={styles.button} />
 		</RootForm>
 	  );
     }
@@ -295,11 +295,192 @@ You can take advantage of this to style your components. For example:
     .input[data-validity="INVALID"] {
 	    /* add styles for an invalid input here */
     }
-(This is assuming you have added `"input"` as the `className` prop to your `Input` components).
 
 Let's add some messages components to the MyFirstForm component to display messages returned by the validators we added.
 
+First, let's add some classes to our css module which we can use to style the messages component.
+
+    //components/my-first-form.module.css
+    .form {
+      /* add styles for your form here.*/
+    }
+    
+    .label {
+      /* add styles for your labels here */
+    } 
+    
+    .input {
+	  /* add styles for your input here */
+    }
+
+	.input[data-validity="INVALID"] {
+	  /* add styles for invalid input here */
+	}
+     
+    .button {
+      /* add styles for your button here */
+    }
+	
+	.messages_container {
+	  /* style the container that wraps messages. */
+	}
+	 
+	.message {
+	  /* style each message */
+	}
+	 
+	.message[data-validity="INVALID"] {
+	  /* style invalid messages */
+	}
+
+Now, we can add some `FieldMessages`  components and a `FormMessages` component to our form component! We'll also add an `id` propto the form so we can pass that into the `idPrefix` prop of the `FormMessages` component.
+
+    // components/my-first-form.tsx
+    import { 
+      RootForm,
+      Label, 
+      Input,
+      SubmitButton,
+      ResetButton,
+      FieldMessages,
+      FormMessages 
+    } from 'modeled-forms-react';
+    
+    import { 
+      MyFirstFormFields, 
+      myFirstFormTemplate 
+    } from '@/form-templates/my-first-form-template';
+
+	import styles from './my-first-form.module.css';
+     
+    export function MyFirstForm() {
+	  return (
+	    <RootForm 
+	      template={myFirstFormTemplate} 
+	      className={styles.form}
+	      id='my-first-form'
+	    >
+		  <Label 
+		    fieldName={MyFirstFormFields.firstName}
+		    className={styles.label}
+		  >
+		    First Name
+		  </Label>
+		  <Input 
+		    type='text' 
+		    fieldName={MyFirstFormFields.firstName}
+		    className={styles.input} 
+		  />
+		  <FieldMessages
+		    fieldName={MyFirstFormFields.firstName}
+		    containerClassName={styles.messages_container}
+		    messageClassName={styles.message}
+		  />
+		  
+		  <Label 
+		    fieldName={MyFirstFormFields.middleName}
+		    className={styles.label}
+		  >
+		    Middle Name
+		  </Label>
+		  <Input 
+		    type='text' 
+		    fieldName={MyFirstFormFields.middleName}
+		    className={styles.input}
+		  />
+		  <FieldMessages
+		    fieldName={MyFirstFormFields.firstName}
+		    containerClassName={styles.messages_container}
+		    messageClassName={styles.message}
+		  />
+		  
+		  <Label 
+		    fieldName={MyFirstFormFields.lastName}
+		    className={styles.label}
+		  >
+		    Last Name
+		  </Label>
+		  <Input 
+		    type='text' 
+		    fieldName={MyFirstFormFields.lastName} 
+		    className={styles.input}
+		  />
+		  <FieldMessages
+		    fieldName={MyFirstFormFields.firstName}
+		    containerClassName={styles.messages_container}
+		    messageClassName={styles.message}
+		  />
+			
+		  <FormMessages 
+		    containerClassName={styles.messages_container}
+		    messageClassName={styles.message}
+		    idPrefix='my-first-form'
+		  />
+		  
+		  <SubmitButton 
+		    onSuccess={(value) => console.log(value)} 
+		    className={styles.button}
+		  />
+		  <ResetButton className={styles.button} />
+		</RootForm>
+	  );
+    }
+Congratulations, you've created your first form with Modeled Forms React!
+
 ## Templates
+
+The `RootFormTemplate` has two required properties: `fields` and `submitFn`.
+
+`fields` is of type `FormElementTemplateDictionaryOrMap`, which is an alias for `Record<string, FieldOrNestedFormTemplate>`.
+
+The keys of this object/Map represent the names of each field, and the template provided defines the structure of the field.
+
+The simplest value one can assign to a `FieldOrNestedFormTemplate` is simply a string representing the default value of a field. The field will be created without any validators or control functions, and will not be omitted by default.
+
+To invoke other options for configuring a field, an object can be provided. To create a simple field, a `defaultValue` property of type string is required on this object. Other properties that can be provided are:
+
+ - `syncValidators` - an array of synchronously executing validators. You can import these from `modeled-forms-react` (technically, what is exported are functions that create validators with the messages and options you pass in, for example the `required` function we used earlier), or you can create your own.
+ - `asyncValidators` - an array of asynchronously executing validators. No async validators are exported from this library, but you can define your own. See [Validators](#validators) for more information.
+ - `pendingAsyncValidatorMessage` - the message that displays as asyncValidators are running. 
+ - `omitByDefault` - determines if the field is omitted by default. Omitted fields are not included in the finalized template, neither are finalizedFields derived from omitted fields and non-omitted fields. Omitted fields do not count towards form validity and multi-field validators which include an omitted field are ignored. Any field or nested form's `omit` property may be toggled later on with a special hook regardless of whether or not `omitByDefault` is included or whether it is set to true or false.
+
+A field template may also represent a `DualField`. This is a special type of field which internally contains two separate fields. Its state as far as other fields are concerned may be toggled back and forth between the states of these two internal fields, but the internal fields each maintain their own unique state. This type of field is used to create the `SelectOther` component, which allows the user to choose from several predefined options, or enter their own value if they don't see a value that best represents their intended input within the predefined options in the dropdown. This template type is identical to the FieldTemplate, with the exception that instead of providing a `defaultValue` property, you must provide both a `primaryDefaultValue` property and a `secondaryDefaultValue` property, both of type string.
+
+Fields may also be controlled fields. Controlled fields are special field's whose value changes automatically depending on the value of another field. An example could be deriving the user's state from their zip code.
+
+Controlled fields are quite easy to declare, and come in a few "flavors." First, they may be either state-controlled or value-controlled. With a state controlled field, the fields entire state (value, validity, messages, etc.) can be controlled by the value of another field OR fields. Value-controlled fields are bit simpler--only their value is controlled by another field or fields. 
+
+Second, controlled fields can be controlled synchronously or asynchronously. Synchronous, value-controlled fields are recommended  for most controlled fields. 
+
+Controlled fields are declared by adding a control function to a `Field` or `DualField` template. Only one control function is allowed per field, but multiple fields may be accessed by this control function. The following properties can be included in a `Field` or `DualField` template to add a control function to that field.
+
+     - syncValueControlFn
+     - syncStateControlFn
+     - asyncValueControlFn
+     - asyncStateControlFn
+For more information, see [Controlled Fields](#controlled-fields).
+
+The `fields` property of a RootFormTemplate may also included a `NestedFormTemplate`. Here is a very simple example:
+
+    const rootFormTemplate : RootFormTemplate = {
+      fields : {
+        myNestedForm : {
+          fields : {
+            someField : ''
+          }
+        }
+      },
+      submitFn : ({value}) => new Promise(resolve => resolve(value))
+    }
+A `NestedFormTemplate` may in turn include its own `NestedFormTemplate`(s), which in turn may include still more nested forms, and so on and so on. A nested form is useful when you want to separate a very long form into several pages, define a fieldset, etc. A `NestedFormTemplate` requires only a `fields` property, and should NOT include a `submitFn`. A `NestedFormTemplate` may include an `omitByDefault` property, which yields the same result as the eponymous property in a field template. The other properties available to a `NestedFormTemplate`are identical to those available to a `RootFormTemplate`, so we will henceforth resume discussion of `RootFormTemplate` properties.
+
+Form templates may also include a `multiFieldValidators` property. This property describes special validators that evaluate the values of several fields together, provided those fields are all individually valid. Synchronously executing multi-field validators are added in the `sync` property of the multiFieldValidators property, and asynchronously executing multi-field validators are added to the `async` property of the multiFieldValidators property. For more information, see [Validators](#validators).
+
+Form templates may also include a `finalizedFields` property. Normally, each field receives a default finalizer, which simply adds that field's key and value as a key-value pair within the form's value. However, by defining custom finalizers, you can create new values within your forms value based on the state(s) of one or more fields. You also have control over whether the fields from which they are derived are included in the form's value (by default, adding a custom finalizer removes the original fields from the form's value, but this behavior can be turned off). Like many other custom functions provided to the template, finalizers may either be synchronous or asynchronous. For more information, see [Finalized Fields](#finalized-fields).
+
+Finally, a form template may include //extracted values
+
+//submitFn
 
 ## Validators
 
