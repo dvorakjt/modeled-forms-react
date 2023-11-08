@@ -448,7 +448,7 @@ A field template may also represent a `DualField`. This is a special type of fie
 
 Fields may also be controlled fields. Controlled fields are special field's whose value changes automatically depending on the value of another field. An example could be deriving the user's state from their zip code.
 
-Controlled fields are quite easy to declare, and come in a few "flavors." First, they may be either state-controlled or value-controlled. With a state controlled field, the fields entire state (value, validity, messages, etc.) can be controlled by the value of another field OR fields. Value-controlled fields are bit simpler--only their value is controlled by another field or fields. 
+Controlled fields are quite easy to declare, and come in a few varieties. First, they may be either state-controlled or value-controlled. With a state controlled field, the fields entire state (value, validity, messages, etc.) can be controlled by the value of another field OR fields. Value-controlled fields are bit simpler--only their value is controlled by another field or fields. 
 
 Second, controlled fields can be controlled synchronously or asynchronously. Synchronous, value-controlled fields are recommended  for most controlled fields. 
 
@@ -478,11 +478,95 @@ Form templates may also include a `multiFieldValidators` property. This property
 
 Form templates may also include a `finalizedFields` property. Normally, each field receives a default finalizer, which simply adds that field's key and value as a key-value pair within the form's value. However, by defining custom finalizers, you can create new values within your forms value based on the state(s) of one or more fields. You also have control over whether the fields from which they are derived are included in the form's value (by default, adding a custom finalizer removes the original fields from the form's value, but this behavior can be turned off). Like many other custom functions provided to the template, finalizers may either be synchronous or asynchronous. For more information, see [Finalized Fields](#finalized-fields).
 
-Finally, a form template may include //extracted values
+A form template may include an `extractedValues` property. Extracted values allow you to define a value which is derived from the state of a field or fields within your form. This value will not be included in the form's value and can be any type of value you want. This allows you to add information derived from your form to your UI without needing to interfere with the actual value of your form. The `extractedValues` property may include `syncExtractedValues` and/or `asyncExtractedValues` keys, whose values are of type`Record<string, SyncExtractedValueFn>` and `Record<string, AsyncExtractedValueFn>`, respectively.
 
-//submitFn
+ A real-life use case could be a message to a user in a voter registration form which reflects their eligibility to register depending on their age and US state. For more information, see [Extracted Values](#extracted-values).
+
+Finally, a RootFormTemplate must include a `submitFn`. This property should be a function that destructures a State object, and returns a promise.
+
+State for a `RootForm` includes the following properties:
+
+ - `value` - the current value of the form, typically an object whose keys represent the fields of the form and whose values represent the values of those fields
+ - `validity` - the current validity of the form. Validity is an enum with values ERROR, INVALID, PENDING, VALID_UNFINALIZABLE, VALID_FINALIZABLE. These values correspond to ascending integers, allowing you to compare validities with comparison operators. 
+	 - Validity.ERROR is typically only encountered should an unexpected error occur.
+	 - Validity.INVALID means that a field has validators that returned an invalid result, or that a form contains INVALID fields.
+	 - Validity.PENDING means an asynchronous validator is running.
+	 - Validity.VALID_UNFINALIZABLE means that all of the form's fields are valid, but an asynchronous finalizer is still finishing its task of preparing a finalized field, so the forms value is not ready to be finalized by an outer form's finalizers. This Validity state will only be encountered should you define asynchrous finalizers.
+	 - Validity.VALID_FINALIZABLE means that all of the form's fields are valid and its value has been fully prepared by finalizers.
+ - `messages`- an array of `Message`. A `Message`includes properties `text` and `type`. These are the messages returned by Validators.
+ - `visited` - visited can be `Visited.NO`, `Visited.YES` or `Visited.PARTIALLY`.
+ - `modified` - modified can be `Modified.NO`, `Modified.YES,` or `Modified.PARTIALLY`
+
+State for nested forms and fields adds an `omit`  property, and state for dual fields adds a `useSecondaryField` property. These are both booleans and represent whether the element is currently omitted, and whether or not it is currently projecting its secondary field's state, respectively. The value property for `FieldState` must be a string, but for forms it will be an object whose shape is defined by the form's finalizers.
+
+For your `submitFn`, it is likely that you will only care about destructuring the `value` property from `State`. Prior to calling the submitFn, the form will perform a step known as confirmation. If its validity is less than `Validity.VALID_FINALIZABLE`, the `submitFn` will not be called, and instead an error message will be displayed by the `FormMessages` component. `FieldMessages` components will also immediately display any error messages which are normally hidden until the corresponding field is visited or modified or the confirmation step is attempted, and labels, inputs etc. will have their true validity assigned to their `data-validity` attribute. This gives your users the opportunity to at least visit each field before a bunch of error messages appear but ensures that if they don't visit any fields, the error messages will appear when they try to submit the invalid form.
+
 
 ## Validators
+
+***Note:** Validators come in two varieties: single-field validators which are added to each field template, and multi-field validators which are added to the `multiFieldValidators` property of a form template. In this section, we will discuss single-field validators. For multi-field validators, see [Multi-Field Validators](#multi-field-validators).* 
+
+A validator is essentially a function that takes in a string and returns a `ValidatorResult` object after performing some computations on that string. Asynchronous validators are almost identical, except that they return a `Promise<ValidatorResult>`.
+
+The `ValidatorResult` type must include an `isValid` property of type boolean, and can optionally include a `message` of type string. This is useful for when you want to return a message if the field is invalid, but not if the field is valid. Note that asynchronous validators should not call `reject()` inside their promise, but should resolve with an object that includes an `isValid` property set to `false` should their criteria for validity be unmet.
+
+This project comes with many built-in "validators." Really, these are functions that return a sync validator, customized with messages you provide.
+
+The available built-in validators are:
+ - `required()`
+ - `email()`
+ - `inDateRange()`
+ - `inLengthRange()`
+ - `inNumRange()`
+ - `includesDigit()`
+ - `includesLower()`
+ - `includesSymbol()`
+ - `includesUpper()`
+ - `maxDate()`
+ - `maxLength()`
+ - `maxNum()`
+ - `minDate()`
+ - `minLength()`
+ - `minNum()`
+ - `pattern()`
+
+Let's look the `includesLower()` validator to see how these validators work and what they return. This is the definition for `includesLower()`:
+
+    import { container } from '../../container';
+    import type { SyncValidator } from '../sync-validator.type';
+    import type { ValidatorResult } from '../validator-result.interface';
+    
+    const autoTransformer = container.services.AutoTransformer;
+    
+    export function includesLower(
+      errorMessage: string,
+      successMessage?: string,
+    ): SyncValidator<string> {
+      return (value: string) => {
+        value = autoTransformer.transform(value);
+        
+        const result: ValidatorResult = {
+          isValid: /[a-z]/.test(value),
+        };
+        if (!result.isValid) {
+          result.message = errorMessage;
+        } else if (successMessage) {
+          result.message = successMessage;
+        }
+
+        return result;
+      };
+    }
+
+The function returned by this built-in "validator" is the real validator. This function first uses the autoTransformer class to apply any transformations (currently, only trimming is available) defined in the config file to the value. This ensures that the value being tested is the same as the value that finalizers will receive. 
+
+A regular expression is then used to evaluate if the field contains a lowercase letter. If not, `isValid` is false, and  `message` is set to the error message passed into the outer function. Otherwise, `isValid` is true, and if a `successMessage` was passed into the outer function, that is set as the `message` on the `ValidatorResult` object. Finally, this object is returned.
+
+Therefore, to define your own custom validator, all you need to do is create a function that takes in a string and results either a `ValidatorResult` or a `Promise<ValidatorResult>`. You can then add this function to either the `syncValidators` or `asyncValidators` (respectively) arrays of a field template.
+
+In terms of behavior, all `syncValidators` are run first. Their messages are all collected and set as the field\'s messages, but the overall validity returned by the validator suite becomes the minimum of all the sync validator results.
+
+If all sync validators pass, the async validators run. Updating the value of the field while async validators are in progress causes the in progress validators to be unsubscribed from, and the process restarts beginning with any sync validators.
 
 ## Controlled Fields
 
@@ -494,18 +578,112 @@ Finally, a form template may include //extracted values
 
 ## Hooks
 
+If you wish for more direct access to your form's state and various other properties, you can utilize the hooks that are exported by the library/returned by calling `useContext` and passing in either a `FormContext` or a `RootFormContext`. There are also certain hooks which are not utilized by any of the library's components, as their use cases are highly project-specific.
+
+Currently, the only hook directly exported by the library is the `useRootForm` hook. This is the hook that the `RootForm` and `RootFormProvider` components call internally to instantiate an instance of the `RootForm` class (distinct from the `RootForm` component), and create various other hooks which can be consumed by components that consume the contexts created by these components.
+
+This hook returns a few other hooks and functions which are shared via the context API with consumers. Generally, it is probably never necessary to use this hook yourself. It is more likely that you will want to use some of the hooks it returns, which can be accessed by consuming the contexts that the `RootForm` or `RootFormProvider` components provide.
+
+These contexts are the `FormContext` and the `RootFormContext`. Both `RootForm`/`RootFormProvider` and `NestedFormAsForm`/`NestedFormAsFieldset`/`NestedFormProvider` provide `FormContext`. This means the hooks and functions that your components consume will be provided by the `FormContext` that immediately wraps them.
+
+Hooks available via consuming the `FormContext` include:
+
+ - `useFormState()`
+ - `useFirstNonValidFormElement()`
+ - `useConfirmationAttempted()`
+ - `tryConfirm()`
+ - `reset()`
+ - `useField()`
+ - `useDualField()`
+ - `useNestedForm()`
+ - `useOmittableFormElement()`
+ - `useExtractedValue()`
+
+Almost all of these are utilized by the components. Notably, `useFirstNonValidFormElement()`, `useOmittableFormElement()`, and `useExtractedValue()` are not, so we will discuss them here.
+
+#### useFirstNonValidFormElement()
+
+This returns a stateful value of string | undefined representing the first non-valid field or nested form within the fields of this particular form. For use cases and more information, see [First Non-Valid Form Element](#first-non-valid-form-element).
+
+#### useOmittableFormElement()
+
+This returns both a stateful value representing whether or not a field/nested form is currently omitted, and a mechanism by which you can set that element's omit property. The hook takes in a fieldName, and returns an object with properties `omitFormElement`(a boolean representing whether the element is currently omitted) and `setOmitFormElement()`. `setOmitFormElement()`takes in a boolean and updates the field's omit property, which in turn updates `omitFormElement`.
+
+#### useExtractedValue()
+
+This grants you access to the extracted values you defined in your template. It takes in the key for the extracted value you wish to access and returns a stateful value which updates as that extracted value updates. For more information on extracted values, see [Extracted Values](#extracted-values).
+
+<hr>
+
+The RootFormContext makes only one function available, which is `trySubmit`. Conveniently though, the`RootForm` and `RootFormProvider` components DO provide `FormContext` in addition to `RootFormContext`.
+
 ## First Non-Valid Form Element
 
+Each form keeps track of its first non-valid form element (i.e. a field or nested form whose validity is less than `Validity.VALID_FINALIZABLE`). This is accomplished using a heap, in which the order of the keys in the `fields` section of the template determines precedence in this heap. 
+
+Some use-cases for this property include scrolling up to the first non-valid field when confirmation fails, or preventing navigation to the next page in a multi-page form should the current nested form be non-valid.
+
+Because what is considered the "first" form element is determined by the order of the keys of the `fields` section of the template, you can use an instance of the `Map` class to define this section. This better guarantees that the order in which you define your fields is the order in which their keys are iterated over.
+
 ## Confirmation
+
+Confirmation is the step that this library takes prior to the submission of a form to ensure that it is valid before actually calling the submit function. This step can also be invoked directly with the `trySubmit()` function which can be accessed by consuming the `FormContext`. The `useConfirmationAttempted()` hook (also available by consuming `FormContext`) returns a stateful value of type boolean representing whether the user has attempted to confirm the form. 
+
+Though the actual confirmation process is very simple (it just checks the validity of the form, which is always the minimum validity of all of its fields anyway), it proved useful to separate this out into a process separate from submission. For a multi-page form, you can call the trySubmit method (or, easier still, use a `ConfirmButton` component) inside each nested form before advancing to the next page. This will cause error messages on unvisited/unmodified fields to display as if submitting the nested form, but won't actually call your `submitFn.`For your root form, though confirmation is distinct from submission, calling `trySubmit` first calls `tryConfirm`, and only calls the `submitFn` if confirmation was successful.
+
+The `tryConfirm()` function takes an object as an argument, with a few optional properties. These same properties are exposed as props by the `ConfirmButton` component. These properties are:
+
+ - `onSuccess` - a function with no parameters that should return void, which is called when confirmation is successful. This could be a function that navigates to the next page in a multi-page form.
+ - `onError` - a function with no parameters that should return void, which is called when confirmation fails.
+ - `errorMessage` - the error message that will be displayed in FormMessages when confirmation fails.
 
 ## Submission
 
 ## Usage with Next.js App Router
 
+All of the components exported by this library harness the power of React hooks to deliver the user experience that they do. For instance, every component with the exception of `RootForm` and `RootFormProvider` calls `useContext()`. Additionally, `RootForm` and `RootFormProvider` accept a `RootFormTemplate` as a prop, which is not a serializable value, and therefore cannot be passed between server and client components. Therefore, you must create a component that defines the line between server and client components. The easiest way to do this is to create a component that renders your form, and add the 'use client' directive to the top of this file. You may then render any components exported by Modeled Forms React within this component, and you may also render this component within a server component. Here is an example of what this might look like:
+
+    'use client';
+    import { RootFormProvider } from  "modeled-forms-react";
+    import { PropsWithChildren } from  "react";    
+    
+    //import your form template
+    import { rootFormTemplate } from  "@/form-templates/root-form.template";
+    
+    export  function  MyRootFormProvider({ children } :  PropsWithChildren) {
+      return  (
+        <RootFormProvider  template={rootFormTemplate}>
+          {children}
+        </RootFormProvider>
+      );
+    }
+
 ## Configuration
+Modeled Forms React uses [rc](https://www.npmjs.com/package/rc) for configuration. Therefore, to configure Modeled Forms React for your project's needs, include a .modeledformsreactrc file in your project. You can configure the following options:
+
+ - `autoTrim` - boolean. If true, form field values are trimmed before validation and before finalization (though the displayed value is not changed).
+ - `emailRegex` - a regular expression. This is the regular expression used by the built-in `email` validator. You can provide a different regular expression if the needs of your project demand one.
+ - `symbolRegex` - a regular expression. This is the regular expression used by the built-in `includesSymbol` validator.
+ - `globalMessages` - this is an object whose properties represent default messages for various scenarios. You may wish to change these messages to better match the tone of your project, for i18n reasons, etc. This object contains  the following customizable properties, each of which should be of type string:
+	- `pendingAsyncValidatorSuite`
+	- `singleFieldValidationError`
+	- `pendingAsyncMultiFieldValidator`
+	- `multiFieldValidationError`
+	- `adapterError`
+	- `finalizerError`
+	- `finalizerPending`
+	- `confirmationFailed`
+	- `submissionError`
 
 ## Contributing
+If you wish to contribute to this project, please feel free to send me an [email](mailto:dvorakjt@gmail.com) to discuss what you'd like to work on. There are many features I'd still like to implement, and probably a lot of refinements that can be made, so going forward, some help would be appreciated! 🙏
 
 ## Issues
 
+If you encounter a bug, compatibility issue, etc., please submit an issue or send me an [email](mailto:dvorakjt@gmail.com). Even after 600+ unit tests, and testing with a variety of React frameworks, some bugs or compatibility issues could still be waiting to be caught, and I want to hear about them! 
+
+If there is a feature you'd really like to see implemented, I want to hear about that too!
+
+
 ## License
+
