@@ -1,386 +1,330 @@
 # Modeled Forms React
-Modeled Forms React provides declarative HTML form state management for React applications. Modeled Forms React is currently a work in progress. Completion of the alpha release is projected by late October 2023. Complete documentation will be published at that time. Please read further for a synopsis of project goals, features and sample usage.
+Powerful MVC-inspired form management for React with declarative syntax and visually unopinionated, fully customizable components.
 
-## Goals
-The impetus for this project was a very complicated form for voter registration. The form had fields whose values were derived from each other (for example, a zip code determines a user's state), fields that produced temporary values which controlled modals displayed to the user (for instance, a user's birthday determines their age, which--in conjunction with their state--determines their eligibility to register to vote and thus the message they are shown), fields which required async validation, and even a field whose value could be set in one of two ways (a `<select>` element where the user could select 'other' and enter a value manually). The form was even split into 4 separate pages to simplify the UI for users, and thus could be thought of as having four nested forms. To add to this, the input elements that had relatively complex styling requirements.
+## Table of Contents
+[About](#about)
+[Installation](#installation)
+[Getting Started](#getting-started)
+[Templates](#templates)
+[Validators](#validators)
+[Controlled Fields](#controlled-fields)
+[Multi-Field Validators](#multi-field-validators)
+[Finalized Fields](#finalized-fields)
+[Extracted Values](#extracted-values)
+[Components](#components)
+[Hooks](#hooks)
+[First Non-Valid Form Element](#first-non-valid-form-element)
+[Confirmation](#confirmation)
+[Submission](#submission)
+[Usage With Next.js App Router](#usage-with-next.js-app-router)
+[Configuration](#configuration)
+[Contributing](#contributing)
+[Issues](#issues)
+[License](#license)
 
-The code with which I accomplished this was...a bit of a mess, and I felt strongly that the logic related to the state and value of the form fields should be abstracted away and separated from the logic related to its presentation. This architecture, in which the view, model and controller for interacting with the model are cleanly separated from each other, is of course, the classic MVC architecture (thus the name Modeled Forms React). Inspired by Angular's [reactive approach to forms](https://angular.io/guide/reactive-forms), I decided to create a library for React that provided declarative management of form state, allowed for interactivity of form fields (meaning that fields could be related--an update to one field could trigger an update to another), guaranteed that validity and value were encapsulated together, and was design-agnostic while providing highly customizable components that easily hooked into this state. The library should also provide easy-to-use built-in validators, and handle asynchronous code as seamlessly as synchronous code (for instance, asynchronous validation, asynchronous field interactions).
+## About
+Modeled Forms React provides powerful, MVC-inspired form state management for React-based applications. 
 
-## Features at a High Level
+The basic premise is that the developer creates a template which defines the structure of the form data (fields, validators, nested forms, multi-field validators), the structure of the data to be submitted to the backend (finalized fields), and the structure of any data that should be created for consumption by the frontend based on form data, but not submitted to the backend (extracted values)--i.e. the model.
 
-✔️ **Fields have a state, which consists of their value, validity, messages, visited and modified.**
+This template is then passed into a special component which creates the necessary classes to realize the model. As the value of fields are modified, their validity is modified simultaneously. Finalized fields are also modified in response to changes in field's data. Therefore, once defined, you can always rely on the structure of your form data to correspond precisely to the description you provide in your template.
 
-Upon construction, fields can be granted synchronous and/or asynchronous validators. Anytime the field's setValue() method is called, these validators run, and the field's validity is updated to the syncResult of those validators immediately, which async validators are awaited (passing or no sync validators in combination with async validators results in a validity of PENDING). Thus form value and validity are always updated simultaneously. 
+Hooks are then used behind the scenes to provide stateful representations of this data to components.  Components such as RootForm, RootFormProvider, NestedFormProvider and others provide stateful representation of your form data to other components, and components such as Input, RadioInput, ResetButton and others read from and update this data. 
 
-✔️ **Fields can control other Fields**
+Therefore, as the developer you are only responsible for defining the structure of your data, and, in a separate place, the visual structure and styles applied to your form.
 
-Fields can control other fields by value or by state. To do this a control function is passed into the template, which might look something like this:
+## Installation
 
-    const controlFn : SyncFieldValueControlFn = ({ firstName, lastName }) => { 
-	    if(firstName.value && lastName.value) {
-		    return `${firstName.value[0]}.${lastName.value[0]}.`;
+To install Modeled Forms React, run the following command within a React-based project. React 18 or higher is required.
+
+    npm i modeled-forms-react
+
+## Getting Started
+
+***Note:** If you are using the App Router in Next.js 13, please see [Usage With Next.js App Router](#usage-with-next.js-app-router) for an additional step that must be taken for compatibility with server components.*
+
+First we need to define a RootFormTemplate. Note that for this example, we'll be using typescript. We'll start with something very simple. Let's begin by importing the `RootFormTemplate` type from `modeled-forms-react`.
+
+    // form-templates/my-first-form-template.ts
+    import type { RootFormTemplate } from 'modeled-forms-react';
+Next, let's define an enum representing the form field names. Strictly speaking, this step is not necessary, but it will make our lives easier when we define the components representing the form's fields. Note that a plain JavaScript object would work just as well.
+
+    // form-templates/my-first-form-template.ts
+    import type { RootFormTemplate } from 'modeled-forms-react';
+     
+    export enum MyFirstFormFields {
+	  firstName = 'firstName',
+	  middleName = 'middleName',
+	  lastName = 'lastName'
+    }
+Next, let's create a simple RootFormTemplate:
+
+    // form-templates/my-first-form-template.ts
+    import type { RootFormTemplate } from 'modeled-forms-react';
+     
+    export enum MyFirstFormFields {
+	  firstName = 'firstName',
+	  middleName = 'middleName',
+	  lastName = 'lastName'
+    }
+	 
+	export const myFirstFormTemplate : RootFormTemplate = {
+	  fields : {
+	    [MyFirstFormFields.firstName] : '',
+	    [MyFirstFormFields.middleName] : '',
+	    [MyFirstFormFields.lastName] : ''
+	  },
+	  submitFn : ({ value }) => new Promise(resolve => resolve(value))
+	} 
+   
+Let's examine the code we just wrote.  The `fields` property of the template determines the fields that will be created for our components to consume. To create a very simple field with no validators or other features, simply add the field's name as a property to the `fields` object, assigning it a string representing the field\'s default value. Note that the fields property can be an object, as above, or a `Map` with keys of type string and values of `NestedForm | FieldTemplateVariations.` We'll see the rationale behind using a `Map` later, but for now we'll stick to using an object for simplicity.
+
+The other property that is required in a `RootFormTemplate` is `submitFn`. There are three things that are important to note here. First, the `submitFn` must return a promise. Second, if the promise is rejected with an instance of `Error`, the message property of the error will be included in the form's messages. You can use this to control the error message your form displays should the fields all be valid but submission fails. Third, the object passed in as an argument to the submit function will represent the form's state. Therefore, you can destructure such properties as `value`, which we've done here, and submit them to your backend.
+
+Despite not declaring any validators or really using very many features of the library yet at all, this form already provides us with some utility. By default, all fields are trimmed before finalized (and before validated if validators are present). Thus, you don't have to worry about trimming any of these fields' values prior to submission. (This behavior can be turned off, of course. See [Configuration](#configuration).)
+
+ Next, we need to create some components that allow users to view and interact with this data.
+
+Let's create component! First, we'll import the enum and template we just defined, as well as the `RootForm` component from `modeled-forms-react`.
+
+    // components/my-first-form.tsx
+    import { RootForm } from 'modeled-forms-react';
+    import { 
+      MyFirstFormFields, 
+      myFirstFormTemplate 
+    } from '@/form-templates/my-first-form-template';
+
+Now, let's create a component that returns a RootForm that receives our template as a prop. 
+
+***Note:** if using Next.js App Router, you should add the 'use client' directive to the top of this file.*
+
+    // components/my-first-form.tsx
+    import { RootForm } from 'modeled-forms-react';
+    import { 
+      MyFirstFormFields, 
+      myFirstFormTemplate 
+    } from '@/form-templates/my-first-form-template';
+     
+    export function MyFirstForm() {
+	  return (
+	    <RootForm template={myFirstFormTemplate}></RootForm>
+	  );
+    }
+This doesn't do too much yet. We need to add some inputs and labels. Let's import those from `modeled-forms-react` and add them to the component.
+
+    // components/my-first-form.tsx
+    import { RootForm, Label, Input } from 'modeled-forms-react';
+    import { 
+      MyFirstFormFields, 
+      myFirstFormTemplate 
+    } from '@/form-templates/my-first-form-template';
+     
+    export function MyFirstForm() {
+	  return (
+	    <RootForm template={myFirstFormTemplate}>
+		  <Label fieldName={MyFirstFormFields.firstName}>First Name</Label>
+		  <Input type='text' fieldName={MyFirstFormFields.firstName} />
+		  
+		  <Label fieldName={MyFirstFormFields.middleName}>Middle Name</Label>
+		  <Input type='text' fieldName={MyFirstFormFields.middleName} />
+		  
+		  <Label fieldName={MyFirstFormFields.lastName}>Last Name</Label>
+		  <Input type='text' fieldName={MyFirstFormFields.lastName} />
+		</RootForm>
+	  );
+    }
+
+We can also add a SubmitButton which we can instruct to log the form's value when the promise we created in our submit function resolves, and ResetButton which will reset the form's state.
+
+    // components/my-first-form.tsx
+    import { 
+      RootForm,
+      Label, 
+      Input,
+      SubmitButton,
+      ResetButton 
+    } from 'modeled-forms-react';
+    
+    import { 
+      MyFirstFormFields, 
+      myFirstFormTemplate 
+    } from '@/form-templates/my-first-form-template';
+     
+    export function MyFirstForm() {
+	  return (
+	    <RootForm template={myFirstFormTemplate}>
+		  <Label fieldName={MyFirstFormFields.firstName}>First Name</Label>
+		  <Input type='text' fieldName={MyFirstFormFields.firstName} />
+		  
+		  <Label fieldName={MyFirstFormFields.middleName}>Middle Name</Label>
+		  <Input type='text' fieldName={MyFirstFormFields.middleName} />
+		  
+		  <Label fieldName={MyFirstFormFields.lastName}>Last Name</Label>
+		  <Input type='text' fieldName={MyFirstFormFields.lastName} />
+
+		  <SubmitButton onSuccess={(value) => console.log(value)} />
+		  <ResetButton />
+		</RootForm>
+	  );
+    }
+You will notice that these components are completely unstyled. To change that, we can add css classes or styles to each component via their `className` or `style` props. We'll use css modules for this example.
+
+    //components/my-first-form.module.css
+    .my_form {
+      /* add styles for your form here.*/
+    }
+    
+    .my_label {
+      /* add styles for your labels here */
+    } 
+    
+    .my_input {
+	  /* add styles for your input here */
+    }
+     
+    .my_button {
+      /* add styles for your button here */
+    }
+
+Now let's import this file and apply the classes we've created.
+
+    // components/my-first-form.tsx
+    import { 
+      RootForm,
+      Label, 
+      Input,
+      SubmitButton,
+      ResetButton 
+    } from 'modeled-forms-react';
+    
+    import { 
+      MyFirstFormFields, 
+      myFirstFormTemplate 
+    } from '@/form-templates/my-first-form-template';
+
+	import styles from './my-first-form.module.css';
+     
+    export function MyFirstForm() {
+	  return (
+	    <RootForm template={myFirstFormTemplate} className={styles.my_form}>
+		  <Label 
+		    fieldName={MyFirstFormFields.firstName}
+		    className={styles.my_label}
+		  >
+		    First Name
+		  </Label>
+		  <Input 
+		    type='text' 
+		    fieldName={MyFirstFormFields.firstName}
+		    className={styles.my_input} 
+		  />
+		  
+		  <Label 
+		    fieldName={MyFirstFormFields.middleName}
+		    className={styles.my_label}
+		  >
+		    Middle Name
+		  </Label>
+		  <Input 
+		    type='text' 
+		    fieldName={MyFirstFormFields.middleName}
+		    className={styles.my_input}
+		  />
+		  
+		  <Label 
+		    fieldName={MyFirstFormFields.lastName}
+		    className={styles.my_label}
+		  >
+		    Last Name
+		  </Label>
+		  <Input 
+		    type='text' 
+		    fieldName={MyFirstFormFields.lastName} 
+		    className={styles.my_input}
+		  />
+
+		  <SubmitButton 
+		    onSuccess={(value) => console.log(value)} 
+		    className={styles.my_button}
+		  />
+		  <ResetButton className={styles.my_button} />
+		</RootForm>
+	  );
+    }
+
+Of course, for a large project which will use the same styles for each element throughout, you could create custom components which return Modeled Forms React components with your styles/classes already applied. This will make your code simpler, easier to understand and less repetitive.
+
+Now let's add some validation. Out of the three fields we create, let's say we want firstName and lastName to be required. Let's go back into our template and import `required`, one of the many built in validators, from `modeled-forms-react.`We'll then modify the field templates for firstName and lastName.
+
+    // form-templates/my-first-form-template.ts
+    import { type RootFormTemplate, required } from 'modeled-forms-react';
+     
+    export enum MyFirstFormFields {
+	  firstName = 'firstName',
+	  middleName = 'middleName',
+	  lastName = 'lastName'
+    }
+	 
+	export const myFirstFormTemplate : RootFormTemplate = {
+	  fields : {
+	    [MyFirstFormFields.firstName] : {
+	      defaultValue : '',
+	      syncValidators : [
+	        required('Please enter your first name.')
+	      ]
+	    },
+	    [MyFirstFormFields.middleName] : '',
+	    [MyFirstFormFields.lastName] : {
+	      defaultValue : '',
+	      syncValidators : [
+	        required('Please enter your last name.')
+	      ]
 	    }
+	  },
+	  submitFn : ({ value }) => new Promise(resolve => resolve(value))
+	} 
+
+firstName and lastName will now be considered invalid unless their values are not empty strings. Remember, by default, their values will be trimmed for validation, meaning that a value consisting of all whitespace characters will not satisfy this `required` validator. `required` is just one of many built-in validators that you have access to with Modeled Forms React. Further, you can define your own validators, and you can even add asynchronous validators as well.
+
+A few things will happen because of this validator. First, besides setting the validity of the field, it will simultaneously add a message to the array of messages maintained in its state property. The message will be the string we passed as an argument to required. If we passed a second string to required, that message would be included when the field is valid. These messages can be displayed with a `FieldMessages` component.
+
+Additionally, any components (such as a `Label` or `Input`) associated with this field will receive a `data-validity="INVALID"` attribute, assuming the field has been visited (clicked/tabbed to then blurred) or modified, or the form was confirmed/submitted. Labels, Inputs, etc. will also have a `data-visited` attribute if they have been visited and a `data-modified` attribute if they have been modified. Other possible values for `data-validity` are `ERROR`, `PENDING` and `VALID`. Before a field is visited/modified or the form is confirmed/submitted, `data-validity` defaults to `VALID`.
+
+You can take advantage of this to style your components. For example:
+
+    .input[data-validity="INVALID"] {
+	    /* add styles for an invalid input here */
     }
-This demonstrates a field control function that could be used to determine the user's initials. If the control function returns a falsy value, the controlled field's value will not be set. Unexpected errors are also caught at this level and result in a validity of ERROR, as well as setting an error message on the field. A customizable, global error message is used for this purpose. If a control function could throw an error, though, it is better to catch it inside the control function and handle it in a way that is most meaningful to your form and users. This control function will run anytime either firstName or lastName updates.
+(This is assuming you have added `"input"` as the `className` prop to your `Input` components).
 
-Fields can also be 'state-controlled' meaning that instead of returning a string value, the control function returns a FieldState object.
+Let's add some messages components to the MyFirstForm component to display messages returned by the validators we added.
 
-✔️ **Fields are Omittable**
+## Templates
 
-A field's omit property determines whether it is included in the finalized form value.
+## Validators
 
-✔️ **The Finalized Form of the Data is Configurable**
+## Controlled Fields
 
-Finalizers allow you to transform the data that will be submitted to your backend, and configure this transformation in a declarative way. This means that  not only is the state of the form always up to date in terms of the relationship between its value and its validity, but the data is also always ready to be submitted to the backend (assuming it is in a valid state).
+## Multi-Field Validators
 
-✔️ **Forms Can Be Nested, and First Nonvalid Field Is Tracked**
+## Finalized Fields
 
-Forms may be nested, and can be used as arguments in finalizers or field control functions. Additionally, the first nonvalid (meaning errant, invalid, pending) field in the form is tracked using the InsertionOrderHeap class. In a form with multiple sub-forms spread across several pages, this could allow programmatic navigation to the first subform which is not in a valid state.
+## Components
 
-✔️ **Fields can be evaluated for validity as a group**
+## Hooks
 
-MultiInputValidators allow you to determine the validity of several fields as a group. An use-case could be evaluating the validity of an address after the user has completed all fields. Of course, async validation is possible, meaning an API call to the Google Maps or MapQuest APIs could be made to perform this validation.
+## First Non-Valid Form Element
 
-✔️ **Extracted Values allow you to hook into field values and generate values based on those fields**
+## Confirmation
 
-If you need to generate a value that is not to be included in the form, but should be synchronized with updates to the value of a field, this can be performed by utilizing Extracted Values.
+## Submission
 
-✔️ **Auto Transforms and Configuration**
+## Usage with Next.js App Router
 
-By default, autoTrim is set to true. This means that before running default validators that may depend on the length of the value string of a field, that field's value will be trimmed. The field's value will also be trimmed when it is finalized. This can be configured by creating a .modeledformsreactrc file and setting the autoTrim property. Global messages can also be configured here, for instance, for internationalization purposes. Regular expressions used to provide email address validation and the like can also be configured in this file.
+## Configuration
 
-✔️ **Common Validators are provided out of the box**
+## Contributing
 
-Validators like **required, pattern, email, minDate,** and more are provided out of the box and require minimal configuration.
+## Issues
 
-✔️ **Hooks and Customizable Components are also built into the library**
-
-Hooks and components integrate the RxJS-based model with the React-based view. Components are design-agnostic and provide only what is necessary to style the component as you wish based on the corresponding field's state.
-
-## Example
-
-### 1. Create a RootFormTemplate!
-
-```
-import { 
-  RootFormTemplate, 
-  required, 
-  email, 
-  includesDigit, 
-  inLengthRange, 
-  includesLower, 
-  includesUpper, 
-  includesSymbol, 
-  maxDate, 
-  Validity, 
-  State 
-} from 'modeled-forms-react';
-
-//a function that makes an API call to validate an address. Just part of this example, not included in modeled-forms-react.
-import { validateAddress } from './validate-address';
-
-export const template: RootFormTemplate = {
-  fields: {
-    firstName: {
-      defaultValue: '',
-      syncValidators: [required('First Name is a required field.')],
-    },
-    lastName: {
-      defaultValue: '',
-      syncValidators: [required('Last Name is a required field.')],
-    },
-    emailAddr: {
-      defaultValue: '',
-      syncValidators: [
-        required('❌ Email is a required field.'),
-        email('❌ Please enter a valid email address.'),
-      ],
-    },
-    password: {
-      defaultValue: '',
-      syncValidators: [
-        required('❌ Password is a required field.'),
-        includesLower(
-          '❌ Password must include a lowercase letter.',
-          '✅ Password includes a lowercase letter.',
-        ),
-        includesUpper(
-          '❌ Password must include an uppercase letter.',
-          '✅ Password includes an uppercase letter.',
-        ),
-        includesDigit(
-          '❌ Password must include a digit.',
-          '✅ Password includes a digit.',
-        ),
-        includesSymbol(
-          '❌ Password must include a symbol.',
-          '✅ Password includes a symbol.',
-        ),
-        inLengthRange(
-          8,
-          64,
-          '❌ Password must be at least 8 characters long but no more than 64.',
-          '✅ Password is between 8 and 64 characters long.',
-        ),
-      ],
-    },
-    birthday: {
-      defaultValue: '',
-      syncValidators: [
-        required('❌ Birthday is a required field.'),
-        maxDate(
-          new Date(),
-          '❌ Birthday must be a valid date prior to the current date.',
-        ),
-      ],
-    },
-    address : {
-      fields: {
-        line1 : {
-          defaultValue: '',
-          syncValidators: [
-            required('❌ Address Line 1 is a required field.')
-          ]
-        },
-        line2 : '',
-        city: {
-          defaultValue: '',
-          syncValidators: [
-            required('❌ City is a required field.')
-          ]
-        },
-        state: {
-          defaultValue: '',
-          syncValidators: [
-            required('❌ State is a required field.'),
-            inLengthRange(2, 2, '❌ Please enter a two-character state abbreviation.')
-          ]
-        },
-        zip: {
-          defaultValue: '',
-          syncValidators: [
-            required('❌ Zip is a required field.'),
-            inLengthRange(5, 5, '❌ Please enter a 5-digit zip code.'),
-            (value) => {
-              const isValid = !(/\D/.test(value));
-              return {
-                isValid,
-                message : isValid ? undefined : '❌ Zip code must only contain digits.'
-              }
-            }
-          ]
-        }
-      },
-      multiFieldValidators: {
-        async: [
-          {
-            validatorFn: ({line1, line2, city, state, zip, overallValidity}) => {
-
-              return new Promise((resolve) => {
-                if(overallValidity() < Validity.VALID_FINALIZABLE) resolve({
-                  isValid : false
-                });
-                else {
-                  validateAddress(line1.value, line2.value, city.value, state.value, zip.value).then((isValid) => {
-                    resolve({
-                      isValid,
-                      message : isValid ? undefined : 'Please enter a valid address.'
-                    })
-                  });
-                }
-              });
-            },
-            pendingValidatorMessage: 'Checking address fields...'
-          }
-        ]
-      },
-    extractedValues: {
-      syncExtractedValues: {},
-      asyncExtractedValues: {}
-    }
-    },
-  },
-  finalizedFields: {
-    fullName : {
-      syncFinalizerFn: ({firstName, lastName}) => {
-        return firstName.value + ' ' + lastName.value
-      }
-    }
-  },
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  submitFn: (state : State<any>) => {
-    return new Promise((resolve) => {
-      console.log(state);
-      resolve(state);
-    });
-  },
-  extractedValues: {
-    syncExtractedValues: {
-      age : ({ birthday, overallValidity }) => {
-        if (overallValidity() < Validity.VALID_FINALIZABLE) return "Unknown";
-        const ageDifMs = Date.now() - new Date(birthday.value).getTime();
-        const ageDate = new Date(ageDifMs); // miliseconds from epoch
-        return Math.abs(ageDate.getUTCFullYear() - 1970).toString();
-      }
-    },
-    asyncExtractedValues: {}
-  }
-};
-
-```
-
-### 2. Create A Component Which Displays an Extracted Value, in this case age
-
-```
-import { FormContext } from "modeled-forms-react";
-import { useContext } from "react";
-
-export function Age() {
-  const formCtx = useContext(FormContext);
-  if(!formCtx) throw new Error('FormCtx was null');
-  const { useExtractedValue } = formCtx;
-
-  const age = useExtractedValue('age');
-
-  return (
-    <div>
-      <label>Age: {age}</label>
-    </div>
-  )
-}
-```
-
-### 3. Create The Form!
-
-```
-import { 
-  RootFormProvider, 
-  InputGroup, 
-  NestedFormProvider, 
-  SubmitButton, 
-  ResetButton, 
-  FormMessages 
-} from "modeled-forms-react";
-import styles from './styles.module.scss';
-
-import { template } from "./form.template";
-import { Age } from "./age.component";
-export function Form() {
-  return (
-    <div className={styles.screen}>
-      <div className={styles.form}>
-        <h1>My Awesome Form</h1>
-        <RootFormProvider template={template}>
-          <InputGroup fieldName="firstName" labelText="First Name" inputType="text" inputGroupClassName={styles.inputGroup}  />
-          <InputGroup fieldName="lastName" labelText="Last Name" inputType="text" inputGroupClassName={styles.inputGroup}  />
-          <InputGroup fieldName="emailAddr" labelText="Email" inputType="email" inputGroupClassName={styles.inputGroup} />
-          <InputGroup fieldName="password" labelText="Password" inputType="password" inputGroupClassName={styles.inputGroup} />
-          <InputGroup fieldName="birthday" labelText="Birthday" inputType="date" inputGroupClassName={styles.inputGroup} />
-          <Age />
-          <NestedFormProvider fieldName="address">
-            <InputGroup fieldName="line1" labelText="Address Line 1" inputType="text" inputGroupClassName={styles.inputGroup} />
-            <InputGroup fieldName="line2" labelText="Address Line 2" inputType="text" inputGroupClassName={styles.inputGroup} />
-            <InputGroup fieldName="city" labelText="City" inputType="text" inputGroupClassName={styles.inputGroup} />
-            <InputGroup fieldName="state" labelText="State" inputType="text" inputGroupClassName={styles.inputGroup} />
-            <InputGroup fieldName="zip" labelText="Zip" inputType="number" inputGroupClassName={styles.inputGroup} />
-          </NestedFormProvider>
-          <FormMessages idPrefix="rootForm" />
-          <SubmitButton className={styles.button} />
-          <ResetButton disabled={false} className={styles.button} />
-        </RootFormProvider>
-      </div>
-    </div>
-  
-  );
-}
-```
-
-### 4. Style the Form!
-
-Notice how we can hook into the validity of various components via the data-validity attribute.
-
-```
-//styles.module.scss
-
-.screen {
-  background-color: #121212;
-  display : flex;
-  justify-content: center;
-  padding: 20px;
-  width: 100vw;
-  min-height: 100vh;
-}
-
-.form {
-  background: linear-gradient(#9c988a, white);
-  position: relative;
-  padding: 12px;
-  box-sizing: border-box;
-  border-radius: 4px;
-  width: 400px;
-  height: fit-content;
-
-  &::after {
-    content: '';
-	  position: absolute;
-	  top: 4px;
-	  left: 4px;
-	  width: calc(100% - 8px);
-	  height: 50%;
-	  background: linear-gradient(rgba(255,255,255,0.8), rgba(255,255,255,0.2));
-  }
-
-  h1 {
-    position: relative;
-    z-index: 999;
-    font-size: 1.5rem;
-  }
-}
-
-.inputGroup {
-  position: relative;
-  z-index: 999;
-  display: flex;
-  flex-direction: column;
-}
-
-.inputGroup .label {
-  margin : 4px;
-}
-
-.inputGroup :global {
-  .input {
-    transition: all 300ms ease-in-out;
-    outline: 1px solid red;
-    margin : 4px;
-  }
-  
-  .input[data-validity="PENDING"] {
-    transition: all 300ms ease-in-out;
-    outline: 1px solid gray;
-    margin : 4px;
-  }
-  
-  .input[data-validity="VALID"] {
-    outline: none;
-  }
-  
-
-  .messages {
-    display: flex;
-    flex-direction: column;
-
-    .message {
-      background-color: rgba(255, 171, 199, 0.8);
-      margin: 2px;
-      font-size: 10px;
-    }
-
-    .message[data-validity="VALID"] {
-      background-color: lightgreen;
-    }
-  } 
-}
-```
-
-More complete docs will be published along with the alpha release.
+## License
