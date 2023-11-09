@@ -7,7 +7,7 @@ import { getAriaDescribedBy } from '../util/get-aria-described-by';
 import { Visited } from '../../model/state/visited.enum';
 import { Modified } from '../../model/state/modified.enum';
 
-interface InputProps {
+export interface InputProps {
   fieldName : string;
   type : string;
   className? : string;

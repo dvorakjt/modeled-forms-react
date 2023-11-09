@@ -7,7 +7,7 @@ import { getAriaDescribedBy } from '../util/get-aria-described-by';
 import { Visited } from '../../model/state/visited.enum';
 import { Modified } from '../../model/state/modified.enum';
 
-interface CheckboxInputProps {
+export interface CheckboxInputProps {
   fieldName : string;
   value : string;
   labelText : string;

@@ -8,7 +8,7 @@ import { Visited } from '../../model/state/visited.enum';
 import { Modified } from '../../model/state/modified.enum';
 import { getRadioInputId } from '../util/get-radio-input-id';
 
-interface RadioInputProps {
+export interface RadioInputProps {
   fieldName : string;
   value : string;
   labelText : string;

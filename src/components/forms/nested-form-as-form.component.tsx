@@ -2,7 +2,7 @@ import React, { PropsWithChildren } from 'react';
 import { NestedFormProvider, NestedFormProviderProps } from '../context-providers/nested-form-provider.component';
 import { FormProps } from './form-props.interface';
 
-type NestedFormAsFormProps = NestedFormProviderProps & FormProps;
+export type NestedFormAsFormProps = NestedFormProviderProps & FormProps;
 
 export function NestedFormAsForm({
   fieldName,

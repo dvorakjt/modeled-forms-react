@@ -4,7 +4,7 @@ import { RootFormContext } from '../context-providers/root-form-provider.compone
 import { FormContext } from '../context-providers/form-context';
 import { Validity } from '../../model/state/validity.enum';
 
-interface SubmitButtonProps {
+export interface SubmitButtonProps {
   className? : string;
   style? : CSSProperties;
   onSuccess? : (res : any) => void;

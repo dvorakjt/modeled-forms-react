@@ -4,7 +4,7 @@ import { FormContext } from "../context-providers/form-context";
 import { Validity } from "../../model";
 import { container } from "../../model/container";
 
-interface ConfirmButtonProps {
+export interface ConfirmButtonProps {
   className? : string;
   style? : CSSProperties;
   enableOnlyWhenValid? : boolean;

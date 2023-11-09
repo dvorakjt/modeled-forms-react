@@ -1,7 +1,7 @@
 import React, { CSSProperties, PropsWithChildren } from 'react';
 import { NestedFormProvider, NestedFormProviderProps } from '../context-providers/nested-form-provider.component';
 
-type NestedFormAsFieldsetProps = NestedFormProviderProps & {
+export type NestedFormAsFieldsetProps = NestedFormProviderProps & {
   disabled? : boolean;
   className? : string;
   style? : CSSProperties

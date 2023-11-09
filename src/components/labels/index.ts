@@ -1,1 +1,1 @@
-export { Label } from './label.component';
+export { Label, type LabelProps } from './label.component';
