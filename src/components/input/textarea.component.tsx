@@ -5,9 +5,9 @@ import { validityToString } from '../util/validity-to-string';
 import { Validity } from '../../model/state/validity.enum';
 import { getAriaDescribedBy } from '../util/get-aria-described-by';
 import { Visited } from '../../model/state/visited.enum';
-import { Modified } from '../../model/state/modified-enum';
+import { Modified } from '../../model/state/modified.enum';
 
-interface TextareaProps {
+export interface TextareaProps {
   fieldName : string;
   className? : string;
   style? : CSSProperties;

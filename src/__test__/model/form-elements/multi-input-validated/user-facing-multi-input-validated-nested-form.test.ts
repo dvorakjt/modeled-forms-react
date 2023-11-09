@@ -7,7 +7,7 @@ import { AbstractField } from '../../../../model/fields/base/abstract-field';
 import { SyncValidator } from '../../../../model/validators/sync-validator.type';
 import { AggregatedStateChanges } from '../../../../model/aggregators/aggregated-state-changes.interface';
 import { Visited } from '../../../../model/state/visited.enum';
-import { Modified } from '../../../../model/state/modified-enum';
+import { Modified } from '../../../../model/state/modified.enum';
 
 describe('UserFacingMultiInputValidatedNestedForm', () => {
   test('userFacingFields returns the base nested form\'s userFacingFields.', () => {

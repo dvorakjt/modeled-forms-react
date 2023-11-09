@@ -5,7 +5,7 @@ import { FinalizerFnFactory } from '../../../../model/finalizers/finalizer-funct
 import { SyncBaseFinalizerFn } from '../../../../model/finalizers/finalizer-functions/sync-base-finalizer-fn.type';
 import { FinalizerValidity } from '../../../../model/state/finalizer-validity.enum';
 import { Visited } from '../../../../model/state/visited.enum';
-import { Modified } from '../../../../model/state/modified-enum';
+import { Modified } from '../../../../model/state/modified.enum';
 import { MockField } from '../../../util/mocks/mock-field';
 import { Validity } from '../../../../model';
 import { AsyncBaseFinalizerFn } from '../../../../model/finalizers/finalizer-functions/async-base-finalizer-fn.type';

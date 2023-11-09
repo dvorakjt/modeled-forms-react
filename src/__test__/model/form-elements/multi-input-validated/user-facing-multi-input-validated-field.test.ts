@@ -3,7 +3,7 @@ import { container } from '../../../../model/container';
 import { MockField } from '../../../util/mocks/mock-field';
 import { FieldState, MessageType, Validity, required } from '../../../../model';
 import { Visited } from '../../../../model/state/visited.enum';
-import { Modified } from '../../../../model/state/modified-enum';
+import { Modified } from '../../../../model/state/modified.enum';
 import { SyncValidator } from '../../../../model/validators/sync-validator.type';
 import { AggregatedStateChanges } from '../../../../model/aggregators/aggregated-state-changes.interface';
 import { UserFacingMultiInputValidatedField } from '../../../../model/form-elements/multi-input-validated/user-facing-multi-input-validated-field';

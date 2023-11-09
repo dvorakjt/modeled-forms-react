@@ -3,7 +3,7 @@ import React, { CSSProperties, useContext} from 'react';
 import { FormContext } from '../context-providers/form-context';
 import { Messages } from './messages.component';
 
-type FormMessagesProps = {
+export type FormMessagesProps = {
   idPrefix: string;
   containerClassName? : string;
   containerStyle? : CSSProperties;

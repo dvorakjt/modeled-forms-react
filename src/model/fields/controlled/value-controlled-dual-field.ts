@@ -5,7 +5,7 @@ import type { DualFieldSetStateArg } from '../../state/dual-field-set-state-arg.
 import { Validity } from '../../state/validity.enum';
 import { MessageType } from '../../state/messages/message-type.enum';
 import { FieldState } from '../../state/field-state.interface';
-import { Modified } from '../../state/modified-enum';
+import { Modified } from '../../state/modified.enum';
 import { Config } from '../../config-loader/config.interface';
 
 export class ValueControlledDualField extends AbstractDualField {

@@ -2,7 +2,7 @@ import { describe, test, expect, vi } from 'vitest';
 import { DualField } from '../../../../model/fields/base/dual-field';
 import { MockField } from '../../../util/mocks/mock-field';
 import { FieldState, MessageType, Validity } from '../../../../model';
-import { Modified } from '../../../../model/state/modified-enum';
+import { Modified } from '../../../../model/state/modified.enum';
 import { Visited } from '../../../../model/state/visited.enum';
 
 describe('DualField', () => {

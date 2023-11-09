@@ -1,6 +1,6 @@
 import type { FormElementDictionary } from '../form-elements/form-element-dictionary.type';
 import type { AnyState } from '../state/any-state.type';
-import type { Modified } from '../state/modified-enum';
+import type { Modified } from '../state/modified.enum';
 import type { Validity } from '../state/validity.enum';
 import type { Visited } from '../state/visited.enum';
 

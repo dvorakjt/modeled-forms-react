@@ -2,7 +2,7 @@ import React, { PropsWithChildren } from 'react';
 import { RootFormProvider, RootFormProviderProps } from "../context-providers/root-form-provider.component";
 import { FormProps } from "./form-props.interface";
 
-type RootFormProps = FormProps & RootFormProviderProps;
+export type RootFormProps = FormProps & RootFormProviderProps;
 
 export function RootForm({
   template,

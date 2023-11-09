@@ -5,7 +5,7 @@ import type { FieldState } from '../../state/field-state.interface';
 import type { DualFieldSetValueArg } from '../../state/dual-field-set-value-arg.interface';
 import { Subject } from 'rxjs';
 import { StatefulFormElement } from '../../form-elements/stateful-form-element.interface';
-import { Modified } from '../../state/modified-enum';
+import { Modified } from '../../state/modified.enum';
 
 export abstract class AbstractField implements
     StatefulFormElement<string>,

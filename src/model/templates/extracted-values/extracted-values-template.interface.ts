@@ -1,7 +1,7 @@
-import { AsyncAdapterFn } from "../../adapters/async-adapter-fn.type";
-import { SyncAdapterFn } from "../../adapters/sync-adapter-fn.type";
+import { AsyncExtractedValuesTemplate } from "./async-extracted-values-template.interface";
+import { SyncExtractedValuesTemplate } from "./sync-extracted-values-template.interface";
 
 export interface ExtractedValuesTemplate {
-  syncExtractedValues? : Record<string, SyncAdapterFn<any>>;
-  asyncExtractedValues? : Record<string, AsyncAdapterFn<any>>;
+  syncExtractedValues? : SyncExtractedValuesTemplate,
+  asyncExtractedValues? : AsyncExtractedValuesTemplate
 }

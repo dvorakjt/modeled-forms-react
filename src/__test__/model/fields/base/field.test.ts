@@ -3,7 +3,7 @@ import { Field } from '../../../../model/fields/base/field';
 import { container } from '../../../../model/container';
 import { SyncValidator } from '../../../../model/validators/sync-validator.type';
 import { Message, MessageType, Validity } from '../../../../model';
-import { Modified } from '../../../../model/state/modified-enum';
+import { Modified } from '../../../../model/state/modified.enum';
 import { createTriggerableAsyncValidator } from '../../validators/single-input/mocks/async/create-triggerable-async-validator';
 import { Subject, Subscription } from 'rxjs';
 import { Visited } from '../../../../model/state/visited.enum';

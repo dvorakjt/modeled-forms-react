@@ -2,7 +2,7 @@ import { describe, test, expect } from 'vitest';
 import { FieldStateReducerImpl } from '../../../model/reducers/field-state/field-state-reducer-impl';
 import { Validity } from '../../../model/state/validity.enum';
 import { Visited } from '../../../model/state/visited.enum';
-import { Modified } from '../../../model/state/modified-enum';
+import { Modified } from '../../../model/state/modified.enum';
 import { container } from '../../../model/container';
 
 describe('FieldStateReducerImpl', () => {

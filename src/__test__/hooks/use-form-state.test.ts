@@ -4,7 +4,7 @@ import { useRootForm } from "../../hooks";
 import { MessageType, RootFormTemplate, Validity, required } from "../../model";
 import { container } from "../../model/container";
 import { Visited } from "../../model/state/visited.enum";
-import { Modified } from "../../model/state/modified-enum";
+import { Modified } from "../../model/state/modified.enum";
 
 describe('useFormState()', () => {
   test('It returns a value which is updated as the form\'s value is updated.', () => {

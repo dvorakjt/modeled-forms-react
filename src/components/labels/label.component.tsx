@@ -4,15 +4,15 @@ import { FormContext } from '../context-providers/form-context';
 import { validityToString } from '../util/validity-to-string';
 import { Validity } from '../../model/state/validity.enum';
 import { Visited } from '../../model/state/visited.enum';
-import { Modified } from '../../model/state/modified-enum';
+import { Modified } from '../../model/state/modified.enum';
 
-interface LabelComponentProps {
+export interface LabelProps {
   fieldName : string;
   className? : string;
   style? : CSSProperties
 }
 
-export function Label({ fieldName, className, style, children } : PropsWithChildren<LabelComponentProps>) {
+export function Label({ fieldName, className, style, children } : PropsWithChildren<LabelProps>) {
   const formCtx = useContext(FormContext);
   if(!formCtx) throw new Error('Input cannot access properties of null or undefined FormContext');
   else {

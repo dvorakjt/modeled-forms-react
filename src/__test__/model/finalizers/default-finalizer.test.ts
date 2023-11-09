@@ -4,7 +4,7 @@ import { MockField } from '../../util/mocks/mock-field';
 import { Validity } from '../../../model';
 import { FinalizerValidity } from '../../../model/state/finalizer-validity.enum';
 import { Visited } from '../../../model/state/visited.enum';
-import { Modified } from '../../../model/state/modified-enum';
+import { Modified } from '../../../model/state/modified.enum';
 
 describe('DefaultFinalizer', () => {
   const finalizerFactory = container.services.FinalizerFactory;
