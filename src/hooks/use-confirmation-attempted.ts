@@ -9,7 +9,7 @@ export function useConfirmationAttempted(form: AbstractRootForm | AbstractNested
 
   useEffect(() => {
     subRef.current = form.confirmationAttemptedChanges.subscribe(change => {
-      if(change !== confirmationAttempted) setConfirmationAttempted(change);
+      setConfirmationAttempted(change);
     });
     return () => subRef.current?.unsubscribe();
   }, []);
