@@ -5,7 +5,6 @@ Powerful MVC-inspired form management for React with declarative syntax and visu
 [About](#about)
 [Installation](#installation)
 [Getting Started](#getting-started)
-[Examples](#examples)
 [Templates](#templates)
 [Validators](#validators)
 [Controlled Fields](#controlled-fields)
