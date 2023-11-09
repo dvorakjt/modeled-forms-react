@@ -21,7 +21,7 @@ export class Field extends AbstractField {
   readonly _omitByDefault;
   _state: FieldState;
   _validatorSuiteSubscription?: Subscription;
-  
+
   get state() {
     return copyObject(this._state);
   }
@@ -50,8 +50,8 @@ export class Field extends AbstractField {
     this._state = {
       ...initialState.syncResult,
       omit: this._omitByDefault,
-      visited : Visited.NO,
-      modified : this._getDefaultModifiedValue()
+      visited: Visited.NO,
+      modified: this._getDefaultModifiedValue(),
     };
     this.stateChanges = new BehaviorSubject(this.state);
     if (initialState.observable)
@@ -65,8 +65,8 @@ export class Field extends AbstractField {
     this.setState({
       ...validityResult.syncResult,
       omit: this.state.omit,
-      visited : this.state.visited,
-      modified
+      visited: this.state.visited,
+      modified,
     });
     if (validityResult.observable)
       this._handleValidityObservable(validityResult.observable);
@@ -75,8 +75,8 @@ export class Field extends AbstractField {
   setState(state: Partial<FieldState>) {
     this._state = {
       ...this._state,
-      ...state
-    }
+      ...state,
+    };
     this.stateChanges.next(this.state);
   }
 
@@ -87,7 +87,7 @@ export class Field extends AbstractField {
   }
 
   _getDefaultModifiedValue() {
-    return this._defaultValue.length > 0 ? Modified.YES : Modified.NO
+    return this._defaultValue.length > 0 ? Modified.YES : Modified.NO;
   }
 
   _handleValidityObservable(

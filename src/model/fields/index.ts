@@ -6,5 +6,5 @@ export type {
   AsyncFieldStateControlFn,
   AsyncFieldValueControlFn,
   SyncFieldStateControlFn,
-  SyncFieldValueControlFn
+  SyncFieldValueControlFn,
 } from './controlled';

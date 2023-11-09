@@ -6,14 +6,14 @@ import { ModificationReducer } from '../modification/modification-reducer.interf
 
 export class FieldStateReducerImpl implements FieldStateReducer {
   _validityReducer: ValidityReducer;
-  _visitationReducer : VisitationReducer;
-  _modificationReducer : ModificationReducer;
+  _visitationReducer: VisitationReducer;
+  _modificationReducer: ModificationReducer;
   _omittedFields = new Set<string>();
 
   constructor(
     validityReducer: ValidityReducer,
-    visitationReducer : VisitationReducer,
-    modificationReducer : ModificationReducer
+    visitationReducer: VisitationReducer,
+    modificationReducer: ModificationReducer,
   ) {
     this._validityReducer = validityReducer;
     this._visitationReducer = visitationReducer;

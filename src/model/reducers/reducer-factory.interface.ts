@@ -11,8 +11,8 @@ interface ReducerFactory {
   createUserMultiInputValidatorValidityReducer(): MultiInputValidatorValidityReducer;
   createFinalizerFacingMultiInputValidatorValidityReducer(): MultiInputValidatorValidityReducer;
   createValidityReducer(): ValidityReducer;
-  createVisitationReducer() : VisitationReducer;
-  createModificationReducer() : ModificationReducer;
+  createVisitationReducer(): VisitationReducer;
+  createModificationReducer(): ModificationReducer;
 }
 const ReducerFactoryKey = 'ReducerFactory';
 type ReducerFactoryKeyType = typeof ReducerFactoryKey;

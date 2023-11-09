@@ -80,7 +80,7 @@ export class SyncMultiInputValidator implements MultiInputValidator {
       if (result.message) {
         message = {
           type: result.isValid ? MessageType.VALID : MessageType.INVALID,
-          text: result.message
+          text: result.message,
         };
       } else message = null;
       return {
@@ -93,7 +93,7 @@ export class SyncMultiInputValidator implements MultiInputValidator {
         validity: Validity.ERROR,
         message: {
           type: MessageType.ERROR,
-          text: config.globalMessages.multiFieldValidationError
+          text: config.globalMessages.multiFieldValidationError,
         },
       };
     }

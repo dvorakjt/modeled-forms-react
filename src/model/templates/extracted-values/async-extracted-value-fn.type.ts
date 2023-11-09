@@ -1,3 +1,3 @@
-import { AsyncAdapterFn } from "../../adapters/async-adapter-fn.type";
+import { AsyncAdapterFn } from '../../adapters/async-adapter-fn.type';
 
-export type AsyncExtractedValueFn =  AsyncAdapterFn<any>;
+export type AsyncExtractedValueFn = AsyncAdapterFn<any>;

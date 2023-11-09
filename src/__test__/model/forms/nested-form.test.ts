@@ -1,6 +1,11 @@
 import { describe, test, expect, vi } from 'vitest';
 import { container } from '../../../model/container';
-import { MessageType, NestedFormTemplate, Validity, required } from '../../../model';
+import {
+  MessageType,
+  NestedFormTemplate,
+  Validity,
+  required,
+} from '../../../model';
 import { AbstractField } from '../../../model/fields/base/abstract-field';
 import { Visited } from '../../../model/state/visited.enum';
 import { Modified } from '../../../model/state/modified.enum';
@@ -12,46 +17,47 @@ describe('NestedForm', () => {
   test('state returns the expected value for state.', () => {
     const expectedMFVMessageText = 'Field C must NOT equal Field D.';
 
-    const nestedFormTemplate : NestedFormTemplate = {
-      fields : {
-        fieldA : 'test',
-        fieldB : {
-          defaultValue : '',
-          syncValidators : [
-            required('Field B is required.')
-          ]
+    const nestedFormTemplate: NestedFormTemplate = {
+      fields: {
+        fieldA: 'test',
+        fieldB: {
+          defaultValue: '',
+          syncValidators: [required('Field B is required.')],
         },
-        fieldC : 'test',
-        fieldD : 'test',
+        fieldC: 'test',
+        fieldD: 'test',
       },
-      multiFieldValidators : {
-        sync : [
+      multiFieldValidators: {
+        sync: [
           ({ fieldC, fieldD }) => {
             const isValid = fieldC.value !== fieldD.value;
 
-            return ({
+            return {
               isValid,
-              message : isValid ? undefined : expectedMFVMessageText
-            })
-          }
-        ]
-      },
-      finalizedFields : {
-        errantFinalizer : {
-          // eslint-disable-next-line @typescript-eslint/no-unused-vars
-          syncFinalizerFn : ({ fieldA }) => {
-            throw new Error('Finalizer error.')
+              message: isValid ? undefined : expectedMFVMessageText,
+            };
           },
-          preserveOriginalFields : true
-        }
+        ],
       },
-      omitByDefault : true
-    }
+      finalizedFields: {
+        errantFinalizer: {
+          // eslint-disable-next-line @typescript-eslint/no-unused-vars
+          syncFinalizerFn: ({ fieldA }) => {
+            throw new Error('Finalizer error.');
+          },
+          preserveOriginalFields: true,
+        },
+      },
+      omitByDefault: true,
+    };
 
-    const nestedForm = container.services.NestedFormTemplateParser.parseTemplate(nestedFormTemplate);
+    const nestedForm =
+      container.services.NestedFormTemplateParser.parseTemplate(
+        nestedFormTemplate,
+      );
 
     (nestedForm.userFacingFields.fieldB as AbstractField).setState({
-      visited : Visited.YES
+      visited: Visited.YES,
     });
 
     /*
@@ -65,113 +71,125 @@ describe('NestedForm', () => {
       - omit is true as omitByDefault was set to true in the template
     */
     expect(nestedForm.state).toStrictEqual({
-      value : {
-        fieldA : 'test'
+      value: {
+        fieldA: 'test',
       },
-      validity : Validity.ERROR,
-      messages : [
+      validity: Validity.ERROR,
+      messages: [
         {
-          text : expectedMFVMessageText,
-          type : MessageType.INVALID
+          text: expectedMFVMessageText,
+          type: MessageType.INVALID,
         },
         {
-          text : container.services.ConfigLoader.config.globalMessages.finalizerError,
-          type : MessageType.ERROR
-        }
+          text: container.services.ConfigLoader.config.globalMessages
+            .finalizerError,
+          type: MessageType.ERROR,
+        },
       ],
-      visited : Visited.PARTIALLY,
-      modified : Modified.PARTIALLY,
-      omit : true
+      visited: Visited.PARTIALLY,
+      modified: Modified.PARTIALLY,
+      omit: true,
     });
   });
 
   test('firstNonValidFormElement returns the expected firstNonValidFormElement.', () => {
     //here, we use a map to guarantee accurate key order
-    const nestedFormTemplate : NestedFormTemplate = {
-      fields : new Map([
+    const nestedFormTemplate: NestedFormTemplate = {
+      fields: new Map([
         [
-          'fieldA', 
+          'fieldA',
           {
-            defaultValue : '',
-            syncValidators : [
-              required('Field A is required.')
-            ]
-          }
+            defaultValue: '',
+            syncValidators: [required('Field A is required.')],
+          },
         ],
         [
           'fieldB',
           {
-            defaultValue : '',
-            syncValidators : [
-              required('Field B is required.')
-            ]
-          }
-        ]
-      ])
-    }
+            defaultValue: '',
+            syncValidators: [required('Field B is required.')],
+          },
+        ],
+      ]),
+    };
 
-    const nestedForm = container.services.NestedFormTemplateParser.parseTemplate(nestedFormTemplate);
+    const nestedForm =
+      container.services.NestedFormTemplateParser.parseTemplate(
+        nestedFormTemplate,
+      );
 
     expect(nestedForm.firstNonValidFormElement).toBe('fieldA');
 
-    (nestedForm.userFacingFields.fieldA as AbstractField).setValue('some value');
+    (nestedForm.userFacingFields.fieldA as AbstractField).setValue(
+      'some value',
+    );
 
     expect(nestedForm.firstNonValidFormElement).toBe('fieldB');
 
-    (nestedForm.userFacingFields.fieldB as AbstractField).setValue('some other value');
+    (nestedForm.userFacingFields.fieldB as AbstractField).setValue(
+      'some other value',
+    );
 
     expect(nestedForm.firstNonValidFormElement).toBeUndefined();
   });
 
   test('firstNonFormElementChanges emits expected firstNonValidFormElements.', () => {
-    const nestedFormTemplate : NestedFormTemplate = {
-      fields : new Map([
+    const nestedFormTemplate: NestedFormTemplate = {
+      fields: new Map([
         [
-          'fieldA', 
+          'fieldA',
           {
-            defaultValue : '',
-            syncValidators : [
-              required('Field A is required.')
-            ]
-          }
+            defaultValue: '',
+            syncValidators: [required('Field A is required.')],
+          },
         ],
         [
           'fieldB',
           {
-            defaultValue : '',
-            syncValidators : [
-              required('Field B is required.')
-            ]
-          }
-        ]
-      ])
-    }
+            defaultValue: '',
+            syncValidators: [required('Field B is required.')],
+          },
+        ],
+      ]),
+    };
 
-    const nestedForm = container.services.NestedFormTemplateParser.parseTemplate(nestedFormTemplate);
+    const nestedForm =
+      container.services.NestedFormTemplateParser.parseTemplate(
+        nestedFormTemplate,
+      );
 
     const expectedNonValidFormElements = ['fieldA', 'fieldB', undefined];
     let expectedNonValidFormElementIndex = 0;
-    
-    nestedForm.firstNonValidFormElementChanges.subscribe(change => {
-      expect(change).toBe(expectedNonValidFormElements[expectedNonValidFormElementIndex++]);
 
-      if(expectedNonValidFormElementIndex === 1) {
-        (nestedForm.userFacingFields.fieldA as AbstractField).setValue('some value');
-      } else if(expectedNonValidFormElementIndex === 2) {
-        (nestedForm.userFacingFields.fieldB as AbstractField).setValue('some other value');
+    nestedForm.firstNonValidFormElementChanges.subscribe(change => {
+      expect(change).toBe(
+        expectedNonValidFormElements[expectedNonValidFormElementIndex++],
+      );
+
+      if (expectedNonValidFormElementIndex === 1) {
+        (nestedForm.userFacingFields.fieldA as AbstractField).setValue(
+          'some value',
+        );
+      } else if (expectedNonValidFormElementIndex === 2) {
+        (nestedForm.userFacingFields.fieldB as AbstractField).setValue(
+          'some other value',
+        );
       }
     });
   });
 
   test('setting omit causes a new state to be emitted.', () => {
-    const nestedFormTemplate : NestedFormTemplate = {
-      fields : {
-        fieldA : '',
-        fieldB : ''
-      }
-    }
+    const nestedFormTemplate: NestedFormTemplate = {
+      fields: {
+        fieldA: '',
+        fieldB: '',
+      },
+    };
 
-    const nestedForm = container.services.NestedFormTemplateParser.parseTemplate(nestedFormTemplate);
+    const nestedForm =
+      container.services.NestedFormTemplateParser.parseTemplate(
+        nestedFormTemplate,
+      );
 
     nestedForm.omit = true;
 
@@ -180,16 +198,19 @@ describe('NestedForm', () => {
     });
   });
 
-  test('getting omit returns the form\'s _omit value.', () => {
-    const nestedFormTemplate : NestedFormTemplate = {
-      fields : {
-        fieldA : '',
-        fieldB : ''
+  test("getting omit returns the form's _omit value.", () => {
+    const nestedFormTemplate: NestedFormTemplate = {
+      fields: {
+        fieldA: '',
+        fieldB: '',
       },
-      omitByDefault : true
-    }
+      omitByDefault: true,
+    };
 
-    const nestedForm = container.services.NestedFormTemplateParser.parseTemplate(nestedFormTemplate);
+    const nestedForm =
+      container.services.NestedFormTemplateParser.parseTemplate(
+        nestedFormTemplate,
+      );
 
     expect(nestedForm.omit).toBe(true);
 
@@ -198,21 +219,24 @@ describe('NestedForm', () => {
     expect(nestedForm.omit).toBe(false);
   });
 
-  test('calling reset() resets all of the form\'s fields.', () => {
-    const nestedFormTemplate : NestedFormTemplate = {
-      fields : {
-        fieldA : {
-          defaultValue : '',
-          omitByDefault : true
+  test("calling reset() resets all of the form's fields.", () => {
+    const nestedFormTemplate: NestedFormTemplate = {
+      fields: {
+        fieldA: {
+          defaultValue: '',
+          omitByDefault: true,
         },
-        fieldB : {
-          primaryDefaultValue : '',
-          secondaryDefaultValue : '',
-        }
-      }
-    }
+        fieldB: {
+          primaryDefaultValue: '',
+          secondaryDefaultValue: '',
+        },
+      },
+    };
 
-    const nestedForm = container.services.NestedFormTemplateParser.parseTemplate(nestedFormTemplate);
+    const nestedForm =
+      container.services.NestedFormTemplateParser.parseTemplate(
+        nestedFormTemplate,
+      );
 
     const { fieldA, fieldB } = nestedForm.userFacingFields;
 
@@ -231,65 +255,79 @@ describe('NestedForm', () => {
 
   test('When the MultiFieldValidatorAggregator emits a new message, state changes emits a new state.', () => {
     const expectedValidMessageText = 'Field A and Field B are both valid.';
-    const expectedInvalidMessageText = 'Field B and Field A must not have empty values.';
+    const expectedInvalidMessageText =
+      'Field B and Field A must not have empty values.';
 
-    const nestedFormTemplate : NestedFormTemplate = {
-      fields : {
-        fieldA : '',
-        fieldB : ''
+    const nestedFormTemplate: NestedFormTemplate = {
+      fields: {
+        fieldA: '',
+        fieldB: '',
       },
-      multiFieldValidators : {
-        sync : [
+      multiFieldValidators: {
+        sync: [
           ({ fieldA, fieldB }) => {
             const isValid = fieldA.value && fieldB.value;
 
-            return ({
+            return {
               isValid,
-              message : isValid ? expectedValidMessageText : expectedInvalidMessageText
-            })
-          }
-        ]
-      }
-    }
+              message: isValid
+                ? expectedValidMessageText
+                : expectedInvalidMessageText,
+            };
+          },
+        ],
+      },
+    };
 
-    const nestedForm = container.services.NestedFormTemplateParser.parseTemplate(nestedFormTemplate);
+    const nestedForm =
+      container.services.NestedFormTemplateParser.parseTemplate(
+        nestedFormTemplate,
+      );
 
-    (nestedForm as NestedForm)._multiFieldValidatorMessagesAggregator.messagesChanges.subscribe(() => {
-      if(nestedForm.state.validity === Validity.INVALID) {
+    (
+      nestedForm as NestedForm
+    )._multiFieldValidatorMessagesAggregator.messagesChanges.subscribe(() => {
+      if (nestedForm.state.validity === Validity.INVALID) {
         expect(nestedForm.state.messages).toStrictEqual([
           {
-            text : expectedInvalidMessageText,
-            type : MessageType.INVALID
-          }
+            text: expectedInvalidMessageText,
+            type: MessageType.INVALID,
+          },
         ]);
       } else {
         expect(nestedForm.state.messages).toStrictEqual([
           {
-            text : expectedValidMessageText,
-            type : MessageType.VALID
-          }
-        ])
+            text: expectedValidMessageText,
+            type: MessageType.VALID,
+          },
+        ]);
       }
     });
 
-    (nestedForm.userFacingFields.fieldA as AbstractField).setValue('some value');
-    (nestedForm.userFacingFields.fieldB as AbstractField).setValue('some other value');
+    (nestedForm.userFacingFields.fieldA as AbstractField).setValue(
+      'some value',
+    );
+    (nestedForm.userFacingFields.fieldB as AbstractField).setValue(
+      'some other value',
+    );
   });
 
   test('calling tryConfirm() calls tryConfirm() on all fields that are nested forms.', () => {
-    const template : NestedFormTemplate = {
-      fields : {
-        anotherNestedForm : {
-          fields : {
-            fieldA : ''
-          }
-        }
-      }
-    }
+    const template: NestedFormTemplate = {
+      fields: {
+        anotherNestedForm: {
+          fields: {
+            fieldA: '',
+          },
+        },
+      },
+    };
 
-    const nestedForm = container.services.NestedFormTemplateParser.parseTemplate(template);
+    const nestedForm =
+      container.services.NestedFormTemplateParser.parseTemplate(template);
 
-    const anotherNestedForm = nestedForm.userFacingFields.anotherNestedForm as AbstractNestedForm
+    const anotherNestedForm = nestedForm.userFacingFields
+      .anotherNestedForm as AbstractNestedForm;
 
     vi.spyOn(anotherNestedForm, 'tryConfirm');
 
@@ -299,28 +337,27 @@ describe('NestedForm', () => {
   });
 
   test('If confirmationManager.confirmationState.message is defined, it is included in state.messages.', () => {
-    const template : NestedFormTemplate = {
-      fields : {
-        fieldA : {
-          defaultValue : '',
-          syncValidators : [
-            required('field A is required')
-          ]
-        }
-      }
-    }
+    const template: NestedFormTemplate = {
+      fields: {
+        fieldA: {
+          defaultValue: '',
+          syncValidators: [required('field A is required')],
+        },
+      },
+    };
 
-    const nestedForm = container.services.NestedFormTemplateParser.parseTemplate(template);
+    const nestedForm =
+      container.services.NestedFormTemplateParser.parseTemplate(template);
 
     const expectedErrorMessage = 'There are invalid or pending fields.';
 
-    nestedForm.tryConfirm({errorMessage : expectedErrorMessage});
+    nestedForm.tryConfirm({ errorMessage: expectedErrorMessage });
 
     expect(nestedForm.state.messages).toStrictEqual([
       {
-        text : expectedErrorMessage,
-        type : MessageType.INVALID
-      }
-    ])
+        text: expectedErrorMessage,
+        type: MessageType.INVALID,
+      },
+    ]);
   });
 });

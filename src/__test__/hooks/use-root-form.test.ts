@@ -3,31 +3,31 @@ import { renderHook } from '@testing-library/react';
 import { useRootForm } from '../../hooks';
 import { RootFormTemplate } from '../../model';
 
-const formTemplate : RootFormTemplate = {
-  fields : {
-    basicField : '',
-    dualField : {
-      primaryDefaultValue : '',
-      secondaryDefaultValue : ''
+const formTemplate: RootFormTemplate = {
+  fields: {
+    basicField: '',
+    dualField: {
+      primaryDefaultValue: '',
+      secondaryDefaultValue: '',
     },
-    nestedForm : {
-      fields : {
-        fieldA : '',
-        fieldB : ''
-      }
-    }
+    nestedForm: {
+      fields: {
+        fieldA: '',
+        fieldB: '',
+      },
+    },
   },
-  extractedValues : {
-    syncExtractedValues : {
-      myValue : ({ basicField }) => basicField.value
-    }
+  extractedValues: {
+    syncExtractedValues: {
+      myValue: ({ basicField }) => basicField.value,
+    },
   },
-  submitFn : ({ value }) => {
-    return new Promise((resolve) => {
+  submitFn: ({ value }) => {
+    return new Promise(resolve => {
       resolve(value);
     });
-  }
-}
+  },
+};
 
 describe('useRootForm()', () => {
   test('It returns useFormState().', () => {
@@ -78,7 +78,3 @@ describe('useRootForm()', () => {
     expect(typeof reset).toBe('function');
   });
 });
-
-
-
-

@@ -34,13 +34,14 @@ class FinalizerManagerFactoryImpl implements FinalizerManagerFactory {
     const finalizerValidityReducer =
       this._reducerFactory.createFinalizerValidityReducer();
     const visitationReducer = this._reducerFactory.createVisitationReducer();
-    const modificationReducer = this._reducerFactory.createModificationReducer();
+    const modificationReducer =
+      this._reducerFactory.createModificationReducer();
     return new FinalizerManagerImpl(
       finalizerDictionary,
       finalizerValidityReducer,
       this._finalizerValidityTranslator,
       visitationReducer,
-      modificationReducer
+      modificationReducer,
     );
   }
 }

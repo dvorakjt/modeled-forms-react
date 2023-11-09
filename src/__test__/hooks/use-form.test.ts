@@ -4,18 +4,18 @@ import { useForm } from '../../hooks/use-form';
 import { container } from '../../model/container';
 
 describe('useForm()', () => {
-  test('reset() resets the form\'s value.', async () => {
+  test("reset() resets the form's value.", async () => {
     const form = container.services.NestedFormTemplateParser.parseTemplate({
-      fields : {
-        fieldA : ''
-      }
+      fields: {
+        fieldA: '',
+      },
     });
 
     const { result } = renderHook(() => useForm(form));
 
     const { useField } = result.current;
 
-    const { result : useFieldResult } = renderHook(() => useField('fieldA'));
+    const { result: useFieldResult } = renderHook(() => useField('fieldA'));
 
     useFieldResult.current.updateValue('test');
 
@@ -25,4 +25,4 @@ describe('useForm()', () => {
 
     await waitFor(() => expect(useFieldResult.current.value).toBe(''));
   });
-})
+});

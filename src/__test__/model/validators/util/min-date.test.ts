@@ -8,8 +8,8 @@ describe('minDate', () => {
     const errorMessage = `The provided date is earlier than ${minimum.toLocaleDateString()}.`;
 
     expect(minDate(minimum, errorMessage)(testDate)).toStrictEqual({
-      isValid : false,
-      message : errorMessage
+      isValid: false,
+      message: errorMessage,
     });
   });
 
@@ -18,7 +18,7 @@ describe('minDate', () => {
     const testDate = '1955-09-21';
 
     expect(minDate(minimum, '')(testDate)).toStrictEqual({
-      isValid : true
+      isValid: true,
     });
   });
 
@@ -27,7 +27,7 @@ describe('minDate', () => {
     const testDate = '1955-09-21';
 
     expect(minDate(minimum, '')(testDate)).toStrictEqual({
-      isValid : true
+      isValid: true,
     });
   });
 
@@ -37,8 +37,8 @@ describe('minDate', () => {
     const notADate = 'not a date';
 
     expect(minDate(minimum, errorMessage)(notADate)).toStrictEqual({
-      isValid : false,
-      message : errorMessage
+      isValid: false,
+      message: errorMessage,
     });
   });
 
@@ -48,8 +48,8 @@ describe('minDate', () => {
     const successMessage = 'The passed date is valid.';
 
     expect(minDate(minimum, '', successMessage)(testDate)).toStrictEqual({
-      isValid : true,
-      message : successMessage
+      isValid: true,
+      message: successMessage,
     });
   });
 });

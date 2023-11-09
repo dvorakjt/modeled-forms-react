@@ -1,3 +1,3 @@
-export function getFieldMessageIdPrefix(fieldName : string) {
+export function getFieldMessageIdPrefix(fieldName: string) {
   return `${fieldName}-messages`;
 }

@@ -1,11 +1,11 @@
-import { autowire } from "undecorated-di";
-import { 
-  ConfirmationManagerFactory, 
-  ConfirmationManagerFactoryKey, 
-  ConfirmationManagerFactoryKeyType 
-} from "./confirmation-manager-factory.interface";
-import { ConfirmationManagerImpl } from "./confirmation-manager-impl";
-import { ConfirmationManager } from "./confirmation-manager.interface";
+import { autowire } from 'undecorated-di';
+import {
+  ConfirmationManagerFactory,
+  ConfirmationManagerFactoryKey,
+  ConfirmationManagerFactoryKeyType,
+} from './confirmation-manager-factory.interface';
+import { ConfirmationManagerImpl } from './confirmation-manager-impl';
+import { ConfirmationManager } from './confirmation-manager.interface';
 
 class ConfirmationManagerFactoryImpl implements ConfirmationManagerFactory {
   createConfirmationManager(): ConfirmationManager {
@@ -13,8 +13,10 @@ class ConfirmationManagerFactoryImpl implements ConfirmationManagerFactory {
   }
 }
 
-const ConfirmationManagerFactoryService = autowire<ConfirmationManagerFactoryKeyType, ConfirmationManagerFactory, ConfirmationManagerFactoryImpl>(
-  ConfirmationManagerFactoryImpl, ConfirmationManagerFactoryKey
-) 
+const ConfirmationManagerFactoryService = autowire<
+  ConfirmationManagerFactoryKeyType,
+  ConfirmationManagerFactory,
+  ConfirmationManagerFactoryImpl
+>(ConfirmationManagerFactoryImpl, ConfirmationManagerFactoryKey);
 
 export { ConfirmationManagerFactoryImpl, ConfirmationManagerFactoryService };

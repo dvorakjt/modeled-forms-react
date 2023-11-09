@@ -15,7 +15,8 @@ export function useForm(form: AbstractRootForm | AbstractNestedForm) {
   const useFormState = () => _useFormState(form);
   const useFirstNonValidFormElement = () => _useFirstNonValidFormElement(form);
   const reset = () => form.reset();
-  const tryConfirm = (argsObject : TryConfirmArgsObject) => form.tryConfirm(argsObject);
+  const tryConfirm = (argsObject: TryConfirmArgsObject) =>
+    form.tryConfirm(argsObject);
 
   const useField = (fieldName: string) => {
     if (!(fieldName in form.userFacingFields)) {
@@ -29,7 +30,7 @@ export function useForm(form: AbstractRootForm | AbstractNestedForm) {
           fieldName +
           ' exists but is not an instance of AbstractField. Use useNestedForm instead.',
       );
-    } 
+    }
     return _useField(form.userFacingFields[fieldName] as AbstractField);
   };
 
@@ -45,10 +46,8 @@ export function useForm(form: AbstractRootForm | AbstractNestedForm) {
           fieldName +
           ' exists but is not an instance of AbstractDualField. Use useField or useNestedForm instead.',
       );
-    } 
-    return _useDualField(
-      form.userFacingFields[fieldName] as AbstractDualField,
-    );
+    }
+    return _useDualField(form.userFacingFields[fieldName] as AbstractDualField);
   };
 
   const useNestedForm = (fieldName: string) => {
@@ -76,19 +75,19 @@ export function useForm(form: AbstractRootForm | AbstractNestedForm) {
     return _useOmittableFormElement(form.userFacingFields[fieldName]);
   };
 
-  const useExtractedValue = (key : string) => {
-    if(!(key in form.extractedValues)) {
+  const useExtractedValue = (key: string) => {
+    if (!(key in form.extractedValues)) {
       throw new Error(
-        'No extracted value with key ' + key + ' found in extractedValues.'
+        'No extracted value with key ' + key + ' found in extractedValues.',
       );
     }
 
     return _useExtractedValue(form.extractedValues[key]);
-  }
+  };
 
   const useConfirmationAttempted = () => {
     return _useConfirmationAttempted(form);
-  }
+  };
 
   return {
     useFormState,
@@ -100,6 +99,6 @@ export function useForm(form: AbstractRootForm | AbstractNestedForm) {
     useDualField,
     useNestedForm,
     useOmittableFormElement,
-    useExtractedValue
+    useExtractedValue,
   };
 }

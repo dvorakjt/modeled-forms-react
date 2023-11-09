@@ -9,25 +9,37 @@ describe('FirstNonValidFormElementTrackerImpl', () => {
   let firstNonValidFormElementTracker: FirstNonValidFormElementTracker;
 
   beforeEach(() => {
-      firstNonValidFormElementTracker = new FirstNonValidFormElementTrackerImpl(
-          container.services.InsertionOrderHeapFactory.createInsertionOrderHeap()
-      );
+    firstNonValidFormElementTracker = new FirstNonValidFormElementTrackerImpl(
+      container.services.InsertionOrderHeapFactory.createInsertionOrderHeap(),
+    );
   });
 
   test('When no items are added, firstNonValidFormElement returns undefined.', () => {
-      expect(firstNonValidFormElementTracker.firstNonValidFormElement).toBe(undefined);
+    expect(firstNonValidFormElementTracker.firstNonValidFormElement).toBe(
+      undefined,
+    );
   });
 
   test('When a single non-valid item is added, that item is returned by firstNonValidFormElement.', () => {
-      const someField = new MockField('', Validity.INVALID);
-      firstNonValidFormElementTracker.trackFormElementValidity('someField', someField);
-      expect(firstNonValidFormElementTracker.firstNonValidFormElement).toBe('someField');
+    const someField = new MockField('', Validity.INVALID);
+    firstNonValidFormElementTracker.trackFormElementValidity(
+      'someField',
+      someField,
+    );
+    expect(firstNonValidFormElementTracker.firstNonValidFormElement).toBe(
+      'someField',
+    );
   });
 
   test('When a single valid item is added, firstNonValidFormElement returns undefined.', () => {
-      const someValidField = new MockField('', Validity.VALID_FINALIZABLE);
-      firstNonValidFormElementTracker.trackFormElementValidity('someValidField', someValidField);
-      expect(firstNonValidFormElementTracker.firstNonValidFormElement).toBe(undefined);
+    const someValidField = new MockField('', Validity.VALID_FINALIZABLE);
+    firstNonValidFormElementTracker.trackFormElementValidity(
+      'someValidField',
+      someValidField,
+    );
+    expect(firstNonValidFormElementTracker.firstNonValidFormElement).toBe(
+      undefined,
+    );
   });
 
   test('When tracked fields become valid, the next non-valid tracked field is returned by firstNonValidFormElement.', () => {
@@ -42,20 +54,24 @@ describe('FirstNonValidFormElementTrackerImpl', () => {
     const expectedNonValidFields = ['fieldA', 'fieldB', 'fieldC', undefined];
     let expectedNonValidFieldIndex = 0;
 
-    firstNonValidFormElementTracker.firstNonValidFormElementChanges.subscribe(firstNonValidField => {
-        expect(firstNonValidField).toBe(expectedNonValidFields[expectedNonValidFieldIndex++]);
-    });
+    firstNonValidFormElementTracker.firstNonValidFormElementChanges.subscribe(
+      firstNonValidField => {
+        expect(firstNonValidField).toBe(
+          expectedNonValidFields[expectedNonValidFieldIndex++],
+        );
+      },
+    );
 
     fieldA.setState({
-        validity: Validity.VALID_FINALIZABLE
+      validity: Validity.VALID_FINALIZABLE,
     } as FieldState);
 
     fieldB.setState({
-        validity: Validity.VALID_FINALIZABLE
+      validity: Validity.VALID_FINALIZABLE,
     } as FieldState);
 
     fieldC.setState({
-      validity: Validity.VALID_FINALIZABLE
+      validity: Validity.VALID_FINALIZABLE,
     } as FieldState);
   });
 
@@ -71,20 +87,24 @@ describe('FirstNonValidFormElementTrackerImpl', () => {
     const expectedNonValidFields = [undefined, 'fieldC', 'fieldB', 'fieldA'];
     let expectedNonValidFieldIndex = 0;
 
-    firstNonValidFormElementTracker.firstNonValidFormElementChanges.subscribe(firstNonValidField => {
-      expect(firstNonValidField).toBe(expectedNonValidFields[expectedNonValidFieldIndex++]);
-    });
+    firstNonValidFormElementTracker.firstNonValidFormElementChanges.subscribe(
+      firstNonValidField => {
+        expect(firstNonValidField).toBe(
+          expectedNonValidFields[expectedNonValidFieldIndex++],
+        );
+      },
+    );
 
     fieldC.setState({
-      validity: Validity.INVALID
+      validity: Validity.INVALID,
     } as FieldState);
 
     fieldB.setState({
-      validity: Validity.INVALID
+      validity: Validity.INVALID,
     } as FieldState);
 
     fieldA.setState({
-        validity: Validity.INVALID
+      validity: Validity.INVALID,
     } as FieldState);
   });
 });

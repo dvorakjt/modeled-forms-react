@@ -7,7 +7,8 @@ import { Subject } from 'rxjs';
 import { StatefulFormElement } from '../../form-elements/stateful-form-element.interface';
 import { Modified } from '../../state/modified.enum';
 
-export abstract class AbstractField implements
+export abstract class AbstractField
+  implements
     StatefulFormElement<string>,
     OmittableFormElement,
     ResettableFormElement
@@ -16,6 +17,9 @@ export abstract class AbstractField implements
   abstract stateChanges: Subject<FieldState>;
   abstract omit: boolean;
   abstract setState(state: Partial<FieldState> | DualFieldSetStateArg): void;
-  abstract setValue(value: string | DualFieldSetValueArg, modified? : Modified): void;
+  abstract setValue(
+    value: string | DualFieldSetValueArg,
+    modified?: Modified,
+  ): void;
   abstract reset(): void;
 }

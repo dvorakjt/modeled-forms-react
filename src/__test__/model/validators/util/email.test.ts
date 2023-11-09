@@ -12,8 +12,8 @@ const validEmailAddresses = [
   'email@example.name',
   'email@example.museum',
   'email@example.co.jp',
-  'firstname-lastname@example.com'
-]
+  'firstname-lastname@example.com',
+];
 
 const invalidEmailAddresses = [
   'plainaddress',
@@ -31,23 +31,23 @@ const invalidEmailAddresses = [
   'email@-example.com',
   'email@111.222.333.44444',
   'email@example..com',
-  'Abc..123@example.com'
-]
+  'Abc..123@example.com',
+];
 
 describe('email', () => {
   test('It returns an object with an isValid property set to true for valid email addresses.', () => {
-    for(const addr of validEmailAddresses) {
+    for (const addr of validEmailAddresses) {
       expect(email('')(addr)).toStrictEqual({
-        isValid : true
+        isValid: true,
       });
     }
   });
 
   test('It returns an object with an isValid property set to false for invalid email addresses.', () => {
-    for(const addr of invalidEmailAddresses) {
+    for (const addr of invalidEmailAddresses) {
       expect(email('test')(addr)).toStrictEqual({
-        isValid : false,
-        message : 'test'
+        isValid: false,
+        message: 'test',
       });
     }
   });
@@ -55,8 +55,8 @@ describe('email', () => {
   test('It trims values before evaluation if autoTrim is true in the config file.', () => {
     const addressWithWhiteSpace = '   user@example.com   ';
     expect(email('')(addressWithWhiteSpace)).toStrictEqual({
-      isValid : true
-    })
+      isValid: true,
+    });
   });
 
   test('It does not trim values before evaluation if autoTrim is false in the config file.', () => {
@@ -65,8 +65,8 @@ describe('email', () => {
 
     const addressWithWhiteSpace = '   user@example.com   ';
     expect(email('test')(addressWithWhiteSpace)).toStrictEqual({
-      isValid : false,
-      message : 'test'
+      isValid: false,
+      message: 'test',
     });
 
     configLoader.config.autoTrim = true;
@@ -75,8 +75,8 @@ describe('email', () => {
   test('If a success message is supplied and the evaluated string passes, the test message is return.', () => {
     const successMessage = 'success';
     expect(email('', successMessage)(validEmailAddresses[0])).toStrictEqual({
-      isValid : true,
-      message : successMessage
+      isValid: true,
+      message: successMessage,
     });
   });
 
@@ -86,7 +86,7 @@ describe('email', () => {
     configLoader.config.emailRegex = /.*/;
 
     expect(email('')(invalidEmailAddresses[0])).toStrictEqual({
-      isValid : true
+      isValid: true,
     });
 
     configLoader.config.emailRegex = tempEmailRegex;

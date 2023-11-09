@@ -1,11 +1,15 @@
-import { ConfirmationManager } from "./confirmation-manager.interface";
+import { ConfirmationManager } from './confirmation-manager.interface';
 
 interface ConfirmationManagerFactory {
-  createConfirmationManager() : ConfirmationManager;
+  createConfirmationManager(): ConfirmationManager;
 }
 
 const ConfirmationManagerFactoryKey = 'ConfirmationManagerFactory';
 
 type ConfirmationManagerFactoryKeyType = typeof ConfirmationManagerFactoryKey;
 
-export { ConfirmationManagerFactoryKey, type ConfirmationManagerFactory, type ConfirmationManagerFactoryKeyType };
+export {
+  ConfirmationManagerFactoryKey,
+  type ConfirmationManagerFactory,
+  type ConfirmationManagerFactoryKeyType,
+};

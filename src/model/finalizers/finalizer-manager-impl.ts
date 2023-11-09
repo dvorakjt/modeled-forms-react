@@ -19,16 +19,16 @@ export class FinalizerManagerImpl implements FinalizerManager {
   _finalizerMap: FinalizerDictionary;
   _finalizerValidityReducer: FinalizerValidityReducer;
   _finalizerValidityTranslator: FinalizerValidityTranslator;
-  _visitationReducer : VisitationReducer;
-  _modificationReducer : ModificationReducer;
+  _visitationReducer: VisitationReducer;
+  _modificationReducer: ModificationReducer;
 
   get state() {
     return {
       value: copyObject(this._value),
       validity: this._getValidity(),
       messages: this._getMessages(),
-      visited : this._visitationReducer.visited,
-      modified : this._modificationReducer.modified
+      visited: this._visitationReducer.visited,
+      modified: this._modificationReducer.modified,
     };
   }
 
@@ -36,8 +36,8 @@ export class FinalizerManagerImpl implements FinalizerManager {
     finalizerMap: FinalizerDictionary,
     finalizerValidityReducer: FinalizerValidityReducer,
     finalizerValidityTranslator: FinalizerValidityTranslator,
-    visitationReducer : VisitationReducer,
-    modificationReducer : ModificationReducer
+    visitationReducer: VisitationReducer,
+    modificationReducer: ModificationReducer,
   ) {
     this._finalizerMap = finalizerMap;
     this._finalizerValidityReducer = finalizerValidityReducer;
@@ -52,8 +52,14 @@ export class FinalizerManagerImpl implements FinalizerManager {
           finalizerName,
           finalizerStateChange.finalizerValidity,
         );
-        this._visitationReducer.updateTallies(finalizerName, finalizerStateChange.visited);
-        this._modificationReducer.updateTallies(finalizerName, finalizerStateChange.modified);
+        this._visitationReducer.updateTallies(
+          finalizerName,
+          finalizerStateChange.visited,
+        );
+        this._modificationReducer.updateTallies(
+          finalizerName,
+          finalizerStateChange.modified,
+        );
         delete this._value[finalizerName];
         if (finalizerStateChange.value !== undefined)
           this._value[finalizerName] = finalizerStateChange.value;

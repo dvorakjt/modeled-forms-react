@@ -4,15 +4,18 @@ import {
   SubmissionManagerFactoryKey,
   SubmissionManagerFactoryKeyType,
 } from './submission-manager-factory.interface';
-import { ConfigLoader, ConfigLoaderKey } from "../config-loader/config-loader.interface";
-import { SubmissionManagerImpl } from "./submission-manager-impl";
-import { SubmissionManager } from "./submission-manager.interface";
-import { SubmitFn } from "./submit-fn.type";
+import {
+  ConfigLoader,
+  ConfigLoaderKey,
+} from '../config-loader/config-loader.interface';
+import { SubmissionManagerImpl } from './submission-manager-impl';
+import { SubmissionManager } from './submission-manager.interface';
+import { SubmitFn } from './submit-fn.type';
 
 class SubmissionManagerFactoryImpl implements SubmissionManagerFactory {
-  _configLoader : ConfigLoader;
+  _configLoader: ConfigLoader;
 
-  constructor(configLoader : ConfigLoader) {
+  constructor(configLoader: ConfigLoader) {
     this._configLoader = configLoader;
   }
 

@@ -90,9 +90,7 @@ class BaseFieldTemplateParserImpl implements BaseFieldTemplateParser {
     );
   }
 
-  _parseDualFieldTemplate(
-    template: DualFieldTemplate,
-  ): AbstractDualField {
+  _parseDualFieldTemplate(template: DualFieldTemplate): AbstractDualField {
     if (!('primaryDefaultValue' in template)) {
       throw new BaseFieldParsingError(
         'BaseFieldTemplateParser received a template object containing a secondaryDefaultValue property, but not a primaryDefaultValue property. If you wish to create a dual field, ensure that both properties are included in the template.',

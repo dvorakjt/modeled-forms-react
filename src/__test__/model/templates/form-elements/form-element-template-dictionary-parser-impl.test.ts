@@ -10,86 +10,99 @@ import { FieldOrNestedFormTemplate } from '../../../../model/templates/form-elem
 
 describe('FormElementDictionaryParserImpl', () => {
   test('parseTemplate returns the expected FormElementDictionary when an object is passed in as a template.', () => {
-    const template : FormElementTemplateDictionaryOrMap = {
-      simpleFieldA : '',
-      simpleFieldB : {
-        defaultValue : '',
-        syncValidators : [required('Field B is required')]
+    const template: FormElementTemplateDictionaryOrMap = {
+      simpleFieldA: '',
+      simpleFieldB: {
+        defaultValue: '',
+        syncValidators: [required('Field B is required')],
       },
-      dualField : {
-        primaryDefaultValue : '',
-        secondaryDefaultValue : ''
+      dualField: {
+        primaryDefaultValue: '',
+        secondaryDefaultValue: '',
       },
-      controlledField : {
-        defaultValue : '',
-        syncValueControlFn : ({ simpleFieldA }) => {
-          return simpleFieldA.value.toUpperCase()
-        }
+      controlledField: {
+        defaultValue: '',
+        syncValueControlFn: ({ simpleFieldA }) => {
+          return simpleFieldA.value.toUpperCase();
+        },
       },
-      nestedForm : {
-        fields : {
-          fieldA : '',
-          fieldB : ''
-        }
-      }
-    }
+      nestedForm: {
+        fields: {
+          fieldA: '',
+          fieldB: '',
+        },
+      },
+    };
 
-    const parsed = container.services.FormElementTemplateDictionaryParser.parseTemplate(template);
+    const parsed =
+      container.services.FormElementTemplateDictionaryParser.parseTemplate(
+        template,
+      );
 
     const formElementDictionary = parsed[0];
 
     expect(formElementDictionary.simpleFieldA).toBeInstanceOf(AbstractField);
     expect(formElementDictionary.simpleFieldB).toBeInstanceOf(AbstractField);
     expect(formElementDictionary.dualField).toBeInstanceOf(AbstractDualField);
-    expect(formElementDictionary.controlledField).toBeInstanceOf(ValueControlledField);
+    expect(formElementDictionary.controlledField).toBeInstanceOf(
+      ValueControlledField,
+    );
     expect(formElementDictionary.nestedForm).toBeInstanceOf(AbstractNestedForm);
   });
 
-   test('parseTemplate returns the expected FormElementDictionary when a Map is passed in as a template.', () => {
-    const template : FormElementTemplateDictionaryOrMap = new Map<string, FieldOrNestedFormTemplate>([
+  test('parseTemplate returns the expected FormElementDictionary when a Map is passed in as a template.', () => {
+    const template: FormElementTemplateDictionaryOrMap = new Map<
+      string,
+      FieldOrNestedFormTemplate
+    >([
       ['simpleFieldA', ''],
       [
-        'simpleFieldB', 
+        'simpleFieldB',
         {
-          defaultValue : '',
-          syncValidators : [required('Field B is required')]
-        }
+          defaultValue: '',
+          syncValidators: [required('Field B is required')],
+        },
       ],
       [
         'dualField',
         {
-          primaryDefaultValue : '',
-          secondaryDefaultValue : ''
-        }
+          primaryDefaultValue: '',
+          secondaryDefaultValue: '',
+        },
       ],
       [
         'controlledField',
         {
-          defaultValue : '',
-          syncValueControlFn : ({ simpleFieldA }) => {
-            return simpleFieldA.value.toUpperCase()
-          }
-        }
+          defaultValue: '',
+          syncValueControlFn: ({ simpleFieldA }) => {
+            return simpleFieldA.value.toUpperCase();
+          },
+        },
       ],
       [
         'nestedForm',
         {
-          fields : new Map([
+          fields: new Map([
             ['fieldA', ''],
-            ['fieldB', '']
-          ])
-        }
-      ]
+            ['fieldB', ''],
+          ]),
+        },
+      ],
     ]);
 
-    const parsed = container.services.FormElementTemplateDictionaryParser.parseTemplate(template);
+    const parsed =
+      container.services.FormElementTemplateDictionaryParser.parseTemplate(
+        template,
+      );
 
     const formElementDictionary = parsed[0];
 
     expect(formElementDictionary.simpleFieldA).toBeInstanceOf(AbstractField);
     expect(formElementDictionary.simpleFieldB).toBeInstanceOf(AbstractField);
     expect(formElementDictionary.dualField).toBeInstanceOf(AbstractDualField);
-    expect(formElementDictionary.controlledField).toBeInstanceOf(ValueControlledField);
+    expect(formElementDictionary.controlledField).toBeInstanceOf(
+      ValueControlledField,
+    );
     expect(formElementDictionary.nestedForm).toBeInstanceOf(AbstractNestedForm);
   });
 
@@ -98,42 +111,57 @@ describe('FormElementDictionaryParserImpl', () => {
       [
         'fieldA',
         {
-          defaultValue : '',
-          syncValidators : [required('Field A is required')]
-        }
+          defaultValue: '',
+          syncValidators: [required('Field A is required')],
+        },
       ],
       [
         'fieldB',
         {
-          defaultValue : '',
-          syncValidators : [required('Field B is required')]
-        }
+          defaultValue: '',
+          syncValidators: [required('Field B is required')],
+        },
       ],
       [
         'fieldC',
         {
-          defaultValue : '',
-          syncValidators : [required('Field C is required')]
-        }
-      ]
+          defaultValue: '',
+          syncValidators: [required('Field C is required')],
+        },
+      ],
     ]);
 
-    const parsed = container.services.FormElementTemplateDictionaryParser.parseTemplate(template);
+    const parsed =
+      container.services.FormElementTemplateDictionaryParser.parseTemplate(
+        template,
+      );
 
     const [formElementDictionary, firstNonValidFormElementTracker] = parsed;
 
-    expect(firstNonValidFormElementTracker.firstNonValidFormElement).toBe('fieldA');
+    expect(firstNonValidFormElementTracker.firstNonValidFormElement).toBe(
+      'fieldA',
+    );
 
     (formElementDictionary.fieldA as AbstractField).setValue('some value');
 
-    expect(firstNonValidFormElementTracker.firstNonValidFormElement).toBe('fieldB');
+    expect(firstNonValidFormElementTracker.firstNonValidFormElement).toBe(
+      'fieldB',
+    );
 
-    (formElementDictionary.fieldB as AbstractField).setValue('some other value');
+    (formElementDictionary.fieldB as AbstractField).setValue(
+      'some other value',
+    );
 
-    expect(firstNonValidFormElementTracker.firstNonValidFormElement).toBe('fieldC');
+    expect(firstNonValidFormElementTracker.firstNonValidFormElement).toBe(
+      'fieldC',
+    );
 
-    (formElementDictionary.fieldC as AbstractField).setValue('yet another value');
+    (formElementDictionary.fieldC as AbstractField).setValue(
+      'yet another value',
+    );
 
-    expect(firstNonValidFormElementTracker.firstNonValidFormElement).toBeUndefined();
+    expect(
+      firstNonValidFormElementTracker.firstNonValidFormElement,
+    ).toBeUndefined();
   });
 });

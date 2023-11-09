@@ -18,6 +18,5 @@ export function useFirstNonValidFormElement(
     return () => subRef.current?.unsubscribe();
   }, []);
 
-  
   return firstNonValidFormElement;
 }

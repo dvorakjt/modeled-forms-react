@@ -19,11 +19,10 @@ const DEFAULT_SETTINGS = {
     finalizerPending: 'Preparing form for submission...',
     confirmationFailed:
       'There are invalid or pending fields, or the form is currently being prepared for submission.',
-    submissionError:
-      'There was an unknown problem submitting the form.'
+    submissionError: 'There was an unknown problem submitting the form.',
   },
-}
+};
 
-const config : any = rc('modeledformsreact', DEFAULT_SETTINGS);
+const config: any = rc('modeledformsreact', DEFAULT_SETTINGS);
 
 export { config, DEFAULT_SETTINGS };

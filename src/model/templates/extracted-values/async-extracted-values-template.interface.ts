@@ -1,3 +1,6 @@
-import { AsyncExtractedValueFn } from "./async-extracted-value-fn.type";
+import { AsyncExtractedValueFn } from './async-extracted-value-fn.type';
 
-export type AsyncExtractedValuesTemplate = Record<string, AsyncExtractedValueFn>;
+export type AsyncExtractedValuesTemplate = Record<
+  string,
+  AsyncExtractedValueFn
+>;

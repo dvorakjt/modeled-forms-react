@@ -1,5 +1,5 @@
-export { 
-  Validity, 
+export {
+  Validity,
   Visited,
   Modified,
   MessageType,
@@ -18,16 +18,16 @@ export {
   minLength,
   minNum,
   pattern,
-  required
+  required,
 } from './model';
 
-export type { 
-  Message, 
-  State, 
-  FieldState, 
-  DualFieldSetStateArg, 
-  DualFieldSetValueArg, 
-  RootFormTemplate, 
+export type {
+  Message,
+  State,
+  FieldState,
+  DualFieldSetStateArg,
+  DualFieldSetValueArg,
+  RootFormTemplate,
   NestedFormTemplate,
   FormElementTemplateDictionaryOrMap,
   FieldTemplateVariations,
@@ -52,49 +52,49 @@ export type {
   AsyncExtractedValuesTemplate,
   SyncExtractedValueFn,
   AsyncExtractedValueFn,
-  SubmitFn
+  SubmitFn,
 } from './model';
 
 export { useRootForm } from './hooks';
 
-export { 
-  ResetButton, 
+export {
+  ResetButton,
   ConfirmButton,
-  SubmitButton, 
+  SubmitButton,
   FormContext,
   RootFormContext,
   NestedFormProvider,
   RootFormProvider,
-  NestedFormAsFieldset, 
-  NestedFormAsForm, 
+  NestedFormAsFieldset,
+  NestedFormAsForm,
   RootForm,
-  CheckboxInput, 
-  Input, 
-  RadioInput, 
-  SelectOther, 
-  Select, 
-  Textarea, 
+  CheckboxInput,
+  Input,
+  RadioInput,
+  SelectOther,
+  Select,
+  Textarea,
   Label,
-  FieldMessages, 
-  FormMessages 
+  FieldMessages,
+  FormMessages,
 } from './components';
 
-export type { 
-  ResetButtonProps, 
-  ConfirmButtonProps, 
+export type {
+  ResetButtonProps,
+  ConfirmButtonProps,
   SubmitButtonProps,
-  NestedFormAsFieldsetProps, 
-  NestedFormAsFormProps, 
+  NestedFormAsFieldsetProps,
+  NestedFormAsFormProps,
   RootFormProps,
-  CheckboxInputProps, 
-  InputProps, 
-  RadioInputProps, 
-  SelectOtherProps, 
-  SelectProps, 
+  CheckboxInputProps,
+  InputProps,
+  RadioInputProps,
+  SelectOtherProps,
+  SelectProps,
   TextareaProps,
   LabelProps,
-  FieldMessagesProps, 
+  FieldMessagesProps,
   FormMessagesProps,
-  PropsWithoutStyle, 
-  PropsWithoutClassName 
+  PropsWithoutStyle,
+  PropsWithoutClassName,
 } from './components';

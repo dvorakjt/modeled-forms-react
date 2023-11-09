@@ -1,7 +1,7 @@
-import { Config } from "./config.interface"
+import { Config } from './config.interface';
 
 interface ConfigLoader {
-  config : Config
+  config: Config;
 }
 
 const ConfigLoaderKey = 'ConfigLoader';

@@ -9,47 +9,50 @@ import { Visited } from '../../../../model/state/visited.enum';
 import { Modified } from '../../../../model/state/modified.enum';
 
 describe('AutoTransformedField', () => {
-  const mockConfigLoader = new MockConfigLoader({ autoTrim : true});
+  const mockConfigLoader = new MockConfigLoader({ autoTrim: true });
   const autoTransformer = new AutoTransformerImpl(mockConfigLoader);
-  const autoTransformedFieldFactory = new AutoTransformedFieldFactoryImpl(autoTransformer);
-  let baseField : MockField;
-  let autoTransformedField : AutoTransformedField;
+  const autoTransformedFieldFactory = new AutoTransformedFieldFactoryImpl(
+    autoTransformer,
+  );
+  let baseField: MockField;
+  let autoTransformedField: AutoTransformedField;
 
   beforeEach(() => {
     baseField = new MockField('', Validity.VALID_FINALIZABLE);
-    autoTransformedField = autoTransformedFieldFactory.createAutoTransformedField(baseField);
+    autoTransformedField =
+      autoTransformedFieldFactory.createAutoTransformedField(baseField);
   });
 
-  test('It returns applies auto-transformations to the the base field\'s value when state is accessed.', () => {
+  test("It returns applies auto-transformations to the the base field's value when state is accessed.", () => {
     baseField.setValue('   hello world   ');
     expect(autoTransformedField.state.value).toBe('hello world');
   });
 
-  test('It publishes updates to subscribers when the base field\'s state changes.', () => {
+  test("It publishes updates to subscribers when the base field's state changes.", () => {
     baseField.setValue('   hello world   ');
     autoTransformedField.stateChanges.subscribe(change => {
       expect(change.value).toBe('hello world');
     });
   });
 
-  test('It returns the base field\'s omit property when omit is accessed.', () => {
+  test("It returns the base field's omit property when omit is accessed.", () => {
     baseField.omit = true;
     expect(autoTransformedField.omit).toBe(true);
   });
 
-  test('It sets the base field\'s omit property when omit is set.', () => {
+  test("It sets the base field's omit property when omit is set.", () => {
     autoTransformedField.omit = true;
     expect(baseField.omit).toBe(true);
   });
 
   test('It calls setState() on the base field when its own setState() method is called.', () => {
-    const expectedState : FieldState = {
-      value : 'hello world',
-      validity : Validity.VALID_FINALIZABLE,
-      messages : [],
-      visited : Visited.YES,
-      modified : Modified.YES
-    }
+    const expectedState: FieldState = {
+      value: 'hello world',
+      validity: Validity.VALID_FINALIZABLE,
+      messages: [],
+      visited: Visited.YES,
+      modified: Modified.YES,
+    };
     vi.spyOn(baseField, 'setState');
     autoTransformedField.setState(expectedState);
     expect(baseField.setState).toHaveBeenCalledWith(expectedState);

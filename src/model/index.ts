@@ -1,5 +1,5 @@
-export type { 
-  RootFormTemplate, 
+export type {
+  RootFormTemplate,
   NestedFormTemplate,
   FormElementTemplateDictionaryOrMap,
   FieldTemplateVariations,
@@ -11,7 +11,7 @@ export type {
   SyncExtractedValuesTemplate,
   AsyncExtractedValuesTemplate,
   SyncExtractedValueFn,
-  AsyncExtractedValueFn
+  AsyncExtractedValueFn,
 } from './templates';
 
 export {
@@ -33,7 +33,7 @@ export {
   required,
   type SyncValidator,
   type AsyncValidator,
-  type ValidatorResult
+  type ValidatorResult,
 } from './validators';
 
 export type {
@@ -44,25 +44,21 @@ export type {
   AsyncFieldStateControlFn,
   AsyncFieldValueControlFn,
   SyncFieldStateControlFn,
-  SyncFieldValueControlFn
+  SyncFieldValueControlFn,
 } from './fields';
 
-export { 
-  Validity, 
-  Visited, 
-  Modified, 
+export {
+  Validity,
+  Visited,
+  Modified,
   MessageType,
-  type Message, 
+  type Message,
   type State,
-  type FieldState, 
-  type DualFieldSetStateArg, 
-  type DualFieldSetValueArg 
+  type FieldState,
+  type DualFieldSetStateArg,
+  type DualFieldSetValueArg,
 } from './state';
 
-export type {
-  AggregatedStateChanges
-} from './aggregators';
+export type { AggregatedStateChanges } from './aggregators';
 
-export type {
-  SubmitFn
-} from './submission';
+export type { SubmitFn } from './submission';

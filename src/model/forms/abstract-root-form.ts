@@ -16,6 +16,6 @@ export abstract class AbstractRootForm implements BaseForm {
   abstract confirmationAttempted: boolean;
   abstract confirmationAttemptedChanges: Subject<boolean>;
   abstract tryConfirm(argsObject: TryConfirmArgsObject): void;
-  abstract trySubmit(argsObject : TrySubmitArgsObject) : void;
+  abstract trySubmit(argsObject: TrySubmitArgsObject): void;
   abstract reset(): void;
 }

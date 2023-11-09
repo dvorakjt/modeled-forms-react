@@ -95,9 +95,7 @@ class ControlledFieldTemplateParserImpl
     }
   }
 
-  _getControlFnType(
-    template: ControlledFieldTemplateVariations,
-  ): ControlType {
+  _getControlFnType(template: ControlledFieldTemplateVariations): ControlType {
     const controlTypes = Object.values(ControlType) as Array<ControlType>;
     let controlFnType: ControlType | null = null;
     for (const controlType of controlTypes) {

@@ -8,8 +8,8 @@ describe('maxDate', () => {
     const errorMessage = `The provided date is later than ${maximum.toLocaleDateString()}.`;
 
     expect(maxDate(maximum, errorMessage)(testDate)).toStrictEqual({
-      isValid : false,
-      message : errorMessage
+      isValid: false,
+      message: errorMessage,
     });
   });
 
@@ -18,7 +18,7 @@ describe('maxDate', () => {
     const testDate = '1955-09-21';
 
     expect(maxDate(maximum, '')(testDate)).toStrictEqual({
-      isValid : true
+      isValid: true,
     });
   });
 
@@ -27,7 +27,7 @@ describe('maxDate', () => {
     const testDate = '1955-04-27';
 
     expect(maxDate(maximum, '')(testDate)).toStrictEqual({
-      isValid : true
+      isValid: true,
     });
   });
 
@@ -37,8 +37,8 @@ describe('maxDate', () => {
     const notADate = 'not a date';
 
     expect(maxDate(maximum, errorMessage)(notADate)).toStrictEqual({
-      isValid : false,
-      message : errorMessage
+      isValid: false,
+      message: errorMessage,
     });
   });
 
@@ -48,8 +48,8 @@ describe('maxDate', () => {
     const successMessage = 'The passed date is valid.';
 
     expect(maxDate(maximum, '', successMessage)(testDate)).toStrictEqual({
-      isValid : true,
-      message : successMessage
+      isValid: true,
+      message: successMessage,
     });
   });
 });

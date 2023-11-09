@@ -9,50 +9,86 @@ import { NestedFormTemplate } from '../../../../model';
 import { UserFacingMultiInputValidatedNestedForm } from '../../../../model/form-elements/multi-input-validated/user-facing-multi-input-validated-nested-form';
 
 describe('MultiInputValidatedFormElementFactoryImpl', () => {
-  let multiInputValidatedFormElementFactoryImpl : MultiInputValidatedFormElementFactory;
+  let multiInputValidatedFormElementFactoryImpl: MultiInputValidatedFormElementFactory;
 
   beforeEach(() => {
-    multiInputValidatedFormElementFactoryImpl = new MultiInputValidatedFormElementFactoryImpl(
-      container.services.ReducerFactory
-    );
-  });
-  
-  test('createUserAndFinalizerFacingMultiInputValidatedFormElement() returns a UserFacingMultiInputValidatedField and a FinalizerFacingMultiInputValidatedFormElement when called with an AbstractField.', () => {
-    const baseField = container.services.BaseFieldFactory.createField('', false, [], []);
-    const [userFacingMultiInputValidatedField, finalizerFacingMultiInputValidatedFormElement] = 
-      multiInputValidatedFormElementFactoryImpl.createUserAndFinalizerFacingMultiInputValidatedFormElement(
-        baseField
+    multiInputValidatedFormElementFactoryImpl =
+      new MultiInputValidatedFormElementFactoryImpl(
+        container.services.ReducerFactory,
       );
-    expect(userFacingMultiInputValidatedField).toBeInstanceOf(UserFacingMultiInputValidatedField);
-    expect(finalizerFacingMultiInputValidatedFormElement).toBeInstanceOf(FinalizerFacingMultiInputValidatedFormElement);
+  });
+
+  test('createUserAndFinalizerFacingMultiInputValidatedFormElement() returns a UserFacingMultiInputValidatedField and a FinalizerFacingMultiInputValidatedFormElement when called with an AbstractField.', () => {
+    const baseField = container.services.BaseFieldFactory.createField(
+      '',
+      false,
+      [],
+      [],
+    );
+    const [
+      userFacingMultiInputValidatedField,
+      finalizerFacingMultiInputValidatedFormElement,
+    ] =
+      multiInputValidatedFormElementFactoryImpl.createUserAndFinalizerFacingMultiInputValidatedFormElement(
+        baseField,
+      );
+    expect(userFacingMultiInputValidatedField).toBeInstanceOf(
+      UserFacingMultiInputValidatedField,
+    );
+    expect(finalizerFacingMultiInputValidatedFormElement).toBeInstanceOf(
+      FinalizerFacingMultiInputValidatedFormElement,
+    );
   });
 
   test('createUserAndFinalizerFacingMultiInputValidatedFormElement() returns a  UserFacingMultiInputValidatedDualField and a FinalizerFacingMultiInputValidatedFormElement when called with an AbstractDualField.', () => {
-    const baseDualField = container.services.BaseFieldFactory.createDualField('', '', false, [], []);
-    const [userFacingMultiInputValidatedDualField, finalizerFacingMultiInputValidatedFormElement] = 
+    const baseDualField = container.services.BaseFieldFactory.createDualField(
+      '',
+      '',
+      false,
+      [],
+      [],
+    );
+    const [
+      userFacingMultiInputValidatedDualField,
+      finalizerFacingMultiInputValidatedFormElement,
+    ] =
       multiInputValidatedFormElementFactoryImpl.createUserAndFinalizerFacingMultiInputValidatedFormElement(
-        baseDualField
+        baseDualField,
       );
-    expect(userFacingMultiInputValidatedDualField).toBeInstanceOf(UserFacingMultiInputValidatedDualField);
-    expect(finalizerFacingMultiInputValidatedFormElement).toBeInstanceOf(FinalizerFacingMultiInputValidatedFormElement);
+    expect(userFacingMultiInputValidatedDualField).toBeInstanceOf(
+      UserFacingMultiInputValidatedDualField,
+    );
+    expect(finalizerFacingMultiInputValidatedFormElement).toBeInstanceOf(
+      FinalizerFacingMultiInputValidatedFormElement,
+    );
   });
 
   test('createUserAndFinalizerFacingMultiInputValidatedFormElement() returns a UserFacingMultiInputValidatedNestedForm and a FinalizerFacingMultiInputValidatedFormElement when called with an AbstractNestedForm.', () => {
-    const nestedFormTemplate : NestedFormTemplate = {
-      fields : {
-        fieldA : '',
-        fieldB : ''
-      }
-    }
+    const nestedFormTemplate: NestedFormTemplate = {
+      fields: {
+        fieldA: '',
+        fieldB: '',
+      },
+    };
 
-    const baseNestedForm = container.services.NestedFormTemplateParser.parseTemplate(nestedFormTemplate);
-
-    const [userFacingMultiInputValidatedNestedForm, finalizerFacingMultiInputValidatedFormElement] = 
-      multiInputValidatedFormElementFactoryImpl.createUserAndFinalizerFacingMultiInputValidatedFormElement(
-        baseNestedForm
+    const baseNestedForm =
+      container.services.NestedFormTemplateParser.parseTemplate(
+        nestedFormTemplate,
       );
-    
-    expect(userFacingMultiInputValidatedNestedForm).toBeInstanceOf(UserFacingMultiInputValidatedNestedForm);
-    expect(finalizerFacingMultiInputValidatedFormElement).toBeInstanceOf(FinalizerFacingMultiInputValidatedFormElement);
+
+    const [
+      userFacingMultiInputValidatedNestedForm,
+      finalizerFacingMultiInputValidatedFormElement,
+    ] =
+      multiInputValidatedFormElementFactoryImpl.createUserAndFinalizerFacingMultiInputValidatedFormElement(
+        baseNestedForm,
+      );
+
+    expect(userFacingMultiInputValidatedNestedForm).toBeInstanceOf(
+      UserFacingMultiInputValidatedNestedForm,
+    );
+    expect(finalizerFacingMultiInputValidatedFormElement).toBeInstanceOf(
+      FinalizerFacingMultiInputValidatedFormElement,
+    );
   });
 });

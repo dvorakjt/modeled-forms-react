@@ -25,7 +25,7 @@ export class MultiFieldAggregatorImpl implements MultiFieldAggregator {
       overallValidity: () => this._fieldStateReducer.validity,
       hasOmittedFields: () => this._fieldStateReducer.omit,
       visited: () => this._fieldStateReducer.visited,
-      modified: () => this._fieldStateReducer.modified
+      modified: () => this._fieldStateReducer.modified,
     } as AggregatedStateChanges;
   }
 
@@ -45,7 +45,9 @@ export class MultiFieldAggregatorImpl implements MultiFieldAggregator {
         this._aggregatedStateChangesProxyProducer.getProxy(this._fields),
       );
     this.accessedFields = accessedFields;
-    this.aggregateChanges.onInitialSubscription(this._subscribeToAccessedFields);
+    this.aggregateChanges.onInitialSubscription(
+      this._subscribeToAccessedFields,
+    );
   }
 
   _subscribeToAccessedFields = () => {

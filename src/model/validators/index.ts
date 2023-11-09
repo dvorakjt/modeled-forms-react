@@ -14,7 +14,7 @@ export {
   minLength,
   minNum,
   pattern,
-  required
+  required,
 } from './util';
 
 export type { SyncValidator } from './sync-validator.type';

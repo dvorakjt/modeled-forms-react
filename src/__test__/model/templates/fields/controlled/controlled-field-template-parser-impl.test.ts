@@ -24,85 +24,88 @@ import { ValueControlledDualField } from '../../../../../model/fields/controlled
 import { AsyncValueControlledDualFieldTemplate } from '../../../../../model/templates/fields/controlled/async-value-controlled-dual-field-template.type';
 
 describe('ControlledFieldTemplateParserImpl', () => {
-  let controlledFieldTemplateParser : ControlledFieldTemplateParser;
+  let controlledFieldTemplateParser: ControlledFieldTemplateParser;
 
   beforeEach(() => {
     controlledFieldTemplateParser = new ControlledFieldTemplateParserImpl(
-      container.services.ControlledFieldFactory
+      container.services.ControlledFieldFactory,
     );
   });
 
   test('It throws an error if the base field is not an instance of abstract field.', () => {
     const invalidBaseField = 'not an AbstractField';
-    const template : SyncValueControlledFieldTemplate = {
-      defaultValue : '',
-      syncValueControlFn : ({ fieldA }) => {
+    const template: SyncValueControlledFieldTemplate = {
+      defaultValue: '',
+      syncValueControlFn: ({ fieldA }) => {
         return fieldA.value.toUpperCase();
-      }
-    }
+      },
+    };
     const fields = {
       invalidBaseField,
-      fieldA : new MockField('', Validity.VALID_FINALIZABLE)
-    }
-    
-    const invalidCall = () => controlledFieldTemplateParser.parseTemplateAndDecorateField(
-      invalidBaseField as unknown as AbstractField,
-      template,
-      fields as unknown as FormElementDictionary
-    )
+      fieldA: new MockField('', Validity.VALID_FINALIZABLE),
+    };
+
+    const invalidCall = () =>
+      controlledFieldTemplateParser.parseTemplateAndDecorateField(
+        invalidBaseField as unknown as AbstractField,
+        template,
+        fields as unknown as FormElementDictionary,
+      );
 
     expect(invalidCall).toThrowError();
   });
 
   test('It throws an error if multiple control functions are included in the template.', () => {
     const fields = {
-      fieldA : new MockField('', Validity.VALID_FINALIZABLE),
-      fieldB : new MockField('', Validity.VALID_FINALIZABLE),
-      fieldC : new MockField('', Validity.VALID_FINALIZABLE)
-    }
-    
+      fieldA: new MockField('', Validity.VALID_FINALIZABLE),
+      fieldB: new MockField('', Validity.VALID_FINALIZABLE),
+      fieldC: new MockField('', Validity.VALID_FINALIZABLE),
+    };
+
     type InvalidTemplate = {
-      defaultValue : string;
-      syncValueControlFn : SyncFieldValueControlFn,
-      syncStateControlFn : SyncFieldStateControlFn
-    }
+      defaultValue: string;
+      syncValueControlFn: SyncFieldValueControlFn;
+      syncStateControlFn: SyncFieldStateControlFn;
+    };
 
-    const template : InvalidTemplate = {
-      defaultValue : '',
-      syncValueControlFn : ({ fieldB }) => {
-        return fieldB.value.toUpperCase()
+    const template: InvalidTemplate = {
+      defaultValue: '',
+      syncValueControlFn: ({ fieldB }) => {
+        return fieldB.value.toUpperCase();
       },
-      syncStateControlFn : ({ fieldC }) => {
+      syncStateControlFn: ({ fieldC }) => {
         return {
-          value : fieldC.value.toLowerCase()
-        }
-      }
-    }
+          value: fieldC.value.toLowerCase(),
+        };
+      },
+    };
 
-    const invalidCall = () => controlledFieldTemplateParser.parseTemplateAndDecorateField(
-      fields.fieldA,
-      template as unknown as ControlledFieldTemplateVariations,
-      fields
-    );
+    const invalidCall = () =>
+      controlledFieldTemplateParser.parseTemplateAndDecorateField(
+        fields.fieldA,
+        template as unknown as ControlledFieldTemplateVariations,
+        fields,
+      );
 
     expect(invalidCall).toThrowError();
   });
 
   test('It throws an error if there is no control type in the template.', () => {
     const fields = {
-      fieldA : new MockField('', Validity.VALID_FINALIZABLE),
-      fieldB : new MockField('', Validity.VALID_FINALIZABLE),
-    }
-  
-    const template = {
-      defaultValue : ''
-    }
+      fieldA: new MockField('', Validity.VALID_FINALIZABLE),
+      fieldB: new MockField('', Validity.VALID_FINALIZABLE),
+    };
 
-    const invalidCall = () => controlledFieldTemplateParser.parseTemplateAndDecorateField(
-      fields.fieldA,
-      template as unknown as ControlledFieldTemplateVariations,
-      fields
-    );
+    const template = {
+      defaultValue: '',
+    };
+
+    const invalidCall = () =>
+      controlledFieldTemplateParser.parseTemplateAndDecorateField(
+        fields.fieldA,
+        template as unknown as ControlledFieldTemplateVariations,
+        fields,
+      );
 
     expect(invalidCall).toThrowError();
   });
@@ -111,20 +114,25 @@ describe('ControlledFieldTemplateParserImpl', () => {
     const baseField = new MockField('', Validity.VALID_FINALIZABLE);
 
     const fields = {
-      fieldA : baseField,
-      fieldB : new MockField('', Validity.VALID_FINALIZABLE)
-    }
+      fieldA: baseField,
+      fieldB: new MockField('', Validity.VALID_FINALIZABLE),
+    };
 
-    const template : SyncStateControlledFieldTemplate = {
-      defaultValue : '',
-      syncStateControlFn : ({ fieldB }) => {
-        return ({
-          value : fieldB.value.toUpperCase()
-        })
-      }
-    }
+    const template: SyncStateControlledFieldTemplate = {
+      defaultValue: '',
+      syncStateControlFn: ({ fieldB }) => {
+        return {
+          value: fieldB.value.toUpperCase(),
+        };
+      },
+    };
 
-    const controlledField = controlledFieldTemplateParser.parseTemplateAndDecorateField(baseField, template, fields);
+    const controlledField =
+      controlledFieldTemplateParser.parseTemplateAndDecorateField(
+        baseField,
+        template,
+        fields,
+      );
 
     expect(controlledField).toBeInstanceOf(StateControlledField);
   });
@@ -133,28 +141,33 @@ describe('ControlledFieldTemplateParserImpl', () => {
     const baseField = new MockField('', Validity.VALID_FINALIZABLE);
 
     const fields = {
-      fieldA : baseField,
-      fieldB : new MockField('', Validity.VALID_FINALIZABLE)
-    }
+      fieldA: baseField,
+      fieldB: new MockField('', Validity.VALID_FINALIZABLE),
+    };
 
-    const template : AsyncStateControlledFieldTemplate = {
-      defaultValue : '',
-      asyncStateControlFn : ({ fieldB }) => {
+    const template: AsyncStateControlledFieldTemplate = {
+      defaultValue: '',
+      asyncStateControlFn: ({ fieldB }) => {
         return new Observable(subscriber => {
           subscriber.next({
-            value : ''
+            value: '',
           });
           setTimeout(() => {
             subscriber.next({
-              value : fieldB.value.toUpperCase()
+              value: fieldB.value.toUpperCase(),
             });
             subscriber.complete();
           }, 500);
         });
-      }
-    }
+      },
+    };
 
-    const controlledField = controlledFieldTemplateParser.parseTemplateAndDecorateField(baseField, template, fields);
+    const controlledField =
+      controlledFieldTemplateParser.parseTemplateAndDecorateField(
+        baseField,
+        template,
+        fields,
+      );
 
     expect(controlledField).toBeInstanceOf(StateControlledField);
   });
@@ -163,18 +176,23 @@ describe('ControlledFieldTemplateParserImpl', () => {
     const baseField = new MockField('', Validity.VALID_FINALIZABLE);
 
     const fields = {
-      fieldA : baseField,
-      fieldB : new MockField('', Validity.VALID_FINALIZABLE)
-    }
+      fieldA: baseField,
+      fieldB: new MockField('', Validity.VALID_FINALIZABLE),
+    };
 
-    const template : SyncValueControlledFieldTemplate = {
-      defaultValue : '',
-      syncValueControlFn : ({ fieldB }) => {
+    const template: SyncValueControlledFieldTemplate = {
+      defaultValue: '',
+      syncValueControlFn: ({ fieldB }) => {
         return fieldB.value.toUpperCase();
-      }
-    }
+      },
+    };
 
-    const controlledField = controlledFieldTemplateParser.parseTemplateAndDecorateField(baseField, template, fields);
+    const controlledField =
+      controlledFieldTemplateParser.parseTemplateAndDecorateField(
+        baseField,
+        template,
+        fields,
+      );
 
     expect(controlledField).toBeInstanceOf(ValueControlledField);
   });
@@ -183,12 +201,12 @@ describe('ControlledFieldTemplateParserImpl', () => {
     const baseField = new MockField('', Validity.VALID_FINALIZABLE);
 
     const fields = {
-      fieldA : baseField,
-      fieldB : new MockField('', Validity.VALID_FINALIZABLE)
-    }
+      fieldA: baseField,
+      fieldB: new MockField('', Validity.VALID_FINALIZABLE),
+    };
 
-    const template : AsyncValueControlledFieldTemplate = {
-      defaultValue : '',
+    const template: AsyncValueControlledFieldTemplate = {
+      defaultValue: '',
       asyncValueControlFn: ({ fieldB }) => {
         return new Observable(subscriber => {
           subscriber.next('');
@@ -197,131 +215,180 @@ describe('ControlledFieldTemplateParserImpl', () => {
             subscriber.complete();
           }, 500);
         });
-      }
-    }
+      },
+    };
 
-    const controlledField = controlledFieldTemplateParser.parseTemplateAndDecorateField(baseField, template, fields);
+    const controlledField =
+      controlledFieldTemplateParser.parseTemplateAndDecorateField(
+        baseField,
+        template,
+        fields,
+      );
 
     expect(controlledField).toBeInstanceOf(ValueControlledField);
   });
 
   test('A StateControlledDualField is returned when the template includes a syncStateControlFn and the base field is an instance of AbstractDualField.', () => {
-    const baseField = container.services.BaseFieldFactory.createDualField('', '', false, [], []);
+    const baseField = container.services.BaseFieldFactory.createDualField(
+      '',
+      '',
+      false,
+      [],
+      [],
+    );
 
     const fields = {
-      fieldA : baseField,
-      fieldB : new MockField('', Validity.VALID_FINALIZABLE)
-    }
+      fieldA: baseField,
+      fieldB: new MockField('', Validity.VALID_FINALIZABLE),
+    };
 
-    const template : SyncStateControlledDualFieldTemplate = {
-      primaryDefaultValue : '',
-      secondaryDefaultValue : '',
-      syncStateControlFn : ({ fieldB }) => {
-        return ({
-          primaryFieldState : {
-            value : fieldB.value.toUpperCase()
+    const template: SyncStateControlledDualFieldTemplate = {
+      primaryDefaultValue: '',
+      secondaryDefaultValue: '',
+      syncStateControlFn: ({ fieldB }) => {
+        return {
+          primaryFieldState: {
+            value: fieldB.value.toUpperCase(),
           },
-          useSecondaryField : false
-        });
-      }
-    }
+          useSecondaryField: false,
+        };
+      },
+    };
 
-    const controlledField = controlledFieldTemplateParser.parseTemplateAndDecorateField(baseField, template, fields);
+    const controlledField =
+      controlledFieldTemplateParser.parseTemplateAndDecorateField(
+        baseField,
+        template,
+        fields,
+      );
 
     expect(controlledField).toBeInstanceOf(StateControlledDualField);
   });
 
   test('A StateControlledDualField is returned when the template includes an asyncStateControlFn and the base field is an instance of AbstractDualField.', () => {
-    const baseField = container.services.BaseFieldFactory.createDualField('', '', false, [], []);
+    const baseField = container.services.BaseFieldFactory.createDualField(
+      '',
+      '',
+      false,
+      [],
+      [],
+    );
 
     const fields = {
-      fieldA : baseField,
-      fieldB : new MockField('', Validity.VALID_FINALIZABLE)
-    }
+      fieldA: baseField,
+      fieldB: new MockField('', Validity.VALID_FINALIZABLE),
+    };
 
-    const template : AsyncStateControlledDualFieldTemplate = {
-      primaryDefaultValue : '',
-      secondaryDefaultValue : '',
-      asyncStateControlFn : ({ fieldB }) => {
+    const template: AsyncStateControlledDualFieldTemplate = {
+      primaryDefaultValue: '',
+      secondaryDefaultValue: '',
+      asyncStateControlFn: ({ fieldB }) => {
         return new Observable(subscriber => {
           subscriber.next({
-            primaryFieldState : {
-              value : '',
-              validity : Validity.PENDING
+            primaryFieldState: {
+              value: '',
+              validity: Validity.PENDING,
             },
-            useSecondaryField : false
+            useSecondaryField: false,
           });
           setTimeout(() => {
             subscriber.next({
               primaryFieldState: {
-                value : fieldB.value.toUpperCase(),
-                validity : Validity.VALID_FINALIZABLE
+                value: fieldB.value.toUpperCase(),
+                validity: Validity.VALID_FINALIZABLE,
               },
-              useSecondaryField : false
-            })
+              useSecondaryField: false,
+            });
           }, 500);
         });
-      }
-    }
+      },
+    };
 
-    const controlledField = controlledFieldTemplateParser.parseTemplateAndDecorateField(baseField, template, fields);
+    const controlledField =
+      controlledFieldTemplateParser.parseTemplateAndDecorateField(
+        baseField,
+        template,
+        fields,
+      );
 
     expect(controlledField).toBeInstanceOf(StateControlledDualField);
   });
 
   test('A ValueControlledDualField is returned when the template includes a syncValueControlFn and the base field is an instance of AbstractDualField.', () => {
-    const baseField = container.services.BaseFieldFactory.createDualField('', '', false, [], []);
+    const baseField = container.services.BaseFieldFactory.createDualField(
+      '',
+      '',
+      false,
+      [],
+      [],
+    );
 
     const fields = {
-      fieldA : baseField,
-      fieldB : new MockField('', Validity.VALID_FINALIZABLE)
-    }
+      fieldA: baseField,
+      fieldB: new MockField('', Validity.VALID_FINALIZABLE),
+    };
 
-    const template : SyncValueControlledDualFieldTemplate = {
-      primaryDefaultValue : '',
-      secondaryDefaultValue : '',
-      syncValueControlFn : ({ fieldB }) => {
-        return ({
-          primaryFieldValue : fieldB.value.toUpperCase(),
-          useSecondaryField : false
-        });
-      }
-    }
+    const template: SyncValueControlledDualFieldTemplate = {
+      primaryDefaultValue: '',
+      secondaryDefaultValue: '',
+      syncValueControlFn: ({ fieldB }) => {
+        return {
+          primaryFieldValue: fieldB.value.toUpperCase(),
+          useSecondaryField: false,
+        };
+      },
+    };
 
-    const controlledField = controlledFieldTemplateParser.parseTemplateAndDecorateField(baseField, template, fields);
+    const controlledField =
+      controlledFieldTemplateParser.parseTemplateAndDecorateField(
+        baseField,
+        template,
+        fields,
+      );
 
     expect(controlledField).toBeInstanceOf(ValueControlledDualField);
   });
 
   test('A ValueControlledDualField is returned when the template includes an asyncValueControlFn and the base field is an instance of AbstractDualField.', () => {
-    const baseField = container.services.BaseFieldFactory.createDualField('', '', false, [], []);
+    const baseField = container.services.BaseFieldFactory.createDualField(
+      '',
+      '',
+      false,
+      [],
+      [],
+    );
 
     const fields = {
-      fieldA : baseField,
-      fieldB : new MockField('', Validity.VALID_FINALIZABLE)
-    }
+      fieldA: baseField,
+      fieldB: new MockField('', Validity.VALID_FINALIZABLE),
+    };
 
-    const template : AsyncValueControlledDualFieldTemplate = {
-      primaryDefaultValue : '',
-      secondaryDefaultValue : '',
-      asyncValueControlFn : ({ fieldB }) => {
+    const template: AsyncValueControlledDualFieldTemplate = {
+      primaryDefaultValue: '',
+      secondaryDefaultValue: '',
+      asyncValueControlFn: ({ fieldB }) => {
         return new Observable(subscriber => {
           subscriber.next({
-            primaryFieldValue : '',
-            useSecondaryField : false
+            primaryFieldValue: '',
+            useSecondaryField: false,
           });
           setTimeout(() => {
             subscriber.next({
-              primaryFieldValue : fieldB.value.toUpperCase(),
-              useSecondaryField : false
+              primaryFieldValue: fieldB.value.toUpperCase(),
+              useSecondaryField: false,
             });
             subscriber.complete();
           }, 500);
         });
-      }
-    }
+      },
+    };
 
-    const controlledField = controlledFieldTemplateParser.parseTemplateAndDecorateField(baseField, template, fields);
+    const controlledField =
+      controlledFieldTemplateParser.parseTemplateAndDecorateField(
+        baseField,
+        template,
+        fields,
+      );
 
     expect(controlledField).toBeInstanceOf(ValueControlledDualField);
   });

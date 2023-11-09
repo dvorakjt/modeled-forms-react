@@ -1,5 +1,8 @@
 import { autowire } from 'undecorated-di';
-import { ConfigLoader, ConfigLoaderKey } from '../config-loader/config-loader.interface';
+import {
+  ConfigLoader,
+  ConfigLoaderKey,
+} from '../config-loader/config-loader.interface';
 
 import {
   AutoTransformer,
@@ -8,9 +11,9 @@ import {
 } from './auto-transformer.interface';
 
 class AutoTransformerImpl implements AutoTransformer {
-  configLoader : ConfigLoader;
+  configLoader: ConfigLoader;
 
-  constructor(configLoader : ConfigLoader) {
+  constructor(configLoader: ConfigLoader) {
     this.configLoader = configLoader;
   }
 
@@ -25,6 +28,6 @@ const AutoTransformerService = autowire<
   AutoTransformerKeyType,
   AutoTransformer,
   AutoTransformerImpl
->(AutoTransformerImpl, AutoTransformerKey, [ ConfigLoaderKey ]);
+>(AutoTransformerImpl, AutoTransformerKey, [ConfigLoaderKey]);
 
 export { AutoTransformerImpl, AutoTransformerService };

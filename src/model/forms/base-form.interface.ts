@@ -11,8 +11,8 @@ export interface BaseForm
   userFacingFields: FormElementDictionary;
   firstNonValidFormElement: string | undefined;
   firstNonValidFormElementChanges: Subject<string | undefined>;
-  extractedValues : ExtractedValueDictionary;
-  confirmationAttempted : boolean;
-  confirmationAttemptedChanges : Subject<boolean>;
-  tryConfirm(argsObject : TryConfirmArgsObject) : void;
+  extractedValues: ExtractedValueDictionary;
+  confirmationAttempted: boolean;
+  confirmationAttemptedChanges: Subject<boolean>;
+  tryConfirm(argsObject: TryConfirmArgsObject): void;
 }
