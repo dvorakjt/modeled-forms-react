@@ -58,12 +58,17 @@ class FormElementDictionaryParserImpl
       this._trackerFactory.createFirstNonValidFormElementTracker();
     const controlledFields = new Set<string>();
 
-    const entries = template instanceof Map ? template.entries() : Object.entries(template);
+    const entries =
+      template instanceof Map ? template.entries() : Object.entries(template);
 
     for (const [fieldName, formElementTemplate] of entries) {
       const formElement = this._isNestedForm(formElementTemplate)
-        ? this._nestedFormTemplateParser.parseTemplate(formElementTemplate as NestedFormTemplate)
-        : this._baseFieldTemplateParser.parseTemplate(formElementTemplate as FieldTemplateVariations);
+        ? this._nestedFormTemplateParser.parseTemplate(
+            formElementTemplate as NestedFormTemplate,
+          )
+        : this._baseFieldTemplateParser.parseTemplate(
+            formElementTemplate as FieldTemplateVariations,
+          );
       formElementDictionary[fieldName] = formElement;
 
       firstNonValidFormElementTracker.trackFormElementValidity(

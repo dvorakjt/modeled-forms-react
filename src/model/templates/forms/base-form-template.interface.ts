@@ -7,5 +7,5 @@ export interface BaseFormTemplate {
   fields: FormElementTemplateDictionaryOrMap;
   multiFieldValidators?: MultiFieldValidatorsTemplate;
   finalizedFields?: FinalizerTemplateDictionary;
-  extractedValues? : ExtractedValuesTemplate;
+  extractedValues?: ExtractedValuesTemplate;
 }

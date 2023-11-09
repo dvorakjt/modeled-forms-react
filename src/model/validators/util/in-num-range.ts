@@ -2,16 +2,16 @@ import type { SyncValidator } from '../sync-validator.type';
 import type { ValidatorResult } from '../validator-result.interface';
 
 interface Opts {
-  successMessage? : string;
-  exclusiveMin? : boolean;
-  exclusiveMax? : boolean;
+  successMessage?: string;
+  exclusiveMin?: boolean;
+  exclusiveMax?: boolean;
 }
 
 export function inNumRange(
   min: number,
   max: number,
   errorMessage: string,
-  opts? : Opts
+  opts?: Opts,
 ): SyncValidator<string> {
   return (value: string) => {
     const numericValue = Number(value);
@@ -23,7 +23,7 @@ export function inNumRange(
       isValid:
         !Number.isNaN(numericValue) &&
         passesMinComparison(numericValue, min, exclusiveMin) &&
-        passesMaxComparison(numericValue, max, exclusiveMax)
+        passesMaxComparison(numericValue, max, exclusiveMax),
     };
     if (!result.isValid) {
       result.message = errorMessage;
@@ -35,10 +35,10 @@ export function inNumRange(
   };
 }
 
-function passesMinComparison(num : number, min : number, exclusiveMin : boolean) {
+function passesMinComparison(num: number, min: number, exclusiveMin: boolean) {
   return exclusiveMin ? num > min : num >= min;
 }
 
-function passesMaxComparison(num : number, max : number, exclusiveMax : boolean) {
+function passesMaxComparison(num: number, max: number, exclusiveMax: boolean) {
   return exclusiveMax ? num < max : num <= max;
 }

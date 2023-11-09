@@ -3,9 +3,9 @@ import type { SyncValidator } from '../sync-validator.type';
 import type { ValidatorResult } from '../validator-result.interface';
 
 interface Opts {
-  successMessage? : string;
-  exclusiveMin? : boolean;
-  exclusiveMax? : boolean;
+  successMessage?: string;
+  exclusiveMin?: boolean;
+  exclusiveMax?: boolean;
 }
 
 const autoTransformer = container.services.AutoTransformer;
@@ -14,7 +14,7 @@ export function inLengthRange(
   minLength: number,
   maxLength: number,
   errorMessage: string,
-  opts? : Opts
+  opts?: Opts,
 ): SyncValidator<string> {
   return (value: string) => {
     const exclusiveMin = Boolean(opts?.exclusiveMin);
@@ -23,7 +23,9 @@ export function inLengthRange(
     value = autoTransformer.transform(value);
 
     const result: ValidatorResult = {
-      isValid: passesMinLengthComparison(value, minLength, exclusiveMin) && passesMaxLengthComparison(value, maxLength, exclusiveMax),
+      isValid:
+        passesMinLengthComparison(value, minLength, exclusiveMin) &&
+        passesMaxLengthComparison(value, maxLength, exclusiveMax),
     };
     if (!result.isValid) {
       result.message = errorMessage;
@@ -35,10 +37,18 @@ export function inLengthRange(
   };
 }
 
-function passesMinLengthComparison(value : string, minLength : number, exclusiveMin : boolean) {
+function passesMinLengthComparison(
+  value: string,
+  minLength: number,
+  exclusiveMin: boolean,
+) {
   return exclusiveMin ? value.length > minLength : value.length >= minLength;
 }
 
-function passesMaxLengthComparison(value : string, maxLength : number, exclusiveMax : boolean) {
+function passesMaxLengthComparison(
+  value: string,
+  maxLength: number,
+  exclusiveMax: boolean,
+) {
   return exclusiveMax ? value.length < maxLength : value.length <= maxLength;
 }

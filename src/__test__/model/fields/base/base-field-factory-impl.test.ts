@@ -7,27 +7,42 @@ import { AsyncValidator } from '../../../../model/validators/async-validator.typ
 import { AbstractDualField } from '../../../../model/fields/base/abstract-dual-field';
 
 describe('BaseFieldFactoryImpl', () => {
-  const baseFieldFactory = new BaseFieldFactoryImpl(container.services.SingleInputValidatorSuiteFactory);
-  const mockSyncValidators : Array<SyncValidator<string>> = [
-    () => ({ isValid : true })
-  ]
-  const mockAsyncValidators : Array<AsyncValidator<string>> = [
+  const baseFieldFactory = new BaseFieldFactoryImpl(
+    container.services.SingleInputValidatorSuiteFactory,
+  );
+  const mockSyncValidators: Array<SyncValidator<string>> = [
+    () => ({ isValid: true }),
+  ];
+  const mockAsyncValidators: Array<AsyncValidator<string>> = [
     () => {
       return new Promise(resolve => {
         resolve({
-          isValid : true
+          isValid: true,
         });
-      })
-    }
-  ]
+      });
+    },
+  ];
 
   test('It instantiates an AbstractField when createField() is called.', () => {
-    const field = baseFieldFactory.createField('', false, mockSyncValidators, mockAsyncValidators, 'test message');
+    const field = baseFieldFactory.createField(
+      '',
+      false,
+      mockSyncValidators,
+      mockAsyncValidators,
+      'test message',
+    );
     expect(field).toBeInstanceOf(AbstractField);
   });
 
   test('It instantiates an AbstractDualField when createDualField() is called.', () => {
-    const field = baseFieldFactory.createDualField('', '', false, mockSyncValidators, mockAsyncValidators, 'test message');
+    const field = baseFieldFactory.createDualField(
+      '',
+      '',
+      false,
+      mockSyncValidators,
+      mockAsyncValidators,
+      'test message',
+    );
     expect(field).toBeInstanceOf(AbstractDualField);
   });
 });

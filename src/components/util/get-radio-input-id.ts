@@ -1,3 +1,3 @@
-export function getRadioInputId(fieldName : string, value : string) {
+export function getRadioInputId(fieldName: string, value: string) {
   return `${fieldName}-${value}`;
 }

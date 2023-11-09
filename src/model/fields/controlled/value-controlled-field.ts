@@ -26,7 +26,11 @@ export class ValueControlledField extends AbstractField {
     return this._field.omit;
   }
 
-  constructor(field: AbstractField, adapter: Adapter<string | undefined>, config : Config) {
+  constructor(
+    field: AbstractField,
+    adapter: Adapter<string | undefined>,
+    config: Config,
+  ) {
     super();
     this._field = field;
     this._adapter = adapter;
@@ -44,7 +48,7 @@ export class ValueControlledField extends AbstractField {
               text: config.globalMessages.adapterError,
             },
           ],
-          modified : Modified.YES
+          modified: Modified.YES,
         });
       },
     });

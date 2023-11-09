@@ -23,27 +23,36 @@ import {
   RootFormTemplateParserKeyType,
 } from './root-form-template-parser.interface';
 import { RootFormTemplate } from './root-form-template.interface';
-import { ExtractedValuesTemplateParser, ExtractedValuesTemplateParserKey } from '../extracted-values/extracted-values-template-parser.interface';
-import { ConfirmationManagerFactory, ConfirmationManagerFactoryKey } from '../../confirmation/confirmation-manager-factory.interface';
-import { ConfigLoader, ConfigLoaderKey } from '../../config-loader/config-loader.interface';
+import {
+  ExtractedValuesTemplateParser,
+  ExtractedValuesTemplateParserKey,
+} from '../extracted-values/extracted-values-template-parser.interface';
+import {
+  ConfirmationManagerFactory,
+  ConfirmationManagerFactoryKey,
+} from '../../confirmation/confirmation-manager-factory.interface';
+import {
+  ConfigLoader,
+  ConfigLoaderKey,
+} from '../../config-loader/config-loader.interface';
 
 class RootFormTemplateParserImpl implements RootFormTemplateParser {
   _formElementTemplateDictionaryParser: FormElementTemplateDictionaryParser;
   _multiFieldValidatorsTemplateParser: MultiFieldValidatorsTemplateParser;
   _finalizerTemplateDictionaryParser: FinalizerTemplateDictionaryParser;
   _submissionManagerFactory: SubmissionManagerFactory;
-  _extractedValuesTemplateParser : ExtractedValuesTemplateParser;
-  _confirmationManagerFactory : ConfirmationManagerFactory;
-  _configLoader : ConfigLoader;
+  _extractedValuesTemplateParser: ExtractedValuesTemplateParser;
+  _confirmationManagerFactory: ConfirmationManagerFactory;
+  _configLoader: ConfigLoader;
 
   constructor(
     formElementTemplateDictionaryParser: FormElementTemplateDictionaryParser,
     multiFieldValidatorsTemplateParser: MultiFieldValidatorsTemplateParser,
     finalizerTemplateDictionaryParser: FinalizerTemplateDictionaryParser,
     submissionManagerFactory: SubmissionManagerFactory,
-    extractedValuesTemplateParser : ExtractedValuesTemplateParser,
-    confirmationManagerFactory : ConfirmationManagerFactory,
-    configLoader : ConfigLoader
+    extractedValuesTemplateParser: ExtractedValuesTemplateParser,
+    confirmationManagerFactory: ConfirmationManagerFactory,
+    configLoader: ConfigLoader,
   ) {
     this._formElementTemplateDictionaryParser =
       formElementTemplateDictionaryParser;
@@ -79,16 +88,19 @@ class RootFormTemplateParserImpl implements RootFormTemplateParser {
         finalizerFacingFields,
       );
 
-    const confirmationManager = this._confirmationManagerFactory.createConfirmationManager();
+    const confirmationManager =
+      this._confirmationManagerFactory.createConfirmationManager();
 
     const submissionManager =
       this._submissionManagerFactory.createSubmissionManager(template.submitFn);
 
-    const extractedValues = this._extractedValuesTemplateParser.parseTemplate(template.extractedValues
-      ?? {
-        syncExtractedValues : {},
-        asyncExtractedValues : {}
-      }, finalizerFacingFields);
+    const extractedValues = this._extractedValuesTemplateParser.parseTemplate(
+      template.extractedValues ?? {
+        syncExtractedValues: {},
+        asyncExtractedValues: {},
+      },
+      finalizerFacingFields,
+    );
 
     const { config } = this._configLoader;
 
@@ -100,9 +112,9 @@ class RootFormTemplateParserImpl implements RootFormTemplateParser {
       multiInputValidatorMessagesAggregator,
       confirmationManager,
       submissionManager,
-      config
+      config,
     );
-    
+
     return form; //the new form part should come from a factory
   }
 }
@@ -118,7 +130,7 @@ const RootFormTemplateParserService = autowire<
   SubmissionManagerFactoryKey,
   ExtractedValuesTemplateParserKey,
   ConfirmationManagerFactoryKey,
-  ConfigLoaderKey
+  ConfigLoaderKey,
 ]);
 
 export { RootFormTemplateParserImpl, RootFormTemplateParserService };

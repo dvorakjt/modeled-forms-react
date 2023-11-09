@@ -51,7 +51,7 @@ export class StateControlledDualField extends AbstractDualField {
   constructor(
     field: AbstractDualField,
     adapter: Adapter<DualFieldSetStateArg>,
-    config : Config
+    config: Config,
   ) {
     super();
     this._field = field;
@@ -68,7 +68,7 @@ export class StateControlledDualField extends AbstractDualField {
               text: config.globalMessages.adapterError,
             },
           ],
-          modified : Modified.YES
+          modified: Modified.YES,
         };
         const setStateArg: DualFieldSetStateArg = this._dualField
           .useSecondaryField

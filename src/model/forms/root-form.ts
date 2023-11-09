@@ -2,14 +2,20 @@ import { BehaviorSubject, type Subject } from 'rxjs';
 import { copyObject } from '../util/copy-object';
 import type { State } from '../state/state.interface';
 import { AbstractRootForm } from './abstract-root-form';
-import { SubmissionManager, TrySubmitArgsObject } from '../submission/submission-manager.interface';
+import {
+  SubmissionManager,
+  TrySubmitArgsObject,
+} from '../submission/submission-manager.interface';
 import type { Message } from '../state/messages/message.interface';
 import type { FinalizerManager } from '../finalizers/finalizer-manager.interface';
 import type { FormElementDictionary } from '../form-elements/form-element-dictionary.type';
 import type { MultiInputValidatorMessagesAggregator } from '../aggregators/multi-input-validator-messages-aggregator.interface';
 import { FirstNonValidFormElementTracker } from '../trackers/first-nonvalid-form-element-tracker.interface';
 import { ExtractedValueDictionary } from '../extracted-values/extracted-value-dictionary.type';
-import { ConfirmationManager, TryConfirmArgsObject } from '../confirmation/confirmation-manager.interface';
+import {
+  ConfirmationManager,
+  TryConfirmArgsObject,
+} from '../confirmation/confirmation-manager.interface';
 import { AbstractNestedForm } from './abstract-nested-form';
 import { Config } from '../config-loader/config.interface';
 
@@ -21,9 +27,9 @@ export class RootForm extends AbstractRootForm {
   readonly _firstNonValidFormElementTracker: FirstNonValidFormElementTracker;
   readonly _finalizerManager: FinalizerManager;
   readonly _multiFieldValidatorMessagesAggregator: MultiInputValidatorMessagesAggregator;
-  readonly _confirmationManager : ConfirmationManager;
+  readonly _confirmationManager: ConfirmationManager;
   readonly _submissionManager: SubmissionManager;
-  readonly _config : Config;
+  readonly _config: Config;
 
   get state() {
     const messages = this._aggregateMessages();
@@ -42,19 +48,19 @@ export class RootForm extends AbstractRootForm {
       .firstNonValidFormElementChanges;
   }
 
-  get confirmationAttempted() : boolean {
+  get confirmationAttempted(): boolean {
     return this._confirmationManager.confirmationState.confirmationAttempted;
   }
 
   constructor(
     userFacingFields: FormElementDictionary,
-    extractedValues : ExtractedValueDictionary,
+    extractedValues: ExtractedValueDictionary,
     firstNonValidFormElementTracker: FirstNonValidFormElementTracker,
     finalizerManager: FinalizerManager,
     multiFieldValidatorMessagesAggregator: MultiInputValidatorMessagesAggregator,
-    confirmationManager : ConfirmationManager,
+    confirmationManager: ConfirmationManager,
     submissionManager: SubmissionManager,
-    config : Config
+    config: Config,
   ) {
     super();
     this.userFacingFields = userFacingFields;
@@ -85,45 +91,48 @@ export class RootForm extends AbstractRootForm {
     });
 
     this._confirmationManager.confirmationStateChanges.subscribe(() => {
-      if(this.stateChanges) this.stateChanges.next(this.state);
-      if(this.confirmationAttemptedChanges) this.confirmationAttemptedChanges.next(this.confirmationAttempted);
+      if (this.stateChanges) this.stateChanges.next(this.state);
+      if (this.confirmationAttemptedChanges)
+        this.confirmationAttemptedChanges.next(this.confirmationAttempted);
     });
 
-    this.confirmationAttemptedChanges = new BehaviorSubject<boolean>(this.confirmationAttempted);
+    this.confirmationAttemptedChanges = new BehaviorSubject<boolean>(
+      this.confirmationAttempted,
+    );
 
     this.stateChanges = new BehaviorSubject(this.state);
   }
 
-  tryConfirm({onError, onSuccess, errorMessage}: TryConfirmArgsObject): void {
+  tryConfirm({ onError, onSuccess, errorMessage }: TryConfirmArgsObject): void {
     //call try confirm on all nested fields
-    for(const fieldName in this.userFacingFields) {
+    for (const fieldName in this.userFacingFields) {
       const field = this.userFacingFields[fieldName];
-      if(field instanceof AbstractNestedForm) {
+      if (field instanceof AbstractNestedForm) {
         field.tryConfirm({});
-      } 
+      }
     }
     this._confirmationManager.tryConfirm({
-      validity : this.state.validity,
+      validity: this.state.validity,
       onError,
       onSuccess,
-      errorMessage
+      errorMessage,
     });
   }
 
-  trySubmit(argsObject : TrySubmitArgsObject) {
+  trySubmit(argsObject: TrySubmitArgsObject) {
     //clear submission messages
     this._submissionManager.reset();
 
     const onConfirmationSuccess = () => {
       this._submissionManager.trySubmit({
-        state : this.state,
-        ...argsObject
-      })
-    }
+        state: this.state,
+        ...argsObject,
+      });
+    };
 
     this.tryConfirm({
-      onSuccess : onConfirmationSuccess,
-      errorMessage : this._config.globalMessages.confirmationFailed
+      onSuccess: onConfirmationSuccess,
+      errorMessage: this._config.globalMessages.confirmationFailed,
     });
   }
 
@@ -141,7 +150,7 @@ export class RootForm extends AbstractRootForm {
       ...this._finalizerManager.state.messages,
     ];
 
-    if(this._confirmationManager.confirmationState.message) {
+    if (this._confirmationManager.confirmationState.message) {
       messages.push(this._confirmationManager.confirmationState.message);
     }
 

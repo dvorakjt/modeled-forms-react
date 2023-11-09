@@ -26,7 +26,11 @@ export class StateControlledField extends AbstractField {
     return this._field.omit;
   }
 
-  constructor(field: AbstractField, adapter: Adapter<Partial<FieldState>>, config : Config) {
+  constructor(
+    field: AbstractField,
+    adapter: Adapter<Partial<FieldState>>,
+    config: Config,
+  ) {
     super();
     this._field = field;
     this._adapter = adapter;
@@ -42,7 +46,7 @@ export class StateControlledField extends AbstractField {
               text: config.globalMessages.adapterError,
             },
           ],
-          modified : Modified.YES
+          modified: Modified.YES,
         });
       },
     });

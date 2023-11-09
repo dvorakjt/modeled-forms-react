@@ -1,4 +1,7 @@
-export { CheckboxInput, type CheckboxInputProps } from './checkbox-input.component';
+export {
+  CheckboxInput,
+  type CheckboxInputProps,
+} from './checkbox-input.component';
 export { Input, type InputProps } from './input.component';
 export { RadioInput, type RadioInputProps } from './radio-input.component';
 export { SelectOther, type SelectOtherProps } from './select-other.component';

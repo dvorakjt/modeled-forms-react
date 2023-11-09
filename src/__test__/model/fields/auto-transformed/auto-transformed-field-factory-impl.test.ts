@@ -8,9 +8,12 @@ import { Validity } from '../../../../model';
 describe('AutoTransformedFieldFactoryImpl', () => {
   test('It instantiates an AutoTransformedField when createAutoTransformedField() is called.', () => {
     const autoTransformer = container.services.AutoTransformer;
-    const autoTransformedFieldFactory = new AutoTransformedFieldFactoryImpl(autoTransformer);
+    const autoTransformedFieldFactory = new AutoTransformedFieldFactoryImpl(
+      autoTransformer,
+    );
     const baseField = new MockField('', Validity.VALID_FINALIZABLE);
-    const autoTransformedField = autoTransformedFieldFactory.createAutoTransformedField(baseField);
+    const autoTransformedField =
+      autoTransformedFieldFactory.createAutoTransformedField(baseField);
     expect(autoTransformedField).toBeInstanceOf(AutoTransformedField);
   });
 });

@@ -7,12 +7,16 @@ import { TrySubmitArgsObject } from '../model/submission/submission-manager.inte
 const rootFormTemplateParser = container.services.RootFormTemplateParser;
 
 export function useRootForm(template: RootFormTemplate) {
-  const form = useMemo(() => rootFormTemplateParser.parseTemplate(template), [template]) ;
+  const form = useMemo(
+    () => rootFormTemplateParser.parseTemplate(template),
+    [template],
+  );
   const formRef = useRef(form);
-  const trySubmit = (argsObject : TrySubmitArgsObject) => formRef.current.trySubmit(argsObject);
+  const trySubmit = (argsObject: TrySubmitArgsObject) =>
+    formRef.current.trySubmit(argsObject);
 
   return {
     ...useForm(formRef.current),
-    trySubmit
+    trySubmit,
   };
 }

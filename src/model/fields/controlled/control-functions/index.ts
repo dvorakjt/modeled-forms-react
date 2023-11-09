@@ -2,12 +2,12 @@ export type {
   AsyncDualFieldStateControlFn,
   AsyncDualFieldValueControlFn,
   SyncDualFieldStateControlFn,
-  SyncDualFieldValueControlFn
+  SyncDualFieldValueControlFn,
 } from './dual-fields';
 
 export type {
   AsyncFieldStateControlFn,
   AsyncFieldValueControlFn,
   SyncFieldStateControlFn,
-  SyncFieldValueControlFn
+  SyncFieldValueControlFn,
 } from './fields';

@@ -43,7 +43,7 @@ export class UserFacingMultiInputValidatedNestedForm
     return this._baseNestedForm.firstNonValidFormElement;
   }
 
-  get firstNonValidFormElementChanges() : Subject<string | undefined> {
+  get firstNonValidFormElementChanges(): Subject<string | undefined> {
     return this._baseNestedForm.firstNonValidFormElementChanges;
   }
 

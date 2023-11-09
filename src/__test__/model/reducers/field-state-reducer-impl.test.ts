@@ -8,12 +8,27 @@ import { container } from '../../../model/container';
 describe('FieldStateReducerImpl', () => {
   const validityReducer =
     container.services.ReducerFactory.createValidityReducer();
-  const visitationReducer = container.services.ReducerFactory.createVisitationReducer();
-  const modificationReducer = container.services.ReducerFactory.createModificationReducer();
-  const fieldValidityReducer = new FieldStateReducerImpl(validityReducer, visitationReducer, modificationReducer);
-  fieldValidityReducer.updateTallies('a', createState(Validity.ERROR, Visited.YES, Modified.YES));
-  fieldValidityReducer.updateTallies('b', createState(Validity.INVALID, Visited.YES, Modified.YES));
-  fieldValidityReducer.updateTallies('c', createState(Validity.PENDING, Visited.YES, Modified.YES));
+  const visitationReducer =
+    container.services.ReducerFactory.createVisitationReducer();
+  const modificationReducer =
+    container.services.ReducerFactory.createModificationReducer();
+  const fieldValidityReducer = new FieldStateReducerImpl(
+    validityReducer,
+    visitationReducer,
+    modificationReducer,
+  );
+  fieldValidityReducer.updateTallies(
+    'a',
+    createState(Validity.ERROR, Visited.YES, Modified.YES),
+  );
+  fieldValidityReducer.updateTallies(
+    'b',
+    createState(Validity.INVALID, Visited.YES, Modified.YES),
+  );
+  fieldValidityReducer.updateTallies(
+    'c',
+    createState(Validity.PENDING, Visited.YES, Modified.YES),
+  );
   fieldValidityReducer.updateTallies(
     'd',
     createState(Validity.VALID_UNFINALIZABLE, Visited.YES, Modified.YES),
@@ -68,7 +83,12 @@ describe('FieldStateReducerImpl', () => {
   });
 });
 
-function createState(validity: Validity, visited : Visited, modified : Modified, omit: boolean = false) {
+function createState(
+  validity: Validity,
+  visited: Visited,
+  modified: Modified,
+  omit: boolean = false,
+) {
   return {
     value: '',
     validity,

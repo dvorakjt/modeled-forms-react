@@ -43,10 +43,10 @@ class FinalizerFnFactoryImpl implements FinalizerFnFactory {
       }
 
       if (aggregatedStateChanges.hasOmittedFields()) {
-        return { 
+        return {
           finalizerValidity: FinalizerValidity.VALID_FINALIZED,
-          visited : aggregatedStateChanges.visited(),
-          modified : aggregatedStateChanges.modified()
+          visited: aggregatedStateChanges.visited(),
+          modified: aggregatedStateChanges.modified(),
         };
       }
       const overallValidity = aggregatedStateChanges.overallValidity();
@@ -56,22 +56,22 @@ class FinalizerFnFactoryImpl implements FinalizerFnFactory {
             this._finalizerValidityTranslator.translateValidityToFinalizerValidity(
               overallValidity,
             ),
-          visited : aggregatedStateChanges.visited(),
-          modified : aggregatedStateChanges.modified()
+          visited: aggregatedStateChanges.visited(),
+          modified: aggregatedStateChanges.modified(),
         };
       }
       if (error) {
         return {
           finalizerValidity: FinalizerValidity.FINALIZER_ERROR,
-          visited : aggregatedStateChanges.visited(),
-          modified : aggregatedStateChanges.modified()
+          visited: aggregatedStateChanges.visited(),
+          modified: aggregatedStateChanges.modified(),
         };
       } else {
         return {
           value,
           finalizerValidity: FinalizerValidity.VALID_FINALIZED,
-          visited : aggregatedStateChanges.visited(),
-          modified : aggregatedStateChanges.modified()
+          visited: aggregatedStateChanges.visited(),
+          modified: aggregatedStateChanges.modified(),
         };
       }
     };
@@ -88,34 +88,35 @@ class FinalizerFnFactoryImpl implements FinalizerFnFactory {
           if (aggregatedStateChanges.hasOmittedFields()) {
             subscriber.next({
               finalizerValidity: FinalizerValidity.VALID_FINALIZED,
-              visited : aggregatedStateChanges.visited(),
-              modified : aggregatedStateChanges.modified()
+              visited: aggregatedStateChanges.visited(),
+              modified: aggregatedStateChanges.modified(),
             });
             subscriber.complete();
           } else if (
-            aggregatedStateChanges.overallValidity() < Validity.VALID_FINALIZABLE
+            aggregatedStateChanges.overallValidity() <
+            Validity.VALID_FINALIZABLE
           ) {
             subscriber.next({
               finalizerValidity:
                 this._finalizerValidityTranslator.translateValidityToFinalizerValidity(
                   aggregatedStateChanges.overallValidity(),
                 ),
-              visited : aggregatedStateChanges.visited(),
-              modified : aggregatedStateChanges.modified()
+              visited: aggregatedStateChanges.visited(),
+              modified: aggregatedStateChanges.modified(),
             });
           } else {
             subscriber.next({
               finalizerValidity: FinalizerValidity.VALID_FINALIZING,
-              visited : aggregatedStateChanges.visited(),
-              modified : aggregatedStateChanges.modified()
+              visited: aggregatedStateChanges.visited(),
+              modified: aggregatedStateChanges.modified(),
             });
             promise
               .then(value => {
                 subscriber.next({
                   value,
                   finalizerValidity: FinalizerValidity.VALID_FINALIZED,
-                  visited : aggregatedStateChanges.visited(),
-                  modified : aggregatedStateChanges.modified()
+                  visited: aggregatedStateChanges.visited(),
+                  modified: aggregatedStateChanges.modified(),
                 });
                 subscriber.complete();
               })
@@ -123,8 +124,8 @@ class FinalizerFnFactoryImpl implements FinalizerFnFactory {
                 logErrorInDevMode(e);
                 subscriber.next({
                   finalizerValidity: FinalizerValidity.FINALIZER_ERROR,
-                  visited : aggregatedStateChanges.visited(),
-                  modified : aggregatedStateChanges.modified()
+                  visited: aggregatedStateChanges.visited(),
+                  modified: aggregatedStateChanges.modified(),
                 });
                 subscriber.complete();
               });
@@ -133,8 +134,8 @@ class FinalizerFnFactoryImpl implements FinalizerFnFactory {
           logErrorInDevMode(error);
           subscriber.next({
             finalizerValidity: FinalizerValidity.FINALIZER_ERROR,
-            visited : aggregatedStateChanges.visited(),
-            modified : aggregatedStateChanges.modified()
+            visited: aggregatedStateChanges.visited(),
+            modified: aggregatedStateChanges.modified(),
           });
           subscriber.complete();
         }

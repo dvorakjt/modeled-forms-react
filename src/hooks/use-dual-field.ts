@@ -12,6 +12,6 @@ export function useDualField(dualField: AbstractDualField) {
     usePrimaryField,
     useSecondaryField,
     useSwitchToSecondaryField,
-    reset
+    reset,
   };
 }

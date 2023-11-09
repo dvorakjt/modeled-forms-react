@@ -63,10 +63,7 @@ class FinalizerTemplateDictionaryParserImpl
               ...accessedFields,
             ]);
           }
-          finalizedFields = new Set([
-            ...finalizedFields,
-            ...accessedFields
-          ]);
+          finalizedFields = new Set([...finalizedFields, ...accessedFields]);
         });
       } else if (finalizerTemplate.asyncFinalizerFn) {
         const finalizerFn = this._finalizerFnFactory.createAsyncFinalizerFn(
@@ -84,10 +81,7 @@ class FinalizerTemplateDictionaryParserImpl
               ...accessedFields,
             ]);
           }
-          finalizedFields = new Set([
-            ...finalizedFields,
-            ...accessedFields
-          ]);
+          finalizedFields = new Set([...finalizedFields, ...accessedFields]);
         });
       }
     }

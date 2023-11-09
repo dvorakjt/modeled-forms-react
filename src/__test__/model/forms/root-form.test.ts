@@ -1,62 +1,66 @@
-import { describe, test, expect, vi } from "vitest";
-import { container } from "../../../model/container";
-import { MessageType, RootFormTemplate, Validity, required } from "../../../model";
-import { AbstractField } from "../../../model/fields/base/abstract-field";
-import { Visited } from "../../../model/state/visited.enum";
-import { Modified } from "../../../model/state/modified.enum";
-import { AbstractDualField } from "../../../model/fields/base/abstract-dual-field";
-import { RootForm } from "../../../model/forms/root-form";
-import { AbstractNestedForm } from "../../../model/forms/abstract-nested-form";
-import { waitFor } from "@testing-library/react";
+import { describe, test, expect, vi } from 'vitest';
+import { container } from '../../../model/container';
+import {
+  MessageType,
+  RootFormTemplate,
+  Validity,
+  required,
+} from '../../../model';
+import { AbstractField } from '../../../model/fields/base/abstract-field';
+import { Visited } from '../../../model/state/visited.enum';
+import { Modified } from '../../../model/state/modified.enum';
+import { AbstractDualField } from '../../../model/fields/base/abstract-dual-field';
+import { RootForm } from '../../../model/forms/root-form';
+import { AbstractNestedForm } from '../../../model/forms/abstract-nested-form';
+import { waitFor } from '@testing-library/react';
 
 describe('RootForm', () => {
   test('state returns the expected value for state.', () => {
     const expectedMFVMessageText = 'Field C must NOT equal Field D.';
 
-    const rootFormTemplate : RootFormTemplate = {
-      fields : {
-        fieldA : 'test',
-        fieldB : {
-          defaultValue : '',
-          syncValidators : [
-            required('Field B is required.')
-          ]
+    const rootFormTemplate: RootFormTemplate = {
+      fields: {
+        fieldA: 'test',
+        fieldB: {
+          defaultValue: '',
+          syncValidators: [required('Field B is required.')],
         },
-        fieldC : 'test',
-        fieldD : 'test',
+        fieldC: 'test',
+        fieldD: 'test',
       },
-      multiFieldValidators : {
-        sync : [
+      multiFieldValidators: {
+        sync: [
           ({ fieldC, fieldD }) => {
             const isValid = fieldC.value !== fieldD.value;
 
-            return ({
+            return {
               isValid,
-              message : isValid ? undefined : expectedMFVMessageText
-            })
-          }
-        ]
-      },
-      finalizedFields : {
-        errantFinalizer : {
-          // eslint-disable-next-line @typescript-eslint/no-unused-vars
-          syncFinalizerFn : ({ fieldA }) => {
-            throw new Error('Finalizer error.')
+              message: isValid ? undefined : expectedMFVMessageText,
+            };
           },
-          preserveOriginalFields : true
-        }
+        ],
       },
-      submitFn : () => {
-        return new Promise((resolve) => {
-          resolve('Response from imaginary server')
-        })
-      }
-    }
+      finalizedFields: {
+        errantFinalizer: {
+          // eslint-disable-next-line @typescript-eslint/no-unused-vars
+          syncFinalizerFn: ({ fieldA }) => {
+            throw new Error('Finalizer error.');
+          },
+          preserveOriginalFields: true,
+        },
+      },
+      submitFn: () => {
+        return new Promise(resolve => {
+          resolve('Response from imaginary server');
+        });
+      },
+    };
 
-    const rootForm = container.services.RootFormTemplateParser.parseTemplate(rootFormTemplate);
+    const rootForm =
+      container.services.RootFormTemplateParser.parseTemplate(rootFormTemplate);
 
     (rootForm.userFacingFields.fieldB as AbstractField).setState({
-      visited : Visited.YES
+      visited: Visited.YES,
     });
 
     /*
@@ -70,56 +74,54 @@ describe('RootForm', () => {
       - omit is true as omitByDefault was set to true in the template
     */
     expect(rootForm.state).toStrictEqual({
-      value : {
-        fieldA : 'test'
+      value: {
+        fieldA: 'test',
       },
-      validity : Validity.ERROR,
-      messages : [
+      validity: Validity.ERROR,
+      messages: [
         {
-          text : expectedMFVMessageText,
-          type : MessageType.INVALID
+          text: expectedMFVMessageText,
+          type: MessageType.INVALID,
         },
         {
-          text : container.services.ConfigLoader.config.globalMessages.finalizerError,
-          type : MessageType.ERROR
-        }
+          text: container.services.ConfigLoader.config.globalMessages
+            .finalizerError,
+          type: MessageType.ERROR,
+        },
       ],
-      visited : Visited.PARTIALLY,
-      modified : Modified.PARTIALLY,
+      visited: Visited.PARTIALLY,
+      modified: Modified.PARTIALLY,
     });
   });
 
   test('firstNonValidFormElement returns the expected firstNonValidFormElement.', () => {
     //here, we use a map to guarantee accurate key order
-    const rootFormTemplate : RootFormTemplate = {
-      fields : new Map([
+    const rootFormTemplate: RootFormTemplate = {
+      fields: new Map([
         [
-          'fieldA', 
+          'fieldA',
           {
-            defaultValue : '',
-            syncValidators : [
-              required('Field A is required.')
-            ]
-          }
+            defaultValue: '',
+            syncValidators: [required('Field A is required.')],
+          },
         ],
         [
           'fieldB',
           {
-            defaultValue : '',
-            syncValidators : [
-              required('Field B is required.')
-            ]
-          }
-        ]
+            defaultValue: '',
+            syncValidators: [required('Field B is required.')],
+          },
+        ],
       ]),
-      submitFn : () => {
-        return new Promise((resolve) => {
-          resolve('Response from imaginary server')
-        })
-      }
-    }
+      submitFn: () => {
+        return new Promise(resolve => {
+          resolve('Response from imaginary server');
+        });
+      },
+    };
 
-    const rootForm = container.services.RootFormTemplateParser.parseTemplate(rootFormTemplate);
+    const rootForm =
+      container.services.RootFormTemplateParser.parseTemplate(rootFormTemplate);
 
     expect(rootForm.firstNonValidFormElement).toBe('fieldA');
 
@@ -127,76 +129,82 @@ describe('RootForm', () => {
 
     expect(rootForm.firstNonValidFormElement).toBe('fieldB');
 
-    (rootForm.userFacingFields.fieldB as AbstractField).setValue('some other value');
+    (rootForm.userFacingFields.fieldB as AbstractField).setValue(
+      'some other value',
+    );
 
     expect(rootForm.firstNonValidFormElement).toBeUndefined();
   });
 
   test('firstNonFormElementChanges emits expected firstNonValidFormElements.', () => {
-    const rootFormTemplate : RootFormTemplate = {
-      fields : new Map([
+    const rootFormTemplate: RootFormTemplate = {
+      fields: new Map([
         [
-          'fieldA', 
+          'fieldA',
           {
-            defaultValue : '',
-            syncValidators : [
-              required('Field A is required.')
-            ]
-          }
+            defaultValue: '',
+            syncValidators: [required('Field A is required.')],
+          },
         ],
         [
           'fieldB',
           {
-            defaultValue : '',
-            syncValidators : [
-              required('Field B is required.')
-            ]
-          }
-        ]
+            defaultValue: '',
+            syncValidators: [required('Field B is required.')],
+          },
+        ],
       ]),
-      submitFn : () => {
-        return new Promise((resolve) => {
-          resolve('Response from imaginary server')
-        })
-      }
-    }
+      submitFn: () => {
+        return new Promise(resolve => {
+          resolve('Response from imaginary server');
+        });
+      },
+    };
 
-    const rootForm = container.services.RootFormTemplateParser.parseTemplate(rootFormTemplate);
+    const rootForm =
+      container.services.RootFormTemplateParser.parseTemplate(rootFormTemplate);
 
     const expectedNonValidFormElements = ['fieldA', 'fieldB', undefined];
     let expectedNonValidFormElementIndex = 0;
-    
-    rootForm.firstNonValidFormElementChanges.subscribe(change => {
-      expect(change).toBe(expectedNonValidFormElements[expectedNonValidFormElementIndex++]);
 
-      if(expectedNonValidFormElementIndex === 1) {
-        (rootForm.userFacingFields.fieldA as AbstractField).setValue('some value');
-      } else if(expectedNonValidFormElementIndex === 2) {
-        (rootForm.userFacingFields.fieldB as AbstractField).setValue('some other value');
+    rootForm.firstNonValidFormElementChanges.subscribe(change => {
+      expect(change).toBe(
+        expectedNonValidFormElements[expectedNonValidFormElementIndex++],
+      );
+
+      if (expectedNonValidFormElementIndex === 1) {
+        (rootForm.userFacingFields.fieldA as AbstractField).setValue(
+          'some value',
+        );
+      } else if (expectedNonValidFormElementIndex === 2) {
+        (rootForm.userFacingFields.fieldB as AbstractField).setValue(
+          'some other value',
+        );
       }
     });
   });
 
-  test('calling reset() resets all of the form\'s fields.', () => {
-    const rootFormTemplate : RootFormTemplate = {
-      fields : {
-        fieldA : {
-          defaultValue : '',
-          omitByDefault : true
+  test("calling reset() resets all of the form's fields.", () => {
+    const rootFormTemplate: RootFormTemplate = {
+      fields: {
+        fieldA: {
+          defaultValue: '',
+          omitByDefault: true,
         },
-        fieldB : {
-          primaryDefaultValue : '',
-          secondaryDefaultValue : '',
-        }
+        fieldB: {
+          primaryDefaultValue: '',
+          secondaryDefaultValue: '',
+        },
       },
-      submitFn : () => {
-        return new Promise((resolve) => {
-          resolve('Response from imaginary server')
-        })
-      }
-    }
+      submitFn: () => {
+        return new Promise(resolve => {
+          resolve('Response from imaginary server');
+        });
+      },
+    };
 
-    const rootForm = container.services.RootFormTemplateParser.parseTemplate(rootFormTemplate);
+    const rootForm =
+      container.services.RootFormTemplateParser.parseTemplate(rootFormTemplate);
 
     const { fieldA, fieldB } = rootForm.userFacingFields;
 
@@ -215,75 +223,85 @@ describe('RootForm', () => {
 
   test('When the MultiFieldValidatorAggregator emits a new message, state changes emits a new state.', () => {
     const expectedValidMessageText = 'Field A and Field B are both valid.';
-    const expectedInvalidMessageText = 'Field B and Field A must not have empty values.';
+    const expectedInvalidMessageText =
+      'Field B and Field A must not have empty values.';
 
-    const rootFormTemplate : RootFormTemplate = {
-      fields : {
-        fieldA : '',
-        fieldB : ''
+    const rootFormTemplate: RootFormTemplate = {
+      fields: {
+        fieldA: '',
+        fieldB: '',
       },
-      multiFieldValidators : {
-        sync : [
+      multiFieldValidators: {
+        sync: [
           ({ fieldA, fieldB }) => {
             const isValid = fieldA.value && fieldB.value;
 
-            return ({
+            return {
               isValid,
-              message : isValid ? expectedValidMessageText : expectedInvalidMessageText
-            })
-          }
-        ]
+              message: isValid
+                ? expectedValidMessageText
+                : expectedInvalidMessageText,
+            };
+          },
+        ],
       },
-      submitFn : () => {
-        return new Promise((resolve) => {
-          resolve('Response from imaginary server')
-        })
-      }
-    }
+      submitFn: () => {
+        return new Promise(resolve => {
+          resolve('Response from imaginary server');
+        });
+      },
+    };
 
-    const rootForm = container.services.RootFormTemplateParser.parseTemplate(rootFormTemplate);
+    const rootForm =
+      container.services.RootFormTemplateParser.parseTemplate(rootFormTemplate);
 
-    (rootForm as RootForm)._multiFieldValidatorMessagesAggregator.messagesChanges.subscribe(() => {
-      if(rootForm.state.validity === Validity.INVALID) {
+    (
+      rootForm as RootForm
+    )._multiFieldValidatorMessagesAggregator.messagesChanges.subscribe(() => {
+      if (rootForm.state.validity === Validity.INVALID) {
         expect(rootForm.state.messages).toStrictEqual([
           {
-            text : expectedInvalidMessageText,
-            type : MessageType.INVALID
-          }
+            text: expectedInvalidMessageText,
+            type: MessageType.INVALID,
+          },
         ]);
       } else {
         expect(rootForm.state.messages).toStrictEqual([
           {
-            text : expectedValidMessageText,
-            type : MessageType.VALID
-          }
-        ])
+            text: expectedValidMessageText,
+            type: MessageType.VALID,
+          },
+        ]);
       }
     });
 
     (rootForm.userFacingFields.fieldA as AbstractField).setValue('some value');
-    (rootForm.userFacingFields.fieldB as AbstractField).setValue('some other value');
+    (rootForm.userFacingFields.fieldB as AbstractField).setValue(
+      'some other value',
+    );
   });
 
   test('calling tryConfirm() calls tryConfirm() on all fields that are nested forms.', () => {
-    const template : RootFormTemplate = {
-      fields : {
-        nestedForm : {
-          fields : {
-            fieldA : ''
-          }
-        }
+    const template: RootFormTemplate = {
+      fields: {
+        nestedForm: {
+          fields: {
+            fieldA: '',
+          },
+        },
       },
-      submitFn : () => {
-        return new Promise((resolve) => {
-          resolve('Response from imaginary server')
-        })
-      }
-    }
+      submitFn: () => {
+        return new Promise(resolve => {
+          resolve('Response from imaginary server');
+        });
+      },
+    };
 
-    const rootForm = container.services.RootFormTemplateParser.parseTemplate(template);
+    const rootForm =
+      container.services.RootFormTemplateParser.parseTemplate(template);
 
-    const nestedForm = rootForm.userFacingFields.nestedForm as AbstractNestedForm;
+    const nestedForm = rootForm.userFacingFields
+      .nestedForm as AbstractNestedForm;
 
     vi.spyOn(nestedForm, 'tryConfirm');
 
@@ -293,60 +311,59 @@ describe('RootForm', () => {
   });
 
   test('If confirmationManager.confirmationState.message is defined, it is included in state.messages.', () => {
-    const template : RootFormTemplate = {
-      fields : {
-        fieldA : {
-          defaultValue : '',
-          syncValidators : [
-            required('field A is required')
-          ]
-        }
+    const template: RootFormTemplate = {
+      fields: {
+        fieldA: {
+          defaultValue: '',
+          syncValidators: [required('field A is required')],
+        },
       },
-      submitFn : () => {
-        return new Promise((resolve) => {
-          resolve('Response from imaginary server')
-        })
-      }
-    }
+      submitFn: () => {
+        return new Promise(resolve => {
+          resolve('Response from imaginary server');
+        });
+      },
+    };
 
-    const rootForm = container.services.RootFormTemplateParser.parseTemplate(template);
+    const rootForm =
+      container.services.RootFormTemplateParser.parseTemplate(template);
 
     const expectedErrorMessage = 'There are invalid or pending fields.';
 
-    rootForm.tryConfirm({errorMessage : expectedErrorMessage});
+    rootForm.tryConfirm({ errorMessage: expectedErrorMessage });
 
     expect(rootForm.state.messages).toStrictEqual([
       {
-        text : expectedErrorMessage,
-        type : MessageType.INVALID
-      }
-    ])
+        text: expectedErrorMessage,
+        type: MessageType.INVALID,
+      },
+    ]);
   });
 
-  test('trySubmit resets the SubmissionManager\'s message property.', async () => {
-    const template : RootFormTemplate = {
-      fields : {
-        fieldA : ''
+  test("trySubmit resets the SubmissionManager's message property.", async () => {
+    const template: RootFormTemplate = {
+      fields: {
+        fieldA: '',
       },
-      submitFn : () => {
-        return new Promise((resolve) => {
-          resolve('Response from imaginary server')
-        })
-      }
-    }
+      submitFn: () => {
+        return new Promise(resolve => {
+          resolve('Response from imaginary server');
+        });
+      },
+    };
 
-    const rootForm = container.services.RootFormTemplateParser.parseTemplate(template) as RootForm;
+    const rootForm = container.services.RootFormTemplateParser.parseTemplate(
+      template,
+    ) as RootForm;
 
     const expectedMessage = {
-      text : 'error submitting the form',
-      type : MessageType.ERROR
-    }
+      text: 'error submitting the form',
+      type: MessageType.ERROR,
+    };
 
     rootForm._submissionManager.message = expectedMessage;
 
-    expect(rootForm.state.messages).toStrictEqual([
-      expectedMessage
-    ]);
+    expect(rootForm.state.messages).toStrictEqual([expectedMessage]);
 
     rootForm.trySubmit({});
 

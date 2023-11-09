@@ -64,10 +64,11 @@ export class InsertionOrderHeapImpl implements InsertionOrderHeap {
 
     const elementToRemove = this._heap[heapIndex];
 
-    if(heapIndex !== this.size - 1) {
+    if (heapIndex !== this.size - 1) {
       const elementToElevate = this._heap[this.size - 1];
       this._heap[heapIndex] = elementToElevate;
-      this._elementDictionary[elementToElevate.value].currentHeapIndex = heapIndex;
+      this._elementDictionary[elementToElevate.value].currentHeapIndex =
+        heapIndex;
       this._heapifyDown(heapIndex);
     }
 
@@ -82,13 +83,15 @@ export class InsertionOrderHeapImpl implements InsertionOrderHeap {
 
     if (
       _leftChild < this.size &&
-      this._compareHeapElements(this._heap[_leftChild], this._heap[smallest]) < 0
+      this._compareHeapElements(this._heap[_leftChild], this._heap[smallest]) <
+        0
     ) {
       smallest = _leftChild;
     }
     if (
       _rightChild < this.size &&
-      this._compareHeapElements(this._heap[_rightChild], this._heap[smallest]) < 0
+      this._compareHeapElements(this._heap[_rightChild], this._heap[smallest]) <
+        0
     ) {
       smallest = _rightChild;
     }

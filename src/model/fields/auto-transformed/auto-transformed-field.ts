@@ -44,7 +44,7 @@ export class AutoTransformedField extends AbstractField {
     this._baseField.setValue(value);
   }
 
-  reset() : void { 
+  reset(): void {
     this._baseField.reset();
   }
 }

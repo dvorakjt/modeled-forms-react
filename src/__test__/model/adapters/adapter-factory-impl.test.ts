@@ -10,25 +10,33 @@ import { AsyncAdapter } from '../../../model/adapters/async-adapter';
 
 describe('AdapterFactoryImpl', () => {
   const fields = {
-    fieldA : new MockField('', Validity.VALID_FINALIZABLE),
-    fieldB : new MockField('', Validity.VALID_FINALIZABLE)
-  }
+    fieldA: new MockField('', Validity.VALID_FINALIZABLE),
+    fieldB: new MockField('', Validity.VALID_FINALIZABLE),
+  };
   const aggregatorFactory = container.services.AggregatorFactory;
   const adapterFactory = new AdapterFactoryImpl(aggregatorFactory);
 
   test('It returns an instance of SyncAdapter when createSyncAdapterFromFnWithFields is called.', () => {
-    const testSyncFn : SyncAdapterFn<string> = ({ fieldA, fieldB}) => fieldA + ' ' + fieldB;
-    const syncAdapter = adapterFactory.createSyncAdapterFromFnWithFields<string>(testSyncFn, fields);
+    const testSyncFn: SyncAdapterFn<string> = ({ fieldA, fieldB }) =>
+      fieldA + ' ' + fieldB;
+    const syncAdapter =
+      adapterFactory.createSyncAdapterFromFnWithFields<string>(
+        testSyncFn,
+        fields,
+      );
     expect(syncAdapter).toBeInstanceOf(SyncAdapter);
   });
 
   test('It returns an instance of AsyncAdapter when createAsyncAdapterFromFnWithFields is called.', () => {
-    const testAsyncFn : AsyncAdapterFn<string> = ({ fieldA, fieldB }) => {
-      return new Promise<string>((resolve) => {
+    const testAsyncFn: AsyncAdapterFn<string> = ({ fieldA, fieldB }) => {
+      return new Promise<string>(resolve => {
         resolve(fieldA + ' ' + fieldB);
       });
-    }
-    const asyncAdapter = adapterFactory.createAsyncAdapterFromFnWithFields(testAsyncFn, fields);
+    };
+    const asyncAdapter = adapterFactory.createAsyncAdapterFromFnWithFields(
+      testAsyncFn,
+      fields,
+    );
     expect(asyncAdapter).toBeInstanceOf(AsyncAdapter);
   });
 });

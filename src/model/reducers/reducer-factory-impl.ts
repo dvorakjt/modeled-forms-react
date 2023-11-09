@@ -23,7 +23,7 @@ class ReducerFactoryImpl implements ReducerFactory {
     return new FieldStateReducerImpl(
       this.createValidityReducer(),
       this.createVisitationReducer(),
-      this.createModificationReducer()
+      this.createModificationReducer(),
     );
   }
   createFinalizerValidityReducer(): FinalizerValidityReducer {

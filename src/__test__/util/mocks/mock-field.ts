@@ -16,7 +16,7 @@ export class MockField extends AbstractField {
   constructor(
     defaultValue: string,
     defaultValidity: Validity = Validity.VALID_FINALIZABLE,
-    defaultMessages : Array<Message> = []
+    defaultMessages: Array<Message> = [],
   ) {
     super();
     this._defaultValue = defaultValue;
@@ -24,8 +24,8 @@ export class MockField extends AbstractField {
     this._state = {
       value: defaultValue,
       validity: defaultValidity,
-      visited : Visited.NO,
-      modified : Modified.NO,
+      visited: Visited.NO,
+      modified: Modified.NO,
       messages: defaultMessages,
       omit: false,
     };
@@ -54,26 +54,26 @@ export class MockField extends AbstractField {
   get omit(): boolean {
     return this.state.omit as boolean;
   }
-  reset() : void {
+  reset(): void {
     this.setState({
       value: this._defaultValue,
       validity: this._defaultValidity,
-      visited : Visited.NO,
-      modified : Modified.NO,
+      visited: Visited.NO,
+      modified: Modified.NO,
       messages: [],
       omit: false,
     });
   }
-  visit() : void {
+  visit(): void {
     this.setState({
       ...this.state,
-      visited : Visited.YES
+      visited: Visited.YES,
     });
   }
-  modify() : void {
+  modify(): void {
     this.setState({
       ...this.state,
-      modified : Modified.YES
+      modified: Modified.YES,
     });
   }
 }

@@ -5,6 +5,8 @@ import { InsertionOrderHeapImpl } from '../../../model/insertion-order-heap/inse
 describe('InsertionOrderHeapFactoryImpl', () => {
   test('A new InsertionOrderHeapImpl is returned when createInsertionOrderHeap() is called.', () => {
     const insertionOrderHeapFactory = new InsertionOrderHeapFactoryImpl();
-    expect(insertionOrderHeapFactory.createInsertionOrderHeap()).toBeInstanceOf(InsertionOrderHeapImpl);
+    expect(insertionOrderHeapFactory.createInsertionOrderHeap()).toBeInstanceOf(
+      InsertionOrderHeapImpl,
+    );
   });
 });

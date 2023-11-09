@@ -2,16 +2,16 @@ import type { SyncValidator } from '../sync-validator.type';
 import type { ValidatorResult } from '../validator-result.interface';
 
 interface Opts {
-  successMessage? : string;
-  exclusiveMin? : boolean;
-  exclusiveMax? : boolean;
+  successMessage?: string;
+  exclusiveMin?: boolean;
+  exclusiveMax?: boolean;
 }
 
 export function inDateRange(
   min: Date,
   max: Date,
   errorMessage: string,
-  opts? : Opts
+  opts?: Opts,
 ): SyncValidator<string> {
   return (value: string) => {
     const millis = new Date(value).getTime();
@@ -34,13 +34,21 @@ export function inDateRange(
   };
 }
 
-function passesMinDateComparison(millis : number, minDate : Date, exclusiveMin : boolean) {
+function passesMinDateComparison(
+  millis: number,
+  minDate: Date,
+  exclusiveMin: boolean,
+) {
   const minMillis = minDate.getTime();
 
   return exclusiveMin ? millis > minMillis : millis >= minMillis;
 }
 
-function passesMaxDateComparison(millis : number, maxDate : Date, exclusiveMax : boolean) {
+function passesMaxDateComparison(
+  millis: number,
+  maxDate: Date,
+  exclusiveMax: boolean,
+) {
   const maxMillis = maxDate.getTime();
 
   return exclusiveMax ? millis < maxMillis : millis <= maxMillis;

@@ -16,7 +16,7 @@ export abstract class AbstractNestedForm
   abstract firstNonValidFormElement: string | undefined;
   abstract firstNonValidFormElementChanges: Subject<string | undefined>;
   abstract state: State<any>;
-  abstract confirmationAttempted: boolean; 
+  abstract confirmationAttempted: boolean;
   abstract confirmationAttemptedChanges: Subject<boolean>;
   abstract tryConfirm(argsObject: TryConfirmArgsObject): void;
   abstract reset(): void;

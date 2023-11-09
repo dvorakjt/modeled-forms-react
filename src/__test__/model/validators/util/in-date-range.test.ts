@@ -7,7 +7,7 @@ describe('inDateRange', () => {
     const min = new Date('1955-04-27');
     const max = new Date('1955-09-21');
     expect(inDateRange(min, max, '')(dateStr)).toStrictEqual({
-      isValid : true
+      isValid: true,
     });
   });
 
@@ -16,7 +16,7 @@ describe('inDateRange', () => {
     const min = new Date(dateStr);
     const max = new Date('1955-09-21');
     expect(inDateRange(min, max, '')(dateStr)).toStrictEqual({
-      isValid : true
+      isValid: true,
     });
   });
 
@@ -25,7 +25,7 @@ describe('inDateRange', () => {
     const min = new Date('1955-04-27');
     const max = new Date(dateStr);
     expect(inDateRange(min, max, '')(dateStr)).toStrictEqual({
-      isValid : true
+      isValid: true,
     });
   });
 
@@ -34,8 +34,8 @@ describe('inDateRange', () => {
     const min = new Date('1955-07-30');
     const max = new Date('1955-09-21');
     expect(inDateRange(min, max, 'test')(dateStr)).toStrictEqual({
-      isValid : false,
-      message : 'test'
+      isValid: false,
+      message: 'test',
     });
   });
 
@@ -44,8 +44,8 @@ describe('inDateRange', () => {
     const max = new Date('1955-07-30');
     const dateStr = '1955-09-21';
     expect(inDateRange(min, max, 'test')(dateStr)).toStrictEqual({
-      isValid : false,
-      message : 'test'
+      isValid: false,
+      message: 'test',
     });
   });
 
@@ -54,8 +54,8 @@ describe('inDateRange', () => {
     const min = new Date('1955-04-27');
     const max = new Date('1955-09-21');
     expect(inDateRange(min, max, 'test')(notADate)).toStrictEqual({
-      isValid : false,
-      message : 'test'
+      isValid: false,
+      message: 'test',
     });
   });
 
@@ -64,17 +64,17 @@ describe('inDateRange', () => {
     const after = new Date('1955-09-21');
     const dateStr = '1955-07-30';
     expect(inDateRange(after, before, 'test')(dateStr)).toStrictEqual({
-      isValid : false,
-      message : 'test'
+      isValid: false,
+      message: 'test',
     });
   });
 
   test('With default options, it returns an object with an isValid property set to true if the string can be converted to a date that is equal to the min and the max, and the min is equal to the max.', () => {
-    const dateStr = '1955-09-21'
+    const dateStr = '1955-09-21';
     const min = new Date(dateStr);
     const max = new Date(dateStr);
     expect(inDateRange(min, max, '')(dateStr)).toStrictEqual({
-      isValid : true
+      isValid: true,
     });
   });
 
@@ -82,9 +82,11 @@ describe('inDateRange', () => {
     const dateStr = '1955-04-27';
     const min = new Date(dateStr);
     const max = new Date('1955-09-21');
-    expect(inDateRange(min, max, 'test', { exclusiveMin : true})(dateStr)).toStrictEqual({
-      isValid : false,
-      message : 'test'
+    expect(
+      inDateRange(min, max, 'test', { exclusiveMin: true })(dateStr),
+    ).toStrictEqual({
+      isValid: false,
+      message: 'test',
     });
   });
 
@@ -92,9 +94,11 @@ describe('inDateRange', () => {
     const dateStr = '1955-09-21';
     const min = new Date('1955-04-27');
     const max = new Date(dateStr);
-    expect(inDateRange(min, max, 'test', { exclusiveMax : true})(dateStr)).toStrictEqual({
-      isValid : false,
-      message : 'test'
+    expect(
+      inDateRange(min, max, 'test', { exclusiveMax: true })(dateStr),
+    ).toStrictEqual({
+      isValid: false,
+      message: 'test',
     });
   });
 
@@ -102,9 +106,13 @@ describe('inDateRange', () => {
     const dateStr = '1955-07-30';
     const min = new Date('1955-04-27');
     const max = new Date('1955-09-21');
-    expect(inDateRange(min, max, '', {successMessage : 'test success message'})(dateStr)).toStrictEqual({
-      isValid : true,
-      message : 'test success message'
+    expect(
+      inDateRange(min, max, '', { successMessage: 'test success message' })(
+        dateStr,
+      ),
+    ).toStrictEqual({
+      isValid: true,
+      message: 'test success message',
     });
   });
 });

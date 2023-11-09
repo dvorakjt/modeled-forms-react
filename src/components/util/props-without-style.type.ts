@@ -1,1 +1,1 @@
-export type PropsWithoutStyle<Props> = Omit<Props, "style">;
+export type PropsWithoutStyle<Props> = Omit<Props, 'style'>;

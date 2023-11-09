@@ -6,8 +6,8 @@ import type { Visited } from '../state/visited.enum';
 
 interface ReducedState {
   overallValidity(): Validity;
-  modified() : Modified;
-  visited() : Visited;
+  modified(): Modified;
+  visited(): Visited;
   hasOmittedFields(): boolean;
 }
 

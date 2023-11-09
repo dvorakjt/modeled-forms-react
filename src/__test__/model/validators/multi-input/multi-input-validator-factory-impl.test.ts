@@ -12,39 +12,52 @@ import { AsyncValidator } from '../../../../model/validators/async-validator.typ
 import { AsyncMultiInputValidator } from '../../../../model/validators/multi-input/async-multi-input-validator';
 
 describe('MultInputValidatorFactoryImpl', () => {
-  let multiInputValidatorFactory : MultiInputValidatorFactory;
-  let fields : FormElementDictionary;
+  let multiInputValidatorFactory: MultiInputValidatorFactory;
+  let fields: FormElementDictionary;
 
   beforeEach(() => {
     multiInputValidatorFactory = new MultiInputValidatorFactoryImpl(
-      container.services.AggregatorFactory
+      container.services.AggregatorFactory,
     );
     fields = {
-      fieldA : new MockField('', Validity.VALID_FINALIZABLE),
-      fieldB : new MockField('', Validity.VALID_FINALIZABLE)
-    }
+      fieldA: new MockField('', Validity.VALID_FINALIZABLE),
+      fieldB: new MockField('', Validity.VALID_FINALIZABLE),
+    };
   });
 
   test('createSyncMultiInputValidator() returns an instance of SyncMultiInputValidator.', () => {
-    const baseValidatorFn : SyncValidator<AggregatedStateChanges> = ({ fieldA, fieldB}) => {
+    const baseValidatorFn: SyncValidator<AggregatedStateChanges> = ({
+      fieldA,
+      fieldB,
+    }) => {
       return {
-        isValid : fieldA.value && fieldB.value
-      }
-    }
+        isValid: fieldA.value && fieldB.value,
+      };
+    };
 
-    const validator = multiInputValidatorFactory.createSyncMultiInputValidator(baseValidatorFn, fields);
+    const validator = multiInputValidatorFactory.createSyncMultiInputValidator(
+      baseValidatorFn,
+      fields,
+    );
 
     expect(validator).toBeInstanceOf(SyncMultiInputValidator);
   });
 
   test('createAsyncMultiInputValidator() returns an instance of AsyncMultiInputValidator.', () => {
-    const baseValidatorFn : AsyncValidator<AggregatedStateChanges> = ({ fieldA, fieldB }) => {
-      return new Promise((resolve) => {
-        resolve(fieldA.value && fieldB.value)
+    const baseValidatorFn: AsyncValidator<AggregatedStateChanges> = ({
+      fieldA,
+      fieldB,
+    }) => {
+      return new Promise(resolve => {
+        resolve(fieldA.value && fieldB.value);
       });
-    }
+    };
 
-    const validator = multiInputValidatorFactory.createAsyncMultiInputValidator(baseValidatorFn, fields, 'validating...');
+    const validator = multiInputValidatorFactory.createAsyncMultiInputValidator(
+      baseValidatorFn,
+      fields,
+      'validating...',
+    );
 
     expect(validator).toBeInstanceOf(AsyncMultiInputValidator);
   });

@@ -1,1 +1,1 @@
-export type PropsWithoutClassName<Props> = Omit<Props, "className">;
+export type PropsWithoutClassName<Props> = Omit<Props, 'className'>;

@@ -72,14 +72,14 @@ export class AsyncMultiInputValidator implements MultiInputValidator {
           this.overallValidityChanges.next(Validity.ERROR);
           this.messageChanges.next({
             type: MessageType.ERROR,
-            text: config.globalMessages.multiFieldValidationError
+            text: config.globalMessages.multiFieldValidationError,
           });
         } else {
           this.calculatedValidityChanges.next(Validity.PENDING);
           this.overallValidityChanges.next(Validity.PENDING);
           this.messageChanges.next({
-            type: MessageType.PENDING, 
-            text: this._pendingMessage
+            type: MessageType.PENDING,
+            text: this._pendingMessage,
           });
           try {
             if (!observableResult)
@@ -96,7 +96,7 @@ export class AsyncMultiInputValidator implements MultiInputValidator {
                     type: result.isValid
                       ? MessageType.VALID
                       : MessageType.INVALID,
-                    text: result.message
+                    text: result.message,
                   };
                   this.messageChanges.next(message);
                 } else this.messageChanges.next(null);
@@ -107,7 +107,7 @@ export class AsyncMultiInputValidator implements MultiInputValidator {
                 this.overallValidityChanges.next(Validity.ERROR);
                 this.messageChanges.next({
                   type: MessageType.ERROR,
-                  text: config.globalMessages.multiFieldValidationError
+                  text: config.globalMessages.multiFieldValidationError,
                 });
               },
             });
@@ -117,7 +117,7 @@ export class AsyncMultiInputValidator implements MultiInputValidator {
             this.overallValidityChanges.next(Validity.ERROR);
             this.messageChanges.next({
               type: MessageType.ERROR,
-              text: config.globalMessages.multiFieldValidationError
+              text: config.globalMessages.multiFieldValidationError,
             });
           }
         }

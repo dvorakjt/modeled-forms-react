@@ -1,6 +1,6 @@
-import { Modified } from "../../state/modified.enum";
+import { Modified } from '../../state/modified.enum';
 
 export interface ModificationReducer {
-  modified : Modified;
-  updateTallies(fieldName : string, modified: Modified) : void;
+  modified: Modified;
+  updateTallies(fieldName: string, modified: Modified): void;
 }

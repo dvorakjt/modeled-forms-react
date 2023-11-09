@@ -19,7 +19,7 @@ export class UserFacingMultiInputValidatedField extends AbstractField {
       validity: this._calculateValidity(),
     };
   }
-  
+
   get omit() {
     return this._baseField.omit;
   }

@@ -1,15 +1,15 @@
-import { Validity } from "../../model/state/validity.enum";
+import { Validity } from '../../model/state/validity.enum';
 
-export function validityToString(validity : Validity) {
-  switch(validity) {
-    case Validity.ERROR :
+export function validityToString(validity: Validity) {
+  switch (validity) {
+    case Validity.ERROR:
       return 'ERROR';
-    case Validity.INVALID :
+    case Validity.INVALID:
       return 'INVALID';
-    case Validity.PENDING :
+    case Validity.PENDING:
       return 'PENDING';
-    case Validity.VALID_UNFINALIZABLE :
-    case Validity.VALID_FINALIZABLE :
+    case Validity.VALID_UNFINALIZABLE:
+    case Validity.VALID_FINALIZABLE:
       return 'VALID';
   }
 }
