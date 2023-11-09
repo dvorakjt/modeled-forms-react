@@ -5,6 +5,7 @@ Powerful MVC-inspired form management for React with declarative syntax and visu
 [About](#about)
 [Installation](#installation)
 [Getting Started](#getting-started)
+[Examples](#examples)
 [Templates](#templates)
 [Validators](#validators)
 [Controlled Fields](#controlled-fields)
@@ -12,6 +13,7 @@ Powerful MVC-inspired form management for React with declarative syntax and visu
 [Finalized Fields](#finalized-fields)
 [Extracted Values](#extracted-values)
 [Components](#components)
+[Accessibility](#accessibility)
 [Hooks](#hooks)
 [First Non-Valid Form Element](#first-non-valid-form-element)
 [Confirmation](#confirmation)
@@ -570,11 +572,187 @@ If all sync validators pass, the async validators run. Updating the value of the
 
 ## Controlled Fields
 
+Controlled fields allow you to create a field that subscribes to changes in the state(s) of another field or fields, and update its own state or value based on the state of those other fields.
+
+To request an instance of a controlled field, simply add a control function to your field template, like so (see the `syncValueControlFn` property of `addressTemplate.fields[AddressFields.STATE]`:
+
+    import {
+      NestedFormTemplate
+    } from 'modeled-forms-react';
+    import zipState from 'zip-state';
+    import { US_STATE_ABBREVIATIONS } from './util/us-states/us-state-abbreviations';
+    import { isZipCode } from './util/validators/is-zip-code';
+    
+    export enum AddressFields {
+      STREET_LINE_1 = 'streetLine1',
+      STREET_LINE_2 = 'streetLine2',
+      CITY = 'city',
+      STATE = 'state',
+      ZIP = 'zip'
+    }
+    
+    export const addressTemplate : NestedFormTemplate = {
+      fields : {
+        [AddressFields.STREET_LINE_1] : '',
+        [AddressFields.STREET_LINE_2] : '',
+        [AddressFields.CITY] : '',
+        [AddressFields.STATE] : {
+          defaultValue : US_STATE_ABBREVIATIONS[0],
+          syncValueControlFn : ({ [AddressFields.ZIP] : zip }) => {
+            const stateAbbreviation = zipState(zip.value);
+    
+            if(!stateAbbreviation) return;
+    
+            return stateAbbreviation;
+          }
+        },
+        [AddressFields.ZIP] : {
+          defaultValue : '',
+          syncValidators : [
+            isZipCode
+          ]
+        }
+      }
+    }
+ All control functions must destructure an instance of `AggregatedStateChanges`. By destructuring specific fields from this object, the controlled field will know which fields to subscribe to to generate its values. In addition to making all of the field states of your form available, `AggregatedStateChanges`makes the following properties available:
+
+ - `overallValidity(): Validity;` - a function which returns the minimum validity of all fields subscribed to via the destructuring subscription process.
+ - `modified() : Modified;`- a function which returns `Modified.YES` if all fields have been modified, `Modified.NO` if no fields have been modified, and `Modified.PARTIALLY` if some fields have been modified. Once again, fields refers not to all fields, but to fields subscribed to via the destructuring subscription process.
+ - `visited() : Visited;`- a function which returns `Visited.YES` if all fields have been visited, `Visited.NO` if no fields have been visited, and `Visited.PARTIALLY` if some fields have been visited. Again, fields refers not to all fields, but to fields subscribed to via the destructuring subscription process.
+ - `hasOmittedFields(): boolean;`- a function which returns true if at least one field has an `omit` property of `true`.
+
+Though all control functions must destructure this `AggregatedStateChanges` object, they each return a different type of value, and each must return a different type of value depending on whether it is included in a `Field` template or a `DualField` template. You can find information about each type of control function listed below:
+
+|Template Property Name  |Field Return Type  |DualField Return Type | Notes |
+|--|--|--|--|
+| syncValueControlFn | string \| undefined | DualFieldSetValueArg | For Fields, returning undefined allows to elect not to set the Field's value |
+|syncStateControlFn | Partial\<FieldState\> | DualFieldSetStateArg | |
+|asyncValueControlFn | Promise\<string \| undefined\> \| Observable\<string \| undefined\> | Promise\<DualFieldSetValueArg\> \| Observable\<DualFieldSetValueArg\> |
+|asyncStateControlFn | Promise\<Partial\<FieldState\>\> \| Observable\<Partial\<FieldState\>\> | Promise\<DualFieldSetStateArg\> \| Observable\<DualFieldSetStateArg\> |
+
+The definitions of `DualFieldSetValueArg` and `DualFieldSetStateArg` are as follows:
+
+#### DualFieldSetValueArg
+
+    interface DualFieldSetValueArg {
+      primaryFieldValue?: string;
+      secondaryFieldValue?: string;
+      useSecondaryField?: boolean;
+    }
+#### DualFieldSetStateArg 
+
+    interface DualFieldSetStateArg {
+      primaryFieldState?: Partial<FieldState>;
+      secondaryFieldState?: Partial<FieldState>;
+      useSecondaryField?: boolean;
+      omit?: boolean;
+    }
+
+Here, `useSecondaryField` allows you to set whether the secondary field is active or not.
+
 ## Multi-Field Validators
+
+Multi-field validators are similar to controlled fields in that the functions used to define them must also destructure the `AggregatedStateChanges` object and come in both synchronous and asynchronous varieties. To declare these in your template, add the `multiFieldValidators` property to a form template.
+
+This key should be assigned an object with properties `sync` and/or `async`. These represent arrays of sync multi-field validator templates and async multi-field validator templates, respectively. The template for a sync multi-input validator is just the function signature, which must be of type `SyncValidator<AggregatedStateChanges>`. The template for an async multi-input validator is an object with properties `validatorFn` which must be of type `AsyncValidator<AggregatedStateChanges>`, and an optional `pendingValidatorMessage` property, of type string.
+
+Multi-input validators run only once all fields are individually valid.  If a multi-input validator includes omittedFields, it is treated as valid. Fields may participate in multiple multi-field validators. A field may only be finalized once all of its own validators, together with the multi-input validators of which it is a participant, succeed.
+
+Messages returned by multi-field validators are displayed by the `FormMessages` component, together with other messages related to the state of the form itself.
 
 ## Finalized Fields
 
+Finalized fields provide you with a mechanism by which you can customize the structure of the data to be submitted by the submitFn. If you provide a `finalizedFields` property in your form template, you can add keys to this object representing the names you wish to assign to your finalized fields. Any fields omitted from this object automatically receive a default finalizer. If the object is omitted entirely or is empty, every field will receive a default finalizer.
+
+Each key of this object must be assign a finalizer template object. This object has a key representing its finalizerFn, either `asyncFinalizerFn`, or `syncFinalizerFn.` It also has an optional key, `preserveOriginalFields`, of type boolean. By default, the field(s) used to produce a finalized field are not included in the form's finalized value, but you can override this behavior by settting `preserveOriginalFields` to true in at least one finalizerFn in which your field participates.
+
+A finalizer function simply destructures an `AggregatedStateChanges` object and returns some value, or a returns a `Promise` which ultimately resolves to a value, in the case of an async finalizer function.
+
+Finalizers are run in response to every change to your form's data, so the finalized data will always be in a valid state that is ready to submit to your backend.
+
+## Extracted Values
+
+Extracted values provide you with a means of subscribing to your fields' values, deriving new values from those fields in real-time, and exposing them in a stateful manner to your React components. To define extracted values, add the `extractedValues` property to your template, and assign it an object with keys of `syncExtractedValues` and/or `asyncExtractedValues`. Each of these are objects with keys with which you will be to retrieve a stateful representation of your extracted value using the `useExtractedValue` hook. Each key's value must be a function that destructures an `AggregatedStateChanges` object and returns either some value (in the case of sync extracted values), or a `Promise` or rxjs `Observable` (in the case of async extracted values).
+
 ## Components
+
+There are many components exported by the library. As templates are to the model of your form, so are components to its view. These are the primary mechanism by which you should construct the visual layout and appearance of your form.
+
+All components in the libary must be children of a `RootForm` or `RootFormProvider` component. This component provides both the `RootForm` context and a `FormContext` to all child components. `NestedFormProvider`, `NestedFormAsForm` and `NestedFormAsFieldset` provide only `FormContext`.
+
+Components consume this context, and interact with it. For instance, an `Input` component takes in a `fieldName` as a prop. It then hooks into the state of this field, and is able to update that field's state, and what it displays is in turn updated by that state. Almost all components can receive `className` and `style` props, allowing you to customize their appearance. Some include multiple html elements, and therefore receive class names/style props for each element they contain. Further, elements such as `Label` and `Input` (and many others) have custom attributes representing the state of the corresponding field in the model, which can be used to style the component depending on its validity, whether it has been visited, etc.
+
+The following components are exported from the library:
+
+ #### RootForm 
+ 
+Provides RootFormContext and FormContext. Renders an html form element which can be styled with className or style props.
+ 
+#### RootFormProvider 
+
+Provides RootFormContext and FormContext without rendering a form element. Useful for multi-page forms.
+
+#### NestedFormAsForm
+
+Provides FormContext and renders an html form element which can be styled with className or style props. Useful for multi-page forms.
+ 
+#### NestedFormAsFieldset
+
+Provides FormContext and renders and html fieldset element. Useful for nested forms with an outer html form element.
+
+#### NestedFormProvider 
+
+Provides only FormContext without rendering a form or fieldset element.
+ 
+#### Input 
+
+Intended for input types such as text, date, email, password, color, etc. Requires a `type` and `fieldName` prop. Can be styled by providing `className` and/or `style` prop(s).
+
+#### CheckboxInput 
+
+Represents an input of type checkbox Sets the field's value to an empty string when unchecked and the value passed in as the value prop when checked. Also includes a label component. Requires `fieldName`, `value` and `labelText` props. To style the label, provide `labelClassName` and/or `labelStyle` prop(s). To style the input, provide `checkboxClassName` and/or `checkboxStyle` props.
+
+#### RadioInput 
+
+Represents an input of type radio. Requires `fieldName`, `value` and `labelText` props. To style the label, provide `labelClassName` and/or `labelStyle` prop(s). To style the input, provide `radioClassName` and/or `radioStyle` props. Add a few of these with the same fieldnames but different values and labelText props to get the effect of a radio button group.
+
+#### Select
+
+Corresponds to the html select component. You must provide a `fieldName` prop. Additionally, like with an html select element, you can pass in any number of `<option>` elements as children to the component. When declaring the field, ensure that its defaultValue matches the value of the option you wish to be selected by default.
+ 
+ #### SelectOther 
+
+A special component that renders a select element with one option already included. This option's value is "other" and when it is selected, an input is displayed in which the user can enter their own custom value.  This component accepts a `fieldName` prop, and `selectProps`, an object including such properties as `labelText`, `selectClassName`, `selectStyle`, `labelClassName` and `labelStyle`, and `inputProps`, an object including such properties as `inputClassName`, `inputStyle`, `labelClassName,` and `labelStyle.` **This component must be used in conjunction with a field declared as a `DualField` in the template.** See [Templates](#templates) for more information. 
+ 
+ #### Textarea
+
+Represents the html textarea component. Must receive a `fieldName` prop. Otherwise, behaves similarly to `Input.`
+
+
+#### Label
+
+Provides a label that has access to the state of a field. You must supply a fieldName prop. This allows you to style your labels in response to the state of the corresponding field, as the label will have a data-validity property, and will gain data-visited and data-modified properties  when the field is visited or modified, respectively. You can pass in a className and/or style prop to style the label, and you can pass in text or other components as children of this component.
+
+#### FieldMessages
+
+Renders the message returned by a particular field\'s validators in a container with aria-live set to polite. You must pass in a `fieldName` prop. You can pass in `containerClassName`/`containerStyle` and `messageClassName`/`messageStyle` props to style these components.
+
+#### FormMessages
+
+Renders the message associated with the immediately surrounding `FormContext`. You must pass in an `idPrefex` prop (ideally, you should assign your form an id and pass this same id in as this component's `idPrefix` prop). You can pass in `containerClassName`/`containerStyle` and `messageClassName`/`messageStyle` props to style these components.
+
+#### ConfirmButton
+A button used to call `tryConfirm` on the immediately surround `FormContext`. This is useful for attempting to advance to the next page of a multi-page form in a manner that resembles submission without actually submitting any data to a backend. The `ConfirmButton` takes a number optional props. First, it can be styled with `className` or `style` prop(s). It also takes `onSuccess` and `onError` props (both optional) representing callbacks  to be called when the confirmation attempt either succeeds or fails. An `errorMessage` prop can be passed in order to customize the error message that is displayed when confirmation fails. Finally, `enableOnlyWhenValid` can be provided to disable the button unless the form is valid, but this is not recommended unless you are using custom components which display error messages even before confirmation is attempted. The button does not display any text by default, so you should include text as a child component.
+#### SubmitButton
+
+A button used to call `trySubmit` on the `RootFormContext`. It can be styled with `className` or `style` prop(s). It also takes `onSuccess`,`onError` and `onFinally` props, allowing your application to respond to the promise returned by the `submitFn.` Similar to the `ConfirmButton`, `enableOnlyWhenValid` can be provided to disable the button unless the form is valid, but again, this is not recommended unless you are using custom components which display error messages even before confirmation is attempted.
+
+#### ResetButton
+
+A button which resets the state of the immediately surrounding FormContext and its fields. It can be styled with `className` and/or `style` and also accepts a `disabled` prop.
+
+## Accessibility
+In addition to basic steps like assigning a name property to inputs, associating labels with inputs using htmlFor, etc, each input receives an aria-describedby attribute with a list of ids of messages associated with that field. These will be read by screen readers provided the FieldMessages component is used. Containers around these messages have aria-live set to polite.
 
 ## Hooks
 
@@ -638,10 +816,11 @@ The `tryConfirm()` function takes an object as an argument, with a few optional 
  - `errorMessage` - the error message that will be displayed in FormMessages when confirmation fails.
 
 ## Submission
+Submission occurs when `trySubmit` is called. Prior to submission, the form's validity is checked during the confirmation step. If this check fails, submission is not attempted. If it succeeds, the `submitFn` is called. trySubmit accepts an object which can include `onSuccess`, `onError` and `onFinally` callback functions, allow your application to respond to the results of the `submitFn`.
 
 ## Usage with Next.js App Router
 
-All of the components exported by this library harness the power of React hooks to deliver the user experience that they do. For instance, every component with the exception of `RootForm` and `RootFormProvider` calls `useContext()`. Additionally, `RootForm` and `RootFormProvider` accept a `RootFormTemplate` as a prop, which is not a serializable value, and therefore cannot be passed between server and client components. Therefore, you must create a component that defines the line between server and client components. The easiest way to do this is to create a component that renders your form, and add the 'use client' directive to the top of this file. You may then render any components exported by Modeled Forms React within this component, and you may also render this component within a server component. Here is an example of what this might look like:
+All of the components exported by this library harness the power of React hooks to deliver the user experience that they do. For instance, every component with the exception of `RootForm` and `RootFormProvider` calls `useContext()`. Additionally, `RootForm` and `RootFormProvider` accept a `RootFormTemplate` as a prop, which is not a serializable value, and therefore cannot be passed between server and client components. Therefore, you must create a component that defines the line between server and client components. The easiest way to do this is to create a component that renders your form, and add the 'use client' directive to the top of this file. Here is an example of what this might look like:
 
     'use client';
     import { RootFormProvider } from  "modeled-forms-react";
@@ -657,6 +836,8 @@ All of the components exported by this library harness the power of React hooks 
         </RootFormProvider>
       );
     }
+
+ Please see the [Examples](#examples) section for a link to a complete example built with the Next.js 13 app router. 
 
 ## Configuration
 Modeled Forms React uses [rc](https://www.npmjs.com/package/rc) for configuration. Therefore, to configure Modeled Forms React for your project's needs, include a .modeledformsreactrc file in your project. You can configure the following options:
@@ -676,7 +857,7 @@ Modeled Forms React uses [rc](https://www.npmjs.com/package/rc) for configuratio
 	- `submissionError`
 
 ## Contributing
-If you wish to contribute to this project, please feel free to send me an [email](mailto:dvorakjt@gmail.com) to discuss what you'd like to work on. There are many features I'd still like to implement, and probably a lot of refinements that can be made, so going forward, some help would be appreciated! 🙏
+If you wish to contribute to this project, please feel free to send me an [email](mailto:dvorakjt@gmail.com) to discuss a potential collaboration. There are many features I'd still like to implement, and probably a lot of refinements that can be made, so going forward, some help would be appreciated! 🙏
 
 ## Issues
 
