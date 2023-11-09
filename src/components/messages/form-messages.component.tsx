@@ -1,4 +1,3 @@
-'use client';
 import React, { CSSProperties, useContext} from 'react';
 import { FormContext } from '../context-providers/form-context';
 import { Messages } from './messages.component';

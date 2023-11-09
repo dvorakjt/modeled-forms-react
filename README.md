@@ -750,6 +750,10 @@ A button used to call `trySubmit` on the `RootFormContext`. It can be styled wit
 
 A button which resets the state of the immediately surrounding FormContext and its fields. It can be styled with `className` and/or `style` and also accepts a `disabled` prop.
 
+#### OmittableContext
+
+This component takes a `fieldName` and is used to wrap child components. If the field (or dual field or nested form) corresponding to the provided `fieldName` is currently omitted, the component returns null. Otherwise, it returns its children wrapped in a jsx fragment.
+
 ## Accessibility
 In addition to basic steps like assigning a name property to inputs, associating labels with inputs using htmlFor, etc, each input receives an aria-describedby attribute with a list of ids of messages associated with that field. These will be read by screen readers provided the FieldMessages component is used. Containers around these messages have aria-live set to polite.
 

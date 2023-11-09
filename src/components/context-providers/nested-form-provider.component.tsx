@@ -1,4 +1,3 @@
-'use client';
 import React, { PropsWithChildren, useContext } from 'react';
 import { FormContext } from './form-context';
 

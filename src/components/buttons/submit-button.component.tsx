@@ -1,4 +1,3 @@
-'use client';
 import React, {CSSProperties, MouseEventHandler, useContext} from 'react';
 import { RootFormContext } from '../context-providers/root-form-provider.component'; 
 import { FormContext } from '../context-providers/form-context';
