@@ -7,8 +7,8 @@ import { AsyncValidator } from '../async-validator.type';
 import { Validity } from '../../state/validity.enum';
 import { MessageType } from '../../state/messages/message-type.enum';
 import { logErrorInDevMode } from '../../util/log-error-in-dev-mode';
-import { config } from '../../../config';
 import { Message } from '../../state/messages/message.interface';
+import { Config } from '../../config-loader/config.interface';
 
 export class AsyncMultiInputValidator implements MultiInputValidator {
   //messages, calculatedValidity, and overallValidityChanges all go to different destinations
@@ -19,6 +19,7 @@ export class AsyncMultiInputValidator implements MultiInputValidator {
   readonly _pendingMessage: string;
   readonly _multiFieldAggregator: MultiFieldAggregator;
   readonly _validator: AsyncValidator<AggregatedStateChanges>;
+  readonly _config : Config;
   _validatorSubscription?: Subscription;
   _firstRunCompleted = false;
 
@@ -26,10 +27,12 @@ export class AsyncMultiInputValidator implements MultiInputValidator {
     multiFieldAggregator: MultiFieldAggregator,
     validator: AsyncValidator<AggregatedStateChanges>,
     pendingMessage: string,
+    config : Config
   ) {
     this._validator = validator;
     this._multiFieldAggregator = multiFieldAggregator;
     this._pendingMessage = pendingMessage;
+    this._config = config;
     this.accessedFields = multiFieldAggregator.accessedFields;
     this.calculatedValidityChanges = new ReplaySubject<Validity>(1);
     this.overallValidityChanges = new ReplaySubject<Validity>(1);
@@ -107,7 +110,7 @@ export class AsyncMultiInputValidator implements MultiInputValidator {
                 this.overallValidityChanges.next(Validity.ERROR);
                 this.messageChanges.next({
                   type: MessageType.ERROR,
-                  text: config.globalMessages.multiFieldValidationError,
+                  text: this._config.globalMessages.multiFieldValidationError,
                 });
               },
             });
@@ -117,7 +120,7 @@ export class AsyncMultiInputValidator implements MultiInputValidator {
             this.overallValidityChanges.next(Validity.ERROR);
             this.messageChanges.next({
               type: MessageType.ERROR,
-              text: config.globalMessages.multiFieldValidationError,
+              text: this._config.globalMessages.multiFieldValidationError,
             });
           }
         }

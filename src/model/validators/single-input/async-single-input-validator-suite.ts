@@ -7,7 +7,7 @@ import type { ValidatorSuiteResult } from '../validator-suite-result.interface';
 import type { ValidatorSuiteResultsObject } from '../validator-suite-results-object.interface';
 import type { ValidatorResult } from '../validator-result.interface';
 import { logErrorInDevMode } from '../../util/log-error-in-dev-mode';
-import { config } from '../../../config';
+import { Config } from '../../config-loader/config.interface';
 
 type ValidatorSubscriptionMap = {
   [key: number]: Subscription;
@@ -18,14 +18,17 @@ export class AsyncSingleInputValidatorSuite<T>
 {
   readonly _validators: Array<AsyncValidator<T>>;
   readonly _pendingValidatorMessage: string;
+  readonly _config : Config;
   _validatorSubscriptions: ValidatorSubscriptionMap = {};
 
   constructor(
     validators: Array<AsyncValidator<T>>,
     pendingValidatorMessage: string,
+    config : Config
   ) {
     this._validators = validators;
     this._pendingValidatorMessage = pendingValidatorMessage;
+    this._config = config;
   }
 
   evaluate(value: T) {
@@ -139,7 +142,7 @@ export class AsyncSingleInputValidatorSuite<T>
       observableResult.validity = Validity.ERROR;
       observableResult.messages.push({
         type: MessageType.ERROR,
-        text: config.globalMessages.singleFieldValidationError,
+        text: this._config.globalMessages.singleFieldValidationError,
       });
       outerSubscriber.next(observableResult);
       outerSubscriber.complete();

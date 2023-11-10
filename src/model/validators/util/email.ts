@@ -1,4 +1,3 @@
-import { config } from '../../../config';
 import { container } from '../../container';
 import type { SyncValidator } from '../sync-validator.type';
 import type { ValidatorResult } from '../validator-result.interface';
@@ -13,7 +12,7 @@ export function email(
     value = autoTransformer.transform(value);
 
     const result: ValidatorResult = {
-      isValid: value.length > 0 && config.emailRegex.test(value),
+      isValid: value.length > 0 && container.services.ConfigLoader.config.emailRegex.test(value),
     };
     if (!result.isValid) {
       result.message = errorMessage;

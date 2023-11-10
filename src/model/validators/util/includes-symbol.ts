@@ -1,4 +1,3 @@
-import { config } from '../../../config';
 import { container } from '../../container';
 import type { SyncValidator } from '../sync-validator.type';
 import type { ValidatorResult } from '../validator-result.interface';
@@ -13,7 +12,7 @@ export function includesSymbol(
     value = autoTransformer.transform(value);
 
     const result: ValidatorResult = {
-      isValid: config.symbolRegex.test(value),
+      isValid: container.services.ConfigLoader.config.symbolRegex.test(value),
     };
     if (!result.isValid) {
       result.message = errorMessage;

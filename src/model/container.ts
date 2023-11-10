@@ -30,6 +30,7 @@ import { ExtractedValuesTemplateParserService } from './templates/extracted-valu
 import { ConfigLoaderService } from './config-loader/config-loader-impl';
 import { ConfirmationManagerFactoryService } from './confirmation/confirmation-manager-factory-impl';
 
+
 const container = ContainerBuilder.createContainerBuilder()
   .registerSingletonService(AdapterFactoryService)
   .registerSingletonService(AggregatorFactoryService)

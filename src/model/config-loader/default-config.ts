@@ -1,6 +1,6 @@
-import rc from 'rc';
+import { Config } from "./config.interface";
 
-const DEFAULT_SETTINGS = {
+export const DEFAULT_CONFIG : Config = {
   autoTrim: true,
   emailRegex:
     /^[A-Z0-9]+(?:[_%+.-][A-Z0-9]+)*@[A-Z0-9]+(?:[.-][A-Z0-9]+)*\.[A-Z]{2,}$/i,
@@ -22,7 +22,3 @@ const DEFAULT_SETTINGS = {
     submissionError: 'There was an unknown problem submitting the form.',
   },
 };
-
-const config: any = rc('modeledformsreact', DEFAULT_SETTINGS);
-
-export { config, DEFAULT_SETTINGS };

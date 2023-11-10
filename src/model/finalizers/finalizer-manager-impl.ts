@@ -8,10 +8,10 @@ import { copyObject } from '../util/copy-object';
 import { Message } from '../state/messages/message.interface';
 import { FinalizerValidity } from '../state/finalizer-validity.enum';
 import { MessageType } from '../state/messages/message-type.enum';
-import { config } from '../../config';
 import { FinalizerManager } from './finalizer-manager.interface';
 import { ModificationReducer } from '../reducers/modification/modification-reducer.interface';
 import { VisitationReducer } from '../reducers/visitation/visitation-reducer.interface';
+import { ConfigLoader } from '../config-loader/config-loader.interface';
 
 export class FinalizerManagerImpl implements FinalizerManager {
   stateChanges: Subject<State<any>>;
@@ -21,6 +21,7 @@ export class FinalizerManagerImpl implements FinalizerManager {
   _finalizerValidityTranslator: FinalizerValidityTranslator;
   _visitationReducer: VisitationReducer;
   _modificationReducer: ModificationReducer;
+  _configLoader : ConfigLoader;
 
   get state() {
     return {
@@ -38,12 +39,14 @@ export class FinalizerManagerImpl implements FinalizerManager {
     finalizerValidityTranslator: FinalizerValidityTranslator,
     visitationReducer: VisitationReducer,
     modificationReducer: ModificationReducer,
+    configLoader : ConfigLoader
   ) {
     this._finalizerMap = finalizerMap;
     this._finalizerValidityReducer = finalizerValidityReducer;
     this._finalizerValidityTranslator = finalizerValidityTranslator;
     this._visitationReducer = visitationReducer;
     this._modificationReducer = modificationReducer;
+    this._configLoader = configLoader;
 
     for (const finalizerName in this._finalizerMap) {
       const finalizer = this._finalizerMap[finalizerName];
@@ -84,14 +87,14 @@ export class FinalizerManagerImpl implements FinalizerManager {
     if (reducedFinalizerValidity === FinalizerValidity.FINALIZER_ERROR) {
       messages.push({
         type: MessageType.ERROR,
-        text: config.globalMessages.finalizerError,
+        text: this._configLoader.config.globalMessages.finalizerError,
       });
     } else if (
       reducedFinalizerValidity === FinalizerValidity.VALID_FINALIZING
     ) {
       messages.push({
         type: MessageType.PENDING,
-        text: config.globalMessages.finalizerPending,
+        text: this._configLoader.config.globalMessages.finalizerPending,
       });
     }
     return messages;
