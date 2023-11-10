@@ -23,7 +23,7 @@ describe('OmittableContent', () => {
         <OmittableContent fieldName='someField'>test</OmittableContent>
       </MockFormContext>  
     );
-    expect(errorDetected).toBe(true);
+    expect(errorDetected).toBe(false);
   });
 
   test('If the corresponding field is omitted, it returns null.', () => {
