@@ -6,9 +6,9 @@ import { MultiInputValidator } from './multi-input-validator.interface';
 import { SyncValidator } from '../sync-validator.type';
 import { Validity } from '../../state/validity.enum';
 import { MessageType } from '../../state/messages/message-type.enum';
-import { config } from '../../../config';
 import { logErrorInDevMode } from '../../util/log-error-in-dev-mode';
 import { Message } from '../../state/messages/message.interface';
+import { Config } from '../../config-loader/config.interface';
 
 export class SyncMultiInputValidator implements MultiInputValidator {
   //messages, calculatedValidity, and overallValidityChanges all go to different destinations
@@ -18,14 +18,17 @@ export class SyncMultiInputValidator implements MultiInputValidator {
   readonly accessedFields: OneTimeValueEmitter<Set<string>>;
   readonly _multiFieldAggregator: MultiFieldAggregator;
   readonly _validator: SyncValidator<AggregatedStateChanges>;
+  readonly _config : Config;
   _completedFirstRun = false;
 
   constructor(
     multiFieldAggregator: MultiFieldAggregator,
     validator: SyncValidator<AggregatedStateChanges>,
+    config : Config
   ) {
     this._validator = validator;
     this._multiFieldAggregator = multiFieldAggregator;
+    this._config = config;
     this.accessedFields = multiFieldAggregator.accessedFields;
     this.calculatedValidityChanges = new ReplaySubject<Validity>(1);
     this.overallValidityChanges = new ReplaySubject<Validity>(1);
@@ -93,7 +96,7 @@ export class SyncMultiInputValidator implements MultiInputValidator {
         validity: Validity.ERROR,
         message: {
           type: MessageType.ERROR,
-          text: config.globalMessages.multiFieldValidationError,
+          text: this._config.globalMessages.multiFieldValidationError,
         },
       };
     }

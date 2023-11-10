@@ -843,21 +843,70 @@ All of the components exported by this library harness the power of React hooks 
  Please see the [Examples](#examples) section for a link to a complete example built with the Next.js 13 app router. 
 
 ## Configuration
-Modeled Forms React uses [rc](https://www.npmjs.com/package/rc) for configuration. Therefore, to configure Modeled Forms React for your project's needs, include a .modeledformsreactrc file in your project. You can configure the following options:
 
- - `autoTrim` - boolean. If true, form field values are trimmed before validation and before finalization (though the displayed value is not changed).
- - `emailRegex` - a regular expression. This is the regular expression used by the built-in `email` validator. You can provide a different regular expression if the needs of your project demand one.
- - `symbolRegex` - a regular expression. This is the regular expression used by the built-in `includesSymbol` validator.
- - `globalMessages` - this is an object whose properties represent default messages for various scenarios. You may wish to change these messages to better match the tone of your project, for i18n reasons, etc. This object contains  the following customizable properties, each of which should be of type string:
-	- `pendingAsyncValidatorSuite`
-	- `singleFieldValidationError`
-	- `pendingAsyncMultiFieldValidator`
-	- `multiFieldValidationError`
-	- `adapterError`
-	- `finalizerError`
-	- `finalizerPending`
-	- `confirmationFailed`
-	- `submissionError`
+To configure Modeled Forms React, you can set an environment variable named `MODELED_FORMS_REACT_CONFIG` to a stringified config object. Modeled Forms React will look for `process.env.MODELED_FORMS_REACT_CONFIG` and attempt to parse this string into configurable properties. Modeled Forms React exports a utility function that facilitates this, `configMFR`. This very simply takes in a `Partial` of the `ConfigMFROptions` type (see below for all available properties) and returns an object with the key `MODELED_FORMS_REACT_CONFIG` assigned the stringified representation of the config object you passed in.
+
+Here is an example usage of this utility function with Next.js.
+
+    //next.config.js
+    
+    const { configMFR } = require('modeled-forms-react');
+    
+    /** @type {import('next').NextConfig} */
+    const nextConfig = {
+      env : {
+        ...configMFR({
+          autoTrim : false,
+          emailRegex : '.*', //a string that will be passed into a RegExp constructor
+          symbolRegex : '.*', //another string that will be passed into a RegExp constructor
+          globalMessages : {
+            pendingAsyncValidatorSuite: 'your async validator message',
+            singleFieldValidationError: 'your single field validation error message',
+            pendingAsyncMultiFieldValidator: 'your pending async multi-field validator message',
+            multiFieldValidationError: 'your multi-field validation error message',
+            adapterError: 'your adapter error message here',
+            finalizerError: 'your finalizer error message',
+            finalizerPending: 'your finalizer pending message',
+            confirmationFailed: 'your confirmation failed message',
+            submissionError: 'your submission error message'
+          }
+        })
+      },
+    }
+    
+    module.exports = nextConfig
+
+  
+  
+
+-  `autoTrim` - boolean. If true, form field values are trimmed before validation and before finalization (though the displayed value is not changed).
+
+-  `emailRegex` - a string representation of a regular expression. This will be compiled into the regular expression used by the built-in `email` validator. You can provide a different regular expression if the needs of your project demand one.
+
+-  `symbolRegex` - a string representation of a regular expression. This will be compiled into the expression used by the built-in `includesSymbol` validator.
+
+-  `globalMessages` - this is an object whose properties represent default messages for various scenarios. You may wish to change these messages to better match the tone of your project, for i18n reasons, etc. This object contains the following customizable properties, each of which should be of type string:
+
+	-  `pendingAsyncValidatorSuite`
+
+	-  	`singleFieldValidationError`
+
+	-  	`pendingAsyncMultiFieldValidator`
+
+	-  `multiFieldValidationError`
+
+	-  `adapterError`
+
+	-  `finalizerError`
+
+	-  `finalizerPending`
+
+	-  `confirmationFailed`
+
+	-  `submissionError`
+
+  
+
 
 ## Contributing
 If you wish to contribute to this project, please feel free to send me an [email](mailto:dvorakjt@gmail.com) to discuss a potential collaboration. There are many features I'd still like to implement, and probably a lot of refinements that can be made, so going forward, some help would be appreciated! 🙏

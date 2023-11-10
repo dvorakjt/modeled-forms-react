@@ -27,6 +27,7 @@ describe('FinalizerManagerImpl', () => {
       container.services.FinalizerValidityTranslator;
     const visitationReducer = reducerFactory.createVisitationReducer();
     const modificationReducer = reducerFactory.createModificationReducer();
+    const config = container.services.ConfigLoader.config;
 
     finalizerManager = new FinalizerManagerImpl(
       finalizerDictionary,
@@ -34,6 +35,7 @@ describe('FinalizerManagerImpl', () => {
       finalizerValidityTranslator,
       visitationReducer,
       modificationReducer,
+      config
     );
   });
 

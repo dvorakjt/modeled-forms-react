@@ -98,3 +98,7 @@ export type {
   PropsWithoutStyle,
   PropsWithoutClassName,
 } from './components';
+
+export {
+  configMFR
+} from './util';

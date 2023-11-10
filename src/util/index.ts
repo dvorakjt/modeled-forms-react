@@ -1,0 +1,1 @@
+export { configMFR } from './config-mfr';

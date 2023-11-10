@@ -24,12 +24,12 @@ import {
 } from './multi-field-validators-template-parser.interface';
 import { MultiFieldValidatorsTemplate } from './multi-field-validators-template.interface';
 import { MultiInputValidatorMessagesAggregator } from '../../aggregators/multi-input-validator-messages-aggregator.interface';
-import { config } from '../../../config';
 import { AbstractField } from '../../fields/base/abstract-field';
 import {
   AutoTransformedFieldFactory,
   AutoTransformedFieldFactoryKey,
 } from '../../fields/auto-transformed/auto-transformed-field-factory.interface';
+import { ConfigLoader, ConfigLoaderKey } from '../../config-loader/config-loader.interface';
 
 type MultiInputValidatedFormElementDictionary = Record<
   string,
@@ -46,18 +46,21 @@ class MultiFieldValidatorsTemplateParserImpl
   _multiInputValidatedFormElementFactory: MultiInputValidatedFormElementFactory;
   _aggregatorFactory: AggregatorFactory;
   _autoTransformedFieldFactory: AutoTransformedFieldFactory;
+  _configLoader : ConfigLoader;
 
   constructor(
     multiInputValidatorFactory: MultiInputValidatorFactory,
     multiInputValidatedFormElementFactory: MultiInputValidatedFormElementFactory,
     aggregatorFactory: AggregatorFactory,
     autoTransformedFieldFactory: AutoTransformedFieldFactory,
+    configLoader : ConfigLoader
   ) {
     this._multiInputValidatorFactory = multiInputValidatorFactory;
     this._multiInputValidatedFormElementFactory =
       multiInputValidatedFormElementFactory;
     this._aggregatorFactory = aggregatorFactory;
     this._autoTransformedFieldFactory = autoTransformedFieldFactory;
+    this._configLoader = configLoader;
   }
 
   parseTemplate(
@@ -97,7 +100,7 @@ class MultiFieldValidatorsTemplateParserImpl
           validatorTemplate.validatorFn,
           formElementDictionary,
           validatorTemplate.pendingValidatorMessage ??
-            config.globalMessages.pendingAsyncMultiFieldValidator,
+            this._configLoader.config.globalMessages.pendingAsyncMultiFieldValidator,
         );
       multiInputValidator.accessedFields.onValue(
         this._onAccessedFields(
@@ -183,6 +186,7 @@ const MultiFieldValidatorsTemplateParserService = autowire<
     MultiInputValidatedFormElementFactoryKey,
     AggregatorFactoryKey,
     AutoTransformedFieldFactoryKey,
+    ConfigLoaderKey
   ],
 );
 

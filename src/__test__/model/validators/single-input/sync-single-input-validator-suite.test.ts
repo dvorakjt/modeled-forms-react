@@ -5,12 +5,12 @@ import { createValidSyncValidator } from './mocks/sync/create-valid-sync-validat
 import { createInvalidSyncValidator } from './mocks/sync/create-invalid-sync-validator';
 import { createErrantSyncValidator } from './mocks/sync/create-errant-sync-validator';
 import { MessageType } from '../../../../model/state/messages/message-type.enum';
-import { config } from '../../../../config';
 import { setNodeEnv } from '../../../util/funcs/set-node-env';
+import { container } from '../../../../model/container';
 
 describe('SyncSingleInputValidatorSuite', () => {
   test('When evaluate() is called and no validators were passed in to the constructor, the object is returns has a property syncResult.validity which equals Validity.VALID_FINALIZABLE.', () => {
-    const validatorSuite = new SyncSingleInputValidatorSuite<string>([]);
+    const validatorSuite = new SyncSingleInputValidatorSuite<string>([], container.services.ConfigLoader.config);
     expect(validatorSuite.evaluate('').syncResult.validity).toBe(
       Validity.VALID_FINALIZABLE,
     );
@@ -21,7 +21,7 @@ describe('SyncSingleInputValidatorSuite', () => {
       createValidSyncValidator(),
       createValidSyncValidator(),
       createValidSyncValidator(),
-    ]);
+    ], container.services.ConfigLoader.config);
     expect(validatorSuite.evaluate('').syncResult.validity).toBe(
       Validity.VALID_FINALIZABLE,
     );
@@ -32,7 +32,7 @@ describe('SyncSingleInputValidatorSuite', () => {
       createValidSyncValidator(),
       createInvalidSyncValidator(),
       createValidSyncValidator(),
-    ]);
+    ], container.services.ConfigLoader.config);
     expect(validatorSuite.evaluate('').syncResult.validity).toBe(
       Validity.INVALID,
     );
@@ -44,7 +44,7 @@ describe('SyncSingleInputValidatorSuite', () => {
       createInvalidSyncValidator(),
       createErrantSyncValidator(),
       createInvalidSyncValidator(),
-    ]);
+    ], container.services.ConfigLoader.config);
     expect(validatorSuite.evaluate('').syncResult.validity).toBe(
       Validity.ERROR,
     );
@@ -56,7 +56,7 @@ describe('SyncSingleInputValidatorSuite', () => {
       createValidSyncValidator(),
       createErrantSyncValidator(),
       notCalled,
-    ]);
+    ], container.services.ConfigLoader.config);
     validatorSuite.evaluate('');
 
     expect(notCalled).not.toHaveBeenCalled();
@@ -73,7 +73,7 @@ describe('SyncSingleInputValidatorSuite', () => {
         type: MessageType.INVALID,
       },
       {
-        text: config.globalMessages.singleFieldValidationError,
+        text: container.services.ConfigLoader.config.globalMessages.singleFieldValidationError,
         type: MessageType.ERROR,
       },
     ];
@@ -82,7 +82,7 @@ describe('SyncSingleInputValidatorSuite', () => {
       createInvalidSyncValidator(expectedMessages[1].text),
       createErrantSyncValidator(),
       createValidSyncValidator('unreachable message'),
-    ]);
+    ], container.services.ConfigLoader.config);
     expect(validatorSuite.evaluate('').syncResult.messages).toStrictEqual(
       expectedMessages,
     );
@@ -96,7 +96,7 @@ describe('SyncSingleInputValidatorSuite', () => {
     const error = new Error();
     const validatorSuite = new SyncSingleInputValidatorSuite([
       createErrantSyncValidator(error),
-    ]);
+    ], container.services.ConfigLoader.config);
     validatorSuite.evaluate('');
     expect(console.error).toBeCalledWith(error);
     vi.unstubAllGlobals();

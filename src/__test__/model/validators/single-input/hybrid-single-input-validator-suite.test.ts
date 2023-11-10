@@ -7,9 +7,9 @@ import { AsyncSingleInputValidatorSuite } from '../../../../model/validators/sin
 import { createTriggerableValidAsyncValidator } from './mocks/async/create-triggerable-valid-async-validator';
 import { HybridSingleInputValidatorSuite } from '../../../../model/validators/single-input/hybrid-single-input-validator-suite';
 import { Subject } from 'rxjs';
-import { config } from '../../../../config';
 import { createErrantSyncValidator } from './mocks/sync/create-errant-sync-validator';
 import { createValidSyncValidator } from './mocks/sync/create-valid-sync-validator';
+import { container } from '../../../../model/container';
 
 describe('HybridSingleInputValidatorSuite', () => {
   test('It returns only the syncResult if the resultant validity is INVALID.', () => {
@@ -29,16 +29,18 @@ describe('HybridSingleInputValidatorSuite', () => {
     };
     const syncValidatorSuite = new SyncSingleInputValidatorSuite([
       createInvalidSyncValidator(expectedMessage),
-    ]);
+    ], container.services.ConfigLoader.config);
     const triggerAsync = new Subject<void>();
     const asyncValidatorSuite = new AsyncSingleInputValidatorSuite(
       [
         createTriggerableValidAsyncValidator(
           triggerAsync,
           'unreachable message',
+          
         ),
       ],
       'pending message',
+      container.services.ConfigLoader.config
     );
     const hybridValidatorSuite = new HybridSingleInputValidatorSuite(
       syncValidatorSuite,
@@ -59,14 +61,14 @@ describe('HybridSingleInputValidatorSuite', () => {
         messages: [
           {
             type: MessageType.ERROR,
-            text: config.globalMessages.singleFieldValidationError,
+            text: container.services.ConfigLoader.config.globalMessages.singleFieldValidationError,
           },
         ],
       },
     };
     const syncValidatorSuite = new SyncSingleInputValidatorSuite([
       createErrantSyncValidator(),
-    ]);
+    ], container.services.ConfigLoader.config);
     const triggerAsync = new Subject<void>();
     const asyncValidatorSuite = new AsyncSingleInputValidatorSuite(
       [
@@ -76,6 +78,7 @@ describe('HybridSingleInputValidatorSuite', () => {
         ),
       ],
       'pending message',
+      container.services.ConfigLoader.config
     );
     const hybridValidatorSuite = new HybridSingleInputValidatorSuite(
       syncValidatorSuite,
@@ -107,7 +110,7 @@ describe('HybridSingleInputValidatorSuite', () => {
     };
     const syncValidatorSuite = new SyncSingleInputValidatorSuite([
       createValidSyncValidator(validMessage),
-    ]);
+    ], container.services.ConfigLoader.config);
     const triggerAsync = new Subject<void>();
     const asyncValidatorSuite = new AsyncSingleInputValidatorSuite(
       [
@@ -117,6 +120,7 @@ describe('HybridSingleInputValidatorSuite', () => {
         ),
       ],
       pendingMessage,
+      container.services.ConfigLoader.config
     );
     const hybridValidatorSuite = new HybridSingleInputValidatorSuite(
       syncValidatorSuite,

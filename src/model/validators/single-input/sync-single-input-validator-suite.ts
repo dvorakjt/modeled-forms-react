@@ -1,18 +1,20 @@
 import { Validity } from '../../state/validity.enum';
 import { MessageType } from '../../state/messages/message-type.enum';
-import { config } from '../../../config';
 import { logErrorInDevMode } from '../../util/log-error-in-dev-mode';
 import type { SingleInputValidatorSuite } from './single-input-validator-suite.interface';
 import type { SyncValidator } from '../sync-validator.type';
 import type { ValidatorSuiteResult } from '../validator-suite-result.interface';
+import { Config } from '../../config-loader/config.interface';
 
 export class SyncSingleInputValidatorSuite<T>
   implements SingleInputValidatorSuite<T>
 {
   readonly _validators: Array<SyncValidator<T>>;
+  readonly _config : Config;
 
-  constructor(validators: Array<SyncValidator<T>>) {
+  constructor(validators: Array<SyncValidator<T>>, config : Config) {
     this._validators = validators;
+    this._config = config;
   }
 
   evaluate(value: T) {
@@ -43,7 +45,7 @@ export class SyncSingleInputValidatorSuite<T>
       result.validity = Validity.ERROR;
       result.messages.push({
         type: MessageType.ERROR,
-        text: config.globalMessages.singleFieldValidationError,
+        text: this._config.globalMessages.singleFieldValidationError,
       });
     }
     return result;

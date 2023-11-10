@@ -6,28 +6,36 @@ import {
 } from './single-input-validator-suite-factory.interface';
 import { SingleInputValidatorSuite } from './single-input-validator-suite.interface';
 import { SyncValidator } from '../sync-validator.type';
-import { config } from '../../../config';
 import { AsyncSingleInputValidatorSuite } from './async-single-input-validator-suite';
 import { HybridSingleInputValidatorSuite } from './hybrid-single-input-validator-suite';
 import { SyncSingleInputValidatorSuite } from './sync-single-input-validator-suite';
 import { autowire } from 'undecorated-di';
+import { ConfigLoader, ConfigLoaderKey } from '../../config-loader/config-loader.interface';
 
 class SingleInputValidatorSuiteFactoryImpl
   implements SingleInputValidatorSuiteFactory
 {
+  _configLoader : ConfigLoader;
+
+  constructor(configLoader : ConfigLoader) {
+    this._configLoader = configLoader;
+  }
+
   createSingleInputValidatorSuite<T>(
     syncValidators: SyncValidator<T>[],
     asyncValidators: AsyncValidator<T>[],
-    pendingAsyncValidatorMessage: string = config.globalMessages
+    pendingAsyncValidatorMessage: string = this._configLoader.config.globalMessages
       .pendingAsyncValidatorSuite,
   ): SingleInputValidatorSuite<T> {
     const syncValidatorSuite = new SyncSingleInputValidatorSuite(
       syncValidators,
+      this._configLoader.config
     );
     if (asyncValidators.length > 0) {
       const asyncValidatorSuite = new AsyncSingleInputValidatorSuite(
         asyncValidators,
         pendingAsyncValidatorMessage,
+        this._configLoader.config
       );
       if (syncValidators.length > 0)
         return new HybridSingleInputValidatorSuite(
@@ -43,7 +51,9 @@ const SingleInputValidatorSuiteFactoryService = autowire<
   SingleInputValidatorSuiteFactoryKeyType,
   SingleInputValidatorSuiteFactory,
   SingleInputValidatorSuiteFactoryImpl
->(SingleInputValidatorSuiteFactoryImpl, SingleInputValidatorSuiteFactoryKey);
+>(SingleInputValidatorSuiteFactoryImpl, SingleInputValidatorSuiteFactoryKey, [
+  ConfigLoaderKey
+]);
 
 export {
   SingleInputValidatorSuiteFactoryImpl,
