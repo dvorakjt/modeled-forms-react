@@ -1,4 +1,3 @@
-'use client';
 import React, { useState, useEffect, CSSProperties } from "react";
 import { Message } from "../../model/state/messages/message.interface";
 import { Message as MessageComponent } from "./message.component";

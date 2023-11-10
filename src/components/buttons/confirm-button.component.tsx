@@ -1,4 +1,3 @@
-'use client';
 import React, { CSSProperties, MouseEventHandler, PropsWithChildren, useContext } from "react";
 import { FormContext } from "../context-providers/form-context";
 import { Validity } from "../../model";

@@ -1,4 +1,3 @@
-'use client';
 import React, { CSSProperties, ChangeEventHandler, PropsWithChildren, useContext, useEffect } from 'react';
 import { FormContext } from '../context-providers/form-context';
 import { validityToString } from '../util/validity-to-string';
