@@ -10,6 +10,7 @@ describe('FinalizerManagerFactoryImpl', () => {
     const finalizerManagerFactory = new FinalizerManagerFactoryImpl(
       container.services.ReducerFactory,
       container.services.FinalizerValidityTranslator,
+      container.services.ConfigLoader
     );
     const finalizerFactory = container.services.FinalizerFactory;
     const fieldA = new MockField('', Validity.VALID_FINALIZABLE);

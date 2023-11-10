@@ -15,17 +15,21 @@ import {
   FinalizerValidityTranslator,
   FinalizerValidityTranslatorKey,
 } from './finalizer-validity-translator.interface';
+import { ConfigLoader, ConfigLoaderKey } from '../config-loader/config-loader.interface';
 
 class FinalizerManagerFactoryImpl implements FinalizerManagerFactory {
   _reducerFactory: ReducerFactory;
   _finalizerValidityTranslator: FinalizerValidityTranslator;
+  _configLoader : ConfigLoader
 
   constructor(
     reducerFactory: ReducerFactory,
     finalizerValidityTranslator: FinalizerValidityTranslator,
+    configLoader : ConfigLoader
   ) {
     this._reducerFactory = reducerFactory;
     this._finalizerValidityTranslator = finalizerValidityTranslator;
+    this._configLoader = configLoader
   }
 
   createFinalizerManager(
@@ -42,6 +46,7 @@ class FinalizerManagerFactoryImpl implements FinalizerManagerFactory {
       this._finalizerValidityTranslator,
       visitationReducer,
       modificationReducer,
+      this._configLoader.config
     );
   }
 }
@@ -53,6 +58,7 @@ const FinalizerManagerFactoryService = autowire<
 >(FinalizerManagerFactoryImpl, FinalizerManagerFactoryKey, [
   ReducerFactoryKey,
   FinalizerValidityTranslatorKey,
+  ConfigLoaderKey
 ]);
 
 export { FinalizerManagerFactoryImpl, FinalizerManagerFactoryService };

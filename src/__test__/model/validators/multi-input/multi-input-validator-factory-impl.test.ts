@@ -18,6 +18,7 @@ describe('MultInputValidatorFactoryImpl', () => {
   beforeEach(() => {
     multiInputValidatorFactory = new MultiInputValidatorFactoryImpl(
       container.services.AggregatorFactory,
+      container.services.ConfigLoader
     );
     fields = {
       fieldA: new MockField('', Validity.VALID_FINALIZABLE),

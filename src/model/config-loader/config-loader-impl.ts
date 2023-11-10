@@ -1,5 +1,4 @@
 import { autowire } from 'undecorated-di';
-import { copyObject } from "../util/copy-object";
 import { logErrorInDevMode } from "../util/log-error-in-dev-mode";
 import { ConfigLoader, ConfigLoaderKey, ConfigLoaderKeyType } from "./config-loader.interface";
 import { Config } from "./config.interface";
@@ -10,7 +9,12 @@ class ConfigLoaderImpl implements ConfigLoader {
   config: Config;
   
   constructor() {
-    const mergedConfig = copyObject(DEFAULT_CONFIG);
+    const mergedConfig = {
+      ...DEFAULT_CONFIG,
+      globalMessages : {
+        ...DEFAULT_CONFIG.globalMessages
+      }
+    }
 
     const configVar = process.env.MODELED_FORMS_REACT_CONFIG;
 
@@ -21,18 +25,32 @@ class ConfigLoaderImpl implements ConfigLoader {
         customConfig = JSON.parse(configVar);
 
         for(const [key, value] of Object.entries(customConfig)) {
-
-          if(key in mergedConfig) { 
-            if(key.includes('Regex') && typeof value === 'string') {
-              try {
-                const regex = new RegExp(value);
-                mergedConfig[key] = regex;
-              } catch(e) {
-                logErrorInDevMode(e);
+          switch(key) {
+            case 'autoTrim' :
+              if(typeof value === 'boolean') {
+                mergedConfig[key] = value;
               }
-            } else if(typeof value === typeof mergedConfig[key]) {
-              mergedConfig[key] = value;
-            }
+              break;
+            case 'emailRegex' :
+            case 'symbolRegex' :
+              if(typeof value === 'string') {
+                try {
+                  const regex = new RegExp(value);
+                  mergedConfig[key] = regex;
+                } catch(e) {
+                  logErrorInDevMode(e);
+                }
+              }
+              break;
+            case 'globalMessages' :
+              if(typeof value === 'object') {
+                for(const [messageKey, messageValue] of Object.entries(value)) {
+                  if(Object.prototype.hasOwnProperty.call(mergedConfig.globalMessages, messageKey) && typeof messageValue === 'string') {
+                    mergedConfig.globalMessages[messageKey as keyof typeof mergedConfig.globalMessages] = messageValue;
+                  }
+                }
+              }
+              break;
           }
         }
       } catch(e) {
@@ -41,8 +59,6 @@ class ConfigLoaderImpl implements ConfigLoader {
     }
 
     this.config = mergedConfig;
-
-    console.log(this.config);
   }
 }
 

@@ -7,7 +7,7 @@ import { MessageType } from '../../../../model/state/messages/message-type.enum'
 import { createTriggerableValidAsyncValidator } from './mocks/async/create-triggerable-valid-async-validator';
 import { ValidatorSuiteResult } from '../../../../model/validators/validator-suite-result.interface';
 import { createTriggerableInvalidAsyncValidator } from './mocks/async/create-triggerable-invalid-async-validator';
-import { config } from '../../../../config';
+import { container } from '../../../../model/container';
 import { createTriggerablePromiseRejectingAsyncValidator } from './mocks/async/create-triggerable-promise-rejecting-async-validator';
 import { createIntraPromiseErrorThrowingAsyncValidator } from './mocks/async/create-intra-promise-error-throwing-async-validator';
 import { createImmediateErrorThrowingAsyncValidator } from './mocks/async/create-immediate-error-throwing-async-validator';
@@ -30,6 +30,7 @@ describe('AsyncSingleInputValidatorSuite', () => {
     const validatorSuite = new AsyncSingleInputValidatorSuite<string>(
       [untriggerableAsyncValidator],
       expectedMessage,
+      container.services.ConfigLoader.config
     );
     expect(validatorSuite.evaluate(expectedValue).syncResult).toStrictEqual(
       expectedSyncResult,
@@ -54,6 +55,7 @@ describe('AsyncSingleInputValidatorSuite', () => {
         createTriggerableValidAsyncValidator(trigger3),
       ],
       'pending message',
+      container.services.ConfigLoader.config
     );
     validatorSuite
       .evaluate(expectedValue)
@@ -101,6 +103,7 @@ describe('AsyncSingleInputValidatorSuite', () => {
         ),
       ],
       'pending message',
+      container.services.ConfigLoader.config
     );
     validatorSuite
       .evaluate('test')
@@ -124,7 +127,7 @@ describe('AsyncSingleInputValidatorSuite', () => {
           type: MessageType.VALID,
         },
         {
-          text: config.globalMessages.singleFieldValidationError,
+          text: container.services.ConfigLoader.config.globalMessages.singleFieldValidationError,
           type: MessageType.ERROR,
         },
       ],
@@ -147,6 +150,7 @@ describe('AsyncSingleInputValidatorSuite', () => {
         ),
       ],
       'pending message',
+      container.services.ConfigLoader.config
     );
     validatorSuite
       .evaluate('test')
@@ -170,7 +174,7 @@ describe('AsyncSingleInputValidatorSuite', () => {
           type: MessageType.VALID,
         },
         {
-          text: config.globalMessages.singleFieldValidationError,
+          text: container.services.ConfigLoader.config.globalMessages.singleFieldValidationError,
           type: MessageType.ERROR,
         },
       ],
@@ -189,6 +193,7 @@ describe('AsyncSingleInputValidatorSuite', () => {
         ),
       ],
       'pending message',
+      container.services.ConfigLoader.config
     );
     triggerValid.complete();
     validatorSuite
@@ -207,7 +212,7 @@ describe('AsyncSingleInputValidatorSuite', () => {
       validity: Validity.ERROR,
       messages: [
         {
-          text: config.globalMessages.singleFieldValidationError,
+          text: container.services.ConfigLoader.config.globalMessages.singleFieldValidationError,
           type: MessageType.ERROR,
         },
       ],
@@ -226,6 +231,7 @@ describe('AsyncSingleInputValidatorSuite', () => {
         createImmediateErrorThrowingAsyncValidator(expectedError),
       ],
       'pending message',
+      container.services.ConfigLoader.config
     );
     triggerAllValid.complete();
     validatorSuite
@@ -244,6 +250,7 @@ describe('AsyncSingleInputValidatorSuite', () => {
     const validatorSuite = new AsyncSingleInputValidatorSuite(
       [createImmediateErrorThrowingAsyncValidator(expectedError)],
       'pending message',
+      container.services.ConfigLoader.config
     );
     validatorSuite.evaluate('test').observable?.subscribe(() => {
       expect(console.error).toHaveBeenCalledWith(expectedError);
