@@ -16,6 +16,7 @@ export {
 } from './input';
 export { Label } from './labels';
 export { FieldMessages, FormMessages } from './messages';
+export { OmittableContent } from './omittable-content';
 
 export type {
   ResetButtonProps,
@@ -37,4 +38,5 @@ export type {
 } from './input';
 export type { LabelProps } from './labels';
 export type { FieldMessagesProps, FormMessagesProps } from './messages';
+export type { OmittableContentProps } from './omittable-content';
 export type { PropsWithoutStyle, PropsWithoutClassName } from './util';

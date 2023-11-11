@@ -77,6 +77,7 @@ export {
   Label,
   FieldMessages,
   FormMessages,
+  OmittableContent
 } from './components';
 
 export type {
@@ -97,6 +98,7 @@ export type {
   FormMessagesProps,
   PropsWithoutStyle,
   PropsWithoutClassName,
+  OmittableContentProps
 } from './components';
 
 export {
