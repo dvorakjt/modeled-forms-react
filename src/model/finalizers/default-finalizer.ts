@@ -27,6 +27,14 @@ export class DefaultFinalizer implements Finalizer {
   }
 
   _getFinalizerState(fieldState: State<any>) {
+    if(fieldState.omit) {
+      return {
+        finalizerValidity: FinalizerValidity.VALID_FINALIZED,
+        visited: fieldState.visited,
+        modified: fieldState.modified
+      }
+    }
+
     if (fieldState.validity < Validity.VALID_FINALIZABLE)
       return {
         finalizerValidity:
