@@ -5,6 +5,7 @@ import { Validity } from '../../model/state/validity.enum';
 import { getAriaDescribedBy } from '../util/get-aria-described-by';
 import { Visited } from '../../model/state/visited.enum';
 import { Modified } from '../../model/state/modified.enum';
+import { Focused } from '../../model/state/focused.enum';
 
 export interface TextareaProps {
   fieldName : string;
@@ -41,7 +42,7 @@ export function Textarea({
   if(!formCtx) throw new Error('Input cannot access properties of null or undefined FormContext');
   else {
     const { useField, useConfirmationAttempted } = formCtx;
-    const { value, validity, messages, visited, modified, updateValue, visit} = useField(fieldName);
+    const { value, validity, messages, visited, modified, focused, updateValue, visit, focus} = useField(fieldName);
 
     const confirmationAttempted = useConfirmationAttempted();
     
@@ -58,6 +59,7 @@ export function Textarea({
       aria-invalid={(confirmationAttempted || visited === Visited.YES || modified === Modified.YES) && validity <= Validity.INVALID}
       data-visited={visited !== Visited.NO ? true : null}
       data-modified={modified !== Modified.NO ? true : null}
+      data-focused={focused !== Focused.NO ? true : null}
       value={value} 
       onChange={(e) => {
        updateValue(e.target.value);
@@ -71,6 +73,7 @@ export function Textarea({
       placeholder={placeholder}
       autoFocus={autoFocus}
       maxLength={maxLength}
+      onFocus={focus}
       onBlur={visit}
     />);
   }

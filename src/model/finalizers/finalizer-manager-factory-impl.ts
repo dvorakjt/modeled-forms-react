@@ -40,12 +40,15 @@ class FinalizerManagerFactoryImpl implements FinalizerManagerFactory {
     const visitationReducer = this._reducerFactory.createVisitationReducer();
     const modificationReducer =
       this._reducerFactory.createModificationReducer();
+    const focusReducer = this._reducerFactory.createFocusReducer();
+
     return new FinalizerManagerImpl(
       finalizerDictionary,
       finalizerValidityReducer,
       this._finalizerValidityTranslator,
       visitationReducer,
       modificationReducer,
+      focusReducer,
       this._configLoader.config
     );
   }

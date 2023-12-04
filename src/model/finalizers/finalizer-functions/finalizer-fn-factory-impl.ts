@@ -47,6 +47,7 @@ class FinalizerFnFactoryImpl implements FinalizerFnFactory {
           finalizerValidity: FinalizerValidity.VALID_FINALIZED,
           visited: aggregatedStateChanges.visited(),
           modified: aggregatedStateChanges.modified(),
+          focused : aggregatedStateChanges.focused()
         };
       }
       const overallValidity = aggregatedStateChanges.overallValidity();
@@ -58,6 +59,7 @@ class FinalizerFnFactoryImpl implements FinalizerFnFactory {
             ),
           visited: aggregatedStateChanges.visited(),
           modified: aggregatedStateChanges.modified(),
+          focused : aggregatedStateChanges.focused()
         };
       }
       if (error) {
@@ -65,6 +67,7 @@ class FinalizerFnFactoryImpl implements FinalizerFnFactory {
           finalizerValidity: FinalizerValidity.FINALIZER_ERROR,
           visited: aggregatedStateChanges.visited(),
           modified: aggregatedStateChanges.modified(),
+          focused : aggregatedStateChanges.focused()
         };
       } else {
         return {
@@ -72,6 +75,7 @@ class FinalizerFnFactoryImpl implements FinalizerFnFactory {
           finalizerValidity: FinalizerValidity.VALID_FINALIZED,
           visited: aggregatedStateChanges.visited(),
           modified: aggregatedStateChanges.modified(),
+          focused: aggregatedStateChanges.focused()
         };
       }
     };
@@ -90,6 +94,7 @@ class FinalizerFnFactoryImpl implements FinalizerFnFactory {
               finalizerValidity: FinalizerValidity.VALID_FINALIZED,
               visited: aggregatedStateChanges.visited(),
               modified: aggregatedStateChanges.modified(),
+              focused : aggregatedStateChanges.focused()
             });
             subscriber.complete();
           } else if (
@@ -103,12 +108,14 @@ class FinalizerFnFactoryImpl implements FinalizerFnFactory {
                 ),
               visited: aggregatedStateChanges.visited(),
               modified: aggregatedStateChanges.modified(),
+              focused : aggregatedStateChanges.focused()
             });
           } else {
             subscriber.next({
               finalizerValidity: FinalizerValidity.VALID_FINALIZING,
               visited: aggregatedStateChanges.visited(),
               modified: aggregatedStateChanges.modified(),
+              focused : aggregatedStateChanges.focused()
             });
             promise
               .then(value => {
@@ -117,6 +124,7 @@ class FinalizerFnFactoryImpl implements FinalizerFnFactory {
                   finalizerValidity: FinalizerValidity.VALID_FINALIZED,
                   visited: aggregatedStateChanges.visited(),
                   modified: aggregatedStateChanges.modified(),
+                  focused : aggregatedStateChanges.focused()
                 });
                 subscriber.complete();
               })
@@ -126,6 +134,7 @@ class FinalizerFnFactoryImpl implements FinalizerFnFactory {
                   finalizerValidity: FinalizerValidity.FINALIZER_ERROR,
                   visited: aggregatedStateChanges.visited(),
                   modified: aggregatedStateChanges.modified(),
+                  focused : aggregatedStateChanges.focused()
                 });
                 subscriber.complete();
               });
@@ -136,6 +145,7 @@ class FinalizerFnFactoryImpl implements FinalizerFnFactory {
             finalizerValidity: FinalizerValidity.FINALIZER_ERROR,
             visited: aggregatedStateChanges.visited(),
             modified: aggregatedStateChanges.modified(),
+            focused : aggregatedStateChanges.focused()
           });
           subscriber.complete();
         }

@@ -1,6 +1,7 @@
 export { Validity } from './validity.enum';
 export { Visited } from './visited.enum';
 export { Modified } from './modified.enum';
+export { Focused } from './focused.enum';
 export { MessageType } from './messages/message-type.enum';
 export type { Message } from './messages/message.interface';
 export type { State } from './state.interface';

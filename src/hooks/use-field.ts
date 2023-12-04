@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from 'react';
 import { AbstractField } from '../model/fields/base/abstract-field';
 import { Subscription } from 'rxjs';
 import { Visited } from '../model/state/visited.enum';
+import { Focused } from '../model/state/focused.enum';
 
 export function useField(field: AbstractField) {
   const [state, setState] = useState({
@@ -10,6 +11,7 @@ export function useField(field: AbstractField) {
     messages: field.state.messages,
     visited: field.state.visited,
     modified: field.state.modified,
+    focused : field.state.focused
   });
 
   const stateChangesSubRef = useRef<Subscription | null>(null);
@@ -22,6 +24,7 @@ export function useField(field: AbstractField) {
         messages: stateChange.messages,
         visited: stateChange.visited,
         modified: stateChange.modified,
+        focused : stateChange.focused
       });
     });
     return () => {
@@ -43,10 +46,20 @@ export function useField(field: AbstractField) {
     }
   };
 
+  const focus = () => {
+    if (field.state.focused === Focused.NO)
+    {
+      field.setState({
+        focused : Focused.YES
+      });
+    }
+  }
+
   return {
     ...state,
     updateValue,
     reset,
     visit,
+    focus
   };
 }

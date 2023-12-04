@@ -5,6 +5,7 @@ import { Validity } from '../../model/state/validity.enum';
 import { getAriaDescribedBy } from '../util/get-aria-described-by';
 import { Visited } from '../../model/state/visited.enum';
 import { Modified } from '../../model/state/modified.enum';
+import { Focused } from '../../model/state/focused.enum';
 
 export interface SelectProps {
   fieldName : string;
@@ -32,7 +33,7 @@ export function Select({
   if(!formCtx) throw new Error('Input cannot access properties of null or undefined FormContext');
   else {
     const { useField, useConfirmationAttempted } = formCtx;
-    const { value, validity, messages, visited, modified, updateValue, visit} = useField(fieldName);
+    const { value, validity, messages, visited, modified, focused, updateValue, visit, focus} = useField(fieldName);
 
     const confirmationAttempted = useConfirmationAttempted();
 
@@ -40,12 +41,14 @@ export function Select({
       <select
         value={value}
         onChange={(e) => updateValue(e.target.value)}
+        onFocus={focus}
         onBlur={visit}
         data-validity={(confirmationAttempted || visited === Visited.YES || modified === Modified.YES) ? validityToString(validity) : validityToString(Validity.VALID_FINALIZABLE)} 
         aria-invalid={(confirmationAttempted || visited === Visited.YES || modified === Modified.YES) && validity <= Validity.INVALID}
         aria-describedby={(confirmationAttempted || visited === Visited.YES || modified === Modified.YES) ? getAriaDescribedBy(fieldName, messages) : ""}
         data-visited={visited !== Visited.NO ? true : null}
         data-modified={modified !== Modified.NO ? true : null}
+        data-focused={focused !== Focused.NO ? true : null}
         className={className}
         style={style}
         autoComplete={autoComplete}

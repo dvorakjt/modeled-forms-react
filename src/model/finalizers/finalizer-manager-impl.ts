@@ -12,6 +12,7 @@ import { FinalizerManager } from './finalizer-manager.interface';
 import { ModificationReducer } from '../reducers/modification/modification-reducer.interface';
 import { VisitationReducer } from '../reducers/visitation/visitation-reducer.interface';
 import { Config } from '../config-loader/config.interface';
+import { FocusReducer } from '../reducers/focus/focus-reducer.interface';
 
 export class FinalizerManagerImpl implements FinalizerManager {
   stateChanges: Subject<State<any>>;
@@ -21,6 +22,7 @@ export class FinalizerManagerImpl implements FinalizerManager {
   _finalizerValidityTranslator: FinalizerValidityTranslator;
   _visitationReducer: VisitationReducer;
   _modificationReducer: ModificationReducer;
+  _focusReducer : FocusReducer;
   _config : Config
 
   get state() {
@@ -30,6 +32,7 @@ export class FinalizerManagerImpl implements FinalizerManager {
       messages: this._getMessages(),
       visited: this._visitationReducer.visited,
       modified: this._modificationReducer.modified,
+      focused: this._focusReducer.focused
     };
   }
 
@@ -39,6 +42,7 @@ export class FinalizerManagerImpl implements FinalizerManager {
     finalizerValidityTranslator: FinalizerValidityTranslator,
     visitationReducer: VisitationReducer,
     modificationReducer: ModificationReducer,
+    focusReducer : FocusReducer,
     config: Config
   ) {
     this._finalizerMap = finalizerMap;
@@ -46,6 +50,7 @@ export class FinalizerManagerImpl implements FinalizerManager {
     this._finalizerValidityTranslator = finalizerValidityTranslator;
     this._visitationReducer = visitationReducer;
     this._modificationReducer = modificationReducer;
+    this._focusReducer = focusReducer;
     this._config = config;
 
     for (const finalizerName in this._finalizerMap) {
@@ -62,6 +67,10 @@ export class FinalizerManagerImpl implements FinalizerManager {
         this._modificationReducer.updateTallies(
           finalizerName,
           finalizerStateChange.modified,
+        );
+        this._focusReducer.updateTallies(
+          finalizerName,
+          finalizerStateChange.focused
         );
         delete this._value[finalizerName];
         if (finalizerStateChange.value !== undefined)

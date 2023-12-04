@@ -4,6 +4,7 @@ import { validityToString } from '../util/validity-to-string';
 import { Validity } from '../../model/state/validity.enum';
 import { Visited } from '../../model/state/visited.enum';
 import { Modified } from '../../model/state/modified.enum';
+import { Focused } from '../../model/state/focused.enum';
 
 export interface LabelProps {
   fieldName : string;
@@ -16,7 +17,7 @@ export function Label({ fieldName, className, style, children } : PropsWithChild
   if(!formCtx) throw new Error('Input cannot access properties of null or undefined FormContext');
   else {
     const { useField, useConfirmationAttempted } = formCtx;
-    const { validity, visited, modified } = useField(fieldName);
+    const { validity, visited, modified, focused } = useField(fieldName);
 
     const confirmationAttempted = useConfirmationAttempted();
   
@@ -28,6 +29,7 @@ export function Label({ fieldName, className, style, children } : PropsWithChild
         data-validity={(confirmationAttempted || visited === Visited.YES || modified === Modified.YES) ? validityToString(validity) : validityToString(Validity.VALID_FINALIZABLE)} 
         data-visited={visited !== Visited.NO ? true : null}
         data-modified={modified !== Modified.NO ? true : null}
+        data-focused={focused !== Focused.NO ? true : null}
       >
         {children}
       </label>

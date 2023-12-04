@@ -26,6 +26,7 @@ export class MultiFieldAggregatorImpl implements MultiFieldAggregator {
       hasOmittedFields: () => this._fieldStateReducer.omit,
       visited: () => this._fieldStateReducer.visited,
       modified: () => this._fieldStateReducer.modified,
+      focused: () => this._fieldStateReducer.focused
     } as AggregatedStateChanges;
   }
 
