@@ -7,7 +7,7 @@ import { FinalizerDictionary } from '../../../model/finalizers/finalizer-map.typ
 import { FinalizerValidity } from '../../../model/state/finalizer-validity.enum';
 import { Visited } from '../../../model/state/visited.enum';
 import { Modified } from '../../../model/state/modified.enum';
-import { MessageType, Validity } from '../../../model';
+import { Focused, MessageType, Validity } from '../../../model';
 
 describe('FinalizerManagerImpl', () => {
   let finalizerManager: FinalizerManager;
@@ -27,6 +27,7 @@ describe('FinalizerManagerImpl', () => {
       container.services.FinalizerValidityTranslator;
     const visitationReducer = reducerFactory.createVisitationReducer();
     const modificationReducer = reducerFactory.createModificationReducer();
+    const focusReducer = reducerFactory.createFocusReducer();
     const config = container.services.ConfigLoader.config;
 
     finalizerManager = new FinalizerManagerImpl(
@@ -35,6 +36,7 @@ describe('FinalizerManagerImpl', () => {
       finalizerValidityTranslator,
       visitationReducer,
       modificationReducer,
+      focusReducer,
       config
     );
   });
@@ -47,6 +49,7 @@ describe('FinalizerManagerImpl', () => {
       finalizerValidity: FinalizerValidity.VALID_FINALIZED,
       visited: Visited.YES,
       modified: Modified.YES,
+      focused: Focused.YES
     });
 
     expect(finalizerManager.state.value).toStrictEqual({ fieldA: 'new value' });
@@ -58,6 +61,7 @@ describe('FinalizerManagerImpl', () => {
       finalizerValidity: FinalizerValidity.VALID_FINALIZED,
       visited: Visited.YES,
       modified: Modified.YES,
+      focused: Focused.YES
     });
 
     expect(finalizerManager.state.value).toStrictEqual({ fieldA: 'new value' });
@@ -66,6 +70,7 @@ describe('FinalizerManagerImpl', () => {
       finalizerValidity: FinalizerValidity.FIELD_INVALID,
       visited: Visited.YES,
       modified: Modified.YES,
+      focused: Focused.YES
     });
 
     expect(finalizerManager.state.value).toStrictEqual({});
@@ -81,16 +86,19 @@ describe('FinalizerManagerImpl', () => {
       finalizerValidity: FinalizerValidity.FIELD_INVALID,
       visited: Visited.YES,
       modified: Modified.NO,
+      focused: Focused.YES
     });
     fieldB.stream.next({
       finalizerValidity: FinalizerValidity.FIELD_INVALID,
       visited: Visited.YES,
       modified: Modified.NO,
+      focused: Focused.YES
     });
     fieldC.stream.next({
       finalizerValidity: FinalizerValidity.FIELD_INVALID,
       visited: Visited.YES,
       modified: Modified.NO,
+      focused: Focused.YES
     });
     expect(finalizerManager.state.visited).toBe(Visited.YES);
   });
@@ -101,16 +109,19 @@ describe('FinalizerManagerImpl', () => {
       finalizerValidity: FinalizerValidity.FIELD_INVALID,
       visited: Visited.PARTIALLY,
       modified: Modified.NO,
+      focused: Focused.PARTIALLY
     });
     fieldB.stream.next({
       finalizerValidity: FinalizerValidity.FIELD_INVALID,
       visited: Visited.PARTIALLY,
       modified: Modified.NO,
+      focused: Focused.PARTIALLY
     });
     fieldC.stream.next({
       finalizerValidity: FinalizerValidity.FIELD_INVALID,
       visited: Visited.PARTIALLY,
       modified: Modified.NO,
+      focused: Focused.PARTIALLY
     });
     expect(finalizerManager.state.visited).toBe(Visited.PARTIALLY);
   });
@@ -121,6 +132,7 @@ describe('FinalizerManagerImpl', () => {
       finalizerValidity: FinalizerValidity.FIELD_INVALID,
       visited: Visited.YES,
       modified: Modified.NO,
+      focused: Focused.YES
     });
     expect(finalizerManager.state.visited).toBe(Visited.PARTIALLY);
   });
@@ -131,6 +143,7 @@ describe('FinalizerManagerImpl', () => {
       finalizerValidity: FinalizerValidity.FIELD_INVALID,
       visited: Visited.PARTIALLY,
       modified: Modified.NO,
+      focused: Focused.PARTIALLY
     });
     expect(finalizerManager.state.visited).toBe(Visited.PARTIALLY);
   });
@@ -141,11 +154,13 @@ describe('FinalizerManagerImpl', () => {
       finalizerValidity: FinalizerValidity.FIELD_INVALID,
       visited: Visited.YES,
       modified: Modified.NO,
+      focused: Focused.YES
     });
     fieldB.stream.next({
       finalizerValidity: FinalizerValidity.FIELD_INVALID,
       visited: Visited.YES,
       modified: Modified.NO,
+      focused: Focused.YES
     });
     expect(finalizerManager.state.visited).toBe(Visited.PARTIALLY);
   });
@@ -156,16 +171,19 @@ describe('FinalizerManagerImpl', () => {
       finalizerValidity: FinalizerValidity.FIELD_INVALID,
       visited: Visited.YES,
       modified: Modified.NO,
+      focused: Focused.YES
     });
     fieldB.stream.next({
       finalizerValidity: FinalizerValidity.FIELD_INVALID,
       visited: Visited.YES,
       modified: Modified.NO,
+      focused: Focused.YES
     });
     fieldC.stream.next({
       finalizerValidity: FinalizerValidity.FIELD_INVALID,
       visited: Visited.PARTIALLY,
       modified: Modified.NO,
+      focused: Focused.PARTIALLY
     });
     expect(finalizerManager.state.visited).toBe(Visited.PARTIALLY);
   });
@@ -176,11 +194,13 @@ describe('FinalizerManagerImpl', () => {
       finalizerValidity: FinalizerValidity.FIELD_INVALID,
       visited: Visited.PARTIALLY,
       modified: Modified.NO,
+      focused: Focused.PARTIALLY
     });
     fieldB.stream.next({
       finalizerValidity: FinalizerValidity.FIELD_INVALID,
       visited: Visited.PARTIALLY,
       modified: Modified.NO,
+      focused: Focused.PARTIALLY
     });
     expect(finalizerManager.state.visited).toBe(Visited.PARTIALLY);
   });
@@ -191,16 +211,19 @@ describe('FinalizerManagerImpl', () => {
       finalizerValidity: FinalizerValidity.FIELD_INVALID,
       visited: Visited.PARTIALLY,
       modified: Modified.NO,
+      focused: Focused.PARTIALLY
     });
     fieldB.stream.next({
       finalizerValidity: FinalizerValidity.FIELD_INVALID,
       visited: Visited.PARTIALLY,
       modified: Modified.NO,
+      focused: Focused.PARTIALLY
     });
     fieldC.stream.next({
       finalizerValidity: FinalizerValidity.FIELD_INVALID,
       visited: Visited.YES,
       modified: Modified.NO,
+      focused: Focused.YES
     });
     expect(finalizerManager.state.visited).toBe(Visited.PARTIALLY);
   });
@@ -211,11 +234,13 @@ describe('FinalizerManagerImpl', () => {
       finalizerValidity: FinalizerValidity.FIELD_INVALID,
       visited: Visited.YES,
       modified: Modified.NO,
+      focused: Focused.YES
     });
     fieldB.stream.next({
       finalizerValidity: FinalizerValidity.FIELD_INVALID,
       visited: Visited.PARTIALLY,
       modified: Modified.NO,
+      focused: Focused.PARTIALLY
     });
     expect(finalizerManager.state.visited).toBe(Visited.PARTIALLY);
   });
@@ -230,16 +255,19 @@ describe('FinalizerManagerImpl', () => {
       finalizerValidity: FinalizerValidity.FIELD_INVALID,
       visited: Visited.YES,
       modified: Modified.YES,
+      focused: Focused.YES
     });
     fieldB.stream.next({
       finalizerValidity: FinalizerValidity.FIELD_INVALID,
       visited: Visited.YES,
       modified: Modified.YES,
+      focused: Focused.YES
     });
     fieldC.stream.next({
       finalizerValidity: FinalizerValidity.FIELD_INVALID,
       visited: Visited.YES,
       modified: Modified.YES,
+      focused: Focused.YES
     });
     expect(finalizerManager.state.modified).toBe(Modified.YES);
   });
@@ -250,16 +278,19 @@ describe('FinalizerManagerImpl', () => {
       finalizerValidity: FinalizerValidity.FIELD_INVALID,
       visited: Visited.PARTIALLY,
       modified: Modified.PARTIALLY,
+      focused: Focused.PARTIALLY
     });
     fieldB.stream.next({
       finalizerValidity: FinalizerValidity.FIELD_INVALID,
       visited: Visited.PARTIALLY,
       modified: Modified.PARTIALLY,
+      focused: Focused.PARTIALLY
     });
     fieldC.stream.next({
       finalizerValidity: FinalizerValidity.FIELD_INVALID,
       visited: Visited.PARTIALLY,
       modified: Modified.PARTIALLY,
+      focused: Focused.PARTIALLY
     });
     expect(finalizerManager.state.modified).toBe(Modified.PARTIALLY);
   });
@@ -270,6 +301,7 @@ describe('FinalizerManagerImpl', () => {
       finalizerValidity: FinalizerValidity.FIELD_INVALID,
       visited: Visited.YES,
       modified: Modified.YES,
+      focused: Focused.YES
     });
     expect(finalizerManager.state.modified).toBe(Modified.PARTIALLY);
   });
@@ -280,6 +312,7 @@ describe('FinalizerManagerImpl', () => {
       finalizerValidity: FinalizerValidity.FIELD_INVALID,
       visited: Visited.PARTIALLY,
       modified: Modified.PARTIALLY,
+      focused: Focused.PARTIALLY
     });
     expect(finalizerManager.state.modified).toBe(Modified.PARTIALLY);
   });
@@ -290,11 +323,13 @@ describe('FinalizerManagerImpl', () => {
       finalizerValidity: FinalizerValidity.FIELD_INVALID,
       visited: Visited.YES,
       modified: Modified.YES,
+      focused: Focused.YES
     });
     fieldB.stream.next({
       finalizerValidity: FinalizerValidity.FIELD_INVALID,
       visited: Visited.YES,
       modified: Modified.YES,
+      focused: Focused.YES
     });
     expect(finalizerManager.state.modified).toBe(Modified.PARTIALLY);
   });
@@ -305,16 +340,19 @@ describe('FinalizerManagerImpl', () => {
       finalizerValidity: FinalizerValidity.FIELD_INVALID,
       visited: Visited.YES,
       modified: Modified.YES,
+      focused: Focused.YES
     });
     fieldB.stream.next({
       finalizerValidity: FinalizerValidity.FIELD_INVALID,
       visited: Visited.YES,
       modified: Modified.YES,
+      focused: Focused.YES
     });
     fieldC.stream.next({
       finalizerValidity: FinalizerValidity.FIELD_INVALID,
       visited: Visited.PARTIALLY,
       modified: Modified.PARTIALLY,
+      focused: Focused.PARTIALLY
     });
     expect(finalizerManager.state.modified).toBe(Modified.PARTIALLY);
   });
@@ -325,11 +363,13 @@ describe('FinalizerManagerImpl', () => {
       finalizerValidity: FinalizerValidity.FIELD_INVALID,
       visited: Visited.PARTIALLY,
       modified: Modified.PARTIALLY,
+      focused: Focused.PARTIALLY
     });
     fieldB.stream.next({
       finalizerValidity: FinalizerValidity.FIELD_INVALID,
       visited: Visited.PARTIALLY,
       modified: Modified.PARTIALLY,
+      focused: Focused.PARTIALLY
     });
     expect(finalizerManager.state.modified).toBe(Modified.PARTIALLY);
   });
@@ -340,16 +380,19 @@ describe('FinalizerManagerImpl', () => {
       finalizerValidity: FinalizerValidity.FIELD_INVALID,
       visited: Visited.PARTIALLY,
       modified: Modified.PARTIALLY,
+      focused: Focused.PARTIALLY
     });
     fieldB.stream.next({
       finalizerValidity: FinalizerValidity.FIELD_INVALID,
       visited: Visited.PARTIALLY,
       modified: Modified.PARTIALLY,
+      focused: Focused.PARTIALLY
     });
     fieldC.stream.next({
       finalizerValidity: FinalizerValidity.FIELD_INVALID,
       visited: Visited.YES,
       modified: Modified.YES,
+      focused: Focused.YES
     });
     expect(finalizerManager.state.modified).toBe(Modified.PARTIALLY);
   });
@@ -360,11 +403,13 @@ describe('FinalizerManagerImpl', () => {
       finalizerValidity: FinalizerValidity.FIELD_INVALID,
       visited: Visited.YES,
       modified: Modified.YES,
+      focused: Focused.YES
     });
     fieldB.stream.next({
       finalizerValidity: FinalizerValidity.FIELD_INVALID,
       visited: Visited.PARTIALLY,
       modified: Modified.PARTIALLY,
+      focused: Focused.PARTIALLY
     });
     expect(finalizerManager.state.modified).toBe(Modified.PARTIALLY);
   });
@@ -375,6 +420,7 @@ describe('FinalizerManagerImpl', () => {
       finalizerValidity: FinalizerValidity.FINALIZER_ERROR,
       visited: Visited.YES,
       modified: Modified.YES,
+      focused: Focused.YES
     });
     expect(finalizerManager.state.validity).toBe(Validity.ERROR);
   });
@@ -385,6 +431,7 @@ describe('FinalizerManagerImpl', () => {
       finalizerValidity: FinalizerValidity.FIELD_ERROR,
       visited: Visited.YES,
       modified: Modified.YES,
+      focused: Focused.YES
     });
     expect(finalizerManager.state.validity).toBe(Validity.ERROR);
   });
@@ -395,18 +442,21 @@ describe('FinalizerManagerImpl', () => {
       finalizerValidity: FinalizerValidity.FIELD_INVALID,
       visited: Visited.YES,
       modified: Modified.YES,
+      focused: Focused.YES
     });
     fieldB.stream.next({
       value: '',
       finalizerValidity: FinalizerValidity.FIELD_PENDING,
       visited: Visited.YES,
       modified: Modified.YES,
+      focused: Focused.YES
     });
     fieldC.stream.next({
       value: '',
       finalizerValidity: FinalizerValidity.FIELD_VALID_UNFINALIZABLE,
       visited: Visited.YES,
       modified: Modified.YES,
+      focused: Focused.YES
     });
     expect(finalizerManager.state.validity).toBe(Validity.INVALID);
   });
@@ -417,18 +467,21 @@ describe('FinalizerManagerImpl', () => {
       finalizerValidity: FinalizerValidity.FIELD_PENDING,
       visited: Visited.YES,
       modified: Modified.YES,
+      focused: Focused.YES
     });
     fieldB.stream.next({
       value: '',
       finalizerValidity: FinalizerValidity.FIELD_VALID_UNFINALIZABLE,
       visited: Visited.YES,
       modified: Modified.YES,
+      focused: Focused.YES
     });
     fieldC.stream.next({
       value: '',
       finalizerValidity: FinalizerValidity.VALID_FINALIZING,
       visited: Visited.YES,
       modified: Modified.YES,
+      focused: Focused.YES
     });
     expect(finalizerManager.state.validity).toBe(Validity.PENDING);
   });
@@ -439,18 +492,21 @@ describe('FinalizerManagerImpl', () => {
       finalizerValidity: FinalizerValidity.FIELD_VALID_UNFINALIZABLE,
       visited: Visited.YES,
       modified: Modified.YES,
+      focused: Focused.YES
     });
     fieldB.stream.next({
       value: '',
       finalizerValidity: FinalizerValidity.VALID_FINALIZING,
       visited: Visited.YES,
       modified: Modified.YES,
+      focused: Focused.YES
     });
     fieldC.stream.next({
       value: '',
       finalizerValidity: FinalizerValidity.VALID_FINALIZED,
       visited: Visited.YES,
       modified: Modified.YES,
+      focused: Focused.YES
     });
     expect(finalizerManager.state.validity).toBe(Validity.VALID_UNFINALIZABLE);
   });
@@ -461,18 +517,21 @@ describe('FinalizerManagerImpl', () => {
       finalizerValidity: FinalizerValidity.VALID_FINALIZING,
       visited: Visited.YES,
       modified: Modified.YES,
+      focused: Focused.YES
     });
     fieldB.stream.next({
       value: '',
       finalizerValidity: FinalizerValidity.VALID_FINALIZED,
       visited: Visited.YES,
       modified: Modified.YES,
+      focused: Focused.YES
     });
     fieldC.stream.next({
       value: '',
       finalizerValidity: FinalizerValidity.VALID_FINALIZED,
       visited: Visited.YES,
       modified: Modified.YES,
+      focused: Focused.YES
     });
     expect(finalizerManager.state.validity).toBe(Validity.VALID_UNFINALIZABLE);
   });
@@ -483,18 +542,21 @@ describe('FinalizerManagerImpl', () => {
       finalizerValidity: FinalizerValidity.VALID_FINALIZED,
       visited: Visited.YES,
       modified: Modified.YES,
+      focused: Focused.YES
     });
     fieldB.stream.next({
       value: '',
       finalizerValidity: FinalizerValidity.VALID_FINALIZED,
       visited: Visited.YES,
       modified: Modified.YES,
+      focused: Focused.YES
     });
     fieldC.stream.next({
       value: '',
       finalizerValidity: FinalizerValidity.VALID_FINALIZED,
       visited: Visited.YES,
       modified: Modified.YES,
+      focused: Focused.YES
     });
     expect(finalizerManager.state.validity).toBe(Validity.VALID_FINALIZABLE);
   });
@@ -512,6 +574,7 @@ describe('FinalizerManagerImpl', () => {
       finalizerValidity: FinalizerValidity.FINALIZER_ERROR,
       visited: Visited.YES,
       modified: Modified.YES,
+      focused: Focused.YES
     });
     expect(finalizerManager.state.messages).toContainEqual(expectedMessage);
   });

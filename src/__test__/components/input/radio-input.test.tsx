@@ -23,7 +23,7 @@ describe('RadioInput', () => {
     expect(errorDetected).toBe(false);
   });
 
-  test('When clicked, it calls visit() on the underlying field, setting the input\'s data-visited property.', async () => {
+  test('When clicked, it calls focus() on the underlying field, setting the input\'s data-focused property.', async () => {
     const template : RootFormTemplate = {
       fields : {
         myRadio : 'some value'
@@ -39,14 +39,14 @@ describe('RadioInput', () => {
 
     const radio = document.getElementsByTagName('input')[0];
 
-    expect(radio.getAttribute('data-visited')).toBeNull();
+    expect(radio.getAttribute('data-focused')).toBeNull();
 
     await userEvent.click(radio);
 
-    await waitFor(() => expect(radio.getAttribute('data-visited')).not.toBeNull());
+    await waitFor(() => expect(radio.getAttribute('data-focused')).not.toBeNull());
   });
 
-  test('When clicked, it calls visit() on the underlying field, setting the label\'s data-visited property.', async () => {
+  test('When clicked, it calls focus() on the underlying field, setting the label\'s data-focused property.', async () => {
     const template : RootFormTemplate = {
       fields : {
         myRadio : 'some value'
@@ -63,11 +63,11 @@ describe('RadioInput', () => {
     const radio = document.getElementsByTagName('input')[0];
     const label = document.getElementsByTagName('label')[0];
 
-    expect(label.getAttribute('data-visited')).toBeNull();
+    expect(label.getAttribute('data-focused')).toBeNull();
 
     await userEvent.click(radio);
 
-    await waitFor(() => expect(label.getAttribute('data-visited')).not.toBeNull());
+    await waitFor(() => expect(label.getAttribute('data-focused')).not.toBeNull());
   });
 
   test('When multiple radio buttons are present, the field\'s value is updated accordingly when each is clicked.', async () => {

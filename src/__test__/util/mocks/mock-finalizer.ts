@@ -4,6 +4,7 @@ import { FinalizerState } from '../../../model/state/finalizer-state.interface';
 import { FinalizerValidity } from '../../../model/state/finalizer-validity.enum';
 import { Visited } from '../../../model/state/visited.enum';
 import { Modified } from '../../../model/state/modified.enum';
+import { Focused } from '../../../model/state';
 
 export class MockFinalizer implements Finalizer {
   static createUnvisitedUnmodifiedInvalidFinalizer() {
@@ -12,6 +13,7 @@ export class MockFinalizer implements Finalizer {
       finalizerValidity: FinalizerValidity.FIELD_INVALID,
       visited: Visited.NO,
       modified: Modified.NO,
+      focused: Focused.NO
     });
   }
 

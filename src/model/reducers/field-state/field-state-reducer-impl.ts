@@ -45,10 +45,11 @@ export class FieldStateReducerImpl implements FieldStateReducer {
   }
 
   updateTallies(fieldName: string, state: FieldState) {
-    const { validity, omit, visited, modified } = state;
+    const { validity, omit, visited, modified, focused } = state;
     this._validityReducer.updateTallies(fieldName, validity);
     this._visitationReducer.updateTallies(fieldName, visited);
     this._modificationReducer.updateTallies(fieldName, modified);
+    this._focusReducer.updateTallies(fieldName, focused);
     if (omit) this._omittedFields.add(fieldName);
     else this._omittedFields.delete(fieldName);
   }

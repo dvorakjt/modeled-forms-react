@@ -5,7 +5,7 @@ import { State } from '../../../model/state/state.interface';
 import { Validity } from '../../../model/state/validity.enum';
 import { Visited } from '../../../model/state/visited.enum';
 import { Modified } from '../../../model/state/modified.enum';
-import { Message } from '../../../model';
+import { Focused, Message } from '../../../model';
 
 export class MockField extends AbstractField {
   stateChanges: Subject<FieldState>;
@@ -26,6 +26,7 @@ export class MockField extends AbstractField {
       validity: defaultValidity,
       visited: Visited.NO,
       modified: Modified.NO,
+      focused: Focused.NO,
       messages: defaultMessages,
       omit: false,
     };
@@ -60,6 +61,7 @@ export class MockField extends AbstractField {
       validity: this._defaultValidity,
       visited: Visited.NO,
       modified: Modified.NO,
+      focused: Focused.NO,
       messages: [],
       omit: false,
     });

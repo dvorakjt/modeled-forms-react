@@ -5,6 +5,7 @@ import { MessageType, Validity } from '../../../../model';
 import { Visited } from '../../../../model/state/visited.enum';
 import { Modified } from '../../../../model/state/modified.enum';
 import { ValueControlledDualField } from '../../../../model/fields/controlled/value-controlled-dual-field';
+import { Focused } from '../../../../../dist';
 
 describe('ValueControlledDualField', () => {
   const baseFieldFactory = container.services.BaseFieldFactory;
@@ -64,6 +65,7 @@ describe('ValueControlledDualField', () => {
       useSecondaryField: false,
       visited: Visited.NO,
       modified: Modified.YES,
+      focused: Focused.NO,
       omit: false,
     });
   });
@@ -91,6 +93,7 @@ describe('ValueControlledDualField', () => {
       useSecondaryField: true,
       visited: Visited.NO,
       modified: Modified.YES,
+      focused: Focused.NO,
       omit: false,
     });
   });
@@ -127,6 +130,7 @@ describe('ValueControlledDualField', () => {
       omit: false,
       visited: Visited.NO,
       modified: Modified.NO,
+      focused: Focused.NO
     };
 
     const expectedSecondaryState = {
@@ -142,6 +146,7 @@ describe('ValueControlledDualField', () => {
       omit: false,
       visited: Visited.NO,
       modified: Modified.YES,
+      focused: Focused.NO
     };
 
     fieldB.setState({
@@ -310,6 +315,7 @@ describe('ValueControlledDualField', () => {
         ],
         visited: Visited.YES,
         modified: Modified.YES,
+        focused: Focused.YES,
         omit: true,
       },
     };

@@ -10,6 +10,7 @@ import { AggregatedStateChanges } from '../../../model/aggregators/aggregated-st
 import { Visited } from '../../../model/state/visited.enum';
 import { Modified } from '../../../model/state/modified.enum';
 import { container } from '../../../model/container';
+import { Focused } from '../../../model';
 
 describe('MultiFieldAggregatorImpl', () => {
   const subjectFactory = container.services.SubjectFactory;
@@ -58,6 +59,7 @@ describe('MultiFieldAggregatorImpl', () => {
             messages: [],
             visited: Visited.NO,
             modified: Modified.NO,
+            focused: Focused.NO,
             omit: false,
           },
           invalidField: {
@@ -66,6 +68,7 @@ describe('MultiFieldAggregatorImpl', () => {
             messages: [],
             visited: Visited.NO,
             modified: Modified.NO,
+            focused: Focused.NO,
             omit: false,
           },
           pendingField: {
@@ -73,6 +76,7 @@ describe('MultiFieldAggregatorImpl', () => {
             validity: Validity.PENDING,
             visited: Visited.NO,
             modified: Modified.NO,
+            focused: Focused.NO,
             messages: [],
             omit: false,
           },
@@ -81,6 +85,7 @@ describe('MultiFieldAggregatorImpl', () => {
             validity: Validity.VALID_UNFINALIZABLE,
             visited: Visited.NO,
             modified: Modified.NO,
+            focused: Focused.NO,
             messages: [],
             omit: false,
           },
@@ -89,6 +94,7 @@ describe('MultiFieldAggregatorImpl', () => {
             validity: Validity.VALID_FINALIZABLE,
             visited: Visited.NO,
             modified: Modified.NO,
+            focused: Focused.NO,
             messages: [],
             omit: true,
           },
@@ -608,4 +614,7 @@ describe('MultiFieldAggregatorImpl', () => {
     expectedModifiedValue = Modified.YES;
     fields.fieldB.modify();
   });
+
+  //
+  
 });

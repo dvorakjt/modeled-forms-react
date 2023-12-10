@@ -7,7 +7,7 @@ import { FinalizerValidity } from '../../../../model/state/finalizer-validity.en
 import { Visited } from '../../../../model/state/visited.enum';
 import { Modified } from '../../../../model/state/modified.enum';
 import { MockField } from '../../../util/mocks/mock-field';
-import { Validity } from '../../../../model';
+import { Focused, Validity } from '../../../../model';
 import { AsyncBaseFinalizerFn } from '../../../../model/finalizers/finalizer-functions/async-base-finalizer-fn.type';
 import { Observable, Subject } from 'rxjs';
 import { FinalizerState } from '../../../../model/state/finalizer-state.interface';
@@ -41,6 +41,7 @@ describe('FinalizerFnFactoryImpl', () => {
         finalizerValidity: FinalizerValidity.VALID_FINALIZED,
         visited: Visited.NO,
         modified: Modified.NO,
+        focused: Focused.NO
       });
     });
   });
@@ -64,6 +65,7 @@ describe('FinalizerFnFactoryImpl', () => {
         finalizerValidity: FinalizerValidity.FIELD_INVALID,
         visited: Visited.NO,
         modified: Modified.NO,
+        focused: Focused.NO
       });
     });
   });
@@ -90,6 +92,7 @@ describe('FinalizerFnFactoryImpl', () => {
         finalizerValidity: FinalizerValidity.FINALIZER_ERROR,
         visited: Visited.NO,
         modified: Modified.NO,
+        focused: Focused.NO
       });
     });
   });
@@ -119,6 +122,7 @@ describe('FinalizerFnFactoryImpl', () => {
         finalizerValidity: FinalizerValidity.VALID_FINALIZED,
         visited: Visited.NO,
         modified: Modified.YES,
+        focused: Focused.NO
       });
     });
   });
@@ -149,6 +153,7 @@ describe('FinalizerFnFactoryImpl', () => {
           finalizerValidity: FinalizerValidity.FINALIZER_ERROR,
           visited: Visited.NO,
           modified: Modified.NO,
+          focused: Focused.NO
         });
       });
     });
@@ -217,6 +222,7 @@ describe('FinalizerFnFactoryImpl', () => {
           finalizerValidity: FinalizerValidity.VALID_FINALIZED,
           visited: Visited.NO,
           modified: Modified.NO,
+          focused: Focused.NO
         });
       });
     });
@@ -249,6 +255,7 @@ describe('FinalizerFnFactoryImpl', () => {
           finalizerValidity: FinalizerValidity.FIELD_INVALID,
           visited: Visited.NO,
           modified: Modified.NO,
+          focused: Focused.NO
         });
       });
     });
@@ -293,6 +300,7 @@ describe('FinalizerFnFactoryImpl', () => {
             finalizerValidity: FinalizerValidity.VALID_FINALIZING,
             visited: Visited.NO,
             modified: Modified.YES,
+            focused: Focused.NO
           });
         } else {
           expect(finalizerState).toStrictEqual({
@@ -300,6 +308,7 @@ describe('FinalizerFnFactoryImpl', () => {
             finalizerValidity: FinalizerValidity.VALID_FINALIZED,
             visited: Visited.NO,
             modified: Modified.YES,
+            focused: Focused.NO
           });
         }
       });
@@ -339,6 +348,7 @@ describe('FinalizerFnFactoryImpl', () => {
             finalizerValidity: FinalizerValidity.FINALIZER_ERROR,
             visited: Visited.NO,
             modified: Modified.NO,
+            focused: Focused.NO
           });
         } else promiseRejected = true;
       });

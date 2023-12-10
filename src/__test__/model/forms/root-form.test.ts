@@ -1,6 +1,7 @@
 import { describe, test, expect, vi } from 'vitest';
 import { container } from '../../../model/container';
 import {
+  Focused,
   MessageType,
   RootFormTemplate,
   Validity,
@@ -61,6 +62,7 @@ describe('RootForm', () => {
 
     (rootForm.userFacingFields.fieldB as AbstractField).setState({
       visited: Visited.YES,
+      focused: Focused.YES
     });
 
     /*
@@ -91,6 +93,7 @@ describe('RootForm', () => {
       ],
       visited: Visited.PARTIALLY,
       modified: Modified.PARTIALLY,
+      focused: Focused.PARTIALLY
     });
   });
 

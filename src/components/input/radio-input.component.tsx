@@ -54,6 +54,7 @@ export function RadioInput({ fieldName, value, labelText, labelClassName, labelS
           aria-invalid={(confirmationAttempted || visited === Visited.YES || modified === Modified.YES) && validity <= Validity.INVALID}
           data-visited={visited !== Visited.NO ? true : null}
           data-modified={modified !== Modified.NO ? true : null}
+          data-focused={focused !== Focused.NO ? true : null}
         >
           {labelText}
         </label>

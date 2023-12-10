@@ -56,6 +56,7 @@ export function CheckboxInput({ fieldName, value, labelText, labelClassName, lab
           data-validity={(confirmationAttempted || visited === Visited.YES || modified === Modified.YES) ? validityToString(validity) : validityToString(Validity.VALID_FINALIZABLE)} 
           data-visited={visited !== Visited.NO ? true : null}
           data-modified={modified !== Modified.NO ? true : null}
+          data-focused={focused !== Focused.NO ? true : null}
         >
           {labelText}
         </label>
