@@ -1,7 +1,7 @@
 import { describe, test, expect, vi } from 'vitest';
 import { container } from '../../../../model/container';
 import { SyncFieldValueControlFn } from '../../../../model/fields/controlled/control-functions/fields/sync-field-value-control-fn.type';
-import { FieldState, MessageType, Validity, required } from '../../../../model';
+import { FieldState, Focused, MessageType, Validity, required } from '../../../../model';
 import { FormElementDictionary } from '../../../../model/form-elements/form-element-dictionary.type';
 import { Visited } from '../../../../model/state/visited.enum';
 import { Modified } from '../../../../model/state/modified.enum';
@@ -86,6 +86,7 @@ describe('ValueControlledField', () => {
       omit: false,
       visited: Visited.NO,
       modified: Modified.YES,
+      focused: Focused.NO
     };
     expect(controlledField.state).toStrictEqual(expectedState);
   });
@@ -125,6 +126,7 @@ describe('ValueControlledField', () => {
       ],
       visited: Visited.YES,
       modified: Modified.YES,
+      focused: Focused.YES,
       omit: true,
     };
 
@@ -202,6 +204,7 @@ describe('ValueControlledField', () => {
       ],
       visited: Visited.YES,
       modified: Modified.YES,
+      focused: Focused.YES,
       omit: true,
     };
 

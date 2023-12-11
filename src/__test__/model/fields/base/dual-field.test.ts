@@ -1,7 +1,7 @@
 import { describe, test, expect, vi } from 'vitest';
 import { DualField } from '../../../../model/fields/base/dual-field';
-import { MockField } from '../../../util/mocks/mock-field';
-import { FieldState, MessageType, Validity } from '../../../../model';
+import { MockField } from '../../../testing-util/mocks/mock-field';
+import { FieldState, Focused, MessageType, Validity } from '../../../../model';
 import { Modified } from '../../../../model/state/modified.enum';
 import { Visited } from '../../../../model/state/visited.enum';
 
@@ -26,6 +26,7 @@ describe('DualField', () => {
       ],
       modified: Modified.NO,
       visited: Visited.NO,
+      focused: Focused.NO,
       omit: false,
       useSecondaryField: false,
     });
@@ -53,6 +54,7 @@ describe('DualField', () => {
       ],
       modified: Modified.NO,
       visited: Visited.NO,
+      focused: Focused.NO,
       omit: false,
       useSecondaryField: true,
     });
@@ -130,6 +132,7 @@ describe('DualField', () => {
       ],
       visited: Visited.YES,
       modified: Modified.YES,
+      focused: Focused.YES,
       omit: false,
     };
 
@@ -153,6 +156,7 @@ describe('DualField', () => {
       ],
       visited: Visited.YES,
       modified: Modified.YES,
+      focused: Focused.YES,
       omit: false,
     };
 

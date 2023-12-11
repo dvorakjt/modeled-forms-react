@@ -4,9 +4,9 @@ import { render, cleanup, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { RootFormTemplate, required } from '../../../model';
 import { SubmitButton, RootForm } from '../../../components';
-import { renderPossiblyErrantComponent } from '../../util/components/render-possibly-errant-component';
-import { MockFormContext } from '../../util/mocks/mock-form-context-provider';
-import { MockRootFormContext } from '../../util/mocks/mock-root-form-context-provider';
+import { renderPossiblyErrantComponent } from '../../testing-util/components/render-possibly-errant-component';
+import { MockFormContext } from '../../testing-util/mocks/mock-form-context-provider';
+import { MockRootFormContext } from '../../testing-util/mocks/mock-root-form-context-provider';
 
 describe('SubmitButton', () => {
   afterEach(cleanup);

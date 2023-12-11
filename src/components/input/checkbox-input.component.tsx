@@ -5,6 +5,7 @@ import { Validity } from '../../model/state/validity.enum';
 import { getAriaDescribedBy } from '../util/get-aria-described-by';
 import { Visited } from '../../model/state/visited.enum';
 import { Modified } from '../../model/state/modified.enum';
+import { Focused } from '../../model/state/focused.enum';
 
 export interface CheckboxInputProps {
   fieldName : string;
@@ -22,7 +23,7 @@ export function CheckboxInput({ fieldName, value, labelText, labelClassName, lab
 
   else {
     const { useField, useConfirmationAttempted } = formCtx;
-    const { value : fieldValue, validity, messages, visited, modified, updateValue, visit } = useField(fieldName);
+    const { value : fieldValue, validity, messages, visited, modified, focused, updateValue, focus, visit } = useField(fieldName);
 
     const confirmationAttempted = useConfirmationAttempted();
 
@@ -36,7 +37,8 @@ export function CheckboxInput({ fieldName, value, labelText, labelClassName, lab
           checked={fieldValue === value}
           className={checkboxClassName}
           style={checkboxStyle}
-          onClick={visit}
+          onFocus={focus}
+          onBlur={visit}
           onChange={() => {
             updateValue(fieldValue === value ? '' : value)
           }}
@@ -45,6 +47,7 @@ export function CheckboxInput({ fieldName, value, labelText, labelClassName, lab
           data-validity={(confirmationAttempted || visited === Visited.YES || modified === Modified.YES) ? validityToString(validity) : validityToString(Validity.VALID_FINALIZABLE)} 
           data-visited={visited !== Visited.NO ? true : null}
           data-modified={modified !== Modified.NO ? true : null}
+          data-focused={focused !== Focused.NO ? true : null}
         />
         <label 
           htmlFor={fieldName} 
@@ -53,6 +56,7 @@ export function CheckboxInput({ fieldName, value, labelText, labelClassName, lab
           data-validity={(confirmationAttempted || visited === Visited.YES || modified === Modified.YES) ? validityToString(validity) : validityToString(Validity.VALID_FINALIZABLE)} 
           data-visited={visited !== Visited.NO ? true : null}
           data-modified={modified !== Modified.NO ? true : null}
+          data-focused={focused !== Focused.NO ? true : null}
         >
           {labelText}
         </label>

@@ -1,6 +1,6 @@
 import { describe, test, expect, vi } from 'vitest';
 import { container } from '../../../../model/container';
-import { MockField } from '../../../util/mocks/mock-field';
+import { MockField } from '../../../testing-util/mocks/mock-field';
 import { FieldState, MessageType, Validity, required } from '../../../../model';
 import { Visited } from '../../../../model/state/visited.enum';
 import { Modified } from '../../../../model/state/modified.enum';

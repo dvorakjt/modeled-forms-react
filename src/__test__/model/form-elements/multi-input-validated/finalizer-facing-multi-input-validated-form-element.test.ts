@@ -1,6 +1,6 @@
 import { describe, test, expect } from 'vitest';
 import { container } from '../../../../model/container';
-import { MockField } from '../../../util/mocks/mock-field';
+import { MockField } from '../../../testing-util/mocks/mock-field';
 import { MessageType, Validity, required } from '../../../../model';
 import { Visited } from '../../../../model/state/visited.enum';
 import { Modified } from '../../../../model/state/modified.enum';

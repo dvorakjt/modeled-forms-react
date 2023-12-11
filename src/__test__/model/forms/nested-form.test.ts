@@ -1,6 +1,7 @@
 import { describe, test, expect, vi } from 'vitest';
 import { container } from '../../../model/container';
 import {
+  Focused,
   MessageType,
   NestedFormTemplate,
   Validity,
@@ -58,6 +59,7 @@ describe('NestedForm', () => {
 
     (nestedForm.userFacingFields.fieldB as AbstractField).setState({
       visited: Visited.YES,
+      focused: Focused.YES
     });
 
     /*
@@ -88,6 +90,7 @@ describe('NestedForm', () => {
       ],
       visited: Visited.PARTIALLY,
       modified: Modified.PARTIALLY,
+      focused: Focused.PARTIALLY,
       omit: true,
     });
   });

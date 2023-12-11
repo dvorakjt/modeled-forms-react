@@ -1,6 +1,6 @@
 import { AutoTransformerImpl } from '../../../model/auto-transforms/auto-transformer-impl';
 import { describe, test, expect } from 'vitest';
-import { MockConfigLoader } from '../../util/mocks/mock-config-loader';
+import { MockConfigLoader } from '../../testing-util/mocks/mock-config-loader';
 import { container } from '../../../model/container';
 
 describe('AutoTransformerImpl', () => {

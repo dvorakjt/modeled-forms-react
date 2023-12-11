@@ -289,7 +289,7 @@ firstName and lastName will now be considered invalid unless their values are no
 
 A few things will happen because of this validator. First, besides setting the validity of the field, it will simultaneously add a message to the array of messages maintained in its state property. The message will be the string we passed as an argument to required. If we passed a second string to required, that message would be included when the field is valid. These messages can be displayed with a `FieldMessages` component.
 
-Additionally, any components (such as a `Label` or `Input`) associated with this field will receive a `data-validity="INVALID"` attribute, assuming the field has been visited (clicked/tabbed to then blurred) or modified, or the form was confirmed/submitted. Labels, Inputs, etc. will also have a `data-visited` attribute if they have been visited and a `data-modified` attribute if they have been modified. Other possible values for `data-validity` are `ERROR`, `PENDING` and `VALID`. Before a field is visited/modified or the form is confirmed/submitted, `data-validity` defaults to `VALID`.
+Additionally, any components (such as a `Label` or `Input`) associated with this field will receive a `data-validity="INVALID"` attribute, assuming the field has been visited (clicked/tabbed to then blurred) or modified, or the form was confirmed/submitted. Labels, Inputs, etc. will also have a `data-focused` attribute if they have received focus, a `data-visited` attribute if they have been visited (received focus and then blurred), and a `data-modified` attribute if they have been modified. Other possible values for `data-validity` are `ERROR`, `PENDING` and `VALID`. Before a field is visited/modified or the form is confirmed/submitted, `data-validity` defaults to `VALID`.
 
 You can take advantage of this to style your components. For example:
 
@@ -497,6 +497,7 @@ State for a `RootForm` includes the following properties:
  - `messages`- an array of `Message`. A `Message`includes properties `text` and `type`. These are the messages returned by Validators.
  - `visited` - visited can be `Visited.NO`, `Visited.YES` or `Visited.PARTIALLY`.
  - `modified` - modified can be `Modified.NO`, `Modified.YES,` or `Modified.PARTIALLY`
+ - `focused` - focused can be `Focused.NO`, `Focused.YES`, or `Focused.PARTIALLY`
 
 State for nested forms and fields adds an `omit`  property, and state for dual fields adds a `useSecondaryField` property. These are both booleans and represent whether the element is currently omitted, and whether or not it is currently projecting its secondary field's state, respectively. The value property for `FieldState` must be a string, but for forms it will be an object whose shape is defined by the form's finalizers.
 
@@ -618,6 +619,7 @@ To request an instance of a controlled field, simply add a control function to y
  - `overallValidity(): Validity;` - a function which returns the minimum validity of all fields subscribed to via the destructuring subscription process.
  - `modified() : Modified;`- a function which returns `Modified.YES` if all fields have been modified, `Modified.NO` if no fields have been modified, and `Modified.PARTIALLY` if some fields have been modified. Once again, fields refers not to all fields, but to fields subscribed to via the destructuring subscription process.
  - `visited() : Visited;`- a function which returns `Visited.YES` if all fields have been visited, `Visited.NO` if no fields have been visited, and `Visited.PARTIALLY` if some fields have been visited. Again, fields refers not to all fields, but to fields subscribed to via the destructuring subscription process.
+ - `focused() : Focused;` - a function which returns `Focused.YES ` if all fields have been focused, `Focused.NO` is no fields have been focused, and `Focused.PARTIALLY` if some fields have been focused. Again, fields refers not to all fields, but to fields subscribed to via the destructuring subscription process.
  - `hasOmittedFields(): boolean;`- a function which returns true if at least one field has an `omit` property of `true`.
 
 Though all control functions must destructure this `AggregatedStateChanges` object, they each return a different type of value, and each must return a different type of value depending on whether it is included in a `Field` template or a `DualField` template. You can find information about each type of control function listed below:
@@ -730,7 +732,7 @@ Represents the html textarea component. Must receive a `fieldName` prop. Otherwi
 
 #### Label
 
-Provides a label that has access to the state of a field. You must supply a fieldName prop. This allows you to style your labels in response to the state of the corresponding field, as the label will have a data-validity property, and will gain data-visited and data-modified properties  when the field is visited or modified, respectively. You can pass in a className and/or style prop to style the label, and you can pass in text or other components as children of this component.
+Provides a label that has access to the state of a field. You must supply a fieldName prop. This allows you to style your labels in response to the state of the corresponding field, as the label will have a data-validity property, and will gain data-focused, data-visited and data-modified properties  when the field is focused, visited, or modified, respectively. You can pass in a className and/or style prop to style the label, and you can pass in text or other components as children of this component.
 
 #### FieldMessages
 

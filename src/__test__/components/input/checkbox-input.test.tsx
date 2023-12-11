@@ -4,8 +4,8 @@ import { render, cleanup, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { RootFormTemplate, required } from '../../../model';
 import { CheckboxInput, RootForm } from '../../../components';
-import { renderPossiblyErrantComponent } from '../../util/components/render-possibly-errant-component';
-import { MockFormContext } from '../../util/mocks/mock-form-context-provider';
+import { renderPossiblyErrantComponent } from '../../testing-util/components/render-possibly-errant-component';
+import { MockFormContext } from '../../testing-util/mocks/mock-form-context-provider';
 import { FormValueDisplay } from '../../../stories/utils/form-value-display.component';
 
 describe('CheckboxInput', () => {
@@ -25,7 +25,7 @@ describe('CheckboxInput', () => {
     expect(errorDetected).toBe(false);
   });
 
-  test('When clicked, it calls visit() on the underlying field, setting the input\'s data-visited property.', async () => {
+  test('When clicked, it calls focus() on the underlying field, setting the input\'s data-focused property.', async () => {
     const template : RootFormTemplate = {
       fields : {
         myCheckbox : ''
@@ -41,14 +41,14 @@ describe('CheckboxInput', () => {
 
     const checkbox = document.getElementsByTagName('input')[0];
 
-    expect(checkbox.getAttribute('data-visited')).toBeNull();
+    expect(checkbox.getAttribute('data-focused')).toBeNull();
 
     await userEvent.click(checkbox);
 
-    await waitFor(() => expect(checkbox.getAttribute('data-visited')).not.toBeNull());
+    await waitFor(() => expect(checkbox.getAttribute('data-focused')).not.toBeNull());
   });
 
-  test('When clicked, it calls visit() on the underlying field, setting the label\'s data-visited property.', async () => {
+  test('When clicked, it calls focus() on the underlying field, setting the label\'s data-focused property.', async () => {
     const template : RootFormTemplate = {
       fields : {
         myCheckbox : ''
@@ -65,11 +65,11 @@ describe('CheckboxInput', () => {
     const checkbox = document.getElementsByTagName('input')[0];
     const label = document.getElementsByTagName('label')[0];
 
-    expect(label.getAttribute('data-visited')).toBeNull();
+    expect(label.getAttribute('data-focused')).toBeNull();
 
     await userEvent.click(checkbox);
 
-    await waitFor(() => expect(label.getAttribute('data-visited')).not.toBeNull());
+    await waitFor(() => expect(label.getAttribute('data-focused')).not.toBeNull());
   });
 
   test('When clicked, input[data-modified] becomes not null.', async () => {
@@ -117,6 +117,55 @@ describe('CheckboxInput', () => {
     await userEvent.click(checkbox);
 
     await waitFor(() => expect(label.getAttribute('data-modified')).not.toBeNull());
+  });
+
+  test('When blurred, input[data-visited] becomes not null.', async () => {
+    const template : RootFormTemplate = {
+      fields : {
+        myCheckbox : ''
+      },
+      submitFn : ({ value }) => new Promise((resolve) => resolve(value))
+    }
+
+    render(
+      <RootForm template={template}>
+        <CheckboxInput fieldName='myCheckbox' value='checked' labelText='Check Me' />
+      </RootForm>
+    );
+
+    const checkbox = document.getElementsByTagName('input')[0];
+
+    expect(checkbox.getAttribute('data-visited')).toBeNull();
+
+    await userEvent.click(checkbox);
+    checkbox.blur();
+
+    await waitFor(() => expect(checkbox.getAttribute('data-visited')).not.toBeNull());
+  });
+
+  test('When blurred, label[data-visited] becomes not null.', async () => {
+    const template : RootFormTemplate = {
+      fields : {
+        myCheckbox : ''
+      },
+      submitFn : ({ value }) => new Promise((resolve) => resolve(value))
+    }
+
+    render(
+      <RootForm template={template}>
+        <CheckboxInput fieldName='myCheckbox' value='checked' labelText='Check Me' />
+      </RootForm>
+    );
+
+    const checkbox = document.getElementsByTagName('input')[0];
+    const label = document.getElementsByTagName('label')[0];
+
+    expect(label.getAttribute('data-visited')).toBeNull();
+
+    await userEvent.click(checkbox);
+    checkbox.blur();
+
+    await waitFor(() => expect(label.getAttribute('data-visited')).not.toBeNull());
   });
 
   test('The input\'s data-validity property updates as the field\'s state.validity property updates.', async () => {

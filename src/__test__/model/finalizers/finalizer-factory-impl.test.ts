@@ -5,7 +5,7 @@ import { FinalizerFactory } from '../../../model/finalizers/finalizer-factory.in
 import { SyncFinalizerFn } from '../../../model/finalizers/finalizer-functions/sync-finalizer-fn.type';
 import { Validity } from '../../../model';
 import { FinalizerValidity } from '../../../model/state/finalizer-validity.enum';
-import { MockField } from '../../util/mocks/mock-field';
+import { MockField } from '../../testing-util/mocks/mock-field';
 import { SyncFinalizer } from '../../../model/finalizers/sync-finalizer';
 import { AsyncFinalizerFn } from '../../../model/finalizers/finalizer-functions/async-finalizer-fn.type';
 import { Observable } from 'rxjs';
@@ -34,6 +34,7 @@ describe('FinalizerFactoryImpl', () => {
           : FinalizerValidity.FIELD_INVALID,
       modified: fieldA.modified,
       visited: fieldA.visited,
+      focused: fieldA.focused
     });
     const fieldA = new MockField('', Validity.VALID_FINALIZABLE);
     const fields = { fieldA };
@@ -51,6 +52,7 @@ describe('FinalizerFactoryImpl', () => {
           finalizerValidity: FinalizerValidity.VALID_FINALIZING,
           visited: fieldA.visited,
           modified: fieldA.modified,
+          focused: fieldA.focused
         });
         setTimeout(() => {
           subscriber.next({
@@ -58,6 +60,7 @@ describe('FinalizerFactoryImpl', () => {
             finalizerValidity: FinalizerValidity.VALID_FINALIZED,
             visited: fieldA.visited,
             modified: fieldA.modified,
+            focused: fieldA.focused
           });
           subscriber.complete();
         }, 500);

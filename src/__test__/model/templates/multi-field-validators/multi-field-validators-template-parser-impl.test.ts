@@ -1,7 +1,7 @@
 import { describe, test, expect } from 'vitest';
 import { container } from '../../../../model/container';
 import { MultiFieldValidatorsTemplate } from '../../../../model/templates/multi-field-validators/multi-field-validators-template.interface';
-import { MockField } from '../../../util/mocks/mock-field';
+import { MockField } from '../../../testing-util/mocks/mock-field';
 import { Validity } from '../../../../model';
 import { UserFacingMultiInputValidatedField } from '../../../../model/form-elements/multi-input-validated/user-facing-multi-input-validated-field';
 

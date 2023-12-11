@@ -1,7 +1,7 @@
 import { describe, test, expect } from 'vitest';
 import { FinalizerManagerFactoryImpl } from '../../../model/finalizers/finalizer-manager-factory-impl';
 import { container } from '../../../model/container';
-import { MockField } from '../../util/mocks/mock-field';
+import { MockField } from '../../testing-util/mocks/mock-field';
 import { Validity } from '../../../model';
 import { FinalizerManagerImpl } from '../../../model/finalizers/finalizer-manager-impl';
 

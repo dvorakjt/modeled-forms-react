@@ -1,5 +1,6 @@
 import { FieldStateReducer } from './field-state/field-state-reducer.interface';
 import { FinalizerValidityReducer } from './finalizer-validity/finalizer-validity-reducer.interface';
+import { FocusReducer } from './focus/focus-reducer.interface';
 import { ModificationReducer } from './modification/modification-reducer.interface';
 import { MultiInputValidatorValidityReducer } from './multi-input-validator-validity/multi-input-validator-validity-reducer.interface';
 import { ValidityReducer } from './validity/validity-reducer.interface';
@@ -13,6 +14,7 @@ interface ReducerFactory {
   createValidityReducer(): ValidityReducer;
   createVisitationReducer(): VisitationReducer;
   createModificationReducer(): ModificationReducer;
+  createFocusReducer() : FocusReducer;
 }
 const ReducerFactoryKey = 'ReducerFactory';
 type ReducerFactoryKeyType = typeof ReducerFactoryKey;

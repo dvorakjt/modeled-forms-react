@@ -5,7 +5,7 @@ import { createValidSyncValidator } from './mocks/sync/create-valid-sync-validat
 import { createInvalidSyncValidator } from './mocks/sync/create-invalid-sync-validator';
 import { createErrantSyncValidator } from './mocks/sync/create-errant-sync-validator';
 import { MessageType } from '../../../../model/state/messages/message-type.enum';
-import { setNodeEnv } from '../../../util/funcs/set-node-env';
+import { setNodeEnv } from '../../../testing-util/funcs/set-node-env';
 import { container } from '../../../../model/container';
 
 describe('SyncSingleInputValidatorSuite', () => {

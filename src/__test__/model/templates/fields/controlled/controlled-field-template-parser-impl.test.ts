@@ -4,7 +4,7 @@ import { container } from '../../../../../model/container';
 import { ControlledFieldTemplateParser } from '../../../../../model/templates/fields/controlled/controlled-field-template-parser.interface';
 import { SyncValueControlledFieldTemplate } from '../../../../../model/templates/fields/controlled/sync-value-controlled-field-template.type';
 import { Validity } from '../../../../../model';
-import { MockField } from '../../../../util/mocks/mock-field';
+import { MockField } from '../../../../testing-util/mocks/mock-field';
 import { FormElementDictionary } from '../../../../../model/form-elements/form-element-dictionary.type';
 import { AbstractField } from '../../../../../model/fields/base/abstract-field';
 import { SyncFieldValueControlFn } from '../../../../../model/fields/controlled/control-functions/fields/sync-field-value-control-fn.type';

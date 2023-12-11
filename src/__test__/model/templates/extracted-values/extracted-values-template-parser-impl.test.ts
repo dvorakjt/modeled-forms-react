@@ -2,7 +2,7 @@ import { describe, test, expect, beforeEach } from 'vitest';
 import { ExtractedValuesTemplateParserImpl } from '../../../../model/templates/extracted-values/extracted-values-template-parser-impl';
 import { container } from '../../../../model/container';
 import { FormElementDictionary } from '../../../../model/form-elements/form-element-dictionary.type';
-import { MockField } from '../../../util/mocks/mock-field';
+import { MockField } from '../../../testing-util/mocks/mock-field';
 import { Validity } from '../../../../model';
 import { ExtractedValuesTemplateParser } from '../../../../model/templates/extracted-values/extracted-values-template-parser.interface';
 import { ExtractedValuesTemplate } from '../../../../model/templates/extracted-values/extracted-values-template.interface';

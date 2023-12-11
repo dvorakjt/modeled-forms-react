@@ -7,7 +7,7 @@ import {
   required,
 } from '../../../../model';
 import { UserFacingMultiInputValidatedNestedForm } from '../../../../model/form-elements/multi-input-validated/user-facing-multi-input-validated-nested-form';
-import { MockField } from '../../../util/mocks/mock-field';
+import { MockField } from '../../../testing-util/mocks/mock-field';
 import { AbstractField } from '../../../../model/fields/base/abstract-field';
 import { SyncValidator } from '../../../../model/validators/sync-validator.type';
 import { AggregatedStateChanges } from '../../../../model/aggregators/aggregated-state-changes.interface';

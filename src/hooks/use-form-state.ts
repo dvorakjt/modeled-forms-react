@@ -10,6 +10,7 @@ export function useFormState(form: AbstractRootForm | AbstractNestedForm) {
     messages: form.state.messages,
     visited: form.state.visited,
     modified: form.state.modified,
+    focused : form.state.focused
   });
 
   const subRef = useRef<Subscription | null>(null);
@@ -22,6 +23,7 @@ export function useFormState(form: AbstractRootForm | AbstractNestedForm) {
         messages: stateChange.messages,
         visited: stateChange.visited,
         modified: stateChange.modified,
+        focused : stateChange.focused
       });
     });
     return () => subRef.current?.unsubscribe();

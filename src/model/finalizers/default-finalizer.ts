@@ -31,7 +31,8 @@ export class DefaultFinalizer implements Finalizer {
       return {
         finalizerValidity: FinalizerValidity.VALID_FINALIZED,
         visited: fieldState.visited,
-        modified: fieldState.modified
+        modified: fieldState.modified,
+        focused : fieldState.focused
       }
     }
 
@@ -43,6 +44,7 @@ export class DefaultFinalizer implements Finalizer {
           ),
         visited: fieldState.visited,
         modified: fieldState.modified,
+        focused : fieldState.focused
       };
 
     return {
@@ -50,6 +52,7 @@ export class DefaultFinalizer implements Finalizer {
       value: fieldState.value,
       visited: fieldState.visited,
       modified: fieldState.modified,
+      focused : fieldState.focused
     };
   }
 }

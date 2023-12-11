@@ -17,6 +17,8 @@ import { VisitationReducer } from './visitation/visitation-reducer.interface';
 import { VisitationReducerImpl } from './visitation/visitation-reducer-impl';
 import { ModificationReducer } from './modification/modification-reducer.interface';
 import { ModificationReducerImpl } from './modification/modification-reducer-impl';
+import { FocusReducer } from './focus/focus-reducer.interface';
+import { FocusReducerImpl } from './focus/focus-reducer-impl';
 
 class ReducerFactoryImpl implements ReducerFactory {
   createFieldStateReducer(): FieldStateReducer {
@@ -24,6 +26,7 @@ class ReducerFactoryImpl implements ReducerFactory {
       this.createValidityReducer(),
       this.createVisitationReducer(),
       this.createModificationReducer(),
+      this.createFocusReducer()
     );
   }
   createFinalizerValidityReducer(): FinalizerValidityReducer {
@@ -47,6 +50,9 @@ class ReducerFactoryImpl implements ReducerFactory {
   }
   createModificationReducer(): ModificationReducer {
     return new ModificationReducerImpl();
+  }
+  createFocusReducer(): FocusReducer {
+    return new FocusReducerImpl();
   }
 }
 

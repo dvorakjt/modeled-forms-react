@@ -1,7 +1,7 @@
 import { describe, test, expect, beforeEach, vi } from 'vitest';
-import { MockConfigLoader } from '../../../util/mocks/mock-config-loader';
+import { MockConfigLoader } from '../../../testing-util/mocks/mock-config-loader';
 import { AutoTransformerImpl } from '../../../../model/auto-transforms/auto-transformer-impl';
-import { MockField } from '../../../util/mocks/mock-field';
+import { MockField } from '../../../testing-util/mocks/mock-field';
 import { AutoTransformedField } from '../../../../model/fields/auto-transformed/auto-transformed-field';
 import { AutoTransformedFieldFactoryImpl } from '../../../../model/fields/auto-transformed/auto-transformed-field-factory-impl';
 import { FieldState, Validity } from '../../../../model';

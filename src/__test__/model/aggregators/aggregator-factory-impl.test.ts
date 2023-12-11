@@ -1,7 +1,7 @@
 import { describe, test, expect } from 'vitest';
 import { AggregatorFactoryImpl } from '../../../model/aggregators/aggregator-factory-impl';
 import { FormElementDictionary } from '../../../model/form-elements/form-element-dictionary.type';
-import { MockField } from '../../util/mocks/mock-field';
+import { MockField } from '../../testing-util/mocks/mock-field';
 import { MultiFieldAggregatorImpl } from '../../../model/aggregators/multi-field-aggregator-impl';
 import { MultiInputValidatorMessagesAggregatorImpl } from '../../../model/aggregators/multi-input-validator-messages-aggregator-impl';
 import { container } from '../../../model/container';

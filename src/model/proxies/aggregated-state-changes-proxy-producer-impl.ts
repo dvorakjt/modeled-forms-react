@@ -32,6 +32,7 @@ export class AggregatedStateChangesProxyProducerImpl
           return () => fieldStateReducer.omit;
         else if (prop === 'visited') return () => fieldStateReducer.visited;
         else if (prop === 'modified') return () => fieldStateReducer.modified;
+        else if (prop === 'focused') return () => fieldStateReducer.focused;
         else {
           const propName = prop.toString();
           if (!(prop in fields) || propName === 'constructor')

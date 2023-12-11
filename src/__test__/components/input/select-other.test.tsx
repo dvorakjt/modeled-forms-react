@@ -4,8 +4,8 @@ import { render, cleanup, waitFor, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { RootFormTemplate } from '../../../model';
 import { SelectOther, RootForm } from '../../../components';
-import { renderPossiblyErrantComponent } from '../../util/components/render-possibly-errant-component';
-import { MockFormContext } from '../../util/mocks/mock-form-context-provider';
+import { renderPossiblyErrantComponent } from '../../testing-util/components/render-possibly-errant-component';
+import { MockFormContext } from '../../testing-util/mocks/mock-form-context-provider';
 
 describe('SelectOther', () => {
   afterEach(cleanup);

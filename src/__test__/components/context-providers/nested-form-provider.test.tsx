@@ -1,9 +1,9 @@
 import React from "react";
 import { describe, test, expect, afterEach } from "vitest";
 import { cleanup } from '@testing-library/react';
-import { renderPossiblyErrantComponent } from "../../util/components/render-possibly-errant-component";
+import { renderPossiblyErrantComponent } from "../../testing-util/components/render-possibly-errant-component";
 import { NestedFormProvider } from "../../../components";
-import { MockFormContext } from "../../util/mocks/mock-form-context-provider";
+import { MockFormContext } from "../../testing-util/mocks/mock-form-context-provider";
 
 describe('NestedFormProvider', () => {
   afterEach(cleanup);

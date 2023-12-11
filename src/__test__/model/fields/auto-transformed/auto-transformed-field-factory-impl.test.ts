@@ -1,7 +1,7 @@
 import { describe, test, expect } from 'vitest';
 import { AutoTransformedFieldFactoryImpl } from '../../../../model/fields/auto-transformed/auto-transformed-field-factory-impl';
 import { container } from '../../../../model/container';
-import { MockField } from '../../../util/mocks/mock-field';
+import { MockField } from '../../../testing-util/mocks/mock-field';
 import { AutoTransformedField } from '../../../../model/fields/auto-transformed/auto-transformed-field';
 import { Validity } from '../../../../model';
 

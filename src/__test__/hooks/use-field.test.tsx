@@ -1,7 +1,7 @@
 import { describe, test, expect, vi } from 'vitest';
 import React from 'react';
 import { render, renderHook, waitFor } from '@testing-library/react';
-import { renderPossiblyErrantHook } from '../util/hooks/render-possibly-errant-hook';
+import { renderPossiblyErrantHook } from '../testing-util/hooks/render-possibly-errant-hook';
 import { useRootForm } from '../../hooks';
 import { MessageType, RootFormTemplate, Validity, required } from '../../model';
 import { Visited } from '../../model/state/visited.enum';

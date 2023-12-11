@@ -1,7 +1,7 @@
 import { describe, test, expect, vi } from 'vitest';
 import { container } from '../../../../model/container';
 import { SyncDualFieldStateControlFn } from '../../../../model/fields/controlled/control-functions/dual-fields/sync-dual-field-state-control-fn.type';
-import { MessageType, Validity, required } from '../../../../model';
+import { Focused, MessageType, Validity, required } from '../../../../model';
 import { Visited } from '../../../../model/state/visited.enum';
 import { Modified } from '../../../../model/state/modified.enum';
 import { StateControlledDualField } from '../../../../model/fields/controlled/state-controlled-dual-field';
@@ -74,6 +74,7 @@ describe('StateControlledDualField', () => {
       useSecondaryField: false,
       visited: Visited.NO,
       modified: Modified.YES,
+      focused: Focused.NO,
       omit: false,
     });
   });
@@ -101,6 +102,7 @@ describe('StateControlledDualField', () => {
       useSecondaryField: true,
       visited: Visited.NO,
       modified: Modified.YES,
+      focused: Focused.NO,
       omit: false,
     });
   });
@@ -136,6 +138,7 @@ describe('StateControlledDualField', () => {
       omit: false,
       visited: Visited.NO,
       modified: Modified.NO,
+      focused: Focused.NO,
       useSecondaryField: false,
     };
 
@@ -152,6 +155,7 @@ describe('StateControlledDualField', () => {
       omit: false,
       visited: Visited.NO,
       modified: Modified.YES,
+      focused: Focused.NO
     };
 
     fieldB.setState({
@@ -320,6 +324,7 @@ describe('StateControlledDualField', () => {
         ],
         visited: Visited.YES,
         modified: Modified.YES,
+        focused: Focused.YES,
         omit: true,
       },
     };

@@ -13,6 +13,7 @@ import type { ValidatorSuiteResult } from '../../validators/validator-suite-resu
 import type { Message } from '../../state/messages/message.interface';
 import { Visited } from '../../state/visited.enum';
 import { Modified } from '../../state/modified.enum';
+import { Focused } from '../../state/focused.enum';
 
 export class Field extends AbstractField {
   readonly stateChanges: Subject<FieldState>;
@@ -52,6 +53,7 @@ export class Field extends AbstractField {
       omit: this._omitByDefault,
       visited: Visited.NO,
       modified: this._getDefaultModifiedValue(),
+      focused: Focused.NO
     };
     this.stateChanges = new BehaviorSubject(this.state);
     if (initialState.observable)
@@ -66,6 +68,7 @@ export class Field extends AbstractField {
       ...validityResult.syncResult,
       omit: this.state.omit,
       visited: this.state.visited,
+      focused: this.state.focused,
       modified,
     });
     if (validityResult.observable)
@@ -83,6 +86,7 @@ export class Field extends AbstractField {
   reset() {
     this._state.omit = this._omitByDefault;
     this._state.visited = Visited.NO;
+    this._state.focused = Focused.NO;
     this.setValue(this._defaultValue, this._getDefaultModifiedValue());
   }
 

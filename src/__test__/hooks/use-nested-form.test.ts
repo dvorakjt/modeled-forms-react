@@ -1,6 +1,6 @@
 import { describe, test, expect } from 'vitest';
 import { renderHook } from '@testing-library/react';
-import { renderPossiblyErrantHook } from '../util/hooks/render-possibly-errant-hook';
+import { renderPossiblyErrantHook } from '../testing-util/hooks/render-possibly-errant-hook';
 import { useRootForm } from '../../hooks';
 import { RootFormTemplate } from '../../model';
 

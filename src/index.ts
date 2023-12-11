@@ -2,6 +2,7 @@ export {
   Validity,
   Visited,
   Modified,
+  Focused,
   MessageType,
   email,
   inDateRange,

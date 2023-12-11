@@ -6,6 +6,7 @@ import { getAriaDescribedBy } from '../util/get-aria-described-by';
 import { Visited } from '../../model/state/visited.enum';
 import { Modified } from '../../model/state/modified.enum';
 import { getRadioInputId } from '../util/get-radio-input-id';
+import { Focused } from '../../model/state/focused.enum';
 
 export interface RadioInputProps {
   fieldName : string;
@@ -22,7 +23,7 @@ export function RadioInput({ fieldName, value, labelText, labelClassName, labelS
   if(!formCtx) throw new Error('Input cannot access properties of null or undefined FormContext');
   else {
     const { useField, useConfirmationAttempted } = formCtx;
-    const { value : fieldValue, validity, messages, visited, modified, updateValue, visit} = useField(fieldName);
+    const { value : fieldValue, validity, messages, visited, modified, focused, updateValue, visit, focus} = useField(fieldName);
 
     const confirmationAttempted = useConfirmationAttempted();
 
@@ -36,12 +37,14 @@ export function RadioInput({ fieldName, value, labelText, labelClassName, labelS
           checked={fieldValue === value}
           className={radioClassName}
           style={radioStyle}
-          onClick={visit}
+          onFocus={focus}
+          onBlur={visit}
           onChange={(e) => updateValue(e.target.value)}
           aria-describedby={(confirmationAttempted || visited === Visited.YES || modified === Modified.YES) ? getAriaDescribedBy(fieldName, messages) : ""}
           data-validity={(confirmationAttempted || visited === Visited.YES || modified === Modified.YES) ? validityToString(validity) : validityToString(Validity.VALID_FINALIZABLE)} 
           data-visited={visited !== Visited.NO ? true : null}
           data-modified={modified !== Modified.NO ? true : null}
+          data-focused={focused !== Focused.NO ? true : null}
         />
         <label 
           htmlFor={getRadioInputId(fieldName, value)} 
@@ -51,6 +54,7 @@ export function RadioInput({ fieldName, value, labelText, labelClassName, labelS
           aria-invalid={(confirmationAttempted || visited === Visited.YES || modified === Modified.YES) && validity <= Validity.INVALID}
           data-visited={visited !== Visited.NO ? true : null}
           data-modified={modified !== Modified.NO ? true : null}
+          data-focused={focused !== Focused.NO ? true : null}
         >
           {labelText}
         </label>

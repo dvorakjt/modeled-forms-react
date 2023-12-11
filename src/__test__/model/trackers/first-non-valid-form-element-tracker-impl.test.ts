@@ -2,7 +2,7 @@ import { describe, test, expect, beforeEach } from 'vitest';
 import { FirstNonValidFormElementTrackerImpl } from '../../../model/trackers/first-nonvalid-form-element-tracker-impl';
 import { container } from '../../../model/container';
 import { FirstNonValidFormElementTracker } from '../../../model/trackers/first-nonvalid-form-element-tracker.interface';
-import { MockField } from '../../util/mocks/mock-field';
+import { MockField } from '../../testing-util/mocks/mock-field';
 import { FieldState, Validity } from '../../../model';
 
 describe('FirstNonValidFormElementTrackerImpl', () => {
