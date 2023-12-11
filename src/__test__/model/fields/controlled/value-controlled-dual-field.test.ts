@@ -5,7 +5,7 @@ import { MessageType, Validity } from '../../../../model';
 import { Visited } from '../../../../model/state/visited.enum';
 import { Modified } from '../../../../model/state/modified.enum';
 import { ValueControlledDualField } from '../../../../model/fields/controlled/value-controlled-dual-field';
-import { Focused } from '../../../../../dist';
+import { Focused } from '../../../../index';
 
 describe('ValueControlledDualField', () => {
   const baseFieldFactory = container.services.BaseFieldFactory;

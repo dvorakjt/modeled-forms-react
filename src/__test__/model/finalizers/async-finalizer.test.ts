@@ -1,7 +1,7 @@
 import { describe, test, expect } from 'vitest';
 import { AsyncFinalizer } from '../../../model/finalizers/async-finalizer';
 import { container } from '../../../model/container';
-import { MockField } from '../../util/mocks/mock-field';
+import { MockField } from '../../testing-util/mocks/mock-field';
 import { Validity } from '../../../model';
 import { AsyncBaseFinalizerFn } from '../../../model/finalizers/finalizer-functions/async-base-finalizer-fn.type';
 

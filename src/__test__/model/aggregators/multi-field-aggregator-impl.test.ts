@@ -1,6 +1,6 @@
 import { describe, test, expect, beforeEach, vi } from 'vitest';
 import { MultiFieldAggregatorImpl } from '../../../model/aggregators/multi-field-aggregator-impl';
-import { MockField } from '../../util/mocks/mock-field';
+import { MockField } from '../../testing-util/mocks/mock-field';
 import { AggregatedStateChangesProxyProducer } from '../../../model/proxies/aggregated-state-changes-proxy-producer.interface';
 import { FieldStateReducer } from '../../../model/reducers/field-state/field-state-reducer.interface';
 import { OneTimeValueEmitter } from '../../../model/emitters/one-time-value-emitter.interface';

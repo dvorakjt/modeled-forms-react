@@ -2,7 +2,7 @@ import { container } from '../../../model/container';
 import { MultiInputValidatorMessagesAggregatorImpl } from '../../../model/aggregators/multi-input-validator-messages-aggregator-impl';
 import { describe, test, expect, beforeEach } from 'vitest';
 import { MultiInputValidatorMessagesAggregator } from '../../../model/aggregators/multi-input-validator-messages-aggregator.interface';
-import { MockField } from '../../util/mocks/mock-field';
+import { MockField } from '../../testing-util/mocks/mock-field';
 import { MessageType, Validity } from '../../../model';
 import { FormElementDictionary } from '../../../model/form-elements/form-element-dictionary.type';
 import { MultiInputValidator } from '../../../model/validators/multi-input/multi-input-validator.interface';

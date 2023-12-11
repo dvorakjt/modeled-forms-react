@@ -1,6 +1,6 @@
 import { describe, test, expect, vi } from 'vitest';
 import { container } from '../../../../model/container';
-import { MockField } from '../../../util/mocks/mock-field';
+import { MockField } from '../../../testing-util/mocks/mock-field';
 import {
   DualFieldSetStateArg,
   DualFieldSetValueArg,

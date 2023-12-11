@@ -1,7 +1,7 @@
 import { describe, test, expect } from 'vitest';
 import { SyncFinalizer } from '../../../model/finalizers/sync-finalizer';
 import { container } from '../../../model/container';
-import { MockField } from '../../util/mocks/mock-field';
+import { MockField } from '../../testing-util/mocks/mock-field';
 import { Validity } from '../../../model';
 import { SyncBaseFinalizerFn } from '../../../model/finalizers/finalizer-functions/sync-base-finalizer-fn.type';
 

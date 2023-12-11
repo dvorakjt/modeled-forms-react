@@ -1,7 +1,7 @@
 import { describe, test, expect } from 'vitest';
 import { AdapterFactoryImpl } from '../../../model/adapters/adapter-factory-impl';
 import { container } from '../../../model/container';
-import { MockField } from '../../util/mocks/mock-field';
+import { MockField } from '../../testing-util/mocks/mock-field';
 import { Validity } from '../../../model';
 import { SyncAdapterFn } from '../../../model/adapters/sync-adapter-fn.type';
 import { SyncAdapter } from '../../../model/adapters/sync-adapter';

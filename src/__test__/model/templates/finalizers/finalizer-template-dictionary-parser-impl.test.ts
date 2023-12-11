@@ -1,7 +1,7 @@
 import { describe, test, expect } from 'vitest';
 import { container } from '../../../../model/container';
 import { FinalizerTemplateDictionary } from '../../../../model/templates/finalizers/finalizer-template-dictionary.type';
-import { MockField } from '../../../util/mocks/mock-field';
+import { MockField } from '../../../testing-util/mocks/mock-field';
 import { Validity } from '../../../../model';
 import { FinalizerManagerImpl } from '../../../../model/finalizers/finalizer-manager-impl';
 import { SyncFinalizer } from '../../../../model/finalizers/sync-finalizer';

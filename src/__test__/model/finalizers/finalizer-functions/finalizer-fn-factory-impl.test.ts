@@ -6,12 +6,12 @@ import { SyncBaseFinalizerFn } from '../../../../model/finalizers/finalizer-func
 import { FinalizerValidity } from '../../../../model/state/finalizer-validity.enum';
 import { Visited } from '../../../../model/state/visited.enum';
 import { Modified } from '../../../../model/state/modified.enum';
-import { MockField } from '../../../util/mocks/mock-field';
+import { MockField } from '../../../testing-util/mocks/mock-field';
 import { Focused, Validity } from '../../../../model';
 import { AsyncBaseFinalizerFn } from '../../../../model/finalizers/finalizer-functions/async-base-finalizer-fn.type';
 import { Observable, Subject } from 'rxjs';
 import { FinalizerState } from '../../../../model/state/finalizer-state.interface';
-import { setNodeEnv } from '../../../util/funcs/set-node-env';
+import { setNodeEnv } from '../../../testing-util/funcs/set-node-env';
 
 describe('FinalizerFnFactoryImpl', () => {
   let finalizerFnFactory: FinalizerFnFactory;

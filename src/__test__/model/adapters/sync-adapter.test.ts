@@ -1,7 +1,7 @@
 import { describe, expect, test } from 'vitest';
 import { SyncAdapter } from '../../../model/adapters/sync-adapter';
 import { FormElementDictionary } from '../../../model/form-elements/form-element-dictionary.type';
-import { MockField } from '../../util/mocks/mock-field';
+import { MockField } from '../../testing-util/mocks/mock-field';
 import { AggregatedStateChanges } from '../../../model/aggregators/aggregated-state-changes.interface';
 import { container } from '../../../model/container';
 

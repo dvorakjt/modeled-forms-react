@@ -1,10 +1,10 @@
 import { describe, test, expect, vi } from 'vitest';
 import { container } from '../../../../model/container';
-import { MockField } from '../../../util/mocks/mock-field';
+import { MockField } from '../../../testing-util/mocks/mock-field';
 import { Validity } from '../../../../model';
 import { SyncValidator } from '../../../../model/validators/sync-validator.type';
 import { AggregatedStateChanges } from '../../../../model/aggregators/aggregated-state-changes.interface';
-import { setNodeEnv } from '../../../util/funcs/set-node-env';
+import { setNodeEnv } from '../../../testing-util/funcs/set-node-env';
 
 describe('SyncMultiInputValidator', () => {
   test('If there are omitted fields, calculatedValidityChanges emits Validity.VALID_FINALIZABLE.', () => {

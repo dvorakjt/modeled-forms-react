@@ -2,7 +2,7 @@ import { describe, test, expect, beforeEach } from 'vitest';
 import { MultiInputValidatorFactoryImpl } from '../../../../model/validators/multi-input/multi-input-validator-factory-impl';
 import { container } from '../../../../model/container';
 import { MultiInputValidatorFactory } from '../../../../model/validators/multi-input/multi-input-validator-factory.interface';
-import { MockField } from '../../../util/mocks/mock-field';
+import { MockField } from '../../../testing-util/mocks/mock-field';
 import { Validity } from '../../../../model';
 import { SyncValidator } from '../../../../model/validators/sync-validator.type';
 import { AggregatedStateChanges } from '../../../../model/aggregators/aggregated-state-changes.interface';

@@ -1,6 +1,6 @@
 import { describe, test, expect, vi } from 'vitest';
 import { DualField } from '../../../../model/fields/base/dual-field';
-import { MockField } from '../../../util/mocks/mock-field';
+import { MockField } from '../../../testing-util/mocks/mock-field';
 import { FieldState, Focused, MessageType, Validity } from '../../../../model';
 import { Modified } from '../../../../model/state/modified.enum';
 import { Visited } from '../../../../model/state/visited.enum';

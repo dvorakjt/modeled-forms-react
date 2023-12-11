@@ -5,7 +5,7 @@ import { FinalizerFactory } from '../../../model/finalizers/finalizer-factory.in
 import { SyncFinalizerFn } from '../../../model/finalizers/finalizer-functions/sync-finalizer-fn.type';
 import { Validity } from '../../../model';
 import { FinalizerValidity } from '../../../model/state/finalizer-validity.enum';
-import { MockField } from '../../util/mocks/mock-field';
+import { MockField } from '../../testing-util/mocks/mock-field';
 import { SyncFinalizer } from '../../../model/finalizers/sync-finalizer';
 import { AsyncFinalizerFn } from '../../../model/finalizers/finalizer-functions/async-finalizer-fn.type';
 import { Observable } from 'rxjs';

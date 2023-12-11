@@ -1,9 +1,9 @@
 import React from 'react';
 import { describe, test, expect, afterEach } from "vitest";
 import { render, cleanup, screen } from '@testing-library/react';
-import { renderPossiblyErrantComponent } from "../../util/components/render-possibly-errant-component";
+import { renderPossiblyErrantComponent } from "../../testing-util/components/render-possibly-errant-component";
 import { OmittableContent } from '../../../components/omittable-content/omittable-content.component';
-import { MockFormContext } from '../../util/mocks/mock-form-context-provider';
+import { MockFormContext } from '../../testing-util/mocks/mock-form-context-provider';
 import { FormContextType } from '../../../components/context-providers/form-context';
 import { v4 as uuidv4 } from 'uuid';
 

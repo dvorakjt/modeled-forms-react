@@ -4,8 +4,8 @@ import { render, cleanup, waitFor } from '@testing-library/react';
 import userEvent from "@testing-library/user-event";
 import { RootFormTemplate, includesDigit, includesLower, includesSymbol, includesUpper, required } from "../../../model";
 import { ConfirmButton, FieldMessages, RootForm } from "../../../components";
-import { MockFormContext } from "../../util/mocks/mock-form-context-provider";
-import { renderPossiblyErrantComponent } from "../../util/components/render-possibly-errant-component";
+import { MockFormContext } from "../../testing-util/mocks/mock-form-context-provider";
+import { renderPossiblyErrantComponent } from "../../testing-util/components/render-possibly-errant-component";
 
 describe('FieldMessages', () => {
   afterEach(cleanup);

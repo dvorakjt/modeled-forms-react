@@ -4,7 +4,7 @@ import { render, cleanup, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event';
 import { RootFormTemplate } from '../../../model';
 import { Input, ResetButton, RootForm } from '../../../components';
-import { renderPossiblyErrantComponent } from '../../util/components/render-possibly-errant-component';
+import { renderPossiblyErrantComponent } from '../../testing-util/components/render-possibly-errant-component';
 
 describe('ResetButton', () => {
   afterEach(cleanup);

@@ -1,7 +1,7 @@
 import { describe, test, expect, beforeEach } from 'vitest';
 import { FinalizerManagerImpl } from '../../../model/finalizers/finalizer-manager-impl';
 import { container } from '../../../model/container';
-import { MockFinalizer } from '../../util/mocks/mock-finalizer';
+import { MockFinalizer } from '../../testing-util/mocks/mock-finalizer';
 import { FinalizerManager } from '../../../model/finalizers/finalizer-manager.interface';
 import { FinalizerDictionary } from '../../../model/finalizers/finalizer-map.type';
 import { FinalizerValidity } from '../../../model/state/finalizer-validity.enum';

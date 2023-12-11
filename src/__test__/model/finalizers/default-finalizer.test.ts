@@ -1,6 +1,6 @@
 import { describe, test, expect } from 'vitest';
 import { container } from '../../../model/container';
-import { MockField } from '../../util/mocks/mock-field';
+import { MockField } from '../../testing-util/mocks/mock-field';
 import { Focused, Validity } from '../../../model';
 import { FinalizerValidity } from '../../../model/state/finalizer-validity.enum';
 import { Visited } from '../../../model/state/visited.enum';

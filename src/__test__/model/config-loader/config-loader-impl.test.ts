@@ -1,7 +1,7 @@
 import { describe, test, expect, vi, afterEach } from 'vitest';
 import { DEFAULT_CONFIG } from '../../../model/config-loader/default-config';
 import { ConfigLoaderImpl } from '../../../model/config-loader/config-loader-impl';
-import { setNodeEnv } from '../../util/funcs/set-node-env';
+import { setNodeEnv } from '../../testing-util/funcs/set-node-env';
 describe('ConfigLoader', () => {
   afterEach(() => {
     if("MODELED_FORMS_REACT_CONFIG" in process.env) {

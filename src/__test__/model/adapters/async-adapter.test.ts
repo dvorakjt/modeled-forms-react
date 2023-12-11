@@ -1,6 +1,6 @@
 import { describe, expect, test, vi } from 'vitest';
 import { FormElementDictionary } from '../../../model/form-elements/form-element-dictionary.type';
-import { MockField } from '../../util/mocks/mock-field';
+import { MockField } from '../../testing-util/mocks/mock-field';
 import { AggregatedStateChanges } from '../../../model/aggregators/aggregated-state-changes.interface';
 import { AsyncAdapter } from '../../../model/adapters/async-adapter';
 import { Observable, Subscription } from 'rxjs';
