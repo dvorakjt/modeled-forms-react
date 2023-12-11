@@ -70,6 +70,55 @@ describe('RadioInput', () => {
     await waitFor(() => expect(label.getAttribute('data-focused')).not.toBeNull());
   });
 
+  test('When blurred, input[data-visited] becomes not null.', async () => {
+    const template : RootFormTemplate = {
+      fields : {
+        myRadio : 'some value'
+      },
+      submitFn : ({ value }) => new Promise((resolve) => resolve(value))
+    }
+
+    render(
+      <RootForm template={template}>
+        <RadioInput fieldName='myRadio' value='some value' labelText='Some Value' />
+      </RootForm>
+    );
+
+    const radio = document.getElementsByTagName('input')[0];
+
+    expect(radio.getAttribute('data-visited')).toBeNull();
+
+    await userEvent.click(radio);
+    radio.blur();
+
+    await waitFor(() => expect(radio.getAttribute('data-visited')).not.toBeNull());
+  });
+
+  test('When blurred, label[data-visited] becomes not null.', async () => {
+    const template : RootFormTemplate = {
+      fields : {
+        myRadio : 'some value'
+      },
+      submitFn : ({ value }) => new Promise((resolve) => resolve(value))
+    }
+
+    render(
+      <RootForm template={template}>
+        <RadioInput fieldName='myRadio' value='some value' labelText='Some Value' />
+      </RootForm>
+    );
+
+    const radio = document.getElementsByTagName('input')[0];
+    const label = document.getElementsByTagName('label')[0];
+
+    expect(radio.getAttribute('data-visited')).toBeNull();
+
+    await userEvent.click(radio);
+    radio.blur();
+
+    await waitFor(() => expect(label.getAttribute('data-visited')).not.toBeNull());
+  });
+
   test('When multiple radio buttons are present, the field\'s value is updated accordingly when each is clicked.', async () => {
     const template : RootFormTemplate = {
       fields : {

@@ -78,4 +78,10 @@ export class MockField extends AbstractField {
       modified: Modified.YES,
     });
   }
+  focus() : void {
+    this.setState({
+      ...this.state,
+      focused: Focused.YES
+    });
+  }
 }

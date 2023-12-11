@@ -616,5 +616,97 @@ describe('MultiFieldAggregatorImpl', () => {
   });
 
   //
-  
+  test('focused() returns Focused.NO if no fields have been focused.', () => {
+    const fields: FormElementDictionary = {
+      fieldA: new MockField('', Validity.VALID_FINALIZABLE),
+      fieldB: new MockField('', Validity.VALID_FINALIZABLE),
+    };
+    const multiFieldAggregator = new MultiFieldAggregatorImpl(
+      fields,
+      aggregatedStateChangesProxyProducer,
+      fieldStateReducer,
+      accessedFields,
+      subjectFactory,
+    );
+    multiFieldAggregator.aggregateChanges.subscribe(
+      ({ focused, fieldA, fieldB }) => {
+        expect(focused()).toBe(Focused.NO);
+        expect(fieldA).toBeDefined();
+        expect(fieldB).toBeDefined();
+      },
+    );
+  });
+
+  test('It returns Focused.PARTIALLY if there are both focused and unfocused fields.', () => {
+    const fields = {
+      fieldA: new MockField('', Validity.VALID_FINALIZABLE),
+      fieldB: new MockField('', Validity.VALID_FINALIZABLE),
+    };
+    fields.fieldA.focus();
+    const multiFieldAggregator = new MultiFieldAggregatorImpl(
+      fields,
+      aggregatedStateChangesProxyProducer,
+      fieldStateReducer,
+      accessedFields,
+      subjectFactory,
+    );
+    multiFieldAggregator.aggregateChanges.subscribe(
+      ({ focused, fieldA, fieldB }) => {
+        expect(focused()).toBe(Focused.PARTIALLY);
+        expect(fieldA).toBeDefined();
+        expect(fieldB).toBeDefined();
+      },
+    );
+  });
+
+  test('It returns Focused.YES if all accessed fields have been focused.', () => {
+    const fields = {
+      fieldA: new MockField('', Validity.VALID_FINALIZABLE),
+      fieldB: new MockField('', Validity.VALID_FINALIZABLE),
+    };
+    fields.fieldA.focus();
+    fields.fieldB.focus();
+    const multiFieldAggregator = new MultiFieldAggregatorImpl(
+      fields,
+      aggregatedStateChangesProxyProducer,
+      fieldStateReducer,
+      accessedFields,
+      subjectFactory,
+    );
+    multiFieldAggregator.aggregateChanges.subscribe(
+      ({ focused, fieldA, fieldB }) => {
+        expect(focused()).toBe(Focused.YES);
+        expect(fieldA).toBeDefined();
+        expect(fieldB).toBeDefined();
+      },
+    );
+  });
+
+  test('As fields are focused, focused is updated accordingly.', () => {
+    const fields = {
+      fieldA: new MockField('', Validity.VALID_FINALIZABLE),
+      fieldB: new MockField('', Validity.VALID_FINALIZABLE),
+    };
+    const multiFieldAggregator = new MultiFieldAggregatorImpl(
+      fields,
+      aggregatedStateChangesProxyProducer,
+      fieldStateReducer,
+      accessedFields,
+      subjectFactory,
+    );
+    let expectedValue = Focused.NO;
+    multiFieldAggregator.aggregateChanges.subscribe(
+      ({ focused, fieldA, fieldB }) => {
+        expect(focused()).toBe(expectedValue);
+        expect(fieldA).toBeDefined();
+        expect(fieldB).toBeDefined();
+      },
+    );
+
+    expectedValue = Focused.PARTIALLY;
+    fields.fieldA.focus();
+
+    expectedValue = Focused.YES;
+    fields.fieldB.focus();
+  });
 });

@@ -119,6 +119,55 @@ describe('CheckboxInput', () => {
     await waitFor(() => expect(label.getAttribute('data-modified')).not.toBeNull());
   });
 
+  test('When blurred, input[data-visited] becomes not null.', async () => {
+    const template : RootFormTemplate = {
+      fields : {
+        myCheckbox : ''
+      },
+      submitFn : ({ value }) => new Promise((resolve) => resolve(value))
+    }
+
+    render(
+      <RootForm template={template}>
+        <CheckboxInput fieldName='myCheckbox' value='checked' labelText='Check Me' />
+      </RootForm>
+    );
+
+    const checkbox = document.getElementsByTagName('input')[0];
+
+    expect(checkbox.getAttribute('data-visited')).toBeNull();
+
+    await userEvent.click(checkbox);
+    checkbox.blur();
+
+    await waitFor(() => expect(checkbox.getAttribute('data-visited')).not.toBeNull());
+  });
+
+  test('When blurred, label[data-visited] becomes not null.', async () => {
+    const template : RootFormTemplate = {
+      fields : {
+        myCheckbox : ''
+      },
+      submitFn : ({ value }) => new Promise((resolve) => resolve(value))
+    }
+
+    render(
+      <RootForm template={template}>
+        <CheckboxInput fieldName='myCheckbox' value='checked' labelText='Check Me' />
+      </RootForm>
+    );
+
+    const checkbox = document.getElementsByTagName('input')[0];
+    const label = document.getElementsByTagName('label')[0];
+
+    expect(label.getAttribute('data-visited')).toBeNull();
+
+    await userEvent.click(checkbox);
+    checkbox.blur();
+
+    await waitFor(() => expect(label.getAttribute('data-visited')).not.toBeNull());
+  });
+
   test('The input\'s data-validity property updates as the field\'s state.validity property updates.', async () => {
     const template : RootFormTemplate = {
       fields : {
