@@ -78,7 +78,9 @@ export {
   Label,
   FieldMessages,
   FormMessages,
-  OmittableContent
+  OmittableContent,
+  validityToString,
+  getAriaDescribedBy
 } from './components';
 
 export type {
