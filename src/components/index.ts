@@ -17,6 +17,7 @@ export {
 export { Label } from './labels';
 export { FieldMessages, FormMessages } from './messages';
 export { OmittableContent } from './omittable-content';
+export { validityToString, getAriaDescribedBy } from './util';
 
 export type {
   ResetButtonProps,
